@@ -5,9 +5,11 @@ import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom"
 import { Root } from "routes/Root";
 import { Home } from "routes/Home";
 import { Session } from "routes/Session";
+import { NewSession } from "routes/NewSession";
 import { Error } from "routes/Error";
 import { sessionsLoader, sessionLoader } from "loaders/session_clients";
-import { theme } from "@diamondlightsource/ui-components";
+import { visitLoader } from "loaders/visits";
+import { theme } from "styles/theme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
@@ -34,6 +36,12 @@ const router = createBrowserRouter([
           errorElement: <Error />,
           loader: ({ params }) => sessionLoader(queryClient)(params),
         },
+        {
+          path: "new_session",
+          element: <NewSession />,
+          errorElement: <Error />,
+          loader: visitLoader(queryClient),
+        }
       ],
     }
 ]);

@@ -33,11 +33,12 @@ const getPrefix = (prefix: string = "/api/") => {
 export const client = async (
   endpoint: string,
   customConfig: Record<any, any> = {},
-  body?: Record<any, any> | FormData,
+  body?: Record<any, any> | FormData | null,
+  method: string | null = null,
   prefix = getPrefix(process.env.REACT_APP_API_ENDPOINT)
 ): Promise<never | Response> => {
   const config: RequestConfig = {
-    method: body != null ? "POST" : "GET",
+    method: method ? method: (body != null ? "POST" : "GET"),
     ...customConfig,
     headers: {
       ...customConfig.headers,
@@ -89,6 +90,17 @@ client.get = async (endpoint: string, customConfig = {}) => {
     (customConfig = {
       ...customConfig,
     })
+  );
+};
+
+client.delete = async (endpoint: string, customConfig = {}) => {
+  return await client(
+    endpoint,
+    (customConfig = {
+      ...customConfig,
+    }),
+    null,
+    'DELETE',
   );
 };
 

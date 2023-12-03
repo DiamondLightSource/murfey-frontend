@@ -29,6 +29,14 @@ const getSessionData = async (sessid: string = "0") => {
   
     return response.data;
   };
+
+export const deleteSessionData = async (sessid: number) => {
+  const response = await client.delete(`sessions/${sessid}`);
+  if (response.status !== 200) {
+    return null;
+  }
+  return response.data;
+}
   
   const query = {
     queryKey: ["homepageSessions"],
