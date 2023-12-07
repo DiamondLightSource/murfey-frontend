@@ -6,8 +6,9 @@ import { Root } from "routes/Root";
 import { Home } from "routes/Home";
 import { Session } from "routes/Session";
 import { NewSession } from "routes/NewSession";
+import { SessionLinker } from "routes/SessionLinker";
 import { Error } from "routes/Error";
-import { sessionsLoader, sessionLoader } from "loaders/session_clients";
+import { clientsLoader, sessionsLoader, sessionLoader } from "loaders/session_clients";
 import { visitLoader } from "loaders/visits";
 import { theme } from "styles/theme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -37,10 +38,16 @@ const router = createBrowserRouter([
           loader: ({ params }) => sessionLoader(queryClient)(params),
         },
         {
-          path: "new_session",
+          path: "/new_session",
           element: <NewSession />,
           errorElement: <Error />,
           loader: visitLoader(queryClient),
+        },
+        {
+          path: "/link_session",
+          element: <SessionLinker />,
+          errorElement: <Error />,
+          loader: clientsLoader(queryClient),
         }
       ],
     }

@@ -54,7 +54,14 @@ const NewSession = () => {
             <Box mt='1em' w='95%' justifyContent={'center'} alignItems={'center'} display={'flex'}>
             <Stack>
             <Input placeholder='Session reference' value={sessionReference} onChange={handleChange} />
+            <Link
+                w={{ base: "100%", md: "19.6%" }}
+                _hover={{ textDecor: "none" }}
+                as={LinkRouter}
+                to={`../link_session?session_name=${sessionReference}`}
+            >
             <Button isDisabled={selectedVisit === '' ? true: false}>Create session for visit {selectedVisit}</Button>
+            </Link>
             </Stack>
             </Box>
         </Box>
