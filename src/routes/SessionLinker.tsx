@@ -21,62 +21,15 @@ import { Link as LinkRouter, useLoaderData, useParams } from "react-router-dom";
 import { components } from "schema/main";
 import { linkSessionToClient } from "loaders/session_clients";
 import { useSearchParams } from "react-router-dom";
+import React from "react";
 
 type Client = components["schemas"]["ClientEnvironment"];
 
-interface ClientRowProps {
-    clients: Client[] | null;
-    sessionName: string,
-  }
-
-const ClientRow = ({ clients, sessionName }: ClientRowProps) => {
-    return (
-    <VStack w='100%' spacing={0}>
-      <Heading textAlign='left' w='100%' size='lg'>
-        Existing Clients
-      </Heading>
-      <Divider borderColor='murfey.300' />
-      <Stack w='100%' spacing={5} py='0.8em'>
-        {clients && clients.length > 0 ? (
-          clients.map((client) => {
-            const client_id = client.client_id!;
-            return (
-            <>
-            <HStack>
-              <Stat
-                _hover={{
-                  borderColor: "murfey.400",
-                }}
-                bg='murfey.400'
-                overflow='hidden'
-                w='calc(100%)'
-                p={2}
-                border='1px solid grey'
-                borderRadius={5}
-              >
-                <StatLabel whiteSpace='nowrap' textOverflow='ellipsis' overflow='hidden'>
-                  Client {client_id}
-                </StatLabel>
-              </Stat>
-              <IconButton aria-label='Connect to client' icon={<MdLink />} onClick={() => {linkSessionToClient(client_id, sessionName);}}/>
-              </HStack>
-            </>
-          );})
-        ) : (
-          <GridItem colSpan={5}>
-            <Heading textAlign='center' py={4} variant='notFound'>
-              No Clients Found
-            </Heading>
-          </GridItem>
-        )}
-      </Stack>
-    </VStack>
-    );
-  };
 
 const SessionLinker = () => {
     const existingClients = useLoaderData() as Client[] | null;
     let [searchParams, setSearchParams] = useSearchParams();
+    const [sessionId, setSessionId] = React.useState(0);
 
     return (
         <div className='rootContainer'>
@@ -95,7 +48,54 @@ const SessionLinker = () => {
             </Box>
             <Box mt='1em' w='95%' justifyContent={'center'} alignItems={'center'} display={'flex'}>
             <VStack mt='0 !important' w='100%' px='10vw' justifyContent='start' alignItems='start'>
-            <ClientRow clients={existingClients} sessionName={searchParams.get("session_name") ?? "Client connection"} />
+            <VStack w='100%' spacing={0}>
+            <Heading textAlign='left' w='100%' size='lg'>
+                Existing Clients
+            </Heading>
+            <Divider borderColor='murfey.300' />
+            <Stack w='100%' spacing={5} py='0.8em'>
+                {existingClients && existingClients.length > 0 ? (
+                existingClients.map((client) => {
+                    const client_id = client.client_id!;
+                    return (
+                    <>
+                    <HStack>
+                    <Stat
+                        _hover={{
+                        borderColor: "murfey.400",
+                        }}
+                        bg='murfey.400'
+                        overflow='hidden'
+                        w='calc(100%)'
+                        p={2}
+                        border='1px solid grey'
+                        borderRadius={5}
+                    >
+                        <StatLabel whiteSpace='nowrap' textOverflow='ellipsis' overflow='hidden'>
+                        Client {client_id}
+                        </StatLabel>
+                    </Stat>
+                    <Link
+                        w={{ base: "100%", md: "19.6%" }}
+                        key={sessionId}
+                        _hover={{ textDecor: "none" }}
+                        as={LinkRouter}
+                        to={`../session/${sessionId}`}
+                    >
+                    <IconButton aria-label='Connect to client' icon={<MdLink />} onClick={() => {linkSessionToClient(client_id, searchParams.get("session_name") ?? "Client connection").then(sid => {console.log(sid); setSessionId(sid); console.log(sessionId);})}}/>
+                    </Link>
+                    </HStack>
+                    </>
+                );})
+                ) : (
+                <GridItem colSpan={5}>
+                    <Heading textAlign='center' py={4} variant='notFound'>
+                    No Clients Found
+                    </Heading>
+                </GridItem>
+                )}
+            </Stack>
+            </VStack>
             </VStack>
             </Box>
         </Box>

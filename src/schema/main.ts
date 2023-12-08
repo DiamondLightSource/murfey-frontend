@@ -72,10 +72,6 @@ export interface paths {
      */
     get: operations["get_pypi_file_pypi__package___filename__get"];
   };
-  "/plugins/{package}": {
-    /** Get Plugin Wheel */
-    get: operations["get_plugin_wheel_plugins__package__get"];
-  };
   "/ws/test/{client_id}": {
     /** Close Ws Connection */
     delete: operations["close_ws_connection_ws_test__client_id__delete"];
@@ -113,6 +109,10 @@ export interface paths {
   "/clients/{client_id}/rsyncers": {
     /** Get Rsyncers For Client */
     get: operations["get_rsyncers_for_client_clients__client_id__rsyncers_get"];
+  };
+  "/sessions/{session_id}/rsyncers": {
+    /** Get Rsyncers For Session */
+    get: operations["get_rsyncers_for_session_sessions__session_id__rsyncers_get"];
   };
   "/visits/{visit_name}/increment_rsync_file_count": {
     /** Increment Rsync File Count */
@@ -217,8 +217,8 @@ export interface paths {
     get: operations["get_sessions_sessions_get"];
   };
   "/session/{session_id}": {
-    /** Get Sessions */
-    get: operations["get_sessions_session__session_id__get"];
+    /** Get Session */
+    get: operations["get_session_session__session_id__get"];
   };
   "/clients/{client_id}/session": {
     /** Link Client To Session */
@@ -233,10 +233,6 @@ export interface paths {
   "/visits/{visit_name}/eer_fractionation_file": {
     /** Write Eer Fractionation File */
     post: operations["write_eer_fractionation_file_visits__visit_name__eer_fractionation_file_post"];
-  };
-  "/visits/{visit_name}/smartem_atlas/": {
-    /** Request Smartem Atlas Analysis */
-    post: operations["request_smartem_atlas_analysis_visits__visit_name__smartem_atlas__post"];
   };
 }
 
@@ -498,6 +494,33 @@ export interface components {
       /** Params */
       params?: Record<string, never>;
     };
+    /** RsyncInstance */
+    RsyncInstance: {
+      /** Source */
+      source: string;
+      /**
+       * Destination
+       * @default
+       */
+      destination?: string;
+      /** Client Id */
+      client_id: number;
+      /**
+       * Files Transferred
+       * @default 0
+       */
+      files_transferred?: number;
+      /**
+       * Files Counted
+       * @default 0
+       */
+      files_counted?: number;
+      /**
+       * Transferring
+       * @default false
+       */
+      transferring?: boolean;
+    };
     /** RsyncerInfo */
     RsyncerInfo: {
       /** Source */
@@ -604,24 +627,6 @@ export interface components {
        * @default true
        */
       rescale?: boolean;
-    };
-    /** SmartEMAtlasRequest */
-    SmartEMAtlasRequest: {
-      /**
-       * Atlas Path
-       * Format: path
-       */
-      atlas_path: string;
-      /**
-       * Output Dir
-       * Format: path
-       */
-      output_dir: string;
-      /**
-       * Num Preds
-       * @default 15
-       */
-      num_preds?: number;
     };
     /** SuggestedPathParameters */
     SuggestedPathParameters: {
@@ -862,26 +867,6 @@ export interface operations {
       };
     };
   };
-  /** Get Plugin Wheel */
-  get_plugin_wheel_plugins__package__get: {
-    parameters: {
-      path: {
-        package: string;
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: never;
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
   /** Close Ws Connection */
   close_ws_connection_ws_test__client_id__delete: {
     parameters: {
@@ -1046,7 +1031,29 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          "application/json": components["schemas"]["RsyncInstance"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Get Rsyncers For Session */
+  get_rsyncers_for_session_sessions__session_id__rsyncers_get: {
+    parameters: {
+      path: {
+        session_id: number;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["RsyncInstance"][];
         };
       };
       /** @description Validation Error */
@@ -1650,7 +1657,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          "application/json": components["schemas"]["ClientEnvironment"][];
         };
       };
     };
@@ -1666,8 +1673,8 @@ export interface operations {
       };
     };
   };
-  /** Get Sessions */
-  get_sessions_session__session_id__get: {
+  /** Get Session */
+  get_session_session__session_id__get: {
     parameters: {
       path: {
         session_id: number;
@@ -1776,33 +1783,6 @@ export interface operations {
       200: {
         content: {
           "application/json": Record<string, never>;
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  /** Request Smartem Atlas Analysis */
-  request_smartem_atlas_analysis_visits__visit_name__smartem_atlas__post: {
-    parameters: {
-      path: {
-        visit_name: string;
-      };
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["SmartEMAtlasRequest"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          "application/json": unknown;
         };
       };
       /** @description Validation Error */

@@ -9,6 +9,7 @@ import { NewSession } from "routes/NewSession";
 import { SessionLinker } from "routes/SessionLinker";
 import { Error } from "routes/Error";
 import { clientsLoader, sessionsLoader, sessionLoader } from "loaders/session_clients";
+import { rsyncerLoader } from "loaders/rsyncers";
 import { visitLoader } from "loaders/visits";
 import { theme } from "styles/theme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -32,10 +33,10 @@ const router = createBrowserRouter([
           loader: sessionsLoader(queryClient),
         },
         {
-          path: "/sessions/:sessid",
+          path: "/sessions/:sessionId",
           element: <Session />,
           errorElement: <Error />,
-          loader: ({ params }) => sessionLoader(queryClient)(params),
+          loader: ({ params }) => rsyncerLoader(queryClient)(params),
         },
         {
           path: "/new_session",
