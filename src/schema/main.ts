@@ -138,6 +138,10 @@ export interface paths {
     /** Register Spa Proc Params */
     post: operations["register_spa_proc_params_clients__client_id__spa_processing_parameters_post"];
   };
+  "/sessions/{session_id}/spa_processing_parameters": {
+    /** Get Spa Proc Params */
+    get: operations["get_spa_proc_params_sessions__session_id__spa_processing_parameters_get"];
+  };
   "/visits/{visit_name}/tilt_series": {
     /** Register Tilt Series */
     post: operations["register_tilt_series_visits__visit_name__tilt_series_post"];
@@ -341,6 +345,24 @@ export interface components {
        */
       phase_plate?: boolean;
     };
+    /** DataCollection */
+    DataCollection: {
+      /** Id */
+      id: number;
+      /** Tag */
+      tag: string;
+      /** Dcg Id */
+      dcg_id: number;
+    };
+    /** DataCollectionGroup */
+    DataCollectionGroup: {
+      /** Id */
+      id: number;
+      /** Session Id */
+      session_id: number;
+      /** Tag */
+      tag: string;
+    };
     /** File */
     File: {
       /** Name */
@@ -434,6 +456,25 @@ export interface components {
       extract_downscale?: number;
       /** Eer Fractionation File */
       eer_fractionation_file?: string;
+    };
+    /** ProcessingDetails */
+    ProcessingDetails: {
+      data_collection_group: components["schemas"]["DataCollectionGroup"];
+      /** Data Collections */
+      data_collections: components["schemas"]["DataCollection"][];
+      /** Processing Jobs */
+      processing_jobs: components["schemas"]["ProcessingJob"][];
+      relion_params: components["schemas"]["SPARelionParameters"];
+      feedback_params: components["schemas"]["SPAFeedbackParameters"];
+    };
+    /** ProcessingJob */
+    ProcessingJob: {
+      /** Id */
+      id: number;
+      /** Recipe */
+      recipe: string;
+      /** Dc Id */
+      dc_id: number;
     };
     /** ProcessingJobParameters */
     ProcessingJobParameters: {
@@ -576,6 +617,43 @@ export interface components {
        */
       data_bytes?: number;
     };
+    /** SPAFeedbackParameters */
+    SPAFeedbackParameters: {
+      /** Pj Id */
+      pj_id: number;
+      /**
+       * Estimate Particle Diameter
+       * @default true
+       */
+      estimate_particle_diameter?: boolean;
+      /**
+       * Hold Class2D
+       * @default false
+       */
+      hold_class2d?: boolean;
+      /**
+       * Rerun Class2D
+       * @default false
+       */
+      rerun_class2d?: boolean;
+      /**
+       * Hold Class3D
+       * @default false
+       */
+      hold_class3d?: boolean;
+      /** Class Selection Score */
+      class_selection_score: number;
+      /** Star Combination Job */
+      star_combination_job: number;
+      /** Initial Model */
+      initial_model: string;
+      /** Next Job */
+      next_job: number;
+      /** Picker Murfey Id */
+      picker_murfey_id?: number;
+      /** Picker Ispyb Id */
+      picker_ispyb_id?: number;
+    };
     /** SPAProcessFile */
     SPAProcessFile: {
       /** Tag */
@@ -620,6 +698,49 @@ export interface components {
     SPAProcessingParameters: {
       /** Job Id */
       job_id: number;
+    };
+    /** SPARelionParameters */
+    SPARelionParameters: {
+      /** Pj Id */
+      pj_id: number;
+      /** Angpix */
+      angpix: number;
+      /** Dose Per Frame */
+      dose_per_frame: number;
+      /** Gain Ref */
+      gain_ref?: string;
+      /** Voltage */
+      voltage: number;
+      /** Motion Corr Binning */
+      motion_corr_binning: number;
+      /** Eer Grouping */
+      eer_grouping: number;
+      /** Symmetry */
+      symmetry: string;
+      /** Particle Diameter */
+      particle_diameter?: number;
+      /** Downscale */
+      downscale: boolean;
+      /**
+       * Do Icebreaker Jobs
+       * @default true
+       */
+      do_icebreaker_jobs?: boolean;
+      /**
+       * Boxsize
+       * @default 256
+       */
+      boxsize?: number;
+      /**
+       * Small Boxsize
+       * @default 64
+       */
+      small_boxsize?: number;
+      /**
+       * Mask Diameter
+       * @default 190
+       */
+      mask_diameter?: number;
     };
     /** Session */
     Session: {
@@ -1222,6 +1343,28 @@ export interface operations {
       200: {
         content: {
           "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Get Spa Proc Params */
+  get_spa_proc_params_sessions__session_id__spa_processing_parameters_get: {
+    parameters: {
+      path: {
+        session_id: number;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["ProcessingDetails"];
         };
       };
       /** @description Validation Error */

@@ -10,12 +10,14 @@ import { SessionLinker } from "routes/SessionLinker";
 import { GainRefTransfer } from "routes/GainRefTransfer";
 import { SessionSetup } from "routes/SessionSetup";
 import { MagTable } from "routes/MagTable";
+import { ProcessingParameters } from "routes/ProcessingParameters";
 import { Error } from "routes/Error";
 import { clientsLoader, sessionsLoader, sessionLoader } from "loaders/session_clients";
 import { rsyncerLoader } from "loaders/rsyncers";
 import { visitLoader } from "loaders/visits";
 import { gainRefLoader } from "loaders/possibleGainRefs";
 import { magTableLoader } from "loaders/magTable";
+import { processingParametersLoader } from "loaders/processingParameters";
 import { theme } from "styles/theme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -65,6 +67,12 @@ const router = createBrowserRouter([
           path: "/sessions/:sessid/setup",
           element: <SessionSetup />,
           errorElement: <Error />,
+        },
+        {
+          path: "/sessions/:sessid/processing_parameters",
+          element: <ProcessingParameters />,
+          errorElement: <Error />,
+          loader: ({ params }) => processingParametersLoader(queryClient)(params),
         },
         {
           path: "/mag_table",

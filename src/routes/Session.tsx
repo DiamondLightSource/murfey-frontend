@@ -150,6 +150,16 @@ const Session = () => {
                         <Heading size='xl' color='murfey.50'>
                             Session {sessid}
                         </Heading>
+                        <Link
+                            w={{ base: "100%", md: "19.6%" }}
+                            _hover={{ textDecor: "none" }}
+                            as={LinkRouter}
+                            to={`processing_parameters`}
+                        >
+                        <Button variant="onBlue">
+                        Processing Parameters
+                        </Button>
+                        </Link>
                     </VStack>
                 </VStack>
             </Box>
