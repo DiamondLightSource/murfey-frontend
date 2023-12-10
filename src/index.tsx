@@ -7,10 +7,15 @@ import { Home } from "routes/Home";
 import { Session } from "routes/Session";
 import { NewSession } from "routes/NewSession";
 import { SessionLinker } from "routes/SessionLinker";
+import { GainRefTransfer } from "routes/GainRefTransfer";
+import { SessionSetup } from "routes/SessionSetup";
+import { MagTable } from "routes/MagTable";
 import { Error } from "routes/Error";
 import { clientsLoader, sessionsLoader, sessionLoader } from "loaders/session_clients";
 import { rsyncerLoader } from "loaders/rsyncers";
 import { visitLoader } from "loaders/visits";
+import { gainRefLoader } from "loaders/possibleGainRefs";
+import { magTableLoader } from "loaders/magTable";
 import { theme } from "styles/theme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -33,7 +38,7 @@ const router = createBrowserRouter([
           loader: sessionsLoader(queryClient),
         },
         {
-          path: "/sessions/:sessionId",
+          path: "/sessions/:sessid",
           element: <Session />,
           errorElement: <Error />,
           loader: ({ params }) => rsyncerLoader(queryClient)(params),
@@ -49,6 +54,23 @@ const router = createBrowserRouter([
           element: <SessionLinker />,
           errorElement: <Error />,
           loader: clientsLoader(queryClient),
+        },
+        {
+          path: "/gain_ref_transfer",
+          element: <GainRefTransfer />,
+          errorElement: <Error />,
+          loader: gainRefLoader(queryClient),
+        },
+        {
+          path: "/sessions/:sessid/setup",
+          element: <SessionSetup />,
+          errorElement: <Error />,
+        },
+        {
+          path: "/mag_table",
+          element: <MagTable />,
+          errorElement: <Error />,
+          loader: magTableLoader(queryClient),
         }
       ],
     }

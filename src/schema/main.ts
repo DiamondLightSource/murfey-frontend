@@ -92,6 +92,16 @@ export interface paths {
     /** Get Mic Image */
     get: operations["get_mic_image_microscope_image__get"];
   };
+  "/instrument_name/": {
+    /** Get Instrument Name */
+    get: operations["get_instrument_name_instrument_name__get"];
+  };
+  "/mag_table/": {
+    /** Get Mag Table */
+    get: operations["get_mag_table_mag_table__get"];
+    /** Add To Mag Table */
+    post: operations["add_to_mag_table_mag_table__post"];
+  };
   "/visits/": {
     /** All Visit Info */
     get: operations["all_visit_info_visits__get"];
@@ -203,6 +213,10 @@ export interface paths {
   "/visits/{visit_name}/process_gain": {
     /** Process Gain */
     post: operations["process_gain_visits__visit_name__process_gain_post"];
+  };
+  "/possible_gain_references": {
+    /** Get Possible Gain References */
+    get: operations["get_possible_gain_references_possible_gain_references_get"];
   };
   "/new_client_id/": {
     /** New Client Id */
@@ -369,6 +383,13 @@ export interface components {
     HTTPValidationError: {
       /** Detail */
       detail?: components["schemas"]["ValidationError"][];
+    };
+    /** MagnificationLookup */
+    MagnificationLookup: {
+      /** Magnification */
+      magnification: number;
+      /** Pixel Size */
+      pixel_size: number;
     };
     /** ProcessFile */
     ProcessFile: {
@@ -929,6 +950,50 @@ export interface operations {
       200: {
         content: {
           "application/json": unknown;
+        };
+      };
+    };
+  };
+  /** Get Instrument Name */
+  get_instrument_name_instrument_name__get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+    };
+  };
+  /** Get Mag Table */
+  get_mag_table_mag_table__get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["MagnificationLookup"][];
+        };
+      };
+    };
+  };
+  /** Add To Mag Table */
+  add_to_mag_table_mag_table__post: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["MagnificationLookup"][];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
         };
       };
     };
@@ -1636,6 +1701,17 @@ export interface operations {
       422: {
         content: {
           "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Get Possible Gain References */
+  get_possible_gain_references_possible_gain_references_get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["File"][];
         };
       };
     };

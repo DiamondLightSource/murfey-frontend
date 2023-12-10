@@ -10,7 +10,20 @@ import {
     Heading,
     HStack,
     IconButton,
+    Image,
     Link,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
+    Spacer,
     Spinner,
     Stack,
     StackDivider,
@@ -22,18 +35,63 @@ import {
     VStack,
   } from "@chakra-ui/react";
 
+import { useDisclosure } from "@chakra-ui/react";
+
 import { Link as LinkRouter, useLoaderData, useParams } from "react-router-dom";
-import { MdCheck, MdClose } from "react-icons/md";
+import { MdCheck, MdDensityMedium, MdFileUpload } from "react-icons/md";
 import { FiActivity } from "react-icons/fi";
 import { components } from "schema/main";
+import { getInstrumentName } from "loaders/general";
 
-type RsyncInstance= components["schemas"]["RsyncInstance"];
+import React from "react";
+
+type RsyncInstance = components["schemas"]["RsyncInstance"];
+
+function FinaliseRsyncer(rsyncer: RsyncInstance) {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    return (
+        <>
+          <Button onClick={onOpen}>Open Modal</Button>
+    
+          <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Modal Title</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                etc
+              </ModalBody>
+    
+              <ModalFooter>
+                <Button colorScheme='blue' mr={3} onClick={onClose}>
+                  Close
+                </Button>
+                <Button variant='ghost'>Secondary Action</Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+        </>
+      )
+}
 
 const RsyncCard = (rsyncer: RsyncInstance) => {
     return (
-        <Card>
+        <Card width='100%' bg='murfey.400' borderColor='murfey.300'>
             <CardHeader>
-                <Flex> <Flex flex='1' gap='4' alignItems='center' flexWrap='wrap'> <HStack spacing='3em'> <Text>RSync Instance</Text> {rsyncer.transferring && <Spinner />} </HStack> </Flex> <IconButton aria-label="Stop rsync" icon={<MdClose/>}/> </Flex>
+                <Flex> <Flex flex='1' gap='4' alignItems='center' flexWrap='wrap'> <HStack spacing='3em'> 
+                <Text>RSync Instance</Text> 
+                {rsyncer.transferring && <Spinner color='murfey.700' />} 
+                </HStack> 
+                </Flex> 
+                <Menu>
+                    <MenuButton as={IconButton} aria-label="Rsync control options" icon={<MdDensityMedium/>}/>
+                    <MenuList>
+                        <MenuItem>Stop</MenuItem>
+                        <MenuItem>Kill</MenuItem>
+                        <MenuItem onClick={() => FinaliseRsyncer(rsyncer)}>Finalise</MenuItem>
+                    </MenuList>
+                </Menu> 
+                </Flex>
             </CardHeader>
             <CardBody>
                 <Stack divider={<StackDivider />} spacing='4'>
@@ -66,9 +124,22 @@ const RsyncCard = (rsyncer: RsyncInstance) => {
     )
 }
 
+const getUrl = (endpoint: string) => {
+    return process.env.REACT_APP_API_ENDPOINT + endpoint;
+}
+
+
 const Session = () => {
     const rsync = useLoaderData() as RsyncInstance[] | null;
     const { sessid } = useParams();
+    const [instrumentName, setInstrumentName] = React.useState('');
+
+    const resolveName = async () => {
+        const name: string = await getInstrumentName();
+        setInstrumentName(name);
+    }
+    resolveName();
+
     return (
         <div className='rootContainer'>
         <Box mt='-1em' mx='-7.3vw' bg='murfey.50' flex='1 0 auto'>
@@ -81,7 +152,8 @@ const Session = () => {
                     </VStack>
                 </VStack>
             </Box>
-            <Box mt='1em' w='95%' justifyContent={'center'} alignItems={'center'} display={'flex'}>
+            <Box mt='1em' w='95%' justifyContent={'center'} alignItems={'center'}>
+            <Flex align='stretch'>
             <Stack w='100%' spacing={5} py='0.8em' px='1em'>
                 {rsync && rsync.length > 0 ? (
                 rsync.map((r) => {
@@ -94,6 +166,34 @@ const Session = () => {
                     </GridItem>
                   )}
             </Stack>
+            <Spacer/>
+            <Stack spacing={5} py='0.8em' px='1em'>
+            <Link
+                w={{ base: "100%", md: "19.6%" }}
+                key="gain_ref"
+                _hover={{ textDecor: "none" }}
+                as={LinkRouter}
+                to={`../gain_ref_transfer?sessid=${sessid}`}
+            >
+            <Button rightIcon={<MdFileUpload/>} padding='20px'>Transfer Gain Reference</Button>
+            </Link>
+            <Link
+                key="ag_table"
+                _hover={{ textDecor: "none" }}
+                as={LinkRouter}
+                to={`../mag_table`}
+            >
+            <Card align='center'>
+            <CardHeader>
+            <Image src={getUrl('microscope_image/')} />
+            </CardHeader>
+            <CardBody>
+            <Text>{instrumentName}</Text>
+            </CardBody>
+            </Card>
+            </Link>
+            </Stack>
+            </Flex>
             </Box>
         </Box>
         </div>

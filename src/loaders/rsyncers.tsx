@@ -17,7 +17,7 @@ const getRsyncerData = async (sessionId: string) => {
 
 const queryBuilder = (sessionId: string = "0") => {
     return {
-        queryKey: ["sessionId", sessionId],
+        queryKey: ["sessid", sessionId],
         queryFn: () => getRsyncerData(sessionId),
         staleTime: 60000,
     };
@@ -25,7 +25,7 @@ const queryBuilder = (sessionId: string = "0") => {
 
 export const rsyncerLoader =
     (queryClient: QueryClient) => async (params: Params) => {
-        const singleQuery = queryBuilder(params.sessionId);
+        const singleQuery = queryBuilder(params.sessid);
         return ((await queryClient.getQueryData(singleQuery.queryKey)) ?? (await queryClient.fetchQuery(singleQuery)));
     };
 

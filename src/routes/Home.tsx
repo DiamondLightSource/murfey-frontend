@@ -1,5 +1,4 @@
 import {
-    useDisclosure,
     AlertDialog,
     AlertDialogHeader,
     AlertDialogOverlay,
@@ -37,7 +36,6 @@ interface SessionRowProps {
 }
 
 const SessionRow = ({ session_clients, title }: SessionRowProps) => {
-  const { onOpen } = useDisclosure();
   return (
   <VStack w='100%' spacing={0}>
     <Heading textAlign='left' w='100%' size='lg'>
