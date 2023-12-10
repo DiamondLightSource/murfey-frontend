@@ -27,6 +27,7 @@ import { components } from "schema/main";
 import { MdDelete } from "react-icons/md";
 import { useRef } from "react";
 import { deleteSessionData } from "loaders/session_clients";
+import { InstrumentCard } from "components/instrumentCard";
 
 type SessionClients = components["schemas"]["SessionClients"];
 
@@ -120,6 +121,7 @@ const Home = () => {
               </Link>
             </VStack>
 
+            <HStack w='100%' display='flex'>
             <VStack mt='0 !important' w='100%' px='10vw' justifyContent='start' alignItems='start'>
               {sessions ? (
                 <VStack w='100%' spacing={5}>
@@ -133,6 +135,8 @@ const Home = () => {
                 </VStack>
               )}
             </VStack>
+            <InstrumentCard />
+            </HStack>
           </VStack>
         </Box>
       </Box>

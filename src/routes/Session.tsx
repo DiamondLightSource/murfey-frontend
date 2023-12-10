@@ -42,6 +42,7 @@ import { MdCheck, MdDensityMedium, MdFileUpload } from "react-icons/md";
 import { FiActivity } from "react-icons/fi";
 import { components } from "schema/main";
 import { getInstrumentName } from "loaders/general";
+import { InstrumentCard } from "components/instrumentCard";
 
 import React from "react";
 
@@ -177,21 +178,7 @@ const Session = () => {
             >
             <Button rightIcon={<MdFileUpload/>} padding='20px'>Transfer Gain Reference</Button>
             </Link>
-            <Link
-                key="ag_table"
-                _hover={{ textDecor: "none" }}
-                as={LinkRouter}
-                to={`../mag_table`}
-            >
-            <Card align='center'>
-            <CardHeader>
-            <Image src={getUrl('microscope_image/')} />
-            </CardHeader>
-            <CardBody>
-            <Text>{instrumentName}</Text>
-            </CardBody>
-            </Card>
-            </Link>
+            <InstrumentCard />
             </Stack>
             </Flex>
             </Box>
