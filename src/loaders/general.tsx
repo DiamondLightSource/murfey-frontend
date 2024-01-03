@@ -11,4 +11,14 @@ export const getInstrumentName = async () => {
   return response.data;
 };
 
+export const getInstrumentConnectionStatus = async () => {
+  
+  const response = await client.get(`instrument_server`, {}, false);
+
+  if (response.status !== 200) {
+    return false;
+  }
+  
+  return response.data;
+};
 

@@ -35,7 +35,8 @@ export const client = async (
   customConfig: Record<any, any> = {},
   body?: Record<any, any> | FormData | null,
   method: string | null = null,
-  prefix = getPrefix(process.env.REACT_APP_API_ENDPOINT)
+  errToast: boolean = true,
+  prefix = getPrefix(process.env.REACT_APP_API_ENDPOINT),
 ): Promise<never | Response> => {
   const config: RequestConfig = {
     method: method ? method: (body != null ? "POST" : "GET"),
@@ -72,7 +73,7 @@ export const client = async (
       url: response.url,
     };
   } catch (err) {
-    if (!toast.isActive("main-toast")) {
+    if (!toast.isActive("main-toast") && errToast) {
       toast({
         ...baseToast,
         title: "An error has occurred while fetching data, please try again later.",
@@ -84,12 +85,15 @@ export const client = async (
   }
 };
 
-client.get = async (endpoint: string, customConfig = {}) => {
+client.get = async (endpoint: string, customConfig = {}, errToast: boolean = true) => {
   return await client(
     endpoint,
     (customConfig = {
       ...customConfig,
-    })
+    }),
+    null,
+    'GET',
+    errToast=errToast,
   );
 };
 

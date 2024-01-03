@@ -1,4 +1,5 @@
 import {
+    Badge,
     Box,
     Button,
     Card,
@@ -38,7 +39,7 @@ import {
 import { useDisclosure } from "@chakra-ui/react";
 
 import { Link as LinkRouter, useLoaderData, useParams } from "react-router-dom";
-import { MdCheck, MdDensityMedium, MdFileUpload } from "react-icons/md";
+import { MdCheck, MdDensityMedium, MdFileUpload, MdEmail } from "react-icons/md";
 import { FiActivity } from "react-icons/fi";
 import { components } from "schema/main";
 import { getInstrumentName } from "loaders/general";
@@ -81,7 +82,8 @@ const RsyncCard = (rsyncer: RsyncInstance) => {
             <CardHeader>
                 <Flex> <Flex flex='1' gap='4' alignItems='center' flexWrap='wrap'> <HStack spacing='3em'> 
                 <Text>RSync Instance</Text> 
-                {rsyncer.transferring && <Spinner color='murfey.700' />} 
+                {rsyncer.transferring && <Spinner color='murfey.700' />}
+                <Badge colorScheme={rsyncer.tag === "fractions" ? "green": rsyncer.tag === "metadata" ? "purple": rsyncer.tag === "atlas" ? "yellow": "red"}>{rsyncer.tag}</Badge> 
                 </HStack> 
                 </Flex> 
                 <Menu>
@@ -150,6 +152,7 @@ const Session = () => {
                         <Heading size='xl' color='murfey.50'>
                             Session {sessid}
                         </Heading>
+                        <HStack>
                         <Link
                             w={{ base: "100%", md: "19.6%" }}
                             _hover={{ textDecor: "none" }}
@@ -160,6 +163,11 @@ const Session = () => {
                         Processing Parameters
                         </Button>
                         </Link>
+                        <Spacer/>
+                        <Button aria-label="Subscribe to notifications" rightIcon={<MdEmail/>} variant="onBlue">
+                            Subscribe
+                        </Button>
+                        </HStack>
                     </VStack>
                 </VStack>
             </Box>

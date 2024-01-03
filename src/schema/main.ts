@@ -76,6 +76,10 @@ export interface paths {
     /** Close Ws Connection */
     delete: operations["close_ws_connection_ws_test__client_id__delete"];
   };
+  "/instrument_server": {
+    /** Check Instrument Server */
+    get: operations["check_instrument_server_instrument_server_get"];
+  };
   "/": {
     /** Root */
     get: operations["root__get"];
@@ -139,8 +143,8 @@ export interface paths {
     post: operations["register_spa_proc_params_clients__client_id__spa_processing_parameters_post"];
   };
   "/sessions/{session_id}/spa_processing_parameters": {
-    /** Get Spa Proc Params */
-    get: operations["get_spa_proc_params_sessions__session_id__spa_processing_parameters_get"];
+    /** Get Spa Proc Param Details */
+    get: operations["get_spa_proc_param_details_sessions__session_id__spa_processing_parameters_get"];
   };
   "/visits/{visit_name}/tilt_series": {
     /** Register Tilt Series */
@@ -244,6 +248,10 @@ export interface paths {
     /** Remove Session */
     delete: operations["remove_session_clients__client_id__session_delete"];
   };
+  "/visits/{visit}/session/{name}": {
+    /** Create Session */
+    post: operations["create_session_visits__visit__session__name__post"];
+  };
   "/sessions/{session_id}": {
     /** Remove Session By Id */
     delete: operations["remove_session_by_id_sessions__session_id__delete"];
@@ -251,6 +259,10 @@ export interface paths {
   "/visits/{visit_name}/eer_fractionation_file": {
     /** Write Eer Fractionation File */
     post: operations["write_eer_fractionation_file_visits__visit_name__eer_fractionation_file_post"];
+  };
+  "/sessions/{session_id}/multigrid_watcher": {
+    /** Start Multigrid Watcher */
+    post: operations["start_multigrid_watcher_sessions__session_id__multigrid_watcher_post"];
   };
 }
 
@@ -406,12 +418,164 @@ export interface components {
       /** Detail */
       detail?: components["schemas"]["ValidationError"][];
     };
+    /** MachineConfig */
+    MachineConfig: {
+      /** Acquisition Software */
+      acquisition_software: string[];
+      /** Calibrations */
+      calibrations: {
+        [key: string]: {
+          [key: string]: Record<string, never> | number;
+        };
+      };
+      /** Data Directories */
+      data_directories: {
+        [key: string]: string;
+      };
+      /**
+       * Rsync Basepath
+       * Format: path
+       */
+      rsync_basepath: string;
+      /** Murfey Db Credentials */
+      murfey_db_credentials: string;
+      /**
+       * Display Name
+       * @default
+       */
+      display_name?: string;
+      /**
+       * Image Path
+       * Format: path
+       */
+      image_path?: string;
+      /**
+       * Software Versions
+       * @default {}
+       */
+      software_versions?: {
+        [key: string]: string;
+      };
+      /**
+       * External Executables
+       * @default {}
+       */
+      external_executables?: {
+        [key: string]: string;
+      };
+      /**
+       * External Environment
+       * @default {}
+       */
+      external_environment?: {
+        [key: string]: string;
+      };
+      /**
+       * Rsync Module
+       * @default
+       */
+      rsync_module?: string;
+      /**
+       * Create Directories
+       * @default [
+       *   "atlas"
+       * ]
+       */
+      create_directories?: string[];
+      /**
+       * Gain Reference Directory
+       * Format: path
+       */
+      gain_reference_directory?: string;
+      /**
+       * Processed Directory Name
+       * @default processed
+       */
+      processed_directory_name?: string;
+      /**
+       * Gain Directory Name
+       * @default processing
+       */
+      gain_directory_name?: string;
+      /**
+       * Feedback Queue
+       * @default murfey_feedback
+       */
+      feedback_queue?: string;
+      /**
+       * Superres
+       * @default false
+       */
+      superres?: boolean;
+      /**
+       * Camera
+       * @default FALCON
+       */
+      camera?: string;
+      /**
+       * Data Required Substrings
+       * @default {}
+       */
+      data_required_substrings?: {
+        [key: string]: {
+          [key: string]: string[];
+        };
+      };
+      /**
+       * Allow Removal
+       * @default false
+       */
+      allow_removal?: boolean;
+      /**
+       * Modular Spa
+       * @default false
+       */
+      modular_spa?: boolean;
+      /**
+       * Processing Enabled
+       * @default true
+       */
+      processing_enabled?: boolean;
+      /**
+       * Machine Override
+       * @default
+       */
+      machine_override?: string;
+      /**
+       * Processed Extra Directory
+       * @default
+       */
+      processed_extra_directory?: string;
+      /**
+       * Instrument Name
+       * @default
+       */
+      instrument_name?: string;
+      /**
+       * Instrument Server
+       * @default
+       */
+      instrument_server?: string;
+    };
     /** MagnificationLookup */
     MagnificationLookup: {
       /** Magnification */
       magnification: number;
       /** Pixel Size */
       pixel_size: number;
+    };
+    /** MultigridWatcherSetup */
+    MultigridWatcherSetup: {
+      /**
+       * Source
+       * Format: path
+       */
+      source: string;
+      /**
+       * Skip Existing Processing
+       * @default false
+       */
+      skip_existing_processing?: boolean;
     };
     /** ProcessFile */
     ProcessFile: {
@@ -565,8 +729,13 @@ export interface components {
        * @default
        */
       destination?: string;
-      /** Client Id */
-      client_id: number;
+      /** Session Id */
+      session_id: number;
+      /**
+       * Tag
+       * @default
+       */
+      tag?: string;
       /**
        * Files Transferred
        * @default 0
@@ -589,8 +758,8 @@ export interface components {
       source: string;
       /** Destination */
       destination: string;
-      /** Client Id */
-      client_id: number;
+      /** Session Id */
+      session_id: number;
       /**
        * Transferring
        * @default true
@@ -616,6 +785,11 @@ export interface components {
        * @default 0
        */
       data_bytes?: number;
+      /**
+       * Tag
+       * @default
+       */
+      tag?: string;
     };
     /** SPAFeedbackParameters */
     SPAFeedbackParameters: {
@@ -748,6 +922,11 @@ export interface components {
       id: number;
       /** Name */
       name: string;
+      /**
+       * Visit
+       * @default
+       */
+      visit?: string;
     };
     /** SessionClients */
     SessionClients: {
@@ -1031,6 +1210,17 @@ export interface operations {
       };
     };
   };
+  /** Check Instrument Server */
+  check_instrument_server_instrument_server_get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+    };
+  };
   /** Root */
   root__get: {
     responses: {
@@ -1048,7 +1238,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          "application/json": components["schemas"]["MachineConfig"];
         };
       };
     };
@@ -1353,8 +1543,8 @@ export interface operations {
       };
     };
   };
-  /** Get Spa Proc Params */
-  get_spa_proc_params_sessions__session_id__spa_processing_parameters_get: {
+  /** Get Spa Proc Param Details */
+  get_spa_proc_param_details_sessions__session_id__spa_processing_parameters_get: {
     parameters: {
       path: {
         session_id: number;
@@ -1364,7 +1554,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["ProcessingDetails"];
+          "application/json": components["schemas"]["ProcessingDetails"][];
         };
       };
       /** @description Validation Error */
@@ -1963,6 +2153,29 @@ export interface operations {
       };
     };
   };
+  /** Create Session */
+  create_session_visits__visit__session__name__post: {
+    parameters: {
+      path: {
+        visit: string;
+        name: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": number;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   /** Remove Session By Id */
   remove_session_by_id_sessions__session_id__delete: {
     parameters: {
@@ -2002,6 +2215,33 @@ export interface operations {
       200: {
         content: {
           "application/json": Record<string, never>;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Start Multigrid Watcher */
+  start_multigrid_watcher_sessions__session_id__multigrid_watcher_post: {
+    parameters: {
+      path: {
+        session_id: number;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["MultigridWatcherSetup"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": boolean;
         };
       };
       /** @description Validation Error */

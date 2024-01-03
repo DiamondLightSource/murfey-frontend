@@ -19,6 +19,8 @@ import {
 import { Link as LinkRouter, useLoaderData, useParams } from "react-router-dom";
 import { components } from "schema/main";
 import { Table } from "@diamondlightsource/ui-components";
+import { createSession } from "loaders/session_clients";
+import { useNavigate } from 'react-router-dom';
 import React, { ChangeEventHandler } from "react";
 
 type Visit = components["schemas"]["Visit"];
@@ -28,6 +30,7 @@ const NewSession = () => {
     const currentVisits = useLoaderData() as Visit[] | null;
     const [selectedVisit, setSelectedVisit] = React.useState('');
     const [sessionReference, setSessionReference] = React.useState('');
+    const navigate = useNavigate();
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => setSessionReference(event.target.value);
 
@@ -54,14 +57,7 @@ const NewSession = () => {
             <Box mt='1em' w='95%' justifyContent={'center'} alignItems={'center'} display={'flex'}>
             <Stack>
             <Input placeholder='Session reference' value={sessionReference} onChange={handleChange} />
-            <Link
-                w={{ base: "100%", md: "19.6%" }}
-                _hover={{ textDecor: "none" }}
-                as={LinkRouter}
-                to={`../link_session?session_name=${sessionReference}`}
-            >
-            <Button isDisabled={selectedVisit === '' ? true: false}>Create session for visit {selectedVisit}</Button>
-            </Link>
+            <Button isDisabled={selectedVisit === '' ? true: false} onClick={() => {createSession(selectedVisit, sessionReference).then(sid => {navigate(`setup/${sid}`)})}}>Create session for visit {selectedVisit}</Button>
             </Stack>
             </Box>
         </Box>

@@ -6,10 +6,15 @@ import {
     IconButton,
     useDisclosure,
     Image,
+    Tooltip,
     VStack,
     BoxProps,
+    Icon,
   } from "@chakra-ui/react";
-  import { MdMenu, MdClose } from "react-icons/md";
+  import { MdMenu, MdClose, MdSignalWifi4Bar, MdOutlineSignalWifiBad } from "react-icons/md";
+  import { getInstrumentConnectionStatus } from "loaders/general";
+  import { Link as LinkRouter } from "react-router-dom";
+  import React from "react";
   
   export interface LinkDescriptor {
     label: string;
@@ -25,7 +30,7 @@ import {
     logo?: string | null;
     children?: React.ReactElement;
   }
-  
+
   const NavLinks = ({ links, as }: BaseLinkProps) => (
     <>
       {links
@@ -56,7 +61,14 @@ import {
   
   const Navbar = ({ links, as, children, logo, ...props }: NavbarProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const [ instrumentConnectionStatus, setInsrumentConnectionStatus ] = React.useState(false);
   
+    const resolveName = async () => {
+        const status: boolean = await getInstrumentConnectionStatus();
+        setInsrumentConnectionStatus(status);
+    }
+    resolveName();
+
     return (
       <Box position='sticky' top='0' zIndex={1} w='100%' {...props}>
         <Flex
@@ -78,7 +90,7 @@ import {
           />
           <HStack h='100%' spacing={8} alignItems={"center"}>
             {logo ? (
-              <Link as={as} to='/'>
+              <Link as={LinkRouter} to='/'>
                 <Box maxW='5rem'>
                   <Image
                     alt='Home'
@@ -93,6 +105,7 @@ import {
             <HStack h='100%' as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
               <NavLinks links={links} as={as} />
             </HStack>
+            <Tooltip label={instrumentConnectionStatus ? "Connected to instrument server": "No instrument server connection"} placement='bottom'><Icon as={instrumentConnectionStatus ? MdSignalWifi4Bar: MdOutlineSignalWifiBad} color={instrumentConnectionStatus ? "white": "red"} /></Tooltip>
           </HStack>
           <Flex alignItems={"center"}>{children}</Flex>
         </Flex>

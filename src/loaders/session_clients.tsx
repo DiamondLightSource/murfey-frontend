@@ -49,6 +49,14 @@ export const linkSessionToClient = async (client_id: number, sessionName: string
   return response.data;
 }
 
+export const createSession = async (visit: string, sessionName: string) => {
+  const response = await client.post(`visits/${visit}/session/${sessionName}`, {});
+  if (response.status !== 200) {
+    return null;
+  }
+  return response.data;
+}
+
 export const deleteSessionData = async (sessid: number) => {
   const response = await client.delete(`sessions/${sessid}`);
   if (response.status !== 200) {

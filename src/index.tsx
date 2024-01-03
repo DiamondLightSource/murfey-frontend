@@ -21,6 +21,8 @@ import { processingParametersLoader } from "loaders/processingParameters";
 import { theme } from "styles/theme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { MultigridSetup } from "routes/MultigridSetup";
+import { machineConfigLoader } from "loaders/machineConfig";
 
 const { ToastContainer } = createStandaloneToast();
 const container = document.getElementById("root")!;
@@ -50,6 +52,12 @@ const router = createBrowserRouter([
           element: <NewSession />,
           errorElement: <Error />,
           loader: visitLoader(queryClient),
+        },
+        {
+          path: "/new_session/setup/:sessid",
+          element: <MultigridSetup />,
+          errorElement: <Error />,
+          loader: machineConfigLoader(queryClient),
         },
         {
           path: "/link_session",
