@@ -28,6 +28,7 @@ import { MdDelete } from "react-icons/md";
 import { useRef } from "react";
 import { deleteSessionData } from "loaders/session_clients";
 import { InstrumentCard } from "components/instrumentCard";
+import useWebSocket from 'react-use-websocket';
 
 type SessionClients = components["schemas"]["SessionClients"];
 
@@ -75,7 +76,7 @@ const SessionRow = ({ session_clients, title }: SessionRowProps) => {
             </Stat>
             </Link>
             </Tooltip>
-            <IconButton aria-label='Delete session' icon={<MdDelete />} onClick={() => {deleteSessionData(session_id); window.location.reload();}}/>
+            <IconButton aria-label='Delete session' icon={<MdDelete />} onClick={() => {deleteSessionData(session_id);}}/>
             </HStack>
           </>
         );})
@@ -95,6 +96,21 @@ const Home = () => {
   const sessions = useLoaderData() as {
     current: SessionClients[];
   } | null;
+  const url = process.env.REACT_APP_API_ENDPOINT ? process.env.REACT_APP_API_ENDPOINT.replace("http", "ws"): "ws://localhost:8000"
+  const parseWebsocketMessage = (message: any) => {
+    let parsedMessage: any = {};
+    try {
+      parsedMessage = JSON.parse(message);
+    }
+    catch(err) {
+        return
+    }
+    if (parsedMessage.message === "refresh") { 
+        window.location.reload();
+    }
+}
+
+useWebSocket(url+"ws/test/0", {onOpen: () => {console.log('WebSocket connection established.');}, onMessage: (event) => {parseWebsocketMessage(event.data);}});
 
   return (
     <div className='rootContainer'>

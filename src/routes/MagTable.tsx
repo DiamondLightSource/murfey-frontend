@@ -32,6 +32,8 @@ import {
     TableCaption,
   } from "@chakra-ui/react";
 
+import { CheckIcon } from "@chakra-ui/icons";
+
 import { Link as LinkRouter, useLoaderData } from "react-router-dom";
 import { components } from "schema/main";
 import { MdAdd, MdHorizontalRule } from "react-icons/md";
@@ -74,6 +76,7 @@ const MagTable = () => {
                     <Tr>
                         <Th>Magnification</Th>
                         <Th>Pixel Size</Th>
+                        <Th>Update</Th>
                     </Tr>
                     </Thead>
                     <Tbody>
@@ -83,6 +86,7 @@ const MagTable = () => {
                             <Tr>
                                 <Td><Input defaultValue={row.magnification}></Input></Td>
                                 <Td><Input defaultValue={row.pixel_size}></Input></Td>
+                                <Td><IconButton aria-label="Update row in database" icon={<CheckIcon />}></IconButton></Td>
                             </Tr>
                         )
                         }

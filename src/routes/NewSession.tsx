@@ -57,7 +57,7 @@ const NewSession = () => {
             <Box mt='1em' w='95%' justifyContent={'center'} alignItems={'center'} display={'flex'}>
             <Stack>
             <Input placeholder='Session reference' value={sessionReference} onChange={handleChange} />
-            <Button isDisabled={selectedVisit === '' ? true: false} onClick={() => {createSession(selectedVisit, sessionReference).then(sid => {navigate(`setup/${sid}`)})}}>Create session for visit {selectedVisit}</Button>
+            <Button isDisabled={selectedVisit === '' ? true: false} onClick={() => {createSession(selectedVisit, sessionReference).then(sid => {navigate(`parameters/${sid}`)})}}>Create session for visit {selectedVisit}</Button>
             </Stack>
             </Box>
         </Box>

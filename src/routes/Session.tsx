@@ -34,16 +34,19 @@ import {
     StatNumber,
     Text,
     VStack,
+    useToast,
   } from "@chakra-ui/react";
 
 import { useDisclosure } from "@chakra-ui/react";
 
 import { Link as LinkRouter, useLoaderData, useParams } from "react-router-dom";
-import { MdCheck, MdDensityMedium, MdFileUpload, MdEmail } from "react-icons/md";
+import { MdCheck, MdDensityMedium, MdFileUpload, MdEmail, MdOutlineWarning } from "react-icons/md";
 import { FiActivity } from "react-icons/fi";
 import { components } from "schema/main";
 import { getInstrumentName } from "loaders/general";
+import { stopRsyncer } from "loaders/rsyncers";
 import { InstrumentCard } from "components/instrumentCard";
+import useWebSocket from 'react-use-websocket';
 
 import React from "react";
 
@@ -89,9 +92,9 @@ const RsyncCard = (rsyncer: RsyncInstance) => {
                 <Menu>
                     <MenuButton as={IconButton} aria-label="Rsync control options" icon={<MdDensityMedium/>}/>
                     <MenuList>
-                        <MenuItem>Stop</MenuItem>
-                        <MenuItem>Kill</MenuItem>
-                        <MenuItem onClick={() => FinaliseRsyncer(rsyncer)}>Finalise</MenuItem>
+                        <MenuItem onClick={() => stopRsyncer(rsyncer.session_id, rsyncer.source)} isDisabled={!rsyncer.transferring}>Stop</MenuItem>
+                        <MenuItem isDisabled={!rsyncer.transferring}>Kill</MenuItem>
+                        <MenuItem onClick={() => FinaliseRsyncer(rsyncer)} isDisabled={!rsyncer.transferring}>Finalise</MenuItem>
                     </MenuList>
                 </Menu> 
                 </Flex>
@@ -118,7 +121,7 @@ const RsyncCard = (rsyncer: RsyncInstance) => {
                         <Stat>
                             <StatLabel>Transfer progress</StatLabel>
                             <StatNumber>{rsyncer.files_transferred} / {rsyncer.files_counted}</StatNumber>
-                            <StatHelpText>{((rsyncer.files_transferred ?? 0)  >= (rsyncer.files_counted ?? 0)) ? <HStack><MdCheck/><Text>Up to date</Text></HStack>: <HStack><FiActivity/><Text>Working on it</Text></HStack>}</StatHelpText>
+                            <StatHelpText>{((rsyncer.files_transferred ?? 0)  >= (rsyncer.files_counted ?? 0)) ? <HStack><MdCheck/><Text>Up to date</Text></HStack>: rsyncer.transferring ? <HStack><FiActivity/><Text>Working on it</Text></HStack>: <HStack><MdOutlineWarning/><Text>Broken</Text></HStack>}</StatHelpText>
                         </Stat>
                     </Box>
                 </Stack>
@@ -131,11 +134,30 @@ const getUrl = (endpoint: string) => {
     return process.env.REACT_APP_API_ENDPOINT + endpoint;
 }
 
-
 const Session = () => {
     const rsync = useLoaderData() as RsyncInstance[] | null;
     const { sessid } = useParams();
     const [instrumentName, setInstrumentName] = React.useState('');
+    const url = process.env.REACT_APP_API_ENDPOINT ? process.env.REACT_APP_API_ENDPOINT.replace("http", "ws"): "ws://localhost:8000"
+    const toast = useToast();
+
+    const parseWebsocketMessage = (message: any) => {
+        let parsedMessage: any = {};
+        try {
+          parsedMessage = JSON.parse(message);
+        }
+        catch(err) {
+            return
+        }
+        if (parsedMessage.message === "refresh") { 
+            window.location.reload();
+        }
+        if (parsedMessage.message === "update" && typeof sessid !== "undefined" && parsedMessage.session_id === parseInt(sessid)) {
+            return toast({title: "Update", description: parsedMessage.payload, isClosable: true, duration: parsedMessage.duration ?? null, status: parsedMessage.status ?? "info"});
+        }
+    }
+
+    useWebSocket(url+"ws/test/0", {onOpen: () => {console.log('WebSocket connection established.');}, onMessage: (event) => {parseWebsocketMessage(event.data);}});
 
     const resolveName = async () => {
         const name: string = await getInstrumentName();

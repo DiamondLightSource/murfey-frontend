@@ -72,7 +72,7 @@ const router = createBrowserRouter([
           loader: gainRefLoader(queryClient),
         },
         {
-          path: "/sessions/:sessid/setup",
+          path: "/new_session/parameters/:sessid",
           element: <SessionSetup />,
           errorElement: <Error />,
         },

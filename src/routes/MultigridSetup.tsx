@@ -2,6 +2,8 @@ import {
     Box,
     Button,
     Divider,
+    FormControl,
+    FormLabel,
     GridItem,
     Heading,
     HStack,
@@ -13,6 +15,7 @@ import {
     StatHelpText,
     StatLabel,
     StatNumber,
+    Switch,
     Text,
     VStack,
   } from "@chakra-ui/react";
@@ -36,13 +39,14 @@ const MultigridSetup = () => {
     let initialDirectory = '';
     if (machineConfig) Object.entries(machineConfig.data_directories).forEach(([key, value]) => { if (initialDirectory === '' && value === "detector") initialDirectory=key;});
     const [selectedDirectory, setSelectedDirectory] = React.useState(initialDirectory);
+    const [skipExistingProcessing, setSkipExistingPorcessing] = React.useState(false); 
 
     const handleDirectorySelection = (e: React.ChangeEvent<HTMLSelectElement>) => setSelectedDirectory(e.target.value);
 
     const handleSelection = () => {
         console.log(sessid);
         console.log(selectedDirectory);
-        if (typeof sessid !== "undefined") startMultigridWatcher({source: selectedDirectory, skip_existing_processing: false} as MultigridWatcherSpec, parseInt(sessid));
+        if (typeof sessid !== "undefined") startMultigridWatcher({source: selectedDirectory, skip_existing_processing: skipExistingProcessing} as MultigridWatcherSpec, parseInt(sessid));
     };
 
     return (
@@ -65,6 +69,12 @@ const MultigridSetup = () => {
             <VStack w='100%' spacing={0}>
             <Divider borderColor='murfey.300' />
             <Stack w='100%' spacing={5} py='0.8em'>
+                <FormControl display='flex' alignItems='center'>
+                    <FormLabel mb='0'>
+                        Do not process existing data
+                    </FormLabel>
+                    <Switch id='skip-existing-processing' onChange={() => {setSkipExistingPorcessing(!skipExistingProcessing)}}/>
+                </FormControl>
                 <HStack>
                 <Select onChange={handleDirectorySelection}>
                 {machineConfig && Object.keys(machineConfig.data_directories).length > 0 ? (
