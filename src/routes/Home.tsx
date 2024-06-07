@@ -1,10 +1,4 @@
 import {
-    AlertDialog,
-    AlertDialogHeader,
-    AlertDialogOverlay,
-    AlertDialogBody,
-    AlertDialogFooter,
-    AlertDialogContent,
     Box,
     Button,
     Divider,
@@ -15,9 +9,7 @@ import {
     Link,
     Stack,
     Stat,
-    StatHelpText,
     StatLabel,
-    StatNumber,
     Tooltip,
     VStack,
   } from "@chakra-ui/react";
@@ -25,7 +17,6 @@ import {
 import { Link as LinkRouter, useLoaderData } from "react-router-dom";
 import { components } from "schema/main";
 import { MdDelete } from "react-icons/md";
-import { useRef } from "react";
 import { deleteSessionData } from "loaders/session_clients";
 import { InstrumentCard } from "components/instrumentCard";
 import useWebSocket from 'react-use-websocket';
