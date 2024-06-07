@@ -100,3 +100,4 @@ export const sessionLoader =
         return ((await queryClient.getQueryData(singleQuery.queryKey)) ?? (await queryClient.fetchQuery(singleQuery)));
     };
 
+export { getSessionData };

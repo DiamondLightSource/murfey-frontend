@@ -120,6 +120,10 @@ export interface paths {
     /** Register Rsyncer */
     post: operations["register_rsyncer_visits__visit_name__rsyncer_post"];
   };
+  "/rsyncer_stopped": {
+    /** Rsyncer Stopped */
+    post: operations["rsyncer_stopped_rsyncer_stopped_post"];
+  };
   "/clients/{client_id}/rsyncers": {
     /** Get Rsyncers For Client */
     get: operations["get_rsyncers_for_client_clients__client_id__rsyncers_get"];
@@ -136,15 +140,11 @@ export interface paths {
     /** Increment Rsync Transferred Files */
     post: operations["increment_rsync_transferred_files_visits__visit_name__increment_rsync_transferred_files_post"];
   };
-  "/clients/{client_id}/spa_processing_parameters": {
-    /** Get Spa Proc Params */
-    get: operations["get_spa_proc_params_clients__client_id__spa_processing_parameters_get"];
-    /** Register Spa Proc Params */
-    post: operations["register_spa_proc_params_clients__client_id__spa_processing_parameters_post"];
-  };
   "/sessions/{session_id}/spa_processing_parameters": {
     /** Get Spa Proc Param Details */
     get: operations["get_spa_proc_param_details_sessions__session_id__spa_processing_parameters_get"];
+    /** Register Spa Proc Params */
+    post: operations["register_spa_proc_params_sessions__session_id__spa_processing_parameters_post"];
   };
   "/visits/{visit_name}/tilt_series": {
     /** Register Tilt Series */
@@ -178,13 +178,13 @@ export interface paths {
     /** Request Spa Processing */
     post: operations["request_spa_processing_visits__visit_name__spa_processing_post"];
   };
-  "/visits/{visit_name}/{client_id}/flush_spa_processing": {
+  "/visits/{visit_name}/{session_id}/flush_spa_processing": {
     /** Flush Spa Processing */
-    post: operations["flush_spa_processing_visits__visit_name___client_id__flush_spa_processing_post"];
+    post: operations["flush_spa_processing_visits__visit_name___session_id__flush_spa_processing_post"];
   };
-  "/visits/{visit_name}/{client_id}/spa_preprocess": {
+  "/visits/{visit_name}/{session_id}/spa_preprocess": {
     /** Request Spa Preprocessing */
-    post: operations["request_spa_preprocessing_visits__visit_name___client_id__spa_preprocess_post"];
+    post: operations["request_spa_preprocessing_visits__visit_name___session_id__spa_preprocess_post"];
   };
   "/visits/{visit_name}/tomography_preprocess": {
     /** Request Tomography Preprocessing */
@@ -202,17 +202,17 @@ export interface paths {
     /** Suggest Path */
     post: operations["suggest_path_visits__visit_name__suggested_path_post"];
   };
-  "/visits/{visit_name}/{client_id}/register_data_collection_group": {
+  "/visits/{visit_name}/{session_id}/register_data_collection_group": {
     /** Register Dc Group */
-    post: operations["register_dc_group_visits__visit_name___client_id__register_data_collection_group_post"];
+    post: operations["register_dc_group_visits__visit_name___session_id__register_data_collection_group_post"];
   };
-  "/visits/{visit_name}/{client_id}/start_data_collection": {
+  "/visits/{visit_name}/{session_id}/start_data_collection": {
     /** Start Dc */
-    post: operations["start_dc_visits__visit_name___client_id__start_data_collection_post"];
+    post: operations["start_dc_visits__visit_name___session_id__start_data_collection_post"];
   };
-  "/visits/{visit_name}/{client_id}/register_processing_job": {
+  "/visits/{visit_name}/{session_id}/register_processing_job": {
     /** Register Proc */
-    post: operations["register_proc_visits__visit_name___client_id__register_processing_job_post"];
+    post: operations["register_proc_visits__visit_name___session_id__register_processing_job_post"];
   };
   "/visits/{visit_name}/write_connections_file": {
     /** Write Conn File */
@@ -263,6 +263,10 @@ export interface paths {
   "/sessions/{session_id}/multigrid_watcher": {
     /** Start Multigrid Watcher */
     post: operations["start_multigrid_watcher_sessions__session_id__multigrid_watcher_post"];
+  };
+  "/sessions/{session_id}/stop_rsyncer": {
+    /** Stop Rsyncer */
+    post: operations["stop_rsyncer_sessions__session_id__stop_rsyncer_post"];
   };
 }
 
@@ -752,6 +756,13 @@ export interface components {
        */
       transferring?: boolean;
     };
+    /** RsyncerBasicInfo */
+    RsyncerBasicInfo: {
+      /** Source */
+      source: string;
+      /** Session Id */
+      session_id: number;
+    };
     /** RsyncerInfo */
     RsyncerInfo: {
       /** Source */
@@ -790,6 +801,11 @@ export interface components {
        * @default
        */
       tag?: string;
+    };
+    /** RsyncerSource */
+    RsyncerSource: {
+      /** Source */
+      source: string;
     };
     /** SPAFeedbackParameters */
     SPAFeedbackParameters: {
@@ -927,6 +943,11 @@ export interface components {
        * @default
        */
       visit?: string;
+      /**
+       * Started
+       * @default false
+       */
+      started?: boolean;
     };
     /** SessionClients */
     SessionClients: {
@@ -1396,6 +1417,28 @@ export interface operations {
       };
     };
   };
+  /** Rsyncer Stopped */
+  rsyncer_stopped_rsyncer_stopped_post: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RsyncerBasicInfo"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   /** Get Rsyncers For Client */
   get_rsyncers_for_client_clients__client_id__rsyncers_get: {
     parameters: {
@@ -1494,55 +1537,6 @@ export interface operations {
       };
     };
   };
-  /** Get Spa Proc Params */
-  get_spa_proc_params_clients__client_id__spa_processing_parameters_get: {
-    parameters: {
-      path: {
-        client_id: number;
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          "application/json": Record<string, never>[];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  /** Register Spa Proc Params */
-  register_spa_proc_params_clients__client_id__spa_processing_parameters_post: {
-    parameters: {
-      path: {
-        client_id: number;
-      };
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["ProcessingParametersSPA"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
   /** Get Spa Proc Param Details */
   get_spa_proc_param_details_sessions__session_id__spa_processing_parameters_get: {
     parameters: {
@@ -1555,6 +1549,33 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["ProcessingDetails"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Register Spa Proc Params */
+  register_spa_proc_params_sessions__session_id__spa_processing_parameters_post: {
+    parameters: {
+      path: {
+        session_id: number;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ProcessingParametersSPA"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
         };
       };
       /** @description Validation Error */
@@ -1752,11 +1773,11 @@ export interface operations {
     };
   };
   /** Flush Spa Processing */
-  flush_spa_processing_visits__visit_name___client_id__flush_spa_processing_post: {
+  flush_spa_processing_visits__visit_name___session_id__flush_spa_processing_post: {
     parameters: {
       path: {
         visit_name: string;
-        client_id: number;
+        session_id: number;
       };
     };
     responses: {
@@ -1775,11 +1796,11 @@ export interface operations {
     };
   };
   /** Request Spa Preprocessing */
-  request_spa_preprocessing_visits__visit_name___client_id__spa_preprocess_post: {
+  request_spa_preprocessing_visits__visit_name___session_id__spa_preprocess_post: {
     parameters: {
       path: {
         visit_name: string;
-        client_id: number;
+        session_id: number;
       };
     };
     requestBody: {
@@ -1901,11 +1922,11 @@ export interface operations {
     };
   };
   /** Register Dc Group */
-  register_dc_group_visits__visit_name___client_id__register_data_collection_group_post: {
+  register_dc_group_visits__visit_name___session_id__register_data_collection_group_post: {
     parameters: {
       path: {
         visit_name: string;
-        client_id: number;
+        session_id: number;
       };
     };
     requestBody: {
@@ -1929,11 +1950,11 @@ export interface operations {
     };
   };
   /** Start Dc */
-  start_dc_visits__visit_name___client_id__start_data_collection_post: {
+  start_dc_visits__visit_name___session_id__start_data_collection_post: {
     parameters: {
       path: {
         visit_name: unknown;
-        client_id: number;
+        session_id: number;
       };
     };
     requestBody: {
@@ -1957,11 +1978,11 @@ export interface operations {
     };
   };
   /** Register Proc */
-  register_proc_visits__visit_name___client_id__register_processing_job_post: {
+  register_proc_visits__visit_name___session_id__register_processing_job_post: {
     parameters: {
       path: {
         visit_name: unknown;
-        client_id: number;
+        session_id: number;
       };
     };
     requestBody: {
@@ -2242,6 +2263,33 @@ export interface operations {
       200: {
         content: {
           "application/json": boolean;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Stop Rsyncer */
+  stop_rsyncer_sessions__session_id__stop_rsyncer_post: {
+    parameters: {
+      path: {
+        session_id: number;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RsyncerSource"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
         };
       };
       /** @description Validation Error */

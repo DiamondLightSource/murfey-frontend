@@ -18,6 +18,7 @@ import {
 
 import { Link as LinkRouter, useLoaderData, useParams } from "react-router-dom";
 import { components } from "schema/main";
+import { SetupStepper } from "components/setupStepper";
 import { Table } from "@diamondlightsource/ui-components";
 import { createSession } from "loaders/session_clients";
 import { useNavigate } from 'react-router-dom';
@@ -51,13 +52,16 @@ const NewSession = () => {
                     </VStack>
                 </VStack>
             </Box>
+            <Box mt='1em' ml='2em' w='80%' justifyContent={'center'} alignItems={'center'} >
+            <SetupStepper activeStepIndex={0} />
+            </Box>
             <Box mt='1em' w='95%' justifyContent={'center'} alignItems={'center'} display={'flex'}>
             <Table data={currentVisits} headers={[{'key': 'name', 'label': 'Name'}, {'key': 'start', 'label': 'Start Time'}, {'key': 'end', 'label': 'End Time'}, {'key': 'proposal_title', 'label': 'Description'}]} label={'visitData'} onClick={selectVisit} /> 
             </Box>
             <Box mt='1em' w='95%' justifyContent={'center'} alignItems={'center'} display={'flex'}>
             <Stack>
             <Input placeholder='Session reference' value={sessionReference} onChange={handleChange} />
-            <Button isDisabled={selectedVisit === '' ? true: false} onClick={() => {createSession(selectedVisit, sessionReference).then(sid => {navigate(`parameters/${sid}`)})}}>Create session for visit {selectedVisit}</Button>
+            <Button isDisabled={selectedVisit === '' ? true: false} onClick={() => {createSession(selectedVisit, sessionReference).then(sid => {navigate(`../gain_ref_transfer?sessid=${sid}&setup=true`)})}}>Create session for visit {selectedVisit}</Button>
             </Stack>
             </Box>
         </Box>

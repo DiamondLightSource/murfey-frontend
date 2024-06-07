@@ -27,3 +27,6 @@ export const processingParametersLoader =
         const singleQuery = queryBuilder(params.sessid);
         return ((await queryClient.getQueryData(singleQuery.queryKey)) ?? (await queryClient.fetchQuery(singleQuery)));
     };
+
+export { getProcessingParameterData };
+  

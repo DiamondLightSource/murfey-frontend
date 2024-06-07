@@ -32,12 +32,15 @@ import {
     StatHelpText,
     StatLabel,
     StatNumber,
+    Switch,
     Text,
+    Tooltip,
     VStack,
     useToast,
   } from "@chakra-ui/react";
 
 import { useDisclosure } from "@chakra-ui/react";
+import { ViewIcon } from "@chakra-ui/icons";
 
 import { Link as LinkRouter, useLoaderData, useParams } from "react-router-dom";
 import { MdCheck, MdDensityMedium, MdFileUpload, MdEmail, MdOutlineWarning } from "react-icons/md";
@@ -45,12 +48,14 @@ import { FiActivity } from "react-icons/fi";
 import { components } from "schema/main";
 import { getInstrumentName } from "loaders/general";
 import { stopRsyncer } from "loaders/rsyncers";
+import { getSessionData } from "loaders/session_clients";
 import { InstrumentCard } from "components/instrumentCard";
 import useWebSocket from 'react-use-websocket';
 
-import React from "react";
+import React, { useEffect } from "react";
 
 type RsyncInstance = components["schemas"]["RsyncInstance"];
+type Session = components["schemas"]["Session"]
 
 function FinaliseRsyncer(rsyncer: RsyncInstance) {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -140,6 +145,9 @@ const Session = () => {
     const [instrumentName, setInstrumentName] = React.useState('');
     const url = process.env.REACT_APP_API_ENDPOINT ? process.env.REACT_APP_API_ENDPOINT.replace("http", "ws"): "ws://localhost:8000"
     const toast = useToast();
+    const [session, setSession] = React.useState<Session>();
+
+    useEffect(() => {getSessionData(sessid).then(sess => setSession(sess.session))}, []);
 
     const parseWebsocketMessage = (message: any) => {
         let parsedMessage: any = {};
@@ -172,7 +180,7 @@ const Session = () => {
                 <VStack className='homeRoot'>
                     <VStack bg='murfey.700' justifyContent='start' alignItems='start'>
                         <Heading size='xl' color='murfey.50'>
-                            Session {sessid}
+                            Session {sessid}: {session ? session.visit: null}
                         </Heading>
                         <HStack>
                         <Link
@@ -186,9 +194,11 @@ const Session = () => {
                         </Button>
                         </Link>
                         <Spacer/>
-                        <Button aria-label="Subscribe to notifications" rightIcon={<MdEmail/>} variant="onBlue">
+                        <ViewIcon color='white'/> 
+                        <Switch colorScheme="murfey"  id='monitor'/>
+                        {/* <Button aria-label="Subscribe to notifications" rightIcon={<MdEmail/>} variant="onBlue">
                             Subscribe
-                        </Button>
+                        </Button> */}
                         </HStack>
                     </VStack>
                 </VStack>

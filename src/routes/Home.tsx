@@ -138,7 +138,7 @@ useWebSocket(url+"ws/test/0", {onOpen: () => {console.log('WebSocket connection 
             </VStack>
 
             <HStack w='100%' display='flex'>
-            <VStack mt='0 !important' w='100%' px='10vw' justifyContent='start' alignItems='start'>
+            <VStack mt='0 !important' w='100%' px='10vw'  display='flex'>
               {sessions ? (
                 <VStack w='100%' spacing={5}>
                   <SessionRow title='Existing Sessions' session_clients={sessions.current} />

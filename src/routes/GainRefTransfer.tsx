@@ -7,6 +7,7 @@ import {
 import { useNavigate, useLoaderData, useSearchParams } from "react-router-dom";
 import { components } from "schema/main";
 import { Table } from "@diamondlightsource/ui-components";
+import { SetupStepper } from "components/setupStepper";
 
 type File = components["schemas"]["File"];
 
@@ -17,7 +18,9 @@ const GainRefTransfer = () => {
 
     const SelectGainRef = (data: Record<string, any>, index: number) => {
         const sessid = searchParams.get("sessid");
-        sessid ? navigate(`/sessions/${sessid}`): navigate("/");
+        const setup = searchParams.get("setup");
+        if (setup) sessid ? navigate(`/new_session/parameters/${sessid}`): navigate("/")
+        else sessid ? navigate(`/sessions/${sessid}`): navigate("/")
     }
 
     return (
@@ -31,6 +34,9 @@ const GainRefTransfer = () => {
                         </Heading>
                     </VStack>
                 </VStack>
+            </Box>
+            <Box mt='1em' ml='2em' w='80%' justifyContent={'center'} alignItems={'center'} >
+            {searchParams.get("setup") ? <SetupStepper activeStepIndex={1} />: null}
             </Box>
             <Box mt='1em' w='95%' px='1em' justifyContent={'center'} alignItems={'center'}>
             <Table data={possibleGainRefs} headers={[{'key': 'name', 'label': 'Name'}, {'key': 'timestamp', 'label': 'Timestamp'}, {'key': 'size', 'label': 'Size'}]} label={'gainRefData'} onClick={SelectGainRef} /> 
