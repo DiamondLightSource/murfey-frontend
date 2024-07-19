@@ -2,16 +2,15 @@ import { QueryClient } from "@tanstack/react-query";
 import { components } from "schema/main";
 import { client } from "utils/api/client";
 import { Params } from "react-router-dom";
-import { parseDate} from "utils/generic"
+import { parseDate } from "utils/generic";
 
 const getVisitData = async () => {
-  
   const response = await client.get(`visits_raw`);
 
   if (response.status !== 200) {
     return null;
   }
-  
+
   return response.data;
 };
 
@@ -22,4 +21,5 @@ const query = {
 };
 
 export const visitLoader = (queryClient: QueryClient) => async () =>
-(await queryClient.getQueryData(query.queryKey)) ?? (await queryClient.fetchQuery(query));
+  (await queryClient.getQueryData(query.queryKey)) ??
+  (await queryClient.fetchQuery(query));

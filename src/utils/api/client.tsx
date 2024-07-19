@@ -5,7 +5,8 @@ const { toast } = createStandaloneToast();
 const controller = new AbortController();
 
 const defaultSettings: Partial<RequestConfig> = {
-  credentials: process.env.NODE_ENV === "development" ? "include" : "same-origin",
+  credentials:
+    process.env.NODE_ENV === "development" ? "include" : "same-origin",
 };
 
 interface RequestConfig {
@@ -39,7 +40,7 @@ export const client = async (
   prefix = getPrefix(process.env.REACT_APP_API_ENDPOINT),
 ): Promise<never | Response> => {
   const config: RequestConfig = {
-    method: method ? method: (body != null ? "POST" : "GET"),
+    method: method ? method : body != null ? "POST" : "GET",
     ...customConfig,
     headers: {
       ...customConfig.headers,
@@ -63,6 +64,12 @@ export const client = async (
   }
 
   try {
+    const token = sessionStorage.getItem("token");
+    config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
+    if (body != null) {
+      console.log(config);
+      console.log(prefix + endpoint);
+    }
     const response = await fetch(prefix + endpoint, config);
     const isJson = response.headers.get("content-type") === "application/json";
 
@@ -76,7 +83,8 @@ export const client = async (
     if (!toast.isActive("main-toast") && errToast) {
       toast({
         ...baseToast,
-        title: "An error has occurred while fetching data, please try again later.",
+        title:
+          "An error has occurred while fetching data, please try again later.",
         status: "error",
       });
     }
@@ -85,15 +93,19 @@ export const client = async (
   }
 };
 
-client.get = async (endpoint: string, customConfig = {}, errToast: boolean = true) => {
+client.get = async (
+  endpoint: string,
+  customConfig = {},
+  errToast: boolean = true,
+) => {
   return await client(
     endpoint,
     (customConfig = {
       ...customConfig,
     }),
     null,
-    'GET',
-    errToast=errToast,
+    "GET",
+    (errToast = errToast),
   );
 };
 
@@ -104,11 +116,18 @@ client.delete = async (endpoint: string, customConfig = {}) => {
       ...customConfig,
     }),
     null,
-    'DELETE',
+    "DELETE",
   );
 };
 
-client.post = async (endpoint: string, body: Record<any, any> | FormData, customConfig = {}) => {
+client.post = async (
+  endpoint: string,
+  body: Record<any, any> | FormData,
+  customConfig = {},
+) => {
+  console.log(sessionStorage.getItem("token"));
+  console.log(endpoint);
+  console.log(body);
   return await client(endpoint, { ...customConfig }, body);
 };
 

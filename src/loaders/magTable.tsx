@@ -2,13 +2,12 @@ import { QueryClient } from "@tanstack/react-query";
 import { client } from "utils/api/client";
 
 const getMagTableData = async () => {
-  
   const response = await client.get(`mag_table`);
 
   if (response.status !== 200) {
     return null;
   }
-  
+
   return response.data;
 };
 
@@ -19,4 +18,5 @@ const query = {
 };
 
 export const magTableLoader = (queryClient: QueryClient) => async () =>
-(await queryClient.getQueryData(query.queryKey)) ?? (await queryClient.fetchQuery(query));
+  (await queryClient.getQueryData(query.queryKey)) ??
+  (await queryClient.fetchQuery(query));

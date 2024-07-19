@@ -15,28 +15,28 @@ import {
 import React from "react";
 
 const getUrl = (endpoint: string) => {
-    return process.env.REACT_APP_API_ENDPOINT + endpoint;
-}
+  return process.env.REACT_APP_API_ENDPOINT + endpoint;
+};
 
 interface StepperStartConditions {
-  activeStepIndex: number
+  activeStepIndex: number;
 }
 
 const SetupStepper = ({ activeStepIndex }: StepperStartConditions) => {
   const steps = [
-      { title: 'Visit', description: 'Select visit' },
-      { title: 'Gain reference', description: 'Transfer and transform' },
-      { title: 'Parameters', description: 'For processing' },
-      { title: 'Confirm', description: 'Start data transfer' },
-    ]
+    { title: "Visit", description: "Select visit" },
+    { title: "Gain reference", description: "Transfer and transform" },
+    { title: "Parameters", description: "For processing" },
+    { title: "Confirm", description: "Start data transfer" },
+  ];
 
-    const { activeStep } = useSteps({
-      index: activeStepIndex,
-      count: steps.length,
-    })
+  const { activeStep } = useSteps({
+    index: activeStepIndex,
+    count: steps.length,
+  });
 
-    return (
-      <Stepper index={activeStep}>
+  return (
+    <Stepper index={activeStep}>
       {steps.map((step, index) => (
         <Step key={index}>
           <StepIndicator>
@@ -47,7 +47,7 @@ const SetupStepper = ({ activeStepIndex }: StepperStartConditions) => {
             />
           </StepIndicator>
 
-          <Box flexShrink='0'>
+          <Box flexShrink="0">
             <StepTitle>{step.title}</StepTitle>
             <StepDescription>{step.description}</StepDescription>
           </Box>
@@ -56,7 +56,7 @@ const SetupStepper = ({ activeStepIndex }: StepperStartConditions) => {
         </Step>
       ))}
     </Stepper>
-        );
+  );
 };
 
 export { SetupStepper };

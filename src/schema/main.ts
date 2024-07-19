@@ -3,7 +3,6 @@
  * Do not make direct changes to the file.
  */
 
-
 export interface paths {
   "/bootstrap/": {
     /**
@@ -1065,7 +1064,6 @@ export type $defs = Record<string, never>;
 export type external = Record<string, never>;
 
 export interface operations {
-
   /**
    * Get Bootstrap Instructions
    * @description Return a website containing instructions for installing the Murfey client on a

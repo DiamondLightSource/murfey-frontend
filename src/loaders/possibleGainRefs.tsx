@@ -2,13 +2,12 @@ import { QueryClient } from "@tanstack/react-query";
 import { client } from "utils/api/client";
 
 const getGainRefData = async () => {
-  
   const response = await client.get(`possible_gain_references`);
 
   if (response.status !== 200) {
     return null;
   }
-  
+
   return response.data;
 };
 
@@ -19,4 +18,5 @@ const query = {
 };
 
 export const gainRefLoader = (queryClient: QueryClient) => async () =>
-(await queryClient.getQueryData(query.queryKey)) ?? (await queryClient.fetchQuery(query));
+  (await queryClient.getQueryData(query.queryKey)) ??
+  (await queryClient.fetchQuery(query));

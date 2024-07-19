@@ -23,25 +23,31 @@ const Error = () => {
     } else {
       setHeading("An error has occurred");
       setMessage(
-        "An unexpected error has occurred. If this persists, please contact the developers. Details:"
+        "An unexpected error has occurred. If this persists, please contact the developers. Details:",
       );
       setDetails(error.toString());
     }
   }, [error]);
 
   return (
-    <div className='rootContainer'>
+    <div className="rootContainer">
       <Navbar logo={"/images/diamondgs.png"} />
-      <Box marginTop={12} className='main'>
-        <VStack h='100%' justifyContent='center'>
-          <Heading color='murfey.800'>{heading}</Heading>
-          <Text color='murfey.300'>{message}</Text>
+      <Box marginTop={12} className="main">
+        <VStack h="100%" justifyContent="center">
+          <Heading color="murfey.800">{heading}</Heading>
+          <Text color="murfey.300">{message}</Text>
           {details && (
-            <Code fontFamily='monospace' w='50%' h='30%' overflow='visible' p={3}>
+            <Code
+              fontFamily="monospace"
+              w="50%"
+              h="30%"
+              overflow="visible"
+              p={3}
+            >
               {details}
             </Code>
           )}
-          <Link color='murfey.600' href='/'>
+          <Link color="murfey.600" href="/">
             Go home
           </Link>
         </VStack>
