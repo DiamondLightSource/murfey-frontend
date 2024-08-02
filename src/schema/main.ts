@@ -1040,6 +1040,16 @@ export interface components {
       extract_downscale?: boolean;
       /** Particle Diameter */
       particle_diameter?: number;
+      /**
+       * Symmetry
+       * @default C1
+       */
+      symmetry?: string;
+      /**
+       * Eer Fractionation
+       * @default 20
+       */
+      eer_fractionation?: number;
     };
     /** RegistrationMessage */
     RegistrationMessage: {

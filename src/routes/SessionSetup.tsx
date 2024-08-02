@@ -40,14 +40,16 @@ const SessionSetup = () => {
   }, []);
 
   const handleSelection = (formData: any) => {
-    if (typeof sessid !== "undefined")
-      registerProcessingParameters(
-        {
-          dose_per_frame: formData.dose_per_frame,
-        } as ProvidedProcessingParameters,
-        parseInt(sessid),
-      );
+    if (typeof sessid !== "undefined"){
+      const expType = formData.type;
+      delete formData.type;
+      if (expType === "SPA")
+        registerProcessingParameters(
+          formData as ProvidedProcessingParameters,
+          parseInt(sessid),
+        );
       setParamsSet(true);
+    }
   };
 
   if (session)

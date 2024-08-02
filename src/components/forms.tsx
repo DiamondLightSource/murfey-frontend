@@ -23,8 +23,12 @@ import { Link as LinkRouter } from "react-router-dom";
 import React, { ReactElement } from "react";
 
 const formDataSPA: {[key: string]: any} = {
+  "type": "SPA",
   "dose_per_frame": 1,
   "symmetry": "C1",
+  "particle_diameter": null,
+  "extract_downscale": true,
+  "eer_fractionation": 20,
 };
 
 
@@ -48,6 +52,8 @@ const SpaForm = (submissionCallback: (arg0: any) => void, sessid: string) => {
     const formData = new FormData(event.currentTarget);
     formDataSPA.dose_per_frame = formData.get("dose");
     formDataSPA.symmetry = formData.get("symmetry1") as string + formData.get("symmetry2") as string;
+    formDataSPA.particle_diameter = formData.get("detect-particle-size")? null: formData.get("particle-diameter");
+    formDataSPA.eer_fractionation = formData.get("eer-grouping");
     callback(formDataSPA);
   };
 
@@ -85,6 +91,10 @@ const SpaForm = (submissionCallback: (arg0: any) => void, sessid: string) => {
             </HStack>
           </VStack>
           <VStack align="start" width="100%" display="flex">
+            <FormLabel>{"EER grouping (number of EER frames in each fraction)"}</FormLabel>
+            <Input defaultValue="20" name="eer-grouping"/>
+          </VStack>
+          <VStack align="start" width="100%" display="flex">
             <HStack>
               <FormLabel>Automatically detect particle size</FormLabel>
               <Switch
@@ -98,7 +108,7 @@ const SpaForm = (submissionCallback: (arg0: any) => void, sessid: string) => {
           {!particleDetection ? (
             <VStack align="start" width="100%" display="flex">
               <FormLabel>{"Particle diameter [\u212B]"}</FormLabel>
-              <Input defaultValue={200} />
+              <Input defaultValue={200} name="particle-diameter" />
             </VStack>
           ) : (
             <></>
