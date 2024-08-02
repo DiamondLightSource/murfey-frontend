@@ -10,6 +10,7 @@ import React from "react";
 
 const UserParameters = () => {
   const [expType, setExpType] = React.useState("spa");
+  const [procParams, setProcParams] = React.useState();
   return (
     <Stack>
       <Box
@@ -35,7 +36,7 @@ const UserParameters = () => {
         display="flex"
         borderColor={"murfey.400"}
       >
-        {getForm(expType)}
+        {getForm(expType, setProcParams, "0")}
       </Box>
     </Stack>
   );

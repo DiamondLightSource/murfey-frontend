@@ -125,9 +125,6 @@ client.post = async (
   body: Record<any, any> | FormData,
   customConfig = {},
 ) => {
-  console.log(sessionStorage.getItem("token"));
-  console.log(endpoint);
-  console.log(body);
   return await client(endpoint, { ...customConfig }, body);
 };
 

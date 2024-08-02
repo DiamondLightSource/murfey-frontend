@@ -57,10 +57,6 @@ const MultigridSetup = () => {
     setSelectedDirectory(e.target.value);
 
   const handleSelection = () => {
-    console.log("starting multigrid");
-    console.log(sessid);
-    console.log(selectedDirectory);
-    console.log(skipExistingProcessing);
     if (typeof sessid !== "undefined")
       startMultigridWatcher(
         {

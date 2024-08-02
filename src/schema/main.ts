@@ -3,7 +3,260 @@
  * Do not make direct changes to the file.
  */
 
+
 export interface paths {
+  "/": {
+    /** Root */
+    get: operations["root__get"];
+  };
+  "/machine/": {
+    /** Machine Info */
+    get: operations["machine_info_machine__get"];
+  };
+  "/microscope/": {
+    /** Get Mic */
+    get: operations["get_mic_microscope__get"];
+  };
+  "/microscope_image/": {
+    /** Get Mic Image */
+    get: operations["get_mic_image_microscope_image__get"];
+  };
+  "/mag_table/": {
+    /** Get Mag Table */
+    get: operations["get_mag_table_mag_table__get"];
+    /** Add To Mag Table */
+    post: operations["add_to_mag_table_mag_table__post"];
+  };
+  "/visits/": {
+    /** All Visit Info */
+    get: operations["all_visit_info_visits__get"];
+  };
+  "/visits/{visit_name}": {
+    /** Visit Info */
+    get: operations["visit_info_visits__visit_name__get"];
+    /** Register Client To Visit */
+    post: operations["register_client_to_visit_visits__visit_name__post"];
+  };
+  "/num_movies": {
+    /** Count Number Of Movies */
+    get: operations["count_number_of_movies_num_movies_get"];
+  };
+  "/visits/{visit_name}/rsyncer": {
+    /** Register Rsyncer */
+    post: operations["register_rsyncer_visits__visit_name__rsyncer_post"];
+  };
+  "/clients/{client_id}/rsyncers": {
+    /** Get Rsyncers For Client */
+    get: operations["get_rsyncers_for_client_clients__client_id__rsyncers_get"];
+  };
+  "/session/{session_id}": {
+    /** Get Session */
+    get: operations["get_session_session__session_id__get"];
+  };
+  "/visits/{visit_name}/increment_rsync_file_count": {
+    /** Increment Rsync File Count */
+    post: operations["increment_rsync_file_count_visits__visit_name__increment_rsync_file_count_post"];
+  };
+  "/visits/{visit_name}/increment_rsync_transferred_files": {
+    /** Increment Rsync Transferred Files */
+    post: operations["increment_rsync_transferred_files_visits__visit_name__increment_rsync_transferred_files_post"];
+  };
+  "/visits/{visit_name}/increment_rsync_transferred_files_prometheus": {
+    /** Increment Rsync Transferred Files Prometheus */
+    post: operations["increment_rsync_transferred_files_prometheus_visits__visit_name__increment_rsync_transferred_files_prometheus_post"];
+  };
+  "/sessions/{session_id}/spa_processing_parameters": {
+    /** Get Spa Proc Param Details */
+    get: operations["get_spa_proc_param_details_sessions__session_id__spa_processing_parameters_get"];
+    /** Register Spa Proc Params */
+    post: operations["register_spa_proc_params_sessions__session_id__spa_processing_parameters_post"];
+  };
+  "/sessions/{session_id}/tomography_preprocessing_parameters": {
+    /** Register Tomo Preproc Params */
+    post: operations["register_tomo_preproc_params_sessions__session_id__tomography_preprocessing_parameters_post"];
+  };
+  "/clients/{client_id}/tomography_processing_parameters": {
+    /** Register Tomo Proc Params */
+    post: operations["register_tomo_proc_params_clients__client_id__tomography_processing_parameters_post"];
+  };
+  "/clients/{client_id}/spa_processing_parameters": {
+    /** Get Spa Proc Params */
+    get: operations["get_spa_proc_params_clients__client_id__spa_processing_parameters_get"];
+  };
+  "/sessions/{session_id}/grid_squares": {
+    /** Get Grid Squares */
+    get: operations["get_grid_squares_sessions__session_id__grid_squares_get"];
+  };
+  "/sessions/{session_id}/grid_square/{gsid}": {
+    /** Register Grid Square */
+    post: operations["register_grid_square_sessions__session_id__grid_square__gsid__post"];
+  };
+  "/sessions/{session_id}/foil_hole/{fh_name}": {
+    /** Get Foil Hole */
+    get: operations["get_foil_hole_sessions__session_id__foil_hole__fh_name__get"];
+  };
+  "/sessions/{session_id}/grid_square/{gs_name}/foil_hole": {
+    /** Register Foil Hole */
+    post: operations["register_foil_hole_sessions__session_id__grid_square__gs_name__foil_hole_post"];
+  };
+  "/visits/{visit_name}/tilt_series": {
+    /** Register Tilt Series */
+    post: operations["register_tilt_series_visits__visit_name__tilt_series_post"];
+  };
+  "/visits/{visit_name}/{client_id}/completed_tilt_series": {
+    /** Register Completed Tilt Series */
+    post: operations["register_completed_tilt_series_visits__visit_name___client_id__completed_tilt_series_post"];
+  };
+  "/clients/{client_id}/tilt_series/{tilt_series_tag}/tilts": {
+    /** Get Tilts */
+    get: operations["get_tilts_clients__client_id__tilt_series__tilt_series_tag__tilts_get"];
+  };
+  "/visits/{visit_name}/{client_id}/tilt": {
+    /** Register Tilt */
+    post: operations["register_tilt_visits__visit_name___client_id__tilt_post"];
+  };
+  "/visits_raw": {
+    /** Get Current Visits */
+    get: operations["get_current_visits_visits_raw_get"];
+  };
+  "/visits/{visit_name}/context": {
+    /** Register Context */
+    post: operations["register_context_visits__visit_name__context_post"];
+  };
+  "/visits/{visit_name}/files": {
+    /** Add File */
+    post: operations["add_file_visits__visit_name__files_post"];
+  };
+  "/feedback": {
+    /** Send Murfey Message */
+    post: operations["send_murfey_message_feedback_post"];
+  };
+  "/visits/{visit_name}/spa_processing": {
+    /** Request Spa Processing */
+    post: operations["request_spa_processing_visits__visit_name__spa_processing_post"];
+  };
+  "/visits/{visit_name}/{session_id}/flush_spa_processing": {
+    /** Flush Spa Processing */
+    post: operations["flush_spa_processing_visits__visit_name___session_id__flush_spa_processing_post"];
+  };
+  "/visits/{visit_name}/{session_id}/spa_preprocess": {
+    /** Request Spa Preprocessing */
+    post: operations["request_spa_preprocessing_visits__visit_name___session_id__spa_preprocess_post"];
+  };
+  "/visits/{visit_name}/{client_id}/flush_tomography_processing": {
+    /** Flush Tomography Processing */
+    post: operations["flush_tomography_processing_visits__visit_name___client_id__flush_tomography_processing_post"];
+  };
+  "/visits/{visit_name}/{client_id}/tomography_preprocess": {
+    /** Request Tomography Preprocessing */
+    post: operations["request_tomography_preprocessing_visits__visit_name___client_id__tomography_preprocess_post"];
+  };
+  "/version": {
+    /** Get Version */
+    get: operations["get_version_version_get"];
+  };
+  "/visits/{visit_name}/suggested_path": {
+    /** Suggest Path */
+    post: operations["suggest_path_visits__visit_name__suggested_path_post"];
+  };
+  "/sessions/{session_id}/data_collection_groups": {
+    /** Get Dc Groups */
+    get: operations["get_dc_groups_sessions__session_id__data_collection_groups_get"];
+  };
+  "/visits/{visit_name}/{session_id}/register_data_collection_group": {
+    /** Register Dc Group */
+    post: operations["register_dc_group_visits__visit_name___session_id__register_data_collection_group_post"];
+  };
+  "/visits/{visit_name}/{session_id}/start_data_collection": {
+    /** Start Dc */
+    post: operations["start_dc_visits__visit_name___session_id__start_data_collection_post"];
+  };
+  "/visits/{visit_name}/{session_id}/register_processing_job": {
+    /** Register Proc */
+    post: operations["register_proc_visits__visit_name___session_id__register_processing_job_post"];
+  };
+  "/visits/{visit_name}/write_connections_file": {
+    /** Write Conn File */
+    post: operations["write_conn_file_visits__visit_name__write_connections_file_post"];
+  };
+  "/visits/{visit_name}/process_gain": {
+    /** Process Gain */
+    post: operations["process_gain_visits__visit_name__process_gain_post"];
+  };
+  "/new_client_id/": {
+    /** New Client Id */
+    get: operations["new_client_id_new_client_id__get"];
+  };
+  "/clients": {
+    /** Get Clients */
+    get: operations["get_clients_clients_get"];
+  };
+  "/sessions": {
+    /** Get Sessions */
+    get: operations["get_sessions_sessions_get"];
+  };
+  "/clients/{client_id}/session": {
+    /** Link Client To Session */
+    post: operations["link_client_to_session_clients__client_id__session_post"];
+    /** Remove Session */
+    delete: operations["remove_session_clients__client_id__session_delete"];
+  };
+  "/sessions/{session_id}/rsyncers": {
+    /** Get Rsyncers For Session */
+    get: operations["get_rsyncers_for_session_sessions__session_id__rsyncers_get"];
+  };
+  "/sessions/{session_id}": {
+    /** Remove Session By Id */
+    delete: operations["remove_session_by_id_sessions__session_id__delete"];
+  };
+  "/visits/{visit_name}/eer_fractionation_file": {
+    /** Write Eer Fractionation File */
+    post: operations["write_eer_fractionation_file_visits__visit_name__eer_fractionation_file_post"];
+  };
+  "/visits/{visit_name}/monitoring/{on}": {
+    /** Change Monitoring Status */
+    post: operations["change_monitoring_status_visits__visit_name__monitoring__on__post"];
+  };
+  "/visits/{visit_name}/upstream_visits": {
+    /** Find Upstream Visits */
+    get: operations["find_upstream_visits_visits__visit_name__upstream_visits_get"];
+  };
+  "/visits/{visit_name}/upstream_tiff_paths": {
+    /** Gather Upstream Tiffs */
+    get: operations["gather_upstream_tiffs_visits__visit_name__upstream_tiff_paths_get"];
+  };
+  "/visits/{visit_name}/upstream_tiff/{tiff_path}": {
+    /** Get Tiff */
+    get: operations["get_tiff_visits__visit_name__upstream_tiff__tiff_path__get"];
+  };
+  "/failed_client_post": {
+    /** Failed Client Post */
+    post: operations["failed_client_post_failed_client_post_post"];
+  };
+  "/possible_gain_references": {
+    /** Get Possible Gain References */
+    get: operations["get_possible_gain_references_possible_gain_references_get"];
+  };
+  "/visits/{visit}/session/{name}": {
+    /** Create Session */
+    post: operations["create_session_visits__visit__session__name__post"];
+  };
+  "/activate_instrument_server": {
+    /** Activate Instrument Server */
+    post: operations["activate_instrument_server_activate_instrument_server_post"];
+  };
+  "/instrument_name/": {
+    /** Get Instrument Name */
+    get: operations["get_instrument_name_instrument_name__get"];
+  };
+  "/sessions/{session_id}/multigrid_watcher": {
+    /** Start Multigrid Watcher */
+    post: operations["start_multigrid_watcher_sessions__session_id__multigrid_watcher_post"];
+  };
+  "/sessions/{session_id}/provided_processing_parameters": {
+    /** Pass Proc Params To Instrument Server */
+    post: operations["pass_proc_params_to_instrument_server_sessions__session_id__provided_processing_parameters_post"];
+  };
   "/bootstrap/": {
     /**
      * Get Bootstrap Instructions
@@ -35,7 +288,7 @@ export interface paths {
   "/cygwin/setup-x86_64.exe": {
     /**
      * Get Cygwin Setup
-     * @description Obtain and past though a Cygwin installer from an official source.
+     * @description Obtain and pass through a Cygwin installer from an official source.
      * This is used during client bootstrapping and can download and install the
      * Cygwin distribution that then remains on the client machines.
      */
@@ -58,9 +311,8 @@ export interface paths {
   "/pypi/{package}/": {
     /**
      * Get Pypi Package Downloads List
-     * @description Obtain list of all package downloads from PyPI via the simple API (PEP 503),
-     * and rewrite all download URLs to point to this server,
-     * underneath the current directory.
+     * @description Obtain list of all package downloads from PyPI via the simple API (PEP 503), and
+     * rewrite all download URLs to point to this server, under the current directory.
      */
     get: operations["get_pypi_package_downloads_list_pypi__package___get"];
   };
@@ -71,201 +323,33 @@ export interface paths {
      */
     get: operations["get_pypi_file_pypi__package___filename__get"];
   };
+  "/plugins/{package}": {
+    /** Get Plugin Wheel */
+    get: operations["get_plugin_wheel_plugins__package__get"];
+  };
+  "/sessions/{session_id}/lif_to_tiff": {
+    /** Lif To Tiff */
+    post: operations["lif_to_tiff_sessions__session_id__lif_to_tiff_post"];
+  };
+  "/token": {
+    /** Generate Token */
+    post: operations["generate_token_token_post"];
+  };
+  "/validate_token": {
+    /** Simple Token Validation */
+    get: operations["simple_token_validation_validate_token_get"];
+  };
+  "/display/microscope_image/": {
+    /** Get Mic Image */
+    get: operations["get_mic_image_display_microscope_image__get"];
+  };
   "/ws/test/{client_id}": {
     /** Close Ws Connection */
     delete: operations["close_ws_connection_ws_test__client_id__delete"];
   };
-  "/instrument_server": {
-    /** Check Instrument Server */
-    get: operations["check_instrument_server_instrument_server_get"];
-  };
-  "/": {
-    /** Root */
-    get: operations["root__get"];
-  };
-  "/machine/": {
-    /** Machine Info */
-    get: operations["machine_info_machine__get"];
-  };
-  "/microscope/": {
-    /** Get Mic */
-    get: operations["get_mic_microscope__get"];
-  };
-  "/microscope_image/": {
-    /** Get Mic Image */
-    get: operations["get_mic_image_microscope_image__get"];
-  };
-  "/instrument_name/": {
-    /** Get Instrument Name */
-    get: operations["get_instrument_name_instrument_name__get"];
-  };
-  "/mag_table/": {
-    /** Get Mag Table */
-    get: operations["get_mag_table_mag_table__get"];
-    /** Add To Mag Table */
-    post: operations["add_to_mag_table_mag_table__post"];
-  };
-  "/visits/": {
-    /** All Visit Info */
-    get: operations["all_visit_info_visits__get"];
-  };
-  "/visits/{visit_name}": {
-    /** Visit Info */
-    get: operations["visit_info_visits__visit_name__get"];
-    /** Register Client To Visit */
-    post: operations["register_client_to_visit_visits__visit_name__post"];
-  };
-  "/visits/{visit_name}/rsyncer": {
-    /** Register Rsyncer */
-    post: operations["register_rsyncer_visits__visit_name__rsyncer_post"];
-  };
-  "/rsyncer_stopped": {
-    /** Rsyncer Stopped */
-    post: operations["rsyncer_stopped_rsyncer_stopped_post"];
-  };
-  "/clients/{client_id}/rsyncers": {
-    /** Get Rsyncers For Client */
-    get: operations["get_rsyncers_for_client_clients__client_id__rsyncers_get"];
-  };
-  "/sessions/{session_id}/rsyncers": {
-    /** Get Rsyncers For Session */
-    get: operations["get_rsyncers_for_session_sessions__session_id__rsyncers_get"];
-  };
-  "/visits/{visit_name}/increment_rsync_file_count": {
-    /** Increment Rsync File Count */
-    post: operations["increment_rsync_file_count_visits__visit_name__increment_rsync_file_count_post"];
-  };
-  "/visits/{visit_name}/increment_rsync_transferred_files": {
-    /** Increment Rsync Transferred Files */
-    post: operations["increment_rsync_transferred_files_visits__visit_name__increment_rsync_transferred_files_post"];
-  };
-  "/sessions/{session_id}/spa_processing_parameters": {
-    /** Get Spa Proc Param Details */
-    get: operations["get_spa_proc_param_details_sessions__session_id__spa_processing_parameters_get"];
-    /** Register Spa Proc Params */
-    post: operations["register_spa_proc_params_sessions__session_id__spa_processing_parameters_post"];
-  };
-  "/visits/{visit_name}/tilt_series": {
-    /** Register Tilt Series */
-    post: operations["register_tilt_series_visits__visit_name__tilt_series_post"];
-  };
-  "/visits/{visit_name}/{client_id}/completed_tilt_series": {
-    /** Register Completed Tilt Series */
-    post: operations["register_completed_tilt_series_visits__visit_name___client_id__completed_tilt_series_post"];
-  };
-  "/visits/{visit_name}/tilt": {
-    /** Register Tilt */
-    post: operations["register_tilt_visits__visit_name__tilt_post"];
-  };
-  "/visits_raw": {
-    /** Get Current Visits */
-    get: operations["get_current_visits_visits_raw_get"];
-  };
-  "/visits/{visit_name}/context": {
-    /** Register Context */
-    post: operations["register_context_visits__visit_name__context_post"];
-  };
-  "/visits/{visit_name}/files": {
-    /** Add File */
-    post: operations["add_file_visits__visit_name__files_post"];
-  };
-  "/feedback": {
-    /** Send Murfey Message */
-    post: operations["send_murfey_message_feedback_post"];
-  };
-  "/visits/{visit_name}/spa_processing": {
-    /** Request Spa Processing */
-    post: operations["request_spa_processing_visits__visit_name__spa_processing_post"];
-  };
-  "/visits/{visit_name}/{session_id}/flush_spa_processing": {
-    /** Flush Spa Processing */
-    post: operations["flush_spa_processing_visits__visit_name___session_id__flush_spa_processing_post"];
-  };
-  "/visits/{visit_name}/{session_id}/spa_preprocess": {
-    /** Request Spa Preprocessing */
-    post: operations["request_spa_preprocessing_visits__visit_name___session_id__spa_preprocess_post"];
-  };
-  "/visits/{visit_name}/tomography_preprocess": {
-    /** Request Tomography Preprocessing */
-    post: operations["request_tomography_preprocessing_visits__visit_name__tomography_preprocess_post"];
-  };
-  "/visits/{visit_name}/align": {
-    /** Request Tilt Series Alignment */
-    post: operations["request_tilt_series_alignment_visits__visit_name__align_post"];
-  };
-  "/version": {
-    /** Get Version */
-    get: operations["get_version_version_get"];
-  };
-  "/visits/{visit_name}/suggested_path": {
-    /** Suggest Path */
-    post: operations["suggest_path_visits__visit_name__suggested_path_post"];
-  };
-  "/visits/{visit_name}/{session_id}/register_data_collection_group": {
-    /** Register Dc Group */
-    post: operations["register_dc_group_visits__visit_name___session_id__register_data_collection_group_post"];
-  };
-  "/visits/{visit_name}/{session_id}/start_data_collection": {
-    /** Start Dc */
-    post: operations["start_dc_visits__visit_name___session_id__start_data_collection_post"];
-  };
-  "/visits/{visit_name}/{session_id}/register_processing_job": {
-    /** Register Proc */
-    post: operations["register_proc_visits__visit_name___session_id__register_processing_job_post"];
-  };
-  "/visits/{visit_name}/write_connections_file": {
-    /** Write Conn File */
-    post: operations["write_conn_file_visits__visit_name__write_connections_file_post"];
-  };
-  "/visits/{visit_name}/process_gain": {
-    /** Process Gain */
-    post: operations["process_gain_visits__visit_name__process_gain_post"];
-  };
-  "/possible_gain_references": {
-    /** Get Possible Gain References */
-    get: operations["get_possible_gain_references_possible_gain_references_get"];
-  };
-  "/new_client_id/": {
-    /** New Client Id */
-    get: operations["new_client_id_new_client_id__get"];
-  };
-  "/clients": {
-    /** Get Clients */
-    get: operations["get_clients_clients_get"];
-  };
-  "/sessions": {
-    /** Get Sessions */
-    get: operations["get_sessions_sessions_get"];
-  };
-  "/session/{session_id}": {
-    /** Get Session */
-    get: operations["get_session_session__session_id__get"];
-  };
-  "/clients/{client_id}/session": {
-    /** Link Client To Session */
-    post: operations["link_client_to_session_clients__client_id__session_post"];
-    /** Remove Session */
-    delete: operations["remove_session_clients__client_id__session_delete"];
-  };
-  "/visits/{visit}/session/{name}": {
-    /** Create Session */
-    post: operations["create_session_visits__visit__session__name__post"];
-  };
-  "/sessions/{session_id}": {
-    /** Remove Session By Id */
-    delete: operations["remove_session_by_id_sessions__session_id__delete"];
-  };
-  "/visits/{visit_name}/eer_fractionation_file": {
-    /** Write Eer Fractionation File */
-    post: operations["write_eer_fractionation_file_visits__visit_name__eer_fractionation_file_post"];
-  };
-  "/sessions/{session_id}/multigrid_watcher": {
-    /** Start Multigrid Watcher */
-    post: operations["start_multigrid_watcher_sessions__session_id__multigrid_watcher_post"];
-  };
-  "/sessions/{session_id}/stop_rsyncer": {
-    /** Stop Rsyncer */
-    post: operations["stop_rsyncer_sessions__session_id__stop_rsyncer_post"];
+  "/visits/{visit_name}/smartem_atlas/": {
+    /** Request Smartem Atlas Analysis */
+    post: operations["request_smartem_atlas_analysis_visits__visit_name__smartem_atlas__post"];
   };
 }
 
@@ -273,6 +357,24 @@ export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
+    /** Body_generate_token_token_post */
+    Body_generate_token_token_post: {
+      /** Grant Type */
+      grant_type?: string;
+      /** Username */
+      username: string;
+      /** Password */
+      password: string;
+      /**
+       * Scope
+       * @default
+       */
+      scope?: string;
+      /** Client Id */
+      client_id?: string;
+      /** Client Secret */
+      client_secret?: string;
+    };
     /** ClientEnvironment */
     ClientEnvironment: {
       /** Client Id */
@@ -291,13 +393,6 @@ export interface components {
     ClientInfo: {
       /** Id */
       id: number;
-    };
-    /** CompletedTiltSeries */
-    CompletedTiltSeries: {
-      /** Tilt Series */
-      tilt_series: string[];
-      /** Rsync Source */
-      rsync_source: string;
     };
     /** ConnectionFileParameters */
     ConnectionFileParameters: {
@@ -321,6 +416,13 @@ export interface components {
       experiment_type_id: number;
       /** Tag */
       tag: string;
+      /**
+       * Atlas
+       * @default
+       */
+      atlas?: string;
+      /** Sample */
+      sample?: number;
     };
     /** DCParameters */
     DCParameters: {
@@ -359,6 +461,11 @@ export interface components {
        * @default false
        */
       phase_plate?: boolean;
+      /**
+       * Data Collection Tag
+       * @default
+       */
+      data_collection_tag?: string;
     };
     /** DataCollection */
     DataCollection: {
@@ -377,6 +484,13 @@ export interface components {
       session_id: number;
       /** Tag */
       tag: string;
+      /**
+       * Atlas
+       * @default
+       */
+      atlas?: string;
+      /** Sample */
+      sample?: number;
     };
     /** File */
     File: {
@@ -389,14 +503,49 @@ export interface components {
       /** Timestamp */
       timestamp: number;
     };
+    /** FoilHoleParameters */
+    FoilHoleParameters: {
+      /** Tag */
+      tag: string;
+      /** Name */
+      name: number;
+      /** X Location */
+      x_location?: number;
+      /** Y Location */
+      y_location?: number;
+      /** X Stage Position */
+      x_stage_position?: number;
+      /** Y Stage Position */
+      y_stage_position?: number;
+      /** Readout Area X */
+      readout_area_x?: number;
+      /** Readout Area Y */
+      readout_area_y?: number;
+      /** Thumbnail Size X */
+      thumbnail_size_x?: number;
+      /** Thumbnail Size Y */
+      thumbnail_size_y?: number;
+      /** Pixel Size */
+      pixel_size?: number;
+      /**
+       * Image
+       * @default
+       */
+      image?: string;
+    };
     /** FractionationParameters */
     FractionationParameters: {
-      /** Num Frames */
-      num_frames: number;
       /** Fractionation */
       fractionation: number;
       /** Dose Per Frame */
       dose_per_frame: number;
+      /**
+       * Num Frames
+       * @default 0
+       */
+      num_frames?: number;
+      /** Eer Path */
+      eer_path?: string;
       /**
        * Fractionation File Name
        * @default eer_fractionation.txt
@@ -415,11 +564,61 @@ export interface components {
        * @default true
        */
       rescale?: boolean;
+      /**
+       * Eer
+       * @default false
+       */
+      eer?: boolean;
+    };
+    /** GridSquareParameters */
+    GridSquareParameters: {
+      /** Tag */
+      tag: string;
+      /** X Location */
+      x_location?: number;
+      /** Y Location */
+      y_location?: number;
+      /** X Stage Position */
+      x_stage_position?: number;
+      /** Y Stage Position */
+      y_stage_position?: number;
+      /** Readout Area X */
+      readout_area_x?: number;
+      /** Readout Area Y */
+      readout_area_y?: number;
+      /** Thumbnail Size X */
+      thumbnail_size_x?: number;
+      /** Thumbnail Size Y */
+      thumbnail_size_y?: number;
+      /** Pixel Size */
+      pixel_size?: number;
+      /**
+       * Image
+       * @default
+       */
+      image?: string;
     };
     /** HTTPValidationError */
     HTTPValidationError: {
       /** Detail */
       detail?: components["schemas"]["ValidationError"][];
+    };
+    /** LifFileInfo */
+    LifFileInfo: {
+      /**
+       * Name
+       * Format: path
+       */
+      name: string;
+      /** Size */
+      size: number;
+      /** Timestamp */
+      timestamp: number;
+      /**
+       * Description
+       * @default
+       */
+      description?: string;
     };
     /** MachineConfig */
     MachineConfig: {
@@ -442,11 +641,18 @@ export interface components {
       rsync_basepath: string;
       /** Murfey Db Credentials */
       murfey_db_credentials: string;
+      /** Crypto Key */
+      crypto_key: string;
       /**
        * Display Name
        * @default
        */
       display_name?: string;
+      /**
+       * Instrument Name
+       * @default
+       */
+      instrument_name?: string;
       /**
        * Image Path
        * Format: path
@@ -467,6 +673,13 @@ export interface components {
         [key: string]: string;
       };
       /**
+       * External Executables Eer
+       * @default {}
+       */
+      external_executables_eer?: {
+        [key: string]: string;
+      };
+      /**
        * External Environment
        * @default {}
        */
@@ -480,11 +693,18 @@ export interface components {
       rsync_module?: string;
       /**
        * Create Directories
-       * @default [
-       *   "atlas"
-       * ]
+       * @default {
+       *   "atlas": "atlas"
+       * }
        */
-      create_directories?: string[];
+      create_directories?: {
+        [key: string]: string;
+      };
+      /**
+       * Analyse Created Directories
+       * @default []
+       */
+      analyse_created_directories?: string[];
       /**
        * Gain Reference Directory
        * Format: path
@@ -505,6 +725,11 @@ export interface components {
        * @default murfey_feedback
        */
       feedback_queue?: string;
+      /**
+       * Node Creator Queue
+       * @default node_creator
+       */
+      node_creator_queue?: string;
       /**
        * Superres
        * @default false
@@ -550,15 +775,56 @@ export interface components {
        */
       processed_extra_directory?: string;
       /**
-       * Instrument Name
-       * @default
+       * Plugin Packages
+       * @default {}
        */
-      instrument_name?: string;
+      plugin_packages?: {
+        [key: string]: string;
+      };
       /**
-       * Instrument Server
+       * Software Settings Output Directories
+       * @default {}
+       */
+      software_settings_output_directories?: {
+        [key: string]: string[];
+      };
+      /**
+       * Upstream Data Directories
+       * @default []
+       */
+      upstream_data_directories?: string[];
+      /**
+       * Upstream Data Download Directory
+       * Format: path
+       */
+      upstream_data_download_directory?: string;
+      /**
+       * Upstream Data Tiff Locations
+       * @default [
+       *   "processed"
+       * ]
+       */
+      upstream_data_tiff_locations?: string[];
+      /**
+       * Failure Queue
        * @default
        */
-      instrument_server?: string;
+      failure_queue?: string;
+      /**
+       * Auth Key
+       * @default
+       */
+      auth_key?: string;
+      /**
+       * Auth Algorithm
+       * @default
+       */
+      auth_algorithm?: string;
+      /**
+       * Instrument Server Url
+       * @default http://localhost:8001
+       */
+      instrument_server_url?: string;
     };
     /** MagnificationLookup */
     MagnificationLookup: {
@@ -580,30 +846,66 @@ export interface components {
        */
       skip_existing_processing?: boolean;
     };
+    /** PostInfo */
+    PostInfo: {
+      /** Url */
+      url: string;
+      /** Data */
+      data: Record<string, never>;
+    };
+    /** PreprocessingParametersTomo */
+    PreprocessingParametersTomo: {
+      /** Dose Per Frame */
+      dose_per_frame: number;
+      /** Gain Ref */
+      gain_ref?: string;
+      /** Experiment Type */
+      experiment_type: string;
+      /** Voltage */
+      voltage: number;
+      /** Image Size X */
+      image_size_x: number;
+      /** Image Size Y */
+      image_size_y: number;
+      /** Pixel Size On Image */
+      pixel_size_on_image: string;
+      /** Motion Corr Binning */
+      motion_corr_binning: number;
+      /** Manual Tilt Offset */
+      manual_tilt_offset: number;
+      /** File Extension */
+      file_extension: string;
+      /** Tag */
+      tag: string;
+      /** Tilt Series Tag */
+      tilt_series_tag: string;
+      /** Eer Fractionation File */
+      eer_fractionation_file?: string;
+      /** Eer Fractionation */
+      eer_fractionation: number;
+    };
     /** ProcessFile */
     ProcessFile: {
       /** Path */
       path: string;
       /** Description */
       description: string;
-      /** Size */
-      size: number;
-      /** Timestamp */
-      timestamp: number;
-      /** Processing Job */
-      processing_job?: number;
+      /** Tag */
+      tag: string;
       /** Data Collection Id */
       data_collection_id?: number;
       /** Image Number */
       image_number: number;
-      /** Mc Uuid */
-      mc_uuid: number;
-      /** Autoproc Program Id */
-      autoproc_program_id?: number;
       /** Pixel Size */
       pixel_size: number;
       /** Dose Per Frame */
       dose_per_frame: number;
+      /** Processing Job */
+      processing_job?: number;
+      /** Autoproc Program Id */
+      autoproc_program_id?: number;
+      /** Mc Uuid */
+      mc_uuid?: number;
       /**
        * Voltage
        * @default 300
@@ -623,6 +925,8 @@ export interface components {
       extract_downscale?: number;
       /** Eer Fractionation File */
       eer_fractionation_file?: string;
+      /** Group Tag */
+      group_tag?: string;
     };
     /** ProcessingDetails */
     ProcessingDetails: {
@@ -716,6 +1020,27 @@ export interface components {
        */
       phase_plate?: boolean;
     };
+    /** ProcessingParametersTomo */
+    ProcessingParametersTomo: {
+      /** Manual Tilt Offset */
+      manual_tilt_offset: number;
+      /** Tag */
+      tag: string;
+      /** Tilt Series Tag */
+      tilt_series_tag: string;
+    };
+    /** ProvidedProcessingParameters */
+    ProvidedProcessingParameters: {
+      /** Dose Per Frame */
+      dose_per_frame: number;
+      /**
+       * Extract Downscale
+       * @default true
+       */
+      extract_downscale?: boolean;
+      /** Particle Diameter */
+      particle_diameter?: number;
+    };
     /** RegistrationMessage */
     RegistrationMessage: {
       /** Registration */
@@ -754,13 +1079,6 @@ export interface components {
        * @default false
        */
       transferring?: boolean;
-    };
-    /** RsyncerBasicInfo */
-    RsyncerBasicInfo: {
-      /** Source */
-      source: string;
-      /** Session Id */
-      session_id: number;
     };
     /** RsyncerInfo */
     RsyncerInfo: {
@@ -801,11 +1119,6 @@ export interface components {
        */
       tag?: string;
     };
-    /** RsyncerSource */
-    RsyncerSource: {
-      /** Source */
-      source: string;
-    };
     /** SPAFeedbackParameters */
     SPAFeedbackParameters: {
       /** Pj Id */
@@ -830,6 +1143,11 @@ export interface components {
        * @default false
        */
       hold_class3d?: boolean;
+      /**
+       * Hold Refine
+       * @default false
+       */
+      hold_refine?: boolean;
       /** Class Selection Score */
       class_selection_score: number;
       /** Star Combination Job */
@@ -859,6 +1177,8 @@ export interface components {
       image_number: number;
       /** Autoproc Program Id */
       autoproc_program_id?: number;
+      /** Foil Hole Id */
+      foil_hole_id?: number;
       /** Pixel Size */
       pixel_size?: number;
       /** Dose Per Frame */
@@ -969,6 +1289,34 @@ export interface components {
        */
       rescale?: boolean;
     };
+    /** SmartEMAtlasRequest */
+    SmartEMAtlasRequest: {
+      /**
+       * Atlas Path
+       * Format: path
+       */
+      atlas_path: string;
+      /**
+       * Output Dir
+       * Format: path
+       */
+      output_dir: string;
+      /**
+       * Num Preds
+       * @default 15
+       */
+      num_preds?: number;
+      /**
+       * Cpus
+       * @default 4
+       */
+      cpus?: number;
+    };
+    /** Source */
+    Source: {
+      /** Rsync Source */
+      rsync_source: string;
+    };
     /** SuggestedPathParameters */
     SuggestedPathParameters: {
       /**
@@ -981,6 +1329,16 @@ export interface components {
        * @default false
        */
       touch?: boolean;
+      /**
+       * Extra Directory
+       * @default
+       */
+      extra_directory?: string;
+    };
+    /** Tag */
+    Tag: {
+      /** Tag */
+      tag: string;
     };
     /** TiltInfo */
     TiltInfo: {
@@ -988,38 +1346,33 @@ export interface components {
       tilt_series_tag: string;
       /** Movie Path */
       movie_path: string;
-      /** Rsync Source */
-      rsync_source: string;
+      /** Source */
+      source: string;
+    };
+    /** TiltSeriesGroupInfo */
+    TiltSeriesGroupInfo: {
+      /** Tags */
+      tags: string[];
+      /** Source */
+      source: string;
+      /** Tilt Series Lengths */
+      tilt_series_lengths: number[];
     };
     /** TiltSeriesInfo */
     TiltSeriesInfo: {
-      /** Client Id */
-      client_id: number;
+      /** Session Id */
+      session_id: number;
       /** Tag */
       tag: string;
-      /** Rsync Source */
-      rsync_source: string;
+      /** Source */
+      source: string;
     };
-    /** TiltSeriesProcessingDetails */
-    TiltSeriesProcessingDetails: {
-      /** Name */
-      name: string;
-      /** File Tilt List */
-      file_tilt_list: string;
-      /** Dcid */
-      dcid: number;
-      /** Processing Job */
-      processing_job: number;
-      /** Autoproc Program Id */
-      autoproc_program_id: number;
-      /** Motion Corrected Path */
-      motion_corrected_path: string;
-      /** Movie Id */
-      movie_id: number;
-      /** Pixel Size */
-      pixel_size: number;
-      /** Manual Tilt Offset */
-      manual_tilt_offset: number;
+    /** Token */
+    Token: {
+      /** Access Token */
+      access_token: string;
+      /** Token Type */
+      token_type: string;
     };
     /** ValidationError */
     ValidationError: {
@@ -1064,182 +1417,7 @@ export type $defs = Record<string, never>;
 export type external = Record<string, never>;
 
 export interface operations {
-  /**
-   * Get Bootstrap Instructions
-   * @description Return a website containing instructions for installing the Murfey client on a
-   * machine with no internet access.
-   */
-  get_bootstrap_instructions_bootstrap__get: {
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          "text/html": string;
-        };
-      };
-    };
-  };
-  /**
-   * Get Pip Wheel
-   * @description Return a static version of pip. This does not need to be the newest or best,
-   * but has to be compatible with all supported Python versions.
-   * This is only used during bootstrapping by the client to identify and then
-   * download the actually newest appropriate version of pip.
-   */
-  get_pip_wheel_bootstrap_pip_whl_get: {
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: never;
-      };
-    };
-  };
-  /**
-   * Get Murfey Wheel
-   * @description Return a wheel file containing the latest release version of Murfey. We should
-   * not have to worry about the exact Python compatibility here, as long as
-   * murfey.bootstrap is compatible with all relevant versions of Python.
-   * This also ignores yanked releases, which again should be fine.
-   */
-  get_murfey_wheel_bootstrap_murfey_whl_get: {
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: never;
-      };
-    };
-  };
-  /**
-   * Get Cygwin Setup
-   * @description Obtain and past though a Cygwin installer from an official source.
-   * This is used during client bootstrapping and can download and install the
-   * Cygwin distribution that then remains on the client machines.
-   */
-  get_cygwin_setup_cygwin_setup_x86_64_exe_get: {
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: never;
-      };
-    };
-  };
-  /**
-   * Parse Cygwin Request
-   * @description Forward a Cygwin setup request to an official mirror.
-   */
-  parse_cygwin_request_cygwin__request_path__get: {
-    parameters: {
-      path: {
-        request_path: string;
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: never;
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  /**
-   * Get Pypi Index
-   * @description Obtain list of all PyPI packages via the simple API (PEP 503).
-   */
-  get_pypi_index_pypi__get: {
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: never;
-      };
-    };
-  };
-  /**
-   * Get Pypi Package Downloads List
-   * @description Obtain list of all package downloads from PyPI via the simple API (PEP 503),
-   * and rewrite all download URLs to point to this server,
-   * underneath the current directory.
-   */
-  get_pypi_package_downloads_list_pypi__package___get: {
-    parameters: {
-      path: {
-        package: string;
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: never;
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  /**
-   * Get Pypi File
-   * @description Obtain and pass through a specific download for a PyPI package.
-   */
-  get_pypi_file_pypi__package___filename__get: {
-    parameters: {
-      path: {
-        package: string;
-        filename: string;
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: never;
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  /** Close Ws Connection */
-  close_ws_connection_ws_test__client_id__delete: {
-    parameters: {
-      path: {
-        client_id: number;
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  /** Check Instrument Server */
-  check_instrument_server_instrument_server_get: {
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          "application/json": unknown;
-        };
-      };
-    };
-  };
+
   /** Root */
   root__get: {
     responses: {
@@ -1275,17 +1453,6 @@ export interface operations {
   };
   /** Get Mic Image */
   get_mic_image_microscope_image__get: {
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          "application/json": unknown;
-        };
-      };
-    };
-  };
-  /** Get Instrument Name */
-  get_instrument_name_instrument_name__get: {
     responses: {
       /** @description Successful Response */
       200: {
@@ -1388,6 +1555,19 @@ export interface operations {
       };
     };
   };
+  /** Count Number Of Movies */
+  count_number_of_movies_num_movies_get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": {
+            [key: string]: number;
+          };
+        };
+      };
+    };
+  };
   /** Register Rsyncer */
   register_rsyncer_visits__visit_name__rsyncer_post: {
     parameters: {
@@ -1398,28 +1578,6 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": components["schemas"]["RsyncerInfo"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  /** Rsyncer Stopped */
-  rsyncer_stopped_rsyncer_stopped_post: {
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["RsyncerBasicInfo"];
       };
     };
     responses: {
@@ -1448,7 +1606,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["RsyncInstance"][];
+          "application/json": unknown;
         };
       };
       /** @description Validation Error */
@@ -1459,8 +1617,8 @@ export interface operations {
       };
     };
   };
-  /** Get Rsyncers For Session */
-  get_rsyncers_for_session_sessions__session_id__rsyncers_get: {
+  /** Get Session */
+  get_session_session__session_id__get: {
     parameters: {
       path: {
         session_id: number;
@@ -1470,7 +1628,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["RsyncInstance"][];
+          "application/json": components["schemas"]["SessionClients"];
         };
       };
       /** @description Validation Error */
@@ -1510,6 +1668,33 @@ export interface operations {
   };
   /** Increment Rsync Transferred Files */
   increment_rsync_transferred_files_visits__visit_name__increment_rsync_transferred_files_post: {
+    parameters: {
+      path: {
+        visit_name: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RsyncerInfo"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Increment Rsync Transferred Files Prometheus */
+  increment_rsync_transferred_files_prometheus_visits__visit_name__increment_rsync_transferred_files_prometheus_post: {
     parameters: {
       path: {
         visit_name: string;
@@ -1584,6 +1769,185 @@ export interface operations {
       };
     };
   };
+  /** Register Tomo Preproc Params */
+  register_tomo_preproc_params_sessions__session_id__tomography_preprocessing_parameters_post: {
+    parameters: {
+      path: {
+        session_id: number;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PreprocessingParametersTomo"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Register Tomo Proc Params */
+  register_tomo_proc_params_clients__client_id__tomography_processing_parameters_post: {
+    parameters: {
+      path: {
+        client_id: number;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ProcessingParametersTomo"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Get Spa Proc Params */
+  get_spa_proc_params_clients__client_id__spa_processing_parameters_get: {
+    parameters: {
+      path: {
+        client_id: number;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": Record<string, never>[];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Get Grid Squares */
+  get_grid_squares_sessions__session_id__grid_squares_get: {
+    parameters: {
+      path: {
+        session_id: number;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Register Grid Square */
+  register_grid_square_sessions__session_id__grid_square__gsid__post: {
+    parameters: {
+      path: {
+        session_id: number;
+        gsid: number;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["GridSquareParameters"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Get Foil Hole */
+  get_foil_hole_sessions__session_id__foil_hole__fh_name__get: {
+    parameters: {
+      path: {
+        session_id: number;
+        fh_name: number;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": {
+            [key: string]: number;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Register Foil Hole */
+  register_foil_hole_sessions__session_id__grid_square__gs_name__foil_hole_post: {
+    parameters: {
+      path: {
+        session_id: number;
+        gs_name: number;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["FoilHoleParameters"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   /** Register Tilt Series */
   register_tilt_series_visits__visit_name__tilt_series_post: {
     parameters: {
@@ -1621,7 +1985,30 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["CompletedTiltSeries"];
+        "application/json": components["schemas"]["TiltSeriesGroupInfo"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Get Tilts */
+  get_tilts_clients__client_id__tilt_series__tilt_series_tag__tilts_get: {
+    parameters: {
+      path: {
+        client_id: number;
+        tilt_series_tag: string;
       };
     };
     responses: {
@@ -1640,10 +2027,11 @@ export interface operations {
     };
   };
   /** Register Tilt */
-  register_tilt_visits__visit_name__tilt_post: {
+  register_tilt_visits__visit_name___client_id__tilt_post: {
     parameters: {
       path: {
         visit_name: string;
+        client_id: number;
       };
     };
     requestBody: {
@@ -1778,6 +2166,11 @@ export interface operations {
         session_id: number;
       };
     };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Tag"];
+      };
+    };
     responses: {
       /** @description Successful Response */
       200: {
@@ -1821,16 +2214,17 @@ export interface operations {
       };
     };
   };
-  /** Request Tomography Preprocessing */
-  request_tomography_preprocessing_visits__visit_name__tomography_preprocess_post: {
+  /** Flush Tomography Processing */
+  flush_tomography_processing_visits__visit_name___client_id__flush_tomography_processing_post: {
     parameters: {
       path: {
         visit_name: string;
+        client_id: number;
       };
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["ProcessFile"];
+        "application/json": components["schemas"]["Source"];
       };
     };
     responses: {
@@ -1848,11 +2242,17 @@ export interface operations {
       };
     };
   };
-  /** Request Tilt Series Alignment */
-  request_tilt_series_alignment_visits__visit_name__align_post: {
+  /** Request Tomography Preprocessing */
+  request_tomography_preprocessing_visits__visit_name___client_id__tomography_preprocess_post: {
+    parameters: {
+      path: {
+        visit_name: string;
+        client_id: number;
+      };
+    };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["TiltSeriesProcessingDetails"];
+        "application/json": components["schemas"]["ProcessFile"];
       };
     };
     responses: {
@@ -1919,6 +2319,28 @@ export interface operations {
       };
     };
   };
+  /** Get Dc Groups */
+  get_dc_groups_sessions__session_id__data_collection_groups_get: {
+    parameters: {
+      path: {
+        session_id: number;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   /** Register Dc Group */
   register_dc_group_visits__visit_name___session_id__register_data_collection_group_post: {
     parameters: {
@@ -1951,7 +2373,7 @@ export interface operations {
   start_dc_visits__visit_name___session_id__start_data_collection_post: {
     parameters: {
       path: {
-        visit_name: unknown;
+        visit_name: string;
         session_id: number;
       };
     };
@@ -1964,7 +2386,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
+          "application/json": components["schemas"]["DCParameters"];
         };
       };
       /** @description Validation Error */
@@ -2057,17 +2479,6 @@ export interface operations {
       };
     };
   };
-  /** Get Possible Gain References */
-  get_possible_gain_references_possible_gain_references_get: {
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          "application/json": components["schemas"]["File"][];
-        };
-      };
-    };
-  };
   /** New Client Id */
   new_client_id_new_client_id__get: {
     responses: {
@@ -2085,7 +2496,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["ClientEnvironment"][];
+          "application/json": unknown;
         };
       };
     };
@@ -2096,29 +2507,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["SessionClients"][];
-        };
-      };
-    };
-  };
-  /** Get Session */
-  get_session_session__session_id__get: {
-    parameters: {
-      path: {
-        session_id: number;
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          "application/json": components["schemas"]["SessionClients"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
+          "application/json": unknown;
         };
       };
     };
@@ -2172,19 +2561,18 @@ export interface operations {
       };
     };
   };
-  /** Create Session */
-  create_session_visits__visit__session__name__post: {
+  /** Get Rsyncers For Session */
+  get_rsyncers_for_session_sessions__session_id__rsyncers_get: {
     parameters: {
       path: {
-        visit: string;
-        name: string;
+        session_id: number;
       };
     };
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": number;
+          "application/json": components["schemas"]["RsyncInstance"][];
         };
       };
       /** @description Validation Error */
@@ -2244,6 +2632,174 @@ export interface operations {
       };
     };
   };
+  /** Change Monitoring Status */
+  change_monitoring_status_visits__visit_name__monitoring__on__post: {
+    parameters: {
+      path: {
+        visit_name: string;
+        on: number;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Find Upstream Visits */
+  find_upstream_visits_visits__visit_name__upstream_visits_get: {
+    parameters: {
+      path: {
+        visit_name: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Gather Upstream Tiffs */
+  gather_upstream_tiffs_visits__visit_name__upstream_tiff_paths_get: {
+    parameters: {
+      path: {
+        visit_name: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Get Tiff */
+  get_tiff_visits__visit_name__upstream_tiff__tiff_path__get: {
+    parameters: {
+      path: {
+        visit_name: string;
+        tiff_path: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Failed Client Post */
+  failed_client_post_failed_client_post_post: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PostInfo"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Get Possible Gain References */
+  get_possible_gain_references_possible_gain_references_get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["File"][];
+        };
+      };
+    };
+  };
+  /** Create Session */
+  create_session_visits__visit__session__name__post: {
+    parameters: {
+      path: {
+        visit: string;
+        name: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": number;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Activate Instrument Server */
+  activate_instrument_server_activate_instrument_server_post: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+    };
+  };
+  /** Get Instrument Name */
+  get_instrument_name_instrument_name__get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+    };
+  };
   /** Start Multigrid Watcher */
   start_multigrid_watcher_sessions__session_id__multigrid_watcher_post: {
     parameters: {
@@ -2260,7 +2816,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": boolean;
+          "application/json": unknown;
         };
       };
       /** @description Validation Error */
@@ -2271,8 +2827,8 @@ export interface operations {
       };
     };
   };
-  /** Stop Rsyncer */
-  stop_rsyncer_sessions__session_id__stop_rsyncer_post: {
+  /** Pass Proc Params To Instrument Server */
+  pass_proc_params_to_instrument_server_sessions__session_id__provided_processing_parameters_post: {
     parameters: {
       path: {
         session_id: number;
@@ -2280,7 +2836,289 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["RsyncerSource"];
+        "application/json": components["schemas"]["ProvidedProcessingParameters"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Get Bootstrap Instructions
+   * @description Return a website containing instructions for installing the Murfey client on a
+   * machine with no internet access.
+   */
+  get_bootstrap_instructions_bootstrap__get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "text/html": string;
+        };
+      };
+    };
+  };
+  /**
+   * Get Pip Wheel
+   * @description Return a static version of pip. This does not need to be the newest or best,
+   * but has to be compatible with all supported Python versions.
+   * This is only used during bootstrapping by the client to identify and then
+   * download the actually newest appropriate version of pip.
+   */
+  get_pip_wheel_bootstrap_pip_whl_get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Get Murfey Wheel
+   * @description Return a wheel file containing the latest release version of Murfey. We should
+   * not have to worry about the exact Python compatibility here, as long as
+   * murfey.bootstrap is compatible with all relevant versions of Python.
+   * This also ignores yanked releases, which again should be fine.
+   */
+  get_murfey_wheel_bootstrap_murfey_whl_get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Get Cygwin Setup
+   * @description Obtain and pass through a Cygwin installer from an official source.
+   * This is used during client bootstrapping and can download and install the
+   * Cygwin distribution that then remains on the client machines.
+   */
+  get_cygwin_setup_cygwin_setup_x86_64_exe_get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Parse Cygwin Request
+   * @description Forward a Cygwin setup request to an official mirror.
+   */
+  parse_cygwin_request_cygwin__request_path__get: {
+    parameters: {
+      path: {
+        request_path: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Get Pypi Index
+   * @description Obtain list of all PyPI packages via the simple API (PEP 503).
+   */
+  get_pypi_index_pypi__get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Get Pypi Package Downloads List
+   * @description Obtain list of all package downloads from PyPI via the simple API (PEP 503), and
+   * rewrite all download URLs to point to this server, under the current directory.
+   */
+  get_pypi_package_downloads_list_pypi__package___get: {
+    parameters: {
+      path: {
+        package: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Get Pypi File
+   * @description Obtain and pass through a specific download for a PyPI package.
+   */
+  get_pypi_file_pypi__package___filename__get: {
+    parameters: {
+      path: {
+        package: string;
+        filename: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Get Plugin Wheel */
+  get_plugin_wheel_plugins__package__get: {
+    parameters: {
+      path: {
+        package: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Lif To Tiff */
+  lif_to_tiff_sessions__session_id__lif_to_tiff_post: {
+    parameters: {
+      path: {
+        session_id: number;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["LifFileInfo"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Generate Token */
+  generate_token_token_post: {
+    requestBody: {
+      content: {
+        "application/x-www-form-urlencoded": components["schemas"]["Body_generate_token_token_post"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["Token"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Simple Token Validation */
+  simple_token_validation_validate_token_get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+    };
+  };
+  /** Get Mic Image */
+  get_mic_image_display_microscope_image__get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+    };
+  };
+  /** Close Ws Connection */
+  close_ws_connection_ws_test__client_id__delete: {
+    parameters: {
+      path: {
+        client_id: number;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Request Smartem Atlas Analysis */
+  request_smartem_atlas_analysis_visits__visit_name__smartem_atlas__post: {
+    parameters: {
+      path: {
+        visit_name: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SmartEMAtlasRequest"];
       };
     };
     responses: {

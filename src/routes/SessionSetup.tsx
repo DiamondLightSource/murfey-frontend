@@ -12,20 +12,43 @@ import {
   Heading,
 } from "@chakra-ui/react";
 import { getForm } from "components/forms";
-import { Link as LinkRouter, useParams, useLoaderData } from "react-router-dom";
+import { Link as LinkRouter, useParams, useLoaderData, useNavigate } from "react-router-dom";
 import { SetupStepper } from "components/setupStepper";
 import { components } from "schema/main";
 import { getProcessingParameterData } from "loaders/processingParameters";
+import { getSessionData } from "loaders/session_clients";
+import { registerProcessingParameters } from "loaders/sessionSetup";
 
-import React from "react";
+import React, { useEffect } from "react";
 
 type SessionClients = components["schemas"]["SessionClients"];
+type ProvidedProcessingParameters = components["schemas"]["ProvidedProcessingParameters"];
+type Session = components["schemas"]["Session"];
+
 
 const SessionSetup = () => {
   const session = useLoaderData() as SessionClients | null;
   const [expType, setExpType] = React.useState("spa");
   const [procParams, setProcParams] = React.useState();
   const { sessid } = useParams();
+  const [paramsSet, setParamsSet] = React.useState(false);
+
+  const [_session, setSession] = React.useState<Session>();
+
+  useEffect(() => {
+    getSessionData(sessid).then((sess) => setSession(sess.session));
+  }, []);
+
+  const handleSelection = (formData: any) => {
+    if (typeof sessid !== "undefined")
+      registerProcessingParameters(
+        {
+          dose_per_frame: formData.dose_per_frame,
+        } as ProvidedProcessingParameters,
+        parseInt(sessid),
+      );
+      setParamsSet(true);
+  };
 
   if (session)
     getProcessingParameterData(session.session.id.toString()).then((params) =>
@@ -38,6 +61,7 @@ const SessionSetup = () => {
         ? 2
         : 0
     : 2;
+  let navigate = useNavigate();
   return (
     <div className="rootContainer">
       <Box w="100%" bg="murfey.50">
@@ -93,7 +117,7 @@ const SessionSetup = () => {
             display={"flex"}
             borderColor={"murfey.400"}
           >
-            {getForm(expType)}
+            {sessid?getForm(expType, handleSelection, sessid): <></>}
           </Box>
           <Box
             mt="1em"
@@ -110,7 +134,7 @@ const SessionSetup = () => {
               as={LinkRouter}
               to={`../new_session/setup/${sessid}`}
             >
-              <Button>Save</Button>
+              <Button isDisabled={!paramsSet}>Next</Button>
             </Link>
           </Box>
         </Stack>

@@ -64,6 +64,7 @@ const ProcessingParameters = () => {
   const [showExtra, setShowExtra] = React.useState(false);
   let tableRows = [] as ProcessingTable[];
   let tableRowsExtra = [] as ProcessingTable[];
+  console.log(procParams);
   procParams?.map((p) => {
     let tr: ProcessingTable = {
       processingRows: [],
