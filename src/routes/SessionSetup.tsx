@@ -119,7 +119,7 @@ const SessionSetup = () => {
             display={"flex"}
             borderColor={"murfey.400"}
           >
-            {sessid?getForm(expType, handleSelection, sessid): <></>}
+            {sessid?getForm(expType, handleSelection): <></>}
           </Box>
           <Box
             mt="1em"

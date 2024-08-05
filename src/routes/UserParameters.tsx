@@ -36,7 +36,7 @@ const UserParameters = () => {
         display="flex"
         borderColor={"murfey.400"}
       >
-        {getForm(expType, setProcParams, "0")}
+        {getForm(expType, setProcParams)}
       </Box>
     </Stack>
   );

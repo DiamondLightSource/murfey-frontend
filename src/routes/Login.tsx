@@ -1,4 +1,4 @@
-import { Button, Input, VStack, Link } from "@chakra-ui/react";
+import { Button, Input, VStack, Link, FormControl, Card, CardBody } from "@chakra-ui/react";
 import { Link as LinkRouter, useNavigate } from "react-router-dom";
 
 import { getJWT, handshake } from "loaders/jwt";
@@ -16,7 +16,9 @@ const Login = () => {
   const navigate = useNavigate();
 
   return (
-    <VStack w="100%" spacing={0} display='flex'>
+    <Card>
+      <CardBody>
+    <FormControl>
       <Input placeholder="Username" onChange={handleUsername} />
       <Input placeholder="Password" onChange={handlePassword} type="password" />
       <Link
@@ -36,7 +38,9 @@ const Login = () => {
           Login
         </Button>
       </Link>
-    </VStack>
+    </FormControl>
+    </CardBody>
+    </Card>
   );
 };
 
