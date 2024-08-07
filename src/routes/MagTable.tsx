@@ -1,4 +1,5 @@
 import {
+  Button,
   Box,
   Heading,
   HStack,
@@ -13,14 +14,25 @@ import {
   Tr,
   Th,
   Td,
+  Text,
   TableCaption,
+  Modal,
+  ModalOverlay,
+  ModalHeader,
+  ModalFooter,
+  ModalContent,
+  ModalBody,
+  ModalCloseButton,
+  FormControl,
+  useDisclosure,
 } from "@chakra-ui/react";
 
-import { CheckIcon } from "@chakra-ui/icons";
+import { CheckIcon, EditIcon } from "@chakra-ui/icons";
 
 import { Link as LinkRouter, useLoaderData } from "react-router-dom";
 import { components } from "schema/main";
 import { MdAdd, MdHorizontalRule } from "react-icons/md";
+import { addMagTableRow, removeMagTableRow } from "loaders/magTable";
 
 import React from "react";
 
@@ -28,14 +40,22 @@ type MagTableRow = components["schemas"]["MagnificationLookup"];
 
 const MagTable = () => {
   const magTable = useLoaderData() as MagTableRow[] | null;
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [numNewRows, setNumNewRows] = React.useState(0);
 
-  const handleAddClick = () => {
-    setNumNewRows(numNewRows + 1);
-  };
-  const handleRemoveClick = () => {
-    setNumNewRows(numNewRows === 0 ? 0 : numNewRows - 1);
-  };
+  const handleRemoveRow = (mag: number) => {
+    removeMagTableRow(mag);
+    window.location.reload();
+  }
+
+  const handleForm = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const mag = parseInt(formData.get("magnification") as string);
+    const pixelSize = parseFloat(formData.get("pixelSize") as string);
+    addMagTableRow(mag, pixelSize);
+    window.location.reload();
+  }
 
   return (
     <div className="rootContainer">
@@ -63,24 +83,45 @@ const MagTable = () => {
                     <Tr>
                       <Th>Magnification</Th>
                       <Th>Pixel Size</Th>
-                      <Th>Update</Th>
+                      <Th>Remove</Th>
                     </Tr>
                   </Thead>
+                  <Modal isOpen={isOpen} onClose={onClose}>
+                    <ModalOverlay />
+                    <ModalContent>
+                      <ModalHeader>Add Mag Table Row</ModalHeader>
+                      <ModalCloseButton />
+                      <ModalBody>
+                        <form onSubmit={handleForm}>
+                          <FormControl>
+                            <HStack>
+                            <Input placeholder="Magnification" name="magnification" />
+                            <Input placeholder="Pixel size (Angstroms)" name="pixelSize" />
+                            </HStack>
+                          </FormControl>
+                          <Button type='submit'>
+                              Submit
+                          </Button>
+                        </form>
+                      </ModalBody>
+                    </ModalContent>
+                  </Modal>
                   <Tbody>
                     {magTable && magTable.length > 0 ? (
                       magTable.map((row) => {
                         return (
                           <Tr>
                             <Td>
-                              <Input defaultValue={row.magnification}></Input>
+                              <Text>{row.magnification}</Text>
                             </Td>
                             <Td>
-                              <Input defaultValue={row.pixel_size}></Input>
+                              <Text>{row.pixel_size}</Text>
                             </Td>
                             <Td>
                               <IconButton
-                                aria-label="Update row in database"
-                                icon={<CheckIcon />}
+                                aria-label="Remove row from database"
+                                icon={<MdHorizontalRule />}
+                                onClick={() => handleRemoveRow(row.magnification)}
                               ></IconButton>
                             </Td>
                           </Tr>
@@ -89,20 +130,6 @@ const MagTable = () => {
                     ) : (
                       <></>
                     )}
-                    {Array(numNewRows)
-                      .fill(0)
-                      .map((i) => {
-                        return (
-                          <Tr>
-                            <Td>
-                              <Input></Input>
-                            </Td>
-                            <Td>
-                              <Input></Input>
-                            </Td>
-                          </Tr>
-                        );
-                      })}
                   </Tbody>
                   <Tfoot>
                     <HStack>
@@ -110,13 +137,7 @@ const MagTable = () => {
                         aria-label="Add row to mag table"
                         icon={<MdAdd />}
                         size="m"
-                        onClick={handleAddClick}
-                      ></IconButton>
-                      <IconButton
-                        aria-label="Remove added row from mag table"
-                        icon={<MdHorizontalRule />}
-                        size="m"
-                        onClick={handleRemoveClick}
+                        onClick={onOpen}
                       ></IconButton>
                     </HStack>
                   </Tfoot>
