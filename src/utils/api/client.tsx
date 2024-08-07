@@ -23,7 +23,7 @@ export interface Response {
   url: string;
 }
 
-const getPrefix = (prefix: string = "/api/") => {
+export const getPrefix = (prefix: string = "/api/") => {
   if (prefix.substring(0, 1) === "/") {
     return window.location.origin + prefix;
   }
@@ -37,7 +37,7 @@ export const client = async (
   body?: Record<any, any> | FormData | null,
   method: string | null = null,
   errToast: boolean = true,
-  prefix = getPrefix(process.env.REACT_APP_API_ENDPOINT),
+  prefix: string = getPrefix(process.env.REACT_APP_API_ENDPOINT),
 ): Promise<never | Response> => {
   const config: RequestConfig = {
     method: method ? method : body != null ? "POST" : "GET",
@@ -49,6 +49,8 @@ export const client = async (
     body: undefined,
     ...defaultSettings,
   };
+
+  console.log(prefix);
 
   if (body != null) {
     if (!(body instanceof FormData)) {
@@ -108,6 +110,24 @@ client.get = async (
     (errToast = errToast),
   );
 };
+
+client.hub_get = async (
+  endpoint: string,
+  customConfig = {},
+  errToast: boolean = true,
+) => {
+  return await client(
+    endpoint,
+    (customConfig = {
+      ...customConfig,
+    }),
+    null,
+    "GET",
+    (errToast = errToast),
+    getPrefix(process.env.REACT_APP_HUB_ENDPOINT),
+  );
+};
+
 
 client.delete = async (endpoint: string, customConfig = {}) => {
   return await client(

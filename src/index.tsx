@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import { Root } from "routes/Root";
 import { Home } from "routes/Home";
+import { Hub } from "routes/Hub";
 import { Session } from "routes/Session";
 import { NewSession } from "routes/NewSession";
 import { SessionLinker } from "routes/SessionLinker";
@@ -24,6 +25,7 @@ import {
 import { rsyncerLoader } from "loaders/rsyncers";
 import { visitLoader } from "loaders/visits";
 import { gainRefLoader } from "loaders/possibleGainRefs";
+import { instrumentInfoLoader } from "loaders/hub";
 import { magTableLoader } from "loaders/magTable";
 import { processingParametersLoader } from "loaders/processingParameters";
 import { theme } from "styles/theme";
@@ -57,6 +59,12 @@ const router = createBrowserRouter([
         element: <Home />,
         errorElement: <Error />,
         loader: sessionsLoader(queryClient),
+      },
+      {
+        path: "/hub",
+        element: <Hub />,
+        errorElement: <Error />,
+        loader: instrumentInfoLoader(queryClient),
       },
       {
         path: "/sessions/:sessid",
