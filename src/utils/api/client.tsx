@@ -37,7 +37,7 @@ export const client = async (
   body?: Record<any, any> | FormData | null,
   method: string | null = null,
   errToast: boolean = true,
-  prefix: string = getPrefix(process.env.REACT_APP_API_ENDPOINT),
+  prefix: string = getPrefix(sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT),
 ): Promise<never | Response> => {
   const config: RequestConfig = {
     method: method ? method : body != null ? "POST" : "GET",
@@ -149,4 +149,4 @@ client.post = async (
 };
 
 export const prependApiUrl = (url: string) =>
-  `${getPrefix(process.env.REACT_APP_API_ENDPOINT)}${url}`;
+  `${getPrefix((sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT))}${url}`;

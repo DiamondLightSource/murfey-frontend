@@ -13,7 +13,7 @@ import { getInstrumentName } from "loaders/general";
 import React from "react";
 
 const getUrl = (endpoint: string) => {
-  return process.env.REACT_APP_API_ENDPOINT + endpoint;
+  return (sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT) + endpoint;
 };
 
 const InstrumentCard = () => {

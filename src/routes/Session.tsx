@@ -190,15 +190,16 @@ const RsyncCard = (rsyncer: RsyncInstance) => {
 };
 
 const getUrl = (endpoint: string) => {
-  return process.env.REACT_APP_API_ENDPOINT + endpoint;
+  return (sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT) + endpoint;
 };
 
 const Session = () => {
   const rsync = useLoaderData() as RsyncInstance[] | null;
   const { sessid } = useParams();
   const [instrumentName, setInstrumentName] = React.useState("");
-  const url = process.env.REACT_APP_API_ENDPOINT
-    ? process.env.REACT_APP_API_ENDPOINT.replace("http", "ws")
+  const baseUrl = sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT
+  const url = baseUrl
+    ? baseUrl.replace("http", "ws")
     : "ws://localhost:8000";
   const toast = useToast();
   const [session, setSession] = React.useState<Session>();

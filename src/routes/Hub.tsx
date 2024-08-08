@@ -27,16 +27,21 @@ import {
     const instrumentInfo = useLoaderData() as InstrumentInfo[];
   
     return (
-    <HStack>
+    <HStack w="100%" spacing={3} p={3}>
         {instrumentInfo ? (instrumentInfo.map((ini) => {return (
-        <Card align="center" onClick={() => sessionStorage.setItem("murfeyServerURL", ini.instrument_url)}>
+        <Link w={{ base: "100%", md: "19.6%" }}
+          _hover={{ textDecor: "none" }}
+          as={LinkRouter}
+          to={`/login`}>
+        <Card align="center" onClick={() => sessionStorage.setItem("murfeyServerURL", ini.instrument_url + "/")}>
             <CardHeader>
                 <Image src={getUrl(`instrument/${ini.instrument_name}/image`)} />
             </CardHeader>
             <CardBody>
             <Text>{ini.display_name}</Text>
             </CardBody>
-        </Card>);
+        </Card>
+        </Link>);
         })) : <></>}
     </HStack>
     );

@@ -17,6 +17,7 @@ import {
   MdSignalWifi4Bar,
   MdOutlineSignalWifiBad,
 } from "react-icons/md";
+import { TbMicroscope } from "react-icons/tb";
 import { getInstrumentConnectionStatus } from "loaders/general";
 import { Link as LinkRouter } from "react-router-dom";
 import React from "react";
@@ -108,6 +109,14 @@ const Navbar = ({ links, as, children, logo, ...props }: NavbarProps) => {
               </Box>
             </Link>
           ) : null}
+          <Link as={LinkRouter} to="/hub">
+          <IconButton 
+            size={"sm"}
+            icon={<TbMicroscope/>}
+            aria-label={"Go to Hub"}
+            _hover={{ background: "transparent", color: "murfey.500" }}
+          />
+          </Link>
           <HStack
             h="100%"
             as={"nav"}

@@ -45,6 +45,12 @@ const queryClient = new QueryClient({
 
 const router = createBrowserRouter([
   {
+    path: "/hub",
+    element: <Hub />,
+    errorElement: <Error />,
+    loader: instrumentInfoLoader(queryClient),
+  },
+  {
     path: "/login",
     element: <Login />,
     errorElement: <Error />,
@@ -59,12 +65,6 @@ const router = createBrowserRouter([
         element: <Home />,
         errorElement: <Error />,
         loader: sessionsLoader(queryClient),
-      },
-      {
-        path: "/hub",
-        element: <Hub />,
-        errorElement: <Error />,
-        loader: instrumentInfoLoader(queryClient),
       },
       {
         path: "/sessions/:sessid",

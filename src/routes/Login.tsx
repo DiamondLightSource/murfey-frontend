@@ -1,5 +1,5 @@
 import { Button, Input, VStack, Link, FormControl, Card, CardBody } from "@chakra-ui/react";
-import { Link as LinkRouter, useNavigate } from "react-router-dom";
+import { Link as LinkRouter, useNavigate, Navigate } from "react-router-dom";
 
 import { getJWT, handshake } from "loaders/jwt";
 
@@ -15,7 +15,7 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  return (
+  return sessionStorage.getItem("murfeyServerURL") ? (
     <Card>
       <CardBody>
     <FormControl>
@@ -25,7 +25,7 @@ const Login = () => {
         w={{ base: "100%", md: "19.6%" }}
         _hover={{ textDecor: "none" }}
         as={LinkRouter}
-        to={`/`}
+        to={`/home`}
       >
         <Button
           onClick={() => {
@@ -41,7 +41,7 @@ const Login = () => {
     </FormControl>
     </CardBody>
     </Card>
-  );
+  ) : <Navigate to="/hub" replace />;
 };
 
 export { Login };

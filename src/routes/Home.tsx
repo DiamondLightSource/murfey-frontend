@@ -65,7 +65,7 @@ const SessionRow = ({ session_clients, title }: SessionRowProps) => {
                             ? "murfey.500"
                             : "murfey.400"
                         }
-                        overflow="hidden"
+                        overflow="auto"
                         w="calc(100%)"
                         p={2}
                         border="1px solid grey"
@@ -111,8 +111,9 @@ const Home = () => {
   const sessions = useLoaderData() as {
     current: SessionClients[];
   } | null;
-  const url = process.env.REACT_APP_API_ENDPOINT
-    ? process.env.REACT_APP_API_ENDPOINT.replace("http", "ws")
+  const baseUrl = sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT
+  const url = baseUrl
+    ? baseUrl.replace("http", "ws")
     : "ws://localhost:8000";
   const parseWebsocketMessage = (message: any) => {
     let parsedMessage: any = {};
