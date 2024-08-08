@@ -138,6 +138,15 @@ const SessionSetup = () => {
             >
               <Button isDisabled={!paramsSet}>Next</Button>
             </Link>
+            <Link
+              w={{ base: "100%", md: "19.6%" }}
+              key={sessid}
+              _hover={{ textDecor: "none" }}
+              as={LinkRouter}
+              to={`../new_session/setup/${sessid}`}
+            >
+              <Button>Skip</Button>
+            </Link>
           </Box>
         </Stack>
       </Box>
