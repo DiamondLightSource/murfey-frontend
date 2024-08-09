@@ -15,11 +15,13 @@ export const prepareGainReference = async (
   sessionId: number,
   gainRef: string,
   rescale: boolean = false,
+  eer: boolean = false,
   tag: string = "",
 ) => {
   const response = await client.post(`sessions/${sessionId}/process_gain`, {
     gain_ref: gainRef,
     rescale: rescale,
+    eer: eer,
     tag: tag,
   });
   if (response.status !== 200) {

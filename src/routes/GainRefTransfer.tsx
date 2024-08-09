@@ -4,6 +4,7 @@ import { useNavigate, useLoaderData, useSearchParams } from "react-router-dom";
 import { components } from "schema/main";
 import { Table } from "@diamondlightsource/ui-components";
 import { SetupStepper } from "components/setupStepper";
+import { prepareGainReference } from "loaders/possibleGainRefs";
 
 import React from "react";
 
@@ -14,11 +15,12 @@ const GainRefTransfer = () => {
   let [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [tag, setTag] = React.useState("");
+  const [falcon, setFalcon] = React.useState(false);
 
   const SelectGainRef = (data: Record<string, any>, index: number) => {
     const sessid = searchParams.get("sessid");
     const setup = searchParams.get("setup");
-
+    if (sessid) prepareGainReference(parseInt(sessid), data["full_path"], false, falcon, tag);
     if (setup)
       sessid ? navigate(`/new_session/parameters/${sessid}`) : navigate("/");
     else sessid ? navigate(`/sessions/${sessid}`) : navigate("/");
@@ -62,13 +64,14 @@ const GainRefTransfer = () => {
               { key: "name", label: "Name" },
               { key: "timestamp", label: "Timestamp" },
               { key: "size", label: "Size [GB]" },
+              { key: "full_path", label: "Full path" },
             ]}
             label={"gainRefData"}
             onClick={SelectGainRef}
           />
           <Input placeholder="Tag (optional)" w="50%" display={"flex"} onChange={(e) => setTag(e.target.value)}/>
           </VStack>
-            <Checkbox>Falcon</Checkbox>
+            <Checkbox onChange={(e) => setFalcon(e.target.checked)}>Falcon</Checkbox>
           </HStack>
         </Box>
       </Box>

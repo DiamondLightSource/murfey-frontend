@@ -17,7 +17,7 @@ import {
   MdSignalWifi4Bar,
   MdOutlineSignalWifiBad,
 } from "react-icons/md";
-import { TbMicroscope } from "react-icons/tb";
+import { TbMicroscope, TbSnowflake } from "react-icons/tb";
 import { getInstrumentConnectionStatus } from "loaders/general";
 import { Link as LinkRouter } from "react-router-dom";
 import React from "react";
@@ -112,7 +112,7 @@ const Navbar = ({ links, as, children, logo, ...props }: NavbarProps) => {
           <Link as={LinkRouter} to="/hub">
           <IconButton 
             size={"sm"}
-            icon={<TbMicroscope/>}
+            icon={<><TbSnowflake/><TbMicroscope/></>}
             aria-label={"Go to Hub"}
             _hover={{ background: "transparent", color: "murfey.500" }}
           />
