@@ -56,6 +56,7 @@ import { getInstrumentName } from "loaders/general";
 import { stopRsyncer } from "loaders/rsyncers";
 import { getSessionData } from "loaders/session_clients";
 import { InstrumentCard } from "components/instrumentCard";
+import { UpstreamVisitCard } from "components/upstreamVisitsCard";
 import useWebSocket from "react-use-websocket";
 
 import React, { useEffect } from "react";
@@ -305,6 +306,7 @@ const Session = () => {
                 </Button>
               </Link>
               <InstrumentCard />
+              <UpstreamVisitCard sessid={parseInt(sessid ?? "0")} />
             </Stack>
           </Flex>
         </Box>

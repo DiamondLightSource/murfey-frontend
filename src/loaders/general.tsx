@@ -18,3 +18,12 @@ export const getInstrumentConnectionStatus = async () => {
 
   return response.data;
 };
+
+export const getUpstreamVisits = async (sessid: number) => {
+  const response = await client.get(`sessions/${sessid}/upstream_visits`);
+
+  if (response.status !== 200) {
+    return null;
+  }
+  return response.data;
+};

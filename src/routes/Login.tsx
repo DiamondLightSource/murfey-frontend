@@ -26,24 +26,16 @@ const Login = () => {
     <FormControl>
       <Input placeholder="Username" onChange={handleUsername} />
       <Input placeholder="Password" onChange={handlePassword} type="password" />
-      <Link
-        w={{ base: "100%", md: "19.6%" }}
-        _hover={{ textDecor: "none" }}
-        as={LinkRouter}
-        to={`/home`}
-      >
         <Button
           onClick={() => {
             getJWT({ username: username, password: password })
               .then((jwt) => sessionStorage.setItem("token", jwt.access_token))
               .then(() => handshake())
-              .then(() => navigate("/home"))
-              .then(() => window.location.reload());
+              .then(() => navigate("/home"));
           }}
         >
           Login
         </Button>
-      </Link>
     </FormControl>
     </CardBody>
     </Card>
