@@ -11,6 +11,19 @@ const getGainRefData = async () => {
   return response.data;
 };
 
+export const transferGainReference = async (
+  sessionId: number,
+  gainRef: string,
+) => {
+  const response = await client.post(`sessions/${sessionId}/upload_gain_reference`, {
+    gain_path: gainRef,
+  });
+  if (response.status !== 200) {
+    return null;
+  }
+  return response.data;
+};
+
 export const prepareGainReference = async (
   sessionId: number,
   gainRef: string,

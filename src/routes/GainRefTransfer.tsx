@@ -4,7 +4,7 @@ import { useNavigate, useLoaderData, useSearchParams } from "react-router-dom";
 import { components } from "schema/main";
 import { Table } from "@diamondlightsource/ui-components";
 import { SetupStepper } from "components/setupStepper";
-import { prepareGainReference } from "loaders/possibleGainRefs";
+import { prepareGainReference, transferGainReference } from "loaders/possibleGainRefs";
 
 import React from "react";
 
@@ -17,10 +17,13 @@ const GainRefTransfer = () => {
   const [tag, setTag] = React.useState("");
   const [falcon, setFalcon] = React.useState(false);
 
-  const SelectGainRef = (data: Record<string, any>, index: number) => {
+  const SelectGainRef = async (data: Record<string, any>, index: number) => {
     const sessid = searchParams.get("sessid");
     const setup = searchParams.get("setup");
-    if (sessid) prepareGainReference(parseInt(sessid), data["full_path"], false, falcon, tag);
+    if (sessid) {
+      const transferStatus = await transferGainReference(parseInt(sessid), data["full_path"]);
+      if (transferStatus.success) prepareGainReference(parseInt(sessid), data["full_path"], false, falcon, tag);
+    }
     if (setup)
       sessid ? navigate(`/new_session/parameters/${sessid}`) : navigate("/");
     else sessid ? navigate(`/sessions/${sessid}`) : navigate("/");
