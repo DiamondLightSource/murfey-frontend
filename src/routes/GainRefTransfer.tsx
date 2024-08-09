@@ -1,9 +1,11 @@
-import { Box, Heading, VStack } from "@chakra-ui/react";
+import { Box, Heading, HStack, VStack, Input, Checkbox } from "@chakra-ui/react";
 
 import { useNavigate, useLoaderData, useSearchParams } from "react-router-dom";
 import { components } from "schema/main";
 import { Table } from "@diamondlightsource/ui-components";
 import { SetupStepper } from "components/setupStepper";
+
+import React from "react";
 
 type File = components["schemas"]["File"];
 
@@ -11,10 +13,12 @@ const GainRefTransfer = () => {
   const possibleGainRefs = useLoaderData() as File[] | null;
   let [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const [tag, setTag] = React.useState("");
 
   const SelectGainRef = (data: Record<string, any>, index: number) => {
     const sessid = searchParams.get("sessid");
     const setup = searchParams.get("setup");
+
     if (setup)
       sessid ? navigate(`/new_session/parameters/${sessid}`) : navigate("/");
     else sessid ? navigate(`/sessions/${sessid}`) : navigate("/");
@@ -22,7 +26,7 @@ const GainRefTransfer = () => {
 
   return (
     <div className="rootContainer">
-      <Box w="100%" bg="murfey.50">
+      <Box w="100%" bg="murfey.50" >
         <Box w="100%" overflow="hidden">
           <VStack className="homeRoot">
             <VStack bg="murfey.700" justifyContent="start" alignItems="start" display="flex" w="100%" px="10vw" py="1vh">
@@ -50,16 +54,22 @@ const GainRefTransfer = () => {
           alignItems={"center"}
           display={"flex"}
         >
+          <HStack>
+          <VStack>
           <Table
             data={possibleGainRefs}
             headers={[
               { key: "name", label: "Name" },
               { key: "timestamp", label: "Timestamp" },
-              { key: "size", label: "Size" },
+              { key: "size", label: "Size [GB]" },
             ]}
             label={"gainRefData"}
             onClick={SelectGainRef}
           />
+          <Input placeholder="Tag (optional)" w="50%" display={"flex"} onChange={(e) => setTag(e.target.value)}/>
+          </VStack>
+            <Checkbox>Falcon</Checkbox>
+          </HStack>
         </Box>
       </Box>
     </div>

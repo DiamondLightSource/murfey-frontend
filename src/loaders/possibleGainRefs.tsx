@@ -11,6 +11,23 @@ const getGainRefData = async () => {
   return response.data;
 };
 
+export const prepareGainReference = async (
+  sessionId: number,
+  gainRef: string,
+  rescale: boolean = false,
+  tag: string = "",
+) => {
+  const response = await client.post(`sessions/${sessionId}/process_gain`, {
+    gain_ref: gainRef,
+    rescale: rescale,
+    tag: tag,
+  });
+  if (response.status !== 200) {
+    return null;
+  }
+  return response.data;
+};
+
 const query = {
   queryKey: ["gainRefs"],
   queryFn: getGainRefData,
