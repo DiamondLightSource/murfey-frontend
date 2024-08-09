@@ -37,7 +37,8 @@ const Login = () => {
             getJWT({ username: username, password: password })
               .then((jwt) => sessionStorage.setItem("token", jwt.access_token))
               .then(() => handshake())
-              .then(() => navigate("/home"));
+              .then(() => navigate("/home"))
+              .then(() => window.location.reload());
           }}
         >
           Login

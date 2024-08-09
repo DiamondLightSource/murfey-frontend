@@ -148,5 +148,15 @@ client.post = async (
   return await client(endpoint, { ...customConfig }, body);
 };
 
+client.put = async (
+  endpoint: string,
+  body: Record<any, any> | FormData,
+  customConfig = {},
+) => {
+  return await client(endpoint, { ...customConfig }, body, "PUT");
+};
+
 export const prependApiUrl = (url: string) =>
   `${getPrefix((sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT))}${url}`;
+
+

@@ -43,6 +43,19 @@ export const prepareGainReference = async (
   return response.data;
 };
 
+export const updateCurrentGainReference = async (
+  sessionId: number,
+  gainRef: string,
+) => {
+  const response = await client.put(`sessions/${sessionId}/current_gain_ref`, {
+    path: gainRef,
+  });
+  if (response.status !== 200) {
+    return null;
+  }
+  return response.data;
+};
+
 const query = {
   queryKey: ["gainRefs"],
   queryFn: getGainRefData,
