@@ -5,7 +5,7 @@ import {
     CardHeader,
   } from "@chakra-ui/react";
   
-  import { getUpstreamVisits } from "loaders/general";
+  import { getUpstreamVisits, upstreamDataDownloadRequest } from "loaders/general";
   import { MdFileDownload } from "react-icons/md";
   
   import React from "react";
@@ -23,15 +23,15 @@ import {
     };
     resolveVisits();
   
-    return (<Card alignItems="center">
+    return ((upstreamVisits ? <Card alignItems="center">
         <CardHeader>Upstream Visit Data Download</CardHeader>
         {Object.keys(upstreamVisits).map((k) => {
         return (
           <CardBody>
-            <Button rightIcon={<MdFileDownload />}>{k}</Button>
+            <Button rightIcon={<MdFileDownload />} onClick={() => upstreamDataDownloadRequest(k)}>{k}</Button>
           </CardBody>
         )
-  })}</Card>);
+  })}</Card>: <></>));
   };
   
   export { UpstreamVisitCard };
