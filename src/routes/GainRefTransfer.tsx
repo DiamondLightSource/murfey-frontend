@@ -5,6 +5,7 @@ import { components } from "schema/main";
 import { Table } from "@diamondlightsource/ui-components";
 import { SetupStepper } from "components/setupStepper";
 import { prepareGainReference, transferGainReference, updateCurrentGainReference } from "loaders/possibleGainRefs";
+import { getMachineConfigData } from "loaders/machineConfig";
 
 import React from "react";
 
@@ -17,6 +18,7 @@ const GainRefTransfer = () => {
   const [processing, setProcessing] = React.useState(false);
   const [tag, setTag] = React.useState("");
   const [falcon, setFalcon] = React.useState(false);
+  const [falconPreset, setFalconPreset] = React.useState(false);
 
   const SelectGainRef = async (data: Record<string, any>, index: number) => {
     setProcessing(true);
@@ -37,6 +39,11 @@ const GainRefTransfer = () => {
     else sessid ? navigate(`/sessions/${sessid}`) : navigate("/");
     setProcessing(false);
   };
+
+  if(!falconPreset) {
+    setFalconPreset(true);
+    getMachineConfigData().then((cfg) => setFalcon(cfg.camera === "FALCON"));
+  }
 
   return (
     <div className="rootContainer">
@@ -92,7 +99,7 @@ const GainRefTransfer = () => {
           />
           <Input placeholder="Tag (optional)" w="50%" display={"flex"} onChange={(e) => setTag(e.target.value)}/>
           </VStack>
-            <Checkbox onChange={(e) => setFalcon(e.target.checked)}>Falcon</Checkbox>
+            <Checkbox isChecked={falcon} onChange={(e) => setFalcon(e.target.checked)}>Falcon</Checkbox>
           </HStack>
         </Box>
       </Box>

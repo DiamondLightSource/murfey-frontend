@@ -4,7 +4,7 @@ import { client } from "utils/api/client";
 import { Params } from "react-router-dom";
 import { parseDate } from "utils/generic";
 
-const getMachineConfigData = async () => {
+export const getMachineConfigData = async () => {
   const response = await client.get(`machine`);
 
   if (response.status !== 200) {
