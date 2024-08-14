@@ -87,6 +87,7 @@ const GainRefTransfer = () => {
           <HStack>
           <VStack>
           <Table
+            width='80%'
             data={possibleGainRefs}
             headers={[
               { key: "name", label: "Name" },
@@ -98,8 +99,8 @@ const GainRefTransfer = () => {
             onClick={SelectGainRef}
           />
           <Input placeholder="Tag (optional)" w="50%" display={"flex"} onChange={(e) => setTag(e.target.value)}/>
+          <Checkbox isChecked={falcon} onChange={(e) => setFalcon(e.target.checked)}>Falcon</Checkbox>
           </VStack>
-            <Checkbox isChecked={falcon} onChange={(e) => setFalcon(e.target.checked)}>Falcon</Checkbox>
           </HStack>
         </Box>
       </Box>
