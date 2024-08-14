@@ -1,4 +1,4 @@
-import { Box, Heading, HStack, VStack, Input, Checkbox } from "@chakra-ui/react";
+import { Box, Heading, HStack, VStack, Input, Checkbox, Modal, ModalOverlay, ModalContent, ModalBody, ModalHeader, Spinner } from "@chakra-ui/react";
 
 import { useNavigate, useLoaderData, useSearchParams } from "react-router-dom";
 import { components } from "schema/main";
@@ -14,10 +14,12 @@ const GainRefTransfer = () => {
   const possibleGainRefs = useLoaderData() as File[] | null;
   let [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const [processing, setProcessing] = React.useState(false);
   const [tag, setTag] = React.useState("");
   const [falcon, setFalcon] = React.useState(false);
 
   const SelectGainRef = async (data: Record<string, any>, index: number) => {
+    setProcessing(true);
     const sessid = searchParams.get("sessid");
     const setup = searchParams.get("setup");
     if (sessid) {
@@ -33,6 +35,7 @@ const GainRefTransfer = () => {
     if (setup)
       sessid ? navigate(`/new_session/parameters/${sessid}`) : navigate("/");
     else sessid ? navigate(`/sessions/${sessid}`) : navigate("/");
+    setProcessing(false);
   };
 
   return (
@@ -47,6 +50,15 @@ const GainRefTransfer = () => {
             </VStack>
           </VStack>
         </Box>
+        <Modal isOpen={processing} onClose={() => void(0)}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Processing gain reference</ModalHeader>
+            <ModalBody>
+              <Spinner />
+            </ModalBody>
+          </ModalContent>
+        </Modal>
         <Box
           mt="1em"
           px="10vw"
