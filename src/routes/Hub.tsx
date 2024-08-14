@@ -9,6 +9,7 @@ import {
     Heading,
     VStack,
     Box,
+    SimpleGrid,
   } from "@chakra-ui/react";
   
   import { TbMicroscope, TbSnowflake } from "react-icons/tb";
@@ -37,7 +38,7 @@ import {
       <HStack> <TbSnowflake/> <TbMicroscope/> </HStack> Murfey Hub
     </Heading>
     </VStack>
-    <HStack w="100%" spacing={3} p={3}>
+    <SimpleGrid minChildWidth='250px' spacing={10} p={3} justifyContent="start" alignItems="start" display="flex" w="100%">
         {instrumentInfo ? (instrumentInfo.map((ini) => {return (
         <Link w={{ base: "100%", md: "19.6%" }}
           _hover={{ textDecor: "none" }}
@@ -53,7 +54,7 @@ import {
         </Card>
         </Link>);
         })) : <></>}
-    </HStack>
+    </SimpleGrid>
     </Box>
     );
   };
