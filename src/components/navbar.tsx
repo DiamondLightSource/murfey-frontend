@@ -110,12 +110,14 @@ const Navbar = ({ links, as, children, logo, ...props }: NavbarProps) => {
             </Link>
           ) : null}
           <Link as={LinkRouter} to="/hub">
-          <IconButton 
-            size={"sm"}
-            icon={<><TbSnowflake/><TbMicroscope/></>}
-            aria-label={"Go to Hub"}
-            _hover={{ background: "transparent", color: "murfey.500" }}
-          />
+          <Tooltip label="Back to the Hub">
+            <IconButton 
+              size={"sm"}
+              icon={<><TbSnowflake/><TbMicroscope/></>}
+              aria-label={"Back to the Hub"}
+              _hover={{ background: "transparent", color: "murfey.500" }}
+            />
+          </Tooltip>
           </Link>
           <HStack
             h="100%"

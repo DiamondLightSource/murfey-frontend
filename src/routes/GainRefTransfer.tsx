@@ -1,4 +1,4 @@
-import { Box, Heading, HStack, VStack, Input, Checkbox, Modal, ModalOverlay, ModalContent, ModalBody, ModalHeader, Spinner } from "@chakra-ui/react";
+import { Box, Heading, HStack, VStack, Input, Checkbox, Modal, ModalOverlay, ModalContent, ModalBody, ModalHeader, Spinner, Tooltip } from "@chakra-ui/react";
 
 import { useNavigate, useLoaderData, useSearchParams } from "react-router-dom";
 import { components } from "schema/main";
@@ -98,7 +98,9 @@ const GainRefTransfer = () => {
             label={"gainRefData"}
             onClick={SelectGainRef}
           />
-          <Input placeholder="Tag (optional)" w="50%" display={"flex"} onChange={(e) => setTag(e.target.value)}/>
+          <Tooltip label="Tag appended to gain reference name">
+            <Input placeholder="Tag (optional)" w="50%" display={"flex"} onChange={(e) => setTag(e.target.value)}/>
+          </Tooltip>
           <Checkbox isChecked={falcon} onChange={(e) => setFalcon(e.target.checked)}>Falcon</Checkbox>
           </VStack>
           </HStack>
