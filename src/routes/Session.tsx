@@ -53,7 +53,7 @@ import {
 import { FiActivity } from "react-icons/fi";
 import { components } from "schema/main";
 import { getInstrumentName } from "loaders/general";
-import { stopRsyncer } from "loaders/rsyncers";
+import { pauseRsyncer, restartRsyncer } from "loaders/rsyncers";
 import { getSessionData } from "loaders/session_clients";
 import { InstrumentCard } from "components/instrumentCard";
 import { UpstreamVisitCard } from "components/upstreamVisitsCard";
@@ -122,19 +122,33 @@ const RsyncCard = (rsyncer: RsyncInstance) => {
               icon={<MdDensityMedium />}
             />
             <MenuList>
+              {
+              rsyncer.transferring ? (
+              <>
               <MenuItem
-                onClick={() => stopRsyncer(rsyncer.session_id, rsyncer.source)}
+                onClick={() => pauseRsyncer(rsyncer.session_id, rsyncer.source)}
                 isDisabled={!rsyncer.transferring}
               >
-                Stop
+                Pause
               </MenuItem>
-              <MenuItem isDisabled={!rsyncer.transferring}>Kill</MenuItem>
+              <MenuItem isDisabled={!rsyncer.transferring}>Stop</MenuItem>
               <MenuItem
                 onClick={() => FinaliseRsyncer(rsyncer)}
                 isDisabled={!rsyncer.transferring}
               >
                 Finalise
               </MenuItem>
+              </>
+              ): 
+              <>
+              <MenuItem onClick={() => restartRsyncer(rsyncer.session_id, rsyncer.source)}>
+                Start
+              </MenuItem>
+              <MenuItem>
+                Remove
+              </MenuItem>
+              </>
+            }
             </MenuList>
           </Menu>
         </Flex>

@@ -14,10 +14,26 @@ const getRsyncerData = async (sessionId: string) => {
   return response.data;
 };
 
-export const stopRsyncer = async (sessionId: number, source: string) => {
+export const pauseRsyncer = async (sessionId: number, source: string) => {
   console.log("stopping rsyncer");
 
   const response = await client.post(`sessions/${sessionId}/stop_rsyncer`, {
+    source: source,
+  });
+
+  if (response.status !== 200) {
+    return null;
+  }
+
+  console.log(response.data);
+
+  return response.data;
+};
+
+export const restartRsyncer = async (sessionId: number, source: string) => {
+  console.log("stopping rsyncer");
+
+  const response = await client.post(`sessions/${sessionId}/restart_rsyncer`, {
     source: source,
   });
 

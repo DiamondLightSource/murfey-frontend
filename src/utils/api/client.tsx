@@ -50,7 +50,7 @@ export const client = async (
     ...defaultSettings,
   };
 
-  console.log(prefix);
+  console.log(endpoint);
 
   if (body != null) {
     if (!(body instanceof FormData)) {

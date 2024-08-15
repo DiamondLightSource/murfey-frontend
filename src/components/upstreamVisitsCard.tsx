@@ -8,7 +8,7 @@ import {
   import { getUpstreamVisits, upstreamDataDownloadRequest } from "loaders/general";
   import { MdFileDownload } from "react-icons/md";
   
-  import React from "react";
+  import React, { useEffect } from "react";
 
   interface SessionId {
     sessid: number
@@ -20,8 +20,9 @@ import {
     const resolveVisits = async () => {
       const visits = await getUpstreamVisits(sessid);
       setUpstreamVisits(visits);
+      console.log(upstreamVisits);
     };
-    resolveVisits();
+    useEffect(() => {resolveVisits()}, []);
   
     return ((upstreamVisits ? <Card alignItems="center">
         <CardHeader>Upstream Visit Data Download</CardHeader>

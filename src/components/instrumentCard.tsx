@@ -10,7 +10,7 @@ import {
 import { Link as LinkRouter } from "react-router-dom";
 import { getInstrumentName } from "loaders/general";
 
-import React from "react";
+import React, { useEffect } from "react";
 
 const getUrl = (endpoint: string) => {
   return (sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT) + endpoint;
@@ -23,7 +23,7 @@ const InstrumentCard = () => {
     const name: string = await getInstrumentName();
     setInstrumentName(name);
   };
-  resolveName();
+  useEffect(() => {resolveName()}, []);
 
   return (
     <Link

@@ -57,7 +57,8 @@ const MultigridSetup = () => {
     setSelectedDirectory(e.target.value);
 
   const handleSelection = () => {
-    if (typeof sessid !== "undefined")
+    if (typeof sessid !== "undefined"){
+      console.log(sessid);
       startMultigridWatcher(
         {
           source: selectedDirectory,
@@ -65,6 +66,7 @@ const MultigridSetup = () => {
         } as MultigridWatcherSpec,
         parseInt(sessid),
       );
+    }
   };
 
   return (
