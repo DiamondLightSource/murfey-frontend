@@ -53,7 +53,7 @@ import {
 import { FiActivity } from "react-icons/fi";
 import { components } from "schema/main";
 import { getInstrumentName } from "loaders/general";
-import { pauseRsyncer, restartRsyncer, removeRsyncer } from "loaders/rsyncers";
+import { pauseRsyncer, restartRsyncer, removeRsyncer, finaliseRsyncer } from "loaders/rsyncers";
 import { getSessionData } from "loaders/session_clients";
 import { InstrumentCard } from "components/instrumentCard";
 import { UpstreamVisitCard } from "components/upstreamVisitsCard";
@@ -64,34 +64,55 @@ import React, { useEffect } from "react";
 type RsyncInstance = components["schemas"]["RsyncInstance"];
 type Session = components["schemas"]["Session"];
 
-function FinaliseRsyncer(rsyncer: RsyncInstance) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  return (
-    <>
-      <Button onClick={onOpen}>Open Modal</Button>
 
+
+const RsyncCard = (rsyncer: RsyncInstance) => {
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [action, setAction] = React.useState("finalise");
+  const [activeSource, setActiveSource] = React.useState("");
+  const { sessid } = useParams();
+
+  const finalise = (source: string) => {
+    setAction("finalise");
+    setActiveSource(source);
+    onOpen();
+  }
+
+  const remove = (source: string) => {
+    setAction("remove");
+    setActiveSource(source);
+    onOpen();
+  }
+
+  const handleRsyncerAction = async () => {
+    if(sessid){
+      if(action === "finalise")
+        await finaliseRsyncer(parseInt(sessid), activeSource);
+      else if(action === "remove")
+        await removeRsyncer(parseInt(sessid), activeSource);
+    }
+    onClose();
+  }
+
+  return (
+    
+    <Card width="100%" bg="murfey.400" borderColor="murfey.300">
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>Confirm RSyncer {action}: {activeSource}</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>etc</ModalBody>
+          <ModalBody>Are you sure you want to continue?</ModalBody>
 
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={onClose}>
               Close
             </Button>
-            <Button variant="ghost">Secondary Action</Button>
+            <Button variant="ghost" onClick={() => handleRsyncerAction()}>Confirm</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </>
-  );
-}
-
-const RsyncCard = (rsyncer: RsyncInstance) => {
-  return (
-    <Card width="100%" bg="murfey.400" borderColor="murfey.300">
       <CardHeader>
         <Flex>
           {" "}
@@ -132,13 +153,13 @@ const RsyncCard = (rsyncer: RsyncInstance) => {
                 Pause
               </MenuItem>
               <MenuItem
-                onClick={() => removeRsyncer(rsyncer.session_id, rsyncer.source)}
+                onClick={() => remove(rsyncer.source)}
                 isDisabled={!rsyncer.transferring}
               >
                 Remove
               </MenuItem>
               <MenuItem
-                onClick={() => FinaliseRsyncer(rsyncer)}
+                onClick={() => {finalise(rsyncer.source)}}
                 isDisabled={!rsyncer.transferring}
               >
                 Finalise
@@ -150,7 +171,7 @@ const RsyncCard = (rsyncer: RsyncInstance) => {
                 Start
               </MenuItem>
               <MenuItem
-                onClick={() => removeRsyncer(rsyncer.session_id, rsyncer.source)}
+                onClick={() => remove(rsyncer.source)}
               >
                 Remove
               </MenuItem>
