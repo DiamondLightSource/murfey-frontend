@@ -46,6 +46,22 @@ export const restartRsyncer = async (sessionId: number, source: string) => {
   return response.data;
 };
 
+export const removeRsyncer = async (sessionId: number, source: string) => {
+  console.log("removing rsyncer");
+
+  const response = await client.post(`sessions/${sessionId}/remove_rsyncer`, {
+    source: source,
+  });
+
+  if (response.status !== 200) {
+    return null;
+  }
+
+  console.log(response.data);
+
+  return response.data;
+};
+
 const queryBuilder = (sessionId: string = "0") => {
   return {
     queryKey: ["sessid", sessionId],

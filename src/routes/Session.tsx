@@ -53,7 +53,7 @@ import {
 import { FiActivity } from "react-icons/fi";
 import { components } from "schema/main";
 import { getInstrumentName } from "loaders/general";
-import { pauseRsyncer, restartRsyncer } from "loaders/rsyncers";
+import { pauseRsyncer, restartRsyncer, removeRsyncer } from "loaders/rsyncers";
 import { getSessionData } from "loaders/session_clients";
 import { InstrumentCard } from "components/instrumentCard";
 import { UpstreamVisitCard } from "components/upstreamVisitsCard";
@@ -131,7 +131,12 @@ const RsyncCard = (rsyncer: RsyncInstance) => {
               >
                 Pause
               </MenuItem>
-              <MenuItem isDisabled={!rsyncer.transferring}>Stop</MenuItem>
+              <MenuItem
+                onClick={() => removeRsyncer(rsyncer.session_id, rsyncer.source)}
+                isDisabled={!rsyncer.transferring}
+              >
+                Remove
+              </MenuItem>
               <MenuItem
                 onClick={() => FinaliseRsyncer(rsyncer)}
                 isDisabled={!rsyncer.transferring}
@@ -144,7 +149,9 @@ const RsyncCard = (rsyncer: RsyncInstance) => {
               <MenuItem onClick={() => restartRsyncer(rsyncer.session_id, rsyncer.source)}>
                 Start
               </MenuItem>
-              <MenuItem>
+              <MenuItem
+                onClick={() => removeRsyncer(rsyncer.session_id, rsyncer.source)}
+              >
                 Remove
               </MenuItem>
               </>
