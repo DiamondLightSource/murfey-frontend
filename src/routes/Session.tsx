@@ -70,30 +70,26 @@ const RsyncCard = (rsyncer: RsyncInstance) => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [action, setAction] = React.useState("finalise");
-  const [activeSource, setActiveSource] = React.useState("");
-  const { sessid } = useParams();
 
-  const finalise = (source: string) => {
+  const finalise = () => {
     setAction("finalise");
-    setActiveSource(source);
     onOpen();
   }
 
-  const remove = (source: string) => {
+  const remove = () => {
     setAction("remove");
-    setActiveSource(source);
     onOpen();
   }
 
   const handleRsyncerAction = async () => {
-    if(sessid){
-      if(action === "finalise")
-        await finaliseRsyncer(parseInt(sessid), activeSource);
-      else if(action === "remove")
-        await removeRsyncer(parseInt(sessid), activeSource);
-    }
+    if(action === "finalise")
+      await finaliseRsyncer(rsyncer.session_id, rsyncer.source);
+    else if(action === "remove")
+      await removeRsyncer(rsyncer.session_id, rsyncer.source);
     onClose();
   }
+
+
 
   return (
     
@@ -101,7 +97,7 @@ const RsyncCard = (rsyncer: RsyncInstance) => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Confirm RSyncer {action}: {activeSource}</ModalHeader>
+          <ModalHeader>Confirm RSyncer {action}: {rsyncer.source}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>Are you sure you want to continue?</ModalBody>
 
@@ -153,13 +149,13 @@ const RsyncCard = (rsyncer: RsyncInstance) => {
                 Pause
               </MenuItem>
               <MenuItem
-                onClick={() => remove(rsyncer.source)}
+                onClick={() => remove()}
                 isDisabled={!rsyncer.transferring}
               >
                 Remove
               </MenuItem>
               <MenuItem
-                onClick={() => {finalise(rsyncer.source)}}
+                onClick={() => {finalise()}}
                 isDisabled={!rsyncer.transferring}
               >
                 Finalise
@@ -171,7 +167,7 @@ const RsyncCard = (rsyncer: RsyncInstance) => {
                 Start
               </MenuItem>
               <MenuItem
-                onClick={() => remove(rsyncer.source)}
+                onClick={() => remove()}
               >
                 Remove
               </MenuItem>
@@ -237,6 +233,7 @@ const getUrl = (endpoint: string) => {
 };
 
 const Session = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const rsync = useLoaderData() as RsyncInstance[] | null;
   const { sessid } = useParams();
   const [instrumentName, setInstrumentName] = React.useState("");
@@ -285,6 +282,13 @@ const Session = () => {
     },
   });
 
+  const finaliseAll = async () => {
+    rsync?.map((r) => {
+      finaliseRsyncer(r.session_id, r.source);
+    });
+    onClose();
+  }
+
   const resolveName = async () => {
     const name: string = await getInstrumentName();
     setInstrumentName(name);
@@ -293,6 +297,21 @@ const Session = () => {
 
   return (
     <div className="rootContainer">
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Confirm Visit Completion</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>Are you sure you want to remove all data associated with this visit?</ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
+              Close
+            </Button>
+            <Button variant="ghost" onClick={() => finaliseAll()}>Confirm</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <Box w="100%" bg="murfey.50">
         <Box w="100%" overflow="hidden">
           <VStack className="homeRoot">
@@ -301,6 +320,7 @@ const Session = () => {
                 Session {sessid}: {session ? session.visit : null}
               </Heading>
               <HStack>
+                <Button variant="onBlue" onClick={() => onOpen()}>Visit Complete</Button>
                 <Link
                   w={{ base: "100%", md: "19.6%" }}
                   _hover={{ textDecor: "none" }}
