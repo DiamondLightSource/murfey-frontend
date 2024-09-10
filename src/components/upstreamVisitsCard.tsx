@@ -29,7 +29,7 @@ import {
         {Object.keys(upstreamVisits).map((k) => {
         return (
           <CardBody>
-            <Button rightIcon={<MdFileDownload />} onClick={() => upstreamDataDownloadRequest(k)}>{k}</Button>
+            <Button rightIcon={<MdFileDownload />} onClick={() => upstreamDataDownloadRequest(k, sessid)}>{k}</Button>
           </CardBody>
         )
   })}</Card>: <></>));

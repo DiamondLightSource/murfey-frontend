@@ -28,8 +28,8 @@ export const getUpstreamVisits = async (sessid: number) => {
   return response.data;
 };
 
-export const upstreamDataDownloadRequest = async (visitName: string) => {
-  const response = await client.get(`visit/${visitName}/upstream_tiff_data_request`);
+export const upstreamDataDownloadRequest = async (visitName: string, sessid: number) => {
+  const response = await client.get(`visit/${visitName}/${sessid}/upstream_tiff_data_request`);
 
   if (response.status !== 200) {
     return null;
