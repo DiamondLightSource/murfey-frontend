@@ -19,7 +19,8 @@ export const getJWT = async (loginDetails: LoginDetails) => {
 };
 
 export const handshake = async () => {
-  const response = await client.post(`activate_instrument_server`, {});
+  console.log(sessionStorage.getItem("instrumentName"));
+  const response = await client.post(`instruments/${sessionStorage.getItem("instrumentName")}/activate_instrument_server`, {});
   if (response.status !== 200) {
     return null;
   }

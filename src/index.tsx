@@ -73,10 +73,10 @@ const router = createBrowserRouter([
         loader: ({ params }) => rsyncerLoader(queryClient)(params),
       },
       {
-        path: "/new_session",
+        path: "/instruments/:instrumentName/new_session",
         element: <NewSession />,
         errorElement: <Error />,
-        loader: visitLoader(queryClient),
+        loader: ({ params }) => visitLoader(queryClient)(params),
       },
       {
         path: "/new_session/setup/:sessid",

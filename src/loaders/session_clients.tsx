@@ -51,9 +51,9 @@ export const linkSessionToClient = async (
   return response.data;
 };
 
-export const createSession = async (visit: string, sessionName: string) => {
+export const createSession = async (visit: string, sessionName: string, instrumentName: string) => {
   const response = await client.post(
-    `visits/${visit}/session/${sessionName}`,
+    `instruments/${instrumentName}/visits/${visit}/session/${sessionName}`,
     {},
   );
   if (response.status !== 200) {

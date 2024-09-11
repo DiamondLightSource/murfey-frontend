@@ -40,7 +40,9 @@ const NewSession = () => {
     setSessionReference(data.name);
   }
 
-  return (
+  const instrumentName = sessionStorage.getItem("instrumentName");
+
+  return instrumentName ? (
     <div className="rootContainer">
       <Box w="100%" bg="murfey.50">
         <Box w="100%" overflow="hidden">
@@ -96,7 +98,7 @@ const NewSession = () => {
             <Button
               isDisabled={selectedVisit === "" ? true : false}
               onClick={() => {
-                createSession(selectedVisit, sessionReference).then((sid) => {
+                createSession(selectedVisit, sessionReference, instrumentName).then((sid) => {
                   navigate(`../gain_ref_transfer?sessid=${sid}&setup=true`);
                 });
               }}
@@ -107,7 +109,7 @@ const NewSession = () => {
         </Box>
       </Box>
     </div>
-  );
+  ): <></>;
 };
 
 export { NewSession };

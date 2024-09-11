@@ -2,7 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { client } from "utils/api/client";
 
 const getGainRefData = async () => {
-  const response = await client.get(`possible_gain_references`);
+  const response = await client.get(`instruments/${sessionStorage.getItem("instrumentName")}/possible_gain_references`);
 
   if (response.status !== 200) {
     return null;

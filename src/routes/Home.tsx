@@ -153,7 +153,7 @@ const Home = () => {
                 w={{ base: "100%", md: "19.6%" }}
                 _hover={{ textDecor: "none" }}
                 as={LinkRouter}
-                to={`../new_session`}
+                to={`../instruments/${sessionStorage.getItem("instrumentName")}/new_session`}
               >
                 <Button variant="onBlue">New session</Button>
               </Link>

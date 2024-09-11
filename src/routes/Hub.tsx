@@ -30,6 +30,11 @@ import {
 
   const Hub = () => {
     const instrumentInfo = useLoaderData() as InstrumentInfo[];
+
+    const sessionStorageSetup = (ininfo: InstrumentInfo) => {
+      sessionStorage.setItem("murfeyServerURL", ininfo.instrument_url + "/");
+      sessionStorage.setItem("instrumentName", ininfo.instrument_name);
+    }
   
     return (
     <Box w="100%" overflow="hidden">
@@ -44,7 +49,7 @@ import {
           _hover={{ textDecor: "none" }}
           as={LinkRouter}
           to={`/login`}>
-        <Card align="center" onClick={() => sessionStorage.setItem("murfeyServerURL", ini.instrument_url + "/")}>
+        <Card align="center" onClick={() => sessionStorageSetup(ini)}>
             <CardHeader>
                 <Image src={getUrl(`instrument/${ini.instrument_name}/image`)} />
             </CardHeader>
