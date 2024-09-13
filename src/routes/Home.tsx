@@ -14,12 +14,15 @@ import {
   VStack,
 } from "@chakra-ui/react";
 
+import { v4 as uuid4 } from "uuid";
 import { Link as LinkRouter, useLoaderData } from "react-router-dom";
 import { components } from "schema/main";
 import { MdDelete } from "react-icons/md";
 import { deleteSessionData } from "loaders/session_clients";
 import { InstrumentCard } from "components/instrumentCard";
 import useWebSocket from "react-use-websocket";
+
+import React, { useEffect } from "react";
 
 type SessionClients = components["schemas"]["SessionClients"];
 
@@ -111,6 +114,7 @@ const Home = () => {
   const sessions = useLoaderData() as {
     current: SessionClients[];
   } | null;
+  const [ UUID, setUUID ] = React.useState("");
   const baseUrl = sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT
   const url = baseUrl
     ? baseUrl.replace("http", "ws")
@@ -127,7 +131,10 @@ const Home = () => {
     }
   };
 
-  useWebSocket(url + "ws/test/0", {
+
+  //const wsid = uuid1();
+  useEffect(() => {setUUID(uuid4());}, []);
+  useWebSocket(url + `ws/connect/${UUID}`, {
     onOpen: () => {
       console.log("WebSocket connection established.");
     },
@@ -135,6 +142,7 @@ const Home = () => {
       parseWebsocketMessage(event.data);
     },
   });
+
 
   return (
     <div className="rootContainer">

@@ -12,12 +12,12 @@ import {
     SimpleGrid,
   } from "@chakra-ui/react";
   
-  import { TbMicroscope, TbSnowflake } from "react-icons/tb";
-  import { Link as LinkRouter, useLoaderData } from "react-router-dom";
-  import { getInstrumentName } from "loaders/general";
-  
-  import React from "react";
-  
+import { TbMicroscope, TbSnowflake } from "react-icons/tb";
+import { Link as LinkRouter, useLoaderData } from "react-router-dom";
+import { getInstrumentName } from "loaders/general";
+
+import React from "react";
+
   const getUrl = (endpoint: string) => {
     return process.env.REACT_APP_HUB_ENDPOINT + endpoint;
   };

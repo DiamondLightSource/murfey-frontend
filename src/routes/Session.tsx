@@ -42,6 +42,7 @@ import {
 import { useDisclosure } from "@chakra-ui/react";
 import { ViewIcon } from "@chakra-ui/icons";
 
+import { v4 as uuid4 } from "uuid";
 import { Link as LinkRouter, useLoaderData, useParams } from "react-router-dom";
 import {
   MdCheck,
@@ -236,6 +237,7 @@ const Session = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const rsync = useLoaderData() as RsyncInstance[] | null;
   const { sessid } = useParams();
+  const [UUID, setUUID] = React.useState("");
   const [instrumentName, setInstrumentName] = React.useState("");
   const baseUrl = sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT
   const url = baseUrl
@@ -246,6 +248,7 @@ const Session = () => {
 
   useEffect(() => {
     getSessionData(sessid).then((sess) => setSession(sess.session));
+    setUUID(uuid4());
   }, []);
 
   const parseWebsocketMessage = (message: any) => {
@@ -273,7 +276,7 @@ const Session = () => {
     }
   };
 
-  useWebSocket(url + "ws/test/0", {
+  useWebSocket(url + `ws/connect/${UUID}`, {
     onOpen: () => {
       console.log("WebSocket connection established.");
     },
