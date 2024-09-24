@@ -7,6 +7,8 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import { Root } from "routes/Root";
+import { DataCollectionGroups } from "routes/DataCollectionGroups";
+import { GridSquares } from "routes/GridSquares";
 import { Home } from "routes/Home";
 import { Hub } from "routes/Hub";
 import { Session } from "routes/Session";
@@ -28,6 +30,7 @@ import { gainRefLoader } from "loaders/possibleGainRefs";
 import { instrumentInfoLoader } from "loaders/hub";
 import { magTableLoader } from "loaders/magTable";
 import { processingParametersLoader } from "loaders/processingParameters";
+import { dataCollectionGroupsLoader } from "loaders/dataCollectionGroups";
 import { theme } from "styles/theme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -35,6 +38,7 @@ import { MultigridSetup } from "routes/MultigridSetup";
 import { machineConfigLoader } from "loaders/machineConfig";
 import { ProtectedRoutes } from "components/protectedRoutes";
 import { Login } from "routes/Login";
+import { gridSquaresLoader } from "loaders/gridSquares";
 
 const { ToastContainer } = createStandaloneToast();
 const container = document.getElementById("root")!;
@@ -114,6 +118,18 @@ const router = createBrowserRouter([
         errorElement: <Error />,
         loader: magTableLoader(queryClient),
       },
+      {
+        path: "/sessions/:sessid/data_collection_groups",
+        element: <DataCollectionGroups />,
+        errorElement: <Error />,
+        loader: ({ params }) => dataCollectionGroupsLoader(queryClient)(params),
+      },
+      {
+        path: "/sessions/:sessid/data_collection_groups/:dcgid/grid_squares",
+        element: <GridSquares />,
+        errorElement: <Error />,
+        loader: ({ params }) => gridSquaresLoader(queryClient)(params),
+      },
     ],
   },
 ]);
@@ -129,3 +145,6 @@ root.render(
     </QueryClientProvider>
   </ChakraProvider>,
 );
+
+
+// loader: ({ params }) => gridSquaresLoader(queryClient)(params),

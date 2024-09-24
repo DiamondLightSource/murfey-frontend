@@ -26,11 +26,8 @@ const GainRefTransfer = () => {
     const setup = searchParams.get("setup");
     if (sessid) {
       const transferStatus = await transferGainReference(parseInt(sessid), data["full_path"]);
-      console.log(transferStatus);
-      // if (transferStatus.success) { 
       if (true) {
         const preparedGainReference = await prepareGainReference(parseInt(sessid), data["full_path"], false, falcon, tag);
-        console.log(preparedGainReference.gain_ref);
         await updateCurrentGainReference(parseInt(sessid), preparedGainReference.gain_ref);
       }
     }

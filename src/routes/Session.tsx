@@ -37,6 +37,7 @@ import {
   Tooltip,
   VStack,
   useToast,
+  Icon,
 } from "@chakra-ui/react";
 
 import { useDisclosure } from "@chakra-ui/react";
@@ -48,8 +49,8 @@ import {
   MdCheck,
   MdDensityMedium,
   MdFileUpload,
-  MdEmail,
   MdOutlineWarning,
+  MdOutlineGridOn,
 } from "react-icons/md";
 import { FiActivity } from "react-icons/fi";
 import { components } from "schema/main";
@@ -359,6 +360,17 @@ const Session = () => {
             </Stack>
             <Spacer />
             <Stack spacing={5} py="0.8em" px="1em">
+              <Link
+                w={{ base: "100%", md: "19.6%" }}
+                key="data_collections"
+                _hover={{ textDecor: "none" }}
+                as={LinkRouter}
+                to={`../sessions/${sessid}/data_collection_groups`}
+              >
+              <Button rightIcon={<MdOutlineGridOn />} padding="20px">
+                Data Collections
+              </Button>
+              </Link>
               <Link
                 w={{ base: "100%", md: "19.6%" }}
                 key="gain_ref"
