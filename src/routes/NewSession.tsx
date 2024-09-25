@@ -21,6 +21,7 @@ import { components } from "schema/main";
 import { SetupStepper } from "components/setupStepper";
 import { Table } from "@diamondlightsource/ui-components";
 import { createSession } from "loaders/session_clients";
+import { sessionHandshake } from "loaders/jwt";
 import { useNavigate } from "react-router-dom";
 import React, { ChangeEventHandler } from "react";
 
@@ -41,6 +42,12 @@ const NewSession = () => {
   }
 
   const instrumentName = sessionStorage.getItem("instrumentName");
+
+  const startMurfeySession = async (iName: string) => {
+    const sid = await createSession(selectedVisit, sessionReference, iName);
+    sessionHandshake(sid);
+    return sid;
+  }
 
   return instrumentName ? (
     <div className="rootContainer">
@@ -98,7 +105,7 @@ const NewSession = () => {
             <Button
               isDisabled={selectedVisit === "" ? true : false}
               onClick={() => {
-                createSession(selectedVisit, sessionReference, instrumentName).then((sid) => {
+                startMurfeySession(instrumentName).then((sid: number) => {
                   navigate(`../gain_ref_transfer?sessid=${sid}&setup=true`);
                 });
               }}
