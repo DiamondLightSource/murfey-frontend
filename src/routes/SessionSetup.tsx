@@ -41,13 +41,11 @@ const SessionSetup = () => {
 
   const handleSelection = (formData: any) => {
     if (typeof sessid !== "undefined"){
-      const expType = formData.type;
       delete formData.type;
-      if (expType === "SPA")
-        registerProcessingParameters(
-          formData as ProvidedProcessingParameters,
-          parseInt(sessid),
-        );
+      registerProcessingParameters(
+        formData as ProvidedProcessingParameters,
+        parseInt(sessid),
+      );
       setParamsSet(true);
     }
   };
