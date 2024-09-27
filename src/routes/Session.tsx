@@ -376,7 +376,7 @@ const Session = () => {
                 key="gain_ref"
                 _hover={{ textDecor: "none" }}
                 as={LinkRouter}
-                to={`../gain_ref_transfer?sessid=${sessid}`}
+                to={`../sessions/${sessid}/gain_ref_transfer?sessid=${sessid}`}
               >
                 <Button rightIcon={<MdFileUpload />} padding="20px">
                   Transfer Gain Reference

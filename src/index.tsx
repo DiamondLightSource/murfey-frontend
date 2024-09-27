@@ -95,10 +95,10 @@ const router = createBrowserRouter([
         loader: clientsLoader(queryClient),
       },
       {
-        path: "/gain_ref_transfer",
+        path: "/sessions/:sessid/gain_ref_transfer",
         element: <GainRefTransfer />,
         errorElement: <Error />,
-        loader: gainRefLoader(queryClient),
+        loader: ({ params }) => gainRefLoader(queryClient)(params),
       },
       {
         path: "/new_session/parameters/:sessid",

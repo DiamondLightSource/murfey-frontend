@@ -106,7 +106,7 @@ const NewSession = () => {
               isDisabled={selectedVisit === "" ? true : false}
               onClick={() => {
                 startMurfeySession(instrumentName).then((sid: number) => {
-                  navigate(`../gain_ref_transfer?sessid=${sid}&setup=true`);
+                  navigate(`../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`);
                 });
               }}
             >

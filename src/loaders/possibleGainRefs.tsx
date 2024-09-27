@@ -1,8 +1,9 @@
 import { QueryClient } from "@tanstack/react-query";
 import { client } from "utils/api/client";
+import { Params } from "react-router-dom";
 
-const getGainRefData = async () => {
-  const response = await client.get(`instruments/${sessionStorage.getItem("instrumentName")}/possible_gain_references`);
+const getGainRefData = async (sessionId: string) => {
+  const response = await client.get(`instruments/${sessionStorage.getItem("instrumentName")}/sessions/${sessionId}/possible_gain_references`);
 
   if (response.status !== 200) {
     return null;
@@ -56,12 +57,17 @@ export const updateCurrentGainReference = async (
   return response.data;
 };
 
-const query = {
-  queryKey: ["gainRefs"],
-  queryFn: getGainRefData,
-  staleTime: 60000,
+const query = (sessid: string) => {
+  return {
+    queryKey: ["gainRefs"],
+    queryFn: () => getGainRefData(sessid),
+    staleTime: 60000,
+  }
 };
 
-export const gainRefLoader = (queryClient: QueryClient) => async () =>
-  (await queryClient.getQueryData(query.queryKey)) ??
-  (await queryClient.fetchQuery(query));
+export const gainRefLoader = (queryClient: QueryClient) => async (params: Params) => {
+  if(params.sessid){
+    const singleQuery = query(params.sessid);
+    return (await queryClient.getQueryData(singleQuery.queryKey)) ??
+      (await queryClient.fetchQuery(singleQuery));
+}}
