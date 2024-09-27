@@ -44,8 +44,9 @@ const MultigridSetup = () => {
     });
   const [selectedDirectory, setSelectedDirectory] =
     React.useState(initialDirectory);
+  const processByDefault = machineConfig ? machineConfig.process_by_default: true
   const [skipExistingProcessing, setSkipExistingProcessing] =
-    React.useState(false);
+    React.useState(!processByDefault);
   const [session, setSession] = React.useState<Session>();
 
   useEffect(() => {
@@ -119,6 +120,7 @@ const MultigridSetup = () => {
                   <FormLabel mb="0">Do not process existing data</FormLabel>
                   <Switch
                     id="skip-existing-processing"
+                    isChecked={!processByDefault}
                     onChange={() => {
                       setSkipExistingProcessing(!skipExistingProcessing);
                     }}

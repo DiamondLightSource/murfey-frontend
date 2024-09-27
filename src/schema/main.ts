@@ -31,6 +31,10 @@ export interface paths {
     /** Remove Mag Table Row */
     delete: operations["remove_mag_table_row_mag_table__mag__delete"];
   };
+  "/instruments/{instrument_name}/instrument_name": {
+    /** Get Instrument Display Name */
+    get: operations["get_instrument_display_name_instruments__instrument_name__instrument_name_get"];
+  };
   "/instruments/{instrument_name}/visits/": {
     /** All Visit Info */
     get: operations["all_visit_info_instruments__instrument_name__visits__get"];
@@ -107,9 +111,17 @@ export interface paths {
     /** Get Grid Squares From Dcg */
     get: operations["get_grid_squares_from_dcg_sessions__session_id__data_collection_groups__dcgid__grid_squares_get"];
   };
+  "/sessions/{session_id}/data_collection_groups/{dcgid}/grid_squares/{gsid}/num_movies": {
+    /** Get Number Of Movies From Grid Square */
+    get: operations["get_number_of_movies_from_grid_square_sessions__session_id__data_collection_groups__dcgid__grid_squares__gsid__num_movies_get"];
+  };
   "/sessions/{session_id}/data_collection_groups/{dcgid}/grid_squares/{gsid}/foil_holes": {
     /** Get Foil Holes From Grid Square */
     get: operations["get_foil_holes_from_grid_square_sessions__session_id__data_collection_groups__dcgid__grid_squares__gsid__foil_holes_get"];
+  };
+  "/sessions/{session_id}/data_collection_groups/{dcgid}/grid_squares/{gsid}/foil_holes/{fhid}/num_movies": {
+    /** Get Number Of Movies From Foil Hole */
+    get: operations["get_number_of_movies_from_foil_hole_sessions__session_id__data_collection_groups__dcgid__grid_squares__gsid__foil_holes__fhid__num_movies_get"];
   };
   "/sessions/{session_id}/grid_square/{gsid}": {
     /** Register Grid Square */
@@ -187,9 +199,9 @@ export interface paths {
     /** Get Dc Groups */
     get: operations["get_dc_groups_sessions__session_id__data_collection_groups_get"];
   };
-  "/sessions/{session_id}/data_collection_groups/{dcgid}/data_collection": {
-    /** Get Dc Groups */
-    get: operations["get_dc_groups_sessions__session_id__data_collection_groups__dcgid__data_collection_get"];
+  "/sessions/{session_id}/data_collection_groups/{dcgid}/data_collections": {
+    /** Get Data Collections */
+    get: operations["get_data_collections_sessions__session_id__data_collection_groups__dcgid__data_collections_get"];
   };
   "/visits/{visit_name}/{session_id}/register_data_collection_group": {
     /** Register Dc Group */
@@ -377,6 +389,10 @@ export interface paths {
     /** Generate Token */
     post: operations["generate_token_token_post"];
   };
+  "/sessions/{session_id}/token": {
+    /** Mint Session Token */
+    get: operations["mint_session_token_sessions__session_id__token_get"];
+  };
   "/validate_token": {
     /** Simple Token Validation */
     get: operations["simple_token_validation_validate_token_get"];
@@ -389,9 +405,17 @@ export interface paths {
     /** Get Grid Square Img */
     get: operations["get_grid_square_img_display_sessions__session_id__data_collection_groups__dcgid__grid_squares__grid_square_name__image_get"];
   };
+  "/display/sessions/{session_id}/data_collection_groups/{dcgid}/grid_squares/{grid_square_name}/foil_holes/{foil_hole_name}/image": {
+    /** Get Foil Hole Img */
+    get: operations["get_foil_hole_img_display_sessions__session_id__data_collection_groups__dcgid__grid_squares__grid_square_name__foil_holes__foil_hole_name__image_get"];
+  };
   "/instruments/{instrument_name}/activate_instrument_server": {
     /** Activate Instrument Server */
     post: operations["activate_instrument_server_instruments__instrument_name__activate_instrument_server_post"];
+  };
+  "/instruments/{instrument_name}/sessions/{session_id}/activate_instrument_server": {
+    /** Activate Instrument Server For Session */
+    post: operations["activate_instrument_server_for_session_instruments__instrument_name__sessions__session_id__activate_instrument_server_post"];
   };
   "/sessions/{session_id}/multigrid_watcher": {
     /** Start Multigrid Watcher */
@@ -405,9 +429,9 @@ export interface paths {
     /** Check Instrument Server */
     get: operations["check_instrument_server_instruments__instrument_name__instrument_server_get"];
   };
-  "/instruments/{instrument_name}/possible_gain_references": {
+  "/instruments/{instrument_name}/sessions/{session_id}/possible_gain_references": {
     /** Get Possible Gain References */
-    get: operations["get_possible_gain_references_instruments__instrument_name__possible_gain_references_get"];
+    get: operations["get_possible_gain_references_instruments__instrument_name__sessions__session_id__possible_gain_references_get"];
   };
   "/sessions/{session_id}/upload_gain_reference": {
     /** Request Gain Reference Upload */
@@ -1028,6 +1052,11 @@ export interface components {
       software_settings_output_directories?: {
         [key: string]: string[];
       };
+      /**
+       * Process By Default
+       * @default true
+       */
+      process_by_default?: boolean;
       /**
        * Recipes
        * @default {
@@ -1848,6 +1877,28 @@ export interface operations {
       };
     };
   };
+  /** Get Instrument Display Name */
+  get_instrument_display_name_instruments__instrument_name__instrument_name_get: {
+    parameters: {
+      path: {
+        instrument_name: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": string;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   /** All Visit Info */
   all_visit_info_instruments__instrument_name__visits__get: {
     parameters: {
@@ -2331,6 +2382,30 @@ export interface operations {
       };
     };
   };
+  /** Get Number Of Movies From Grid Square */
+  get_number_of_movies_from_grid_square_sessions__session_id__data_collection_groups__dcgid__grid_squares__gsid__num_movies_get: {
+    parameters: {
+      path: {
+        session_id: number;
+        dcgid: number;
+        gsid: number;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": number;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   /** Get Foil Holes From Grid Square */
   get_foil_holes_from_grid_square_sessions__session_id__data_collection_groups__dcgid__grid_squares__gsid__foil_holes_get: {
     parameters: {
@@ -2345,6 +2420,31 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["FoilHole"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Get Number Of Movies From Foil Hole */
+  get_number_of_movies_from_foil_hole_sessions__session_id__data_collection_groups__dcgid__grid_squares__gsid__foil_holes__fhid__num_movies_get: {
+    parameters: {
+      path: {
+        session_id: number;
+        dcgid: number;
+        gsid: number;
+        fhid: number;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": number;
         };
       };
       /** @description Validation Error */
@@ -2843,10 +2943,11 @@ export interface operations {
       };
     };
   };
-  /** Get Dc Groups */
-  get_dc_groups_sessions__session_id__data_collection_groups__dcgid__data_collection_get: {
+  /** Get Data Collections */
+  get_data_collections_sessions__session_id__data_collection_groups__dcgid__data_collections_get: {
     parameters: {
       path: {
+        dcgid: number;
         session_id: number;
       };
     };
@@ -2854,7 +2955,7 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["DataCollection"];
+          "application/json": components["schemas"]["DataCollection"][];
         };
       };
       /** @description Validation Error */
@@ -3736,6 +3837,28 @@ export interface operations {
       };
     };
   };
+  /** Mint Session Token */
+  mint_session_token_sessions__session_id__token_get: {
+    parameters: {
+      path: {
+        session_id: number;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   /** Simple Token Validation */
   simple_token_validation_validate_token_get: {
     responses: {
@@ -3782,11 +3905,59 @@ export interface operations {
       };
     };
   };
+  /** Get Foil Hole Img */
+  get_foil_hole_img_display_sessions__session_id__data_collection_groups__dcgid__grid_squares__grid_square_name__foil_holes__foil_hole_name__image_get: {
+    parameters: {
+      path: {
+        session_id: number;
+        dcgid: number;
+        grid_square_name: number;
+        foil_hole_name: number;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   /** Activate Instrument Server */
   activate_instrument_server_instruments__instrument_name__activate_instrument_server_post: {
     parameters: {
       path: {
         instrument_name: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Activate Instrument Server For Session */
+  activate_instrument_server_for_session_instruments__instrument_name__sessions__session_id__activate_instrument_server_post: {
+    parameters: {
+      path: {
+        instrument_name: string;
+        session_id: number;
       };
     };
     responses: {
@@ -3881,10 +4052,11 @@ export interface operations {
     };
   };
   /** Get Possible Gain References */
-  get_possible_gain_references_instruments__instrument_name__possible_gain_references_get: {
+  get_possible_gain_references_instruments__instrument_name__sessions__session_id__possible_gain_references_get: {
     parameters: {
       path: {
         instrument_name: string;
+        session_id: number;
       };
     };
     responses: {
