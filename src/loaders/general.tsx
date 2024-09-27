@@ -1,7 +1,7 @@
 import { client } from "utils/api/client";
 
 export const getInstrumentName = async () => {
-  const response = await client.get(`instrument_name`);
+  const response = await client.get(`instruments/${sessionStorage.getItem("instrumentName")}/instrument_name`);
 
   if (response.status !== 200) {
     return null;
