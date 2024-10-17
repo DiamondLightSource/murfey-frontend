@@ -14,8 +14,16 @@ import {
   StatNumber,
   Text,
   VStack,
+  Modal,
+  ModalOverlay,
+  ModalHeader,
+  ModalContent,
+  ModalFooter,
+  ModalCloseButton,
+  ModalBody,
 } from "@chakra-ui/react";
 
+import { useDisclosure } from "@chakra-ui/react";
 import { Link as LinkRouter, useLoaderData, useParams } from "react-router-dom";
 import { components } from "schema/main";
 import { SetupStepper } from "components/setupStepper";
@@ -29,12 +37,16 @@ type Visit = components["schemas"]["Visit"];
 
 const NewSession = () => {
   const currentVisits = useLoaderData() as Visit[] | null;
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedVisit, setSelectedVisit] = React.useState("");
   const [sessionReference, setSessionReference] = React.useState("");
   const navigate = useNavigate();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setSessionReference(event.target.value);
+
+  const handleVisitNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setSelectedVisit(event.target.value);
 
   function selectVisit(data: Record<string, any>, index: number) {
     setSelectedVisit(data.name);
@@ -51,6 +63,36 @@ const NewSession = () => {
 
   return instrumentName ? (
     <div className="rootContainer">
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Create visit</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Input
+              placeholder="Session name"
+              onChange={handleVisitNameChange}
+            />
+            <Input
+              placeholder="Session reference"
+              value={sessionReference}
+              onChange={handleChange}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              isDisabled={selectedVisit === "" ? true : false}
+              onClick={() => {
+                startMurfeySession(instrumentName).then((sid: number) => {
+                  navigate(`../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`);
+                });
+              }}
+            >
+              Create session
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <Box w="100%" bg="murfey.50">
         <Box w="100%" overflow="hidden">
           <VStack className="homeRoot">
@@ -58,6 +100,7 @@ const NewSession = () => {
               <Heading size="xl" color="murfey.50">
                 Current visits
               </Heading>
+              <Button variant="onBlue" onClick={() => onOpen()}>Create visist</Button>
             </VStack>
           </VStack>
         </Box>

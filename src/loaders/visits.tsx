@@ -1,8 +1,6 @@
 import { QueryClient } from "@tanstack/react-query";
-import { components } from "schema/main";
 import { client } from "utils/api/client";
 import { Params } from "react-router-dom";
-import { parseDate } from "utils/generic";
 
 const getVisitData = async (instrumentName: string) => {
   const response = await client.get(`instruments/${instrumentName}/visits_raw`);
