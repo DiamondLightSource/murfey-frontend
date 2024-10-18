@@ -45,8 +45,10 @@ const NewSession = () => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setSessionReference(event.target.value);
 
-  const handleVisitNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+  const handleVisitNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedVisit(event.target.value);
+    setSessionReference(event.target.value);
+  }
 
   function selectVisit(data: Record<string, any>, index: number) {
     setSelectedVisit(data.name);
@@ -57,7 +59,7 @@ const NewSession = () => {
 
   const startMurfeySession = async (iName: string) => {
     const sid = await createSession(selectedVisit, sessionReference, iName);
-    sessionHandshake(sid);
+    await sessionHandshake(sid);
     return sid;
   }
 
