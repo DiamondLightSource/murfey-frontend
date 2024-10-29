@@ -27,7 +27,7 @@ const GainRefTransfer = () => {
     if (sessid) {
       const transferStatus = await transferGainReference(parseInt(sessid), data["full_path"]);
       if (true) {
-        const preparedGainReference = await prepareGainReference(parseInt(sessid), data["full_path"], false, falcon, tag);
+        const preparedGainReference = await prepareGainReference(parseInt(sessid), data["full_path"], !falcon, falcon, tag);
         await updateCurrentGainReference(parseInt(sessid), preparedGainReference.gain_ref);
       }
     }
