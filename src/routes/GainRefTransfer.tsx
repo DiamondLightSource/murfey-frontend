@@ -83,6 +83,10 @@ const GainRefTransfer = () => {
         >
           <HStack>
           <VStack>
+          <Tooltip label="Tag appended to gain reference name">
+            <Input placeholder="Tag (optional)" w="50%" display={"flex"} onChange={(e) => setTag(e.target.value)}/>
+          </Tooltip>
+          <Checkbox isChecked={falcon} onChange={(e) => setFalcon(e.target.checked)}>Falcon</Checkbox>
           <Table
             width='80%'
             data={possibleGainRefs}
@@ -95,10 +99,6 @@ const GainRefTransfer = () => {
             label={"gainRefData"}
             onClick={SelectGainRef}
           />
-          <Tooltip label="Tag appended to gain reference name">
-            <Input placeholder="Tag (optional)" w="50%" display={"flex"} onChange={(e) => setTag(e.target.value)}/>
-          </Tooltip>
-          <Checkbox isChecked={falcon} onChange={(e) => setFalcon(e.target.checked)}>Falcon</Checkbox>
           </VStack>
           </HStack>
         </Box>
