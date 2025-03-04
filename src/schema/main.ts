@@ -942,9 +942,7 @@ export interface components {
         };
       };
       /** Data Directories */
-      data_directories: {
-        [key: string]: string;
-      };
+      data_directories: string[];
       /**
        * Rsync Basepath
        * Format: path

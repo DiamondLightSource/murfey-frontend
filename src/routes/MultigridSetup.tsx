@@ -30,9 +30,9 @@ const MultigridSetup = () => {
   const { sessid } = useParams();
   let initialDirectory = "";
   if (machineConfig)
-    Object.entries(machineConfig.data_directories).forEach(([key, value]) => {
-      if (initialDirectory === "" && value === "detector")
-        initialDirectory = key;
+    machineConfig.data_directories.forEach((value) => {
+      if (initialDirectory === "")
+        initialDirectory = value;
     });
   const [selectedDirectory, setSelectedDirectory] =
     React.useState(initialDirectory);
@@ -120,13 +120,11 @@ const MultigridSetup = () => {
                 <HStack>
                   <Select onChange={handleDirectorySelection}>
                     {machineConfig &&
-                    Object.keys(machineConfig.data_directories).length > 0 ? (
-                      Object.entries(machineConfig.data_directories).map(
-                        ([key, value]) => {
-                          return value === "detector" ? (
-                            <option value={key}>{key}</option>
-                          ) : (
-                            <></>
+                    machineConfig.data_directories.length > 0 ? (
+                      machineConfig.data_directories.map(
+                        (value) => {
+                          return (
+                            <option value={value}>{value}</option>
                           );
                         },
                       )

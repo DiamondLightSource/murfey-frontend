@@ -263,10 +263,7 @@ const Session = () => {
 
   const handleMachineConfig = (mcfg: MachineConfig) => {
     setMachineConfig(mcfg);
-    Object.entries(mcfg["data_directories"]).forEach(([key, value]) => {
-      if (selectedDirectory === "" && value === "detector")
-        setSelectedDirectory(key);
-    });
+    setSelectedDirectory(mcfg["data_directories"][0]);
   } 
 
   useEffect(() => {getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))}, []);
@@ -394,13 +391,11 @@ const Session = () => {
             <FormLabel mb="0">Data directory</FormLabel>
             <Select onChange={handleDirectorySelection}>
               {machineConfig &&
-              Object.keys(machineConfig["data_directories"]).length > 0 ? (
-                Object.entries(machineConfig["data_directories"]).map(
-                  ([key, value]) => {
-                    return value === "detector" ? (
-                      <option value={key}>{key}</option>
-                    ) : (
-                      <></>
+              machineConfig["data_directories"].length > 0 ? (
+                machineConfig["data_directories"].map(
+                  (value) => {
+                    return (
+                      <option value={value}>{value}</option>
                     );
                   },
                 )
