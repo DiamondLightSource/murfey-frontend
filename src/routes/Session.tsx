@@ -338,9 +338,10 @@ const Session = () => {
   }
   useEffect(() => {checkSessionActivationState()}, []);
 
+  const getTransferring = (r: RsyncInstance) => {return r.transferring;}
+
   const checkRsyncStatus = async () => {
-    if(rsync) setRsyncersPaused(rsync.every(r => {r.transferring}))
-    else setRsyncersPaused(false)
+    setRsyncersPaused(rsync ? rsync.every(getTransferring): false);
   }
 
   useEffect(() => {checkRsyncStatus()}, []);
