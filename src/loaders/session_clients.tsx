@@ -71,13 +71,13 @@ export const deleteSessionData = async (sessid: number) => {
 };
 
 const query = {
-  queryKey: ["homepageSessions"],
+  queryKey: ["homepageSessions", sessionStorage.getItem("instrumentName")],
   queryFn: getSessionsData,
   staleTime: 60000,
 };
 
 const clientQuery = {
-  queryKey: ["homepageClients"],
+  queryKey: ["homepageClients", sessionStorage.getItem("instrumentName")],
   queryFn: getClientData,
   staleTime: 60000,
 };

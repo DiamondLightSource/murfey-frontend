@@ -51,7 +51,6 @@ const MultigridSetup = () => {
 
   const handleSelection = () => {
     if (typeof sessid !== "undefined"){
-      console.log(sessid);
       startMultigridWatcher(
         {
           source: selectedDirectory,

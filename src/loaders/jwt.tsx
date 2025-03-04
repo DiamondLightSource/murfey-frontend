@@ -31,3 +31,8 @@ export const sessionHandshake = async (sessid: number) => {
   const response = await client.post(`instruments/${sessionStorage.getItem("instrumentName")}/sessions/${sessid}/activate_instrument_server`, {});
   return response.data;
 }
+
+export const sessionTokenCheck = async (sessid: number) => {
+  const response = await client.get(`instruments/${sessionStorage.getItem("instrumentName")}/sessions/${sessid}/active`);
+  return response.data.active;
+}

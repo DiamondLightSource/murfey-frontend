@@ -279,6 +279,10 @@ export interface paths {
     /** Update Current Gain Ref */
     put: operations["update_current_gain_ref_sessions__session_id__current_gain_ref_put"];
   };
+  "/version/": {
+    /** Get Version */
+    get: operations["get_version_version__get"];
+  };
   "/bootstrap/": {
     /**
      * Get Bootstrap Instructions
@@ -323,6 +327,67 @@ export interface paths {
      */
     get: operations["parse_cygwin_request_cygwin__request_path__get"];
   };
+  "/msys2/setup-x86_64.exe": {
+    /**
+     * Get Msys2 Setup
+     * @description Obtain and pass through an MSYS2 installer from an official source.
+     * This is used during client bootstrapping, and can download and install the
+     * MSYS2 distribution that then remains on the client machines.
+     */
+    get: operations["get_msys2_setup_msys2_setup_x86_64_exe_get"];
+  };
+  "/msys2": {
+    /**
+     * Get Msys2 Main Index
+     * @description Returns a simple index displaying valid MSYS2 systems and the latest setup file
+     * from the main MSYS2 repository.
+     */
+    get: operations["get_msys2_main_index_msys2_get"];
+  };
+  "/msys2/{system}": {
+    /**
+     * Get Msys2 Environment Index
+     * @description Returns a list of all MSYS2 environments for a given system from the main MSYS2
+     * repository.
+     */
+    get: operations["get_msys2_environment_index_msys2__system__get"];
+  };
+  "/msys2/{system}/{environment}": {
+    /**
+     * Get Msys2 Package Index
+     * @description Obtain a list of all available MSYS2 packages for a given environment from the main
+     * MSYS2 repo.
+     */
+    get: operations["get_msys2_package_index_msys2__system___environment__get"];
+  };
+  "/msys2/{system}/{environment}/{package}": {
+    /**
+     * Get Msys2 Package File
+     * @description Obtain and pass through a specific download for an MSYS2 package.
+     */
+    get: operations["get_msys2_package_file_msys2__system___environment___package__get"];
+  };
+  "/microsoft/terminal/releases": {
+    /**
+     * Get Windows Terminal Releases
+     * @description Returns a list of stable Windows Terminal releases from the GitHub repository.
+     */
+    get: operations["get_windows_terminal_releases_microsoft_terminal_releases_get"];
+  };
+  "/microsoft/terminal/releases/{version}": {
+    /**
+     * Get Windows Terminal Version Assets
+     * @description Returns a list of packages for the selected version of Windows Terminal.
+     */
+    get: operations["get_windows_terminal_version_assets_microsoft_terminal_releases__version__get"];
+  };
+  "/microsoft/terminal/releases/{version}/{file_name}": {
+    /**
+     * Get Windows Terminal Package File
+     * @description Returns a package from the GitHub repository.
+     */
+    get: operations["get_windows_terminal_package_file_microsoft_terminal_releases__version___file_name__get"];
+  };
   "/pypi/": {
     /**
      * Get Pypi Index
@@ -349,10 +414,6 @@ export interface paths {
     /** Get Plugin Wheel */
     get: operations["get_plugin_wheel_plugins_instruments__instrument_name___package__get"];
   };
-  "/version/": {
-    /** Get Version */
-    get: operations["get_version_version__get"];
-  };
   "/sessions/{session_id}/clem/lif_files": {
     /** Register Lif File */
     post: operations["register_lif_file_sessions__session_id__clem_lif_files_post"];
@@ -373,13 +434,13 @@ export interface paths {
     /** Register Image Stack */
     post: operations["register_image_stack_sessions__session_id__clem_image_stacks_post"];
   };
-  "/sessions/{session_id}/lif_to_stack": {
-    /** Lif To Stack */
-    post: operations["lif_to_stack_sessions__session_id__lif_to_stack_post"];
+  "/sessions/{session_id}/clem/preprocessing/process_raw_lifs": {
+    /** Process Raw Lifs */
+    post: operations["process_raw_lifs_sessions__session_id__clem_preprocessing_process_raw_lifs_post"];
   };
-  "/sessions/{session_id}/tiff_to_stack": {
-    /** Tiff To Stack */
-    post: operations["tiff_to_stack_sessions__session_id__tiff_to_stack_post"];
+  "/sessions/{session_id}/clem/preprocessing/process_raw_tiffs": {
+    /** Process Raw Tiffs */
+    post: operations["process_raw_tiffs_sessions__session_id__clem_preprocessing_process_raw_tiffs_post"];
   };
   "/sessions/{session_id}/cryolo_model": {
     /** Get Cryolo Model Path */
@@ -397,9 +458,9 @@ export interface paths {
     /** Simple Token Validation */
     get: operations["simple_token_validation_validate_token_get"];
   };
-  "/display/microscope_image/": {
+  "/display/instruments/{instrument_name}/image/": {
     /** Get Mic Image */
-    get: operations["get_mic_image_display_microscope_image__get"];
+    get: operations["get_mic_image_display_instruments__instrument_name__image__get"];
   };
   "/display/sessions/{session_id}/data_collection_groups/{dcgid}/grid_squares/{grid_square_name}/image": {
     /** Get Grid Square Img */
@@ -409,13 +470,13 @@ export interface paths {
     /** Get Foil Hole Img */
     get: operations["get_foil_hole_img_display_sessions__session_id__data_collection_groups__dcgid__grid_squares__grid_square_name__foil_holes__foil_hole_name__image_get"];
   };
-  "/instruments/{instrument_name}/activate_instrument_server": {
-    /** Activate Instrument Server */
-    post: operations["activate_instrument_server_instruments__instrument_name__activate_instrument_server_post"];
-  };
   "/instruments/{instrument_name}/sessions/{session_id}/activate_instrument_server": {
     /** Activate Instrument Server For Session */
     post: operations["activate_instrument_server_for_session_instruments__instrument_name__sessions__session_id__activate_instrument_server_post"];
+  };
+  "/instruments/{instrument_name}/sessions/{session_id}/active": {
+    /** Check If Session Is Active */
+    get: operations["check_if_session_is_active_instruments__instrument_name__sessions__session_id__active_get"];
   };
   "/sessions/{session_id}/multigrid_watcher": {
     /** Start Multigrid Watcher */
@@ -473,9 +534,13 @@ export interface paths {
     /** Close Unrecorded Ws Connection */
     delete: operations["close_unrecorded_ws_connection_ws_connect__client_id__delete"];
   };
-  "/visits/{visit_name}/smartem_atlas/": {
+  "/instruments/{instrument_name}/visits/{visit_name}/smartem_atlas/": {
     /** Request Smartem Atlas Analysis */
-    post: operations["request_smartem_atlas_analysis_visits__visit_name__smartem_atlas__post"];
+    post: operations["request_smartem_atlas_analysis_instruments__instrument_name__visits__visit_name__smartem_atlas__post"];
+  };
+  "/instruments/{instrument_name}/k3_ssd": {
+    /** Update K3 Ssd Statuses */
+    post: operations["update_k3_ssd_statuses_instruments__instrument_name__k3_ssd_post"];
   };
 }
 
@@ -866,23 +931,6 @@ export interface components {
       /** Instrument Url */
       instrument_url: string;
     };
-    /** LifFileInfo */
-    LifFileInfo: {
-      /**
-       * Name
-       * Format: path
-       */
-      name: string;
-      /** Size */
-      size: number;
-      /** Timestamp */
-      timestamp: number;
-      /**
-       * Description
-       * @default
-       */
-      description?: string;
-    };
     /** MachineConfig */
     MachineConfig: {
       /** Acquisition Software */
@@ -975,6 +1023,11 @@ export interface components {
        */
       gain_reference_directory?: string;
       /**
+       * Eer Fractionation File Template
+       * @default
+       */
+      eer_fractionation_file_template?: string;
+      /**
        * Processed Directory Name
        * @default processed
        */
@@ -984,11 +1037,6 @@ export interface components {
        * @default processing
        */
       gain_directory_name?: string;
-      /**
-       * Feedback Queue
-       * @default murfey_feedback
-       */
-      feedback_queue?: string;
       /**
        * Node Creator Queue
        * @default node_creator
@@ -1023,6 +1071,11 @@ export interface components {
        * @default false
        */
       modular_spa?: boolean;
+      /**
+       * Data Transfer Enabled
+       * @default true
+       */
+      data_transfer_enabled?: boolean;
       /**
        * Processing Enabled
        * @default true
@@ -1119,6 +1172,16 @@ export interface components {
        * @default http://localhost:8000
        */
       murfey_url?: string;
+      /**
+       * Security Configuration Path
+       * Format: path
+       */
+      security_configuration_path?: string;
+      /**
+       * Auth Url
+       * @default
+       */
+      auth_url?: string;
     };
     /** MagnificationLookup */
     MagnificationLookup: {
@@ -1139,6 +1202,18 @@ export interface components {
        * @default false
        */
       skip_existing_processing?: boolean;
+      /**
+       * Destination Overrides
+       * @default {}
+       */
+      destination_overrides?: {
+        [key: string]: string;
+      };
+      /**
+       * Rsync Restarts
+       * @default []
+       */
+      rsync_restarts?: string[];
     };
     /** PostInfo */
     PostInfo: {
@@ -1555,6 +1630,13 @@ export interface components {
        */
       mask_diameter?: number;
     };
+    /** SSDData */
+    SSDData: {
+      /** Name */
+      name: string;
+      /** Health */
+      health: number;
+    };
     /** Session */
     Session: {
       /** Id */
@@ -1649,35 +1731,22 @@ export interface components {
        */
       extra_directory?: string;
     };
-    /** Tag */
-    Tag: {
-      /** Tag */
-      tag: string;
-    };
-    /** TiffSeriesInfo */
-    TiffSeriesInfo: {
+    /** TIFFSeriesInfo */
+    TIFFSeriesInfo: {
       /** Series Name */
       series_name: string;
       /** Tiff Files */
       tiff_files: string[];
-      /** Tiff Sizes */
-      tiff_sizes: number[];
-      /** Tiff Timestamps */
-      tiff_timestamps: number[];
       /**
        * Series Metadata
        * Format: path
        */
       series_metadata: string;
-      /** Metadata Size */
-      metadata_size: number;
-      /** Metadata Timestamp */
-      metadata_timestamp: number;
-      /**
-       * Description
-       * @default
-       */
-      description?: string;
+    };
+    /** Tag */
+    Tag: {
+      /** Tag */
+      tag: string;
     };
     /** TiltInfo */
     TiltInfo: {
@@ -1699,8 +1768,8 @@ export interface components {
     };
     /** TiltSeriesInfo */
     TiltSeriesInfo: {
-      /** Client Id */
-      client_id: number;
+      /** Session Id */
+      session_id: number;
       /** Tag */
       tag: string;
       /** Source */
@@ -3397,6 +3466,28 @@ export interface operations {
       };
     };
   };
+  /** Get Version */
+  get_version_version__get: {
+    parameters: {
+      query?: {
+        client_version?: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   /**
    * Get Bootstrap Instructions
    * @description Return a website containing instructions for installing the Murfey client on a
@@ -3464,6 +3555,166 @@ export interface operations {
     parameters: {
       path: {
         request_path: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Get Msys2 Setup
+   * @description Obtain and pass through an MSYS2 installer from an official source.
+   * This is used during client bootstrapping, and can download and install the
+   * MSYS2 distribution that then remains on the client machines.
+   */
+  get_msys2_setup_msys2_setup_x86_64_exe_get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Get Msys2 Main Index
+   * @description Returns a simple index displaying valid MSYS2 systems and the latest setup file
+   * from the main MSYS2 repository.
+   */
+  get_msys2_main_index_msys2_get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Get Msys2 Environment Index
+   * @description Returns a list of all MSYS2 environments for a given system from the main MSYS2
+   * repository.
+   */
+  get_msys2_environment_index_msys2__system__get: {
+    parameters: {
+      path: {
+        system: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Get Msys2 Package Index
+   * @description Obtain a list of all available MSYS2 packages for a given environment from the main
+   * MSYS2 repo.
+   */
+  get_msys2_package_index_msys2__system___environment__get: {
+    parameters: {
+      path: {
+        system: string;
+        environment: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Get Msys2 Package File
+   * @description Obtain and pass through a specific download for an MSYS2 package.
+   */
+  get_msys2_package_file_msys2__system___environment___package__get: {
+    parameters: {
+      path: {
+        system: string;
+        environment: string;
+        package: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Get Windows Terminal Releases
+   * @description Returns a list of stable Windows Terminal releases from the GitHub repository.
+   */
+  get_windows_terminal_releases_microsoft_terminal_releases_get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Get Windows Terminal Version Assets
+   * @description Returns a list of packages for the selected version of Windows Terminal.
+   */
+  get_windows_terminal_version_assets_microsoft_terminal_releases__version__get: {
+    parameters: {
+      path: {
+        version: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Get Windows Terminal Package File
+   * @description Returns a package from the GitHub repository.
+   */
+  get_windows_terminal_package_file_microsoft_terminal_releases__version___file_name__get: {
+    parameters: {
+      path: {
+        version: string;
+        file_name: string;
       };
     };
     responses: {
@@ -3551,28 +3802,6 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: never;
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  /** Get Version */
-  get_version_version__get: {
-    parameters: {
-      query?: {
-        client_version?: string;
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          "application/json": unknown;
-        };
       };
       /** @description Validation Error */
       422: {
@@ -3739,16 +3968,14 @@ export interface operations {
       };
     };
   };
-  /** Lif To Stack */
-  lif_to_stack_sessions__session_id__lif_to_stack_post: {
+  /** Process Raw Lifs */
+  process_raw_lifs_sessions__session_id__clem_preprocessing_process_raw_lifs_post: {
     parameters: {
+      query: {
+        lif_file: string;
+      };
       path: {
         session_id: number;
-      };
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["LifFileInfo"];
       };
     };
     responses: {
@@ -3766,8 +3993,8 @@ export interface operations {
       };
     };
   };
-  /** Tiff To Stack */
-  tiff_to_stack_sessions__session_id__tiff_to_stack_post: {
+  /** Process Raw Tiffs */
+  process_raw_tiffs_sessions__session_id__clem_preprocessing_process_raw_tiffs_post: {
     parameters: {
       path: {
         session_id: number;
@@ -3775,7 +4002,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["TiffSeriesInfo"];
+        "application/json": components["schemas"]["TIFFSeriesInfo"];
       };
     };
     responses: {
@@ -3871,12 +4098,23 @@ export interface operations {
     };
   };
   /** Get Mic Image */
-  get_mic_image_display_microscope_image__get: {
+  get_mic_image_display_instruments__instrument_name__image__get: {
+    parameters: {
+      path: {
+        instrument_name: string;
+      };
+    };
     responses: {
       /** @description Successful Response */
       200: {
         content: {
           "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
         };
       };
     };
@@ -3930,11 +4168,12 @@ export interface operations {
       };
     };
   };
-  /** Activate Instrument Server */
-  activate_instrument_server_instruments__instrument_name__activate_instrument_server_post: {
+  /** Activate Instrument Server For Session */
+  activate_instrument_server_for_session_instruments__instrument_name__sessions__session_id__activate_instrument_server_post: {
     parameters: {
       path: {
         instrument_name: string;
+        session_id: number;
       };
     };
     responses: {
@@ -3952,8 +4191,8 @@ export interface operations {
       };
     };
   };
-  /** Activate Instrument Server For Session */
-  activate_instrument_server_for_session_instruments__instrument_name__sessions__session_id__activate_instrument_server_post: {
+  /** Check If Session Is Active */
+  check_if_session_is_active_instruments__instrument_name__sessions__session_id__active_get: {
     parameters: {
       path: {
         instrument_name: string;
@@ -4310,15 +4549,43 @@ export interface operations {
     };
   };
   /** Request Smartem Atlas Analysis */
-  request_smartem_atlas_analysis_visits__visit_name__smartem_atlas__post: {
+  request_smartem_atlas_analysis_instruments__instrument_name__visits__visit_name__smartem_atlas__post: {
     parameters: {
       path: {
+        instrument_name: string;
         visit_name: string;
       };
     };
     requestBody: {
       content: {
         "application/json": components["schemas"]["SmartEMAtlasRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Update K3 Ssd Statuses */
+  update_k3_ssd_statuses_instruments__instrument_name__k3_ssd_post: {
+    parameters: {
+      path: {
+        instrument_name: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SSDData"];
       };
     };
     responses: {

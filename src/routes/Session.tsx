@@ -6,6 +6,8 @@ import {
   CardBody,
   CardHeader,
   Divider,
+  FormControl,
+  FormLabel,
   Flex,
   GridItem,
   Heading,
@@ -24,6 +26,7 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  Select,
   Spacer,
   Spinner,
   Stack,
@@ -37,7 +40,6 @@ import {
   Tooltip,
   VStack,
   useToast,
-  Icon,
 } from "@chakra-ui/react";
 
 import { useDisclosure } from "@chakra-ui/react";
@@ -51,12 +53,16 @@ import {
   MdFileUpload,
   MdOutlineWarning,
   MdOutlineGridOn,
+  MdPause,
 } from "react-icons/md";
 import { FiActivity } from "react-icons/fi";
 import { components } from "schema/main";
 import { getInstrumentName } from "loaders/general";
+import { getMachineConfigData } from "loaders/machineConfig";
 import { pauseRsyncer, restartRsyncer, removeRsyncer, finaliseRsyncer } from "loaders/rsyncers";
 import { getSessionData } from "loaders/session_clients";
+import { sessionTokenCheck, sessionHandshake } from "loaders/jwt";
+import { startMultigridWatcher } from "loaders/multigridSetup";
 import { InstrumentCard } from "components/instrumentCard";
 import { UpstreamVisitCard } from "components/upstreamVisitsCard";
 import useWebSocket from "react-use-websocket";
@@ -65,7 +71,8 @@ import React, { useEffect } from "react";
 
 type RsyncInstance = components["schemas"]["RsyncInstance"];
 type Session = components["schemas"]["Session"];
-
+type MachineConfig = components["schemas"]["MachineConfig"];
+type MultigridWatcherSpec = components["schemas"]["MultigridWatcherSetup"];
 
 
 const RsyncCard = (rsyncer: RsyncInstance) => {
@@ -234,18 +241,35 @@ const getUrl = (endpoint: string) => {
   return (sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT) + endpoint;
 };
 
+
 const Session = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isOpenReconnect, onOpen: onOpenReconnect, onClose: onCloseReconnect } = useDisclosure();
   const rsync = useLoaderData() as RsyncInstance[] | null;
   const { sessid } = useParams();
   const [UUID, setUUID] = React.useState("");
   const [instrumentName, setInstrumentName] = React.useState("");
+  const [machineConfig, setMachineConfig] = React.useState<MachineConfig>();
+  const [sessionActive, setSessionActive] = React.useState(false);
+  const [skipExistingProcessing, setSkipExistingProcessing] = React.useState(true);
+  const [selectedDirectory, setSelectedDirectory] = React.useState("");
+  const [rsyncersPaused, setRsyncersPaused] = React.useState(false);
   const baseUrl = sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT
   const url = baseUrl
     ? baseUrl.replace("http", "ws")
     : "ws://localhost:8000";
   const toast = useToast();
   const [session, setSession] = React.useState<Session>();
+
+  const handleMachineConfig = (mcfg: MachineConfig) => {
+    setMachineConfig(mcfg);
+    Object.entries(mcfg["data_directories"]).forEach(([key, value]) => {
+      if (selectedDirectory === "" && value === "detector")
+        setSelectedDirectory(key);
+    });
+  } 
+
+  useEffect(() => {getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))}, []);
 
   useEffect(() => {
     getSessionData(sessid).then((sess) => setSession(sess.session));
@@ -293,11 +317,52 @@ const Session = () => {
     onClose();
   }
 
+  const pauseAll = async () => {
+    rsync?.map((r) => {
+      pauseRsyncer(r.session_id, r.source);
+    });
+    setRsyncersPaused(true);
+  }
+
   const resolveName = async () => {
     const name: string = await getInstrumentName();
     setInstrumentName(name);
   };
-  resolveName();
+  useEffect(() => {resolveName()}, []);
+
+  const checkSessionActivationState = async () => {
+    if(sessid !== undefined){
+      const activationState = await sessionTokenCheck(parseInt(sessid));
+      setSessionActive(activationState);
+    }
+  }
+  useEffect(() => {checkSessionActivationState()}, []);
+
+  const checkRsyncStatus = async () => {
+    if(rsync) setRsyncersPaused(rsync.every(r => {r.transferring}))
+    else setRsyncersPaused(false)
+  }
+
+  useEffect(() => {checkRsyncStatus()}, []);
+
+  const handleDirectorySelection = (e: React.ChangeEvent<HTMLSelectElement>) =>
+    setSelectedDirectory(e.target.value);
+
+  const handleReconnect = async () => {
+    if (typeof sessid !== "undefined"){
+      await sessionHandshake(parseInt(sessid));
+      startMultigridWatcher(
+        {
+          source: selectedDirectory,
+          skip_existing_processing: skipExistingProcessing,
+          destination_overrides: rsync ? Object.fromEntries(rsync.map((r) => [r.source, r.destination])): {},
+          rsync_restarts: rsync ? rsync.map((r) => r.source): [],
+        } as MultigridWatcherSpec,
+        parseInt(sessid),
+      );
+    }
+  }
+
 
   return (
     <div className="rootContainer">
@@ -316,6 +381,59 @@ const Session = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <Modal isOpen={isOpenReconnect} onClose={onCloseReconnect}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Restart Transfers</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+          <FormControl display="flex" alignItems="center">
+            <VStack>
+            <HStack>
+            <FormLabel mb="0">Data directory</FormLabel>
+            <Select onChange={handleDirectorySelection}>
+              {machineConfig &&
+              Object.keys(machineConfig["data_directories"]).length > 0 ? (
+                Object.entries(machineConfig["data_directories"]).map(
+                  ([key, value]) => {
+                    return value === "detector" ? (
+                      <option value={key}>{key}</option>
+                    ) : (
+                      <></>
+                    );
+                  },
+                )
+              ) : (
+                <GridItem colSpan={5}>
+                  <Heading textAlign="center" py={4} variant="notFound">
+                    No Data Directories Found
+                  </Heading>
+                </GridItem>
+              )}
+            </Select>
+            </HStack>
+            <HStack>
+              <FormLabel mb="0">Do not process existing data</FormLabel>
+              <Switch
+                id="skip-existing-processing-reconnect"
+                isChecked={true}
+                onChange={() => {
+                  setSkipExistingProcessing(!skipExistingProcessing);
+                }}
+              />
+            </HStack>
+            </VStack>
+          </FormControl>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onCloseReconnect}>
+              Close
+            </Button>
+            <Button variant="ghost" onClick={handleReconnect}>Confirm</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <Box w="100%" bg="murfey.50">
         <Box w="100%" overflow="hidden">
           <VStack className="homeRoot">
@@ -324,7 +442,10 @@ const Session = () => {
                 Session {sessid}: {session ? session.visit : null}
               </Heading>
               <HStack>
+                <HStack>
+                <HStack>
                 <Button variant="onBlue" onClick={() => onOpen()}>Visit Complete</Button>
+                <IconButton aria-label="Pause all transfers" as={MdPause} variant="onBlue" isDisabled={rsyncersPaused} onClick={() => pauseAll()} />
                 <Link
                   w={{ base: "100%", md: "19.6%" }}
                   _hover={{ textDecor: "none" }}
@@ -333,6 +454,9 @@ const Session = () => {
                 >
                   <Button variant="onBlue">Processing Parameters</Button>
                 </Link>
+                </HStack>
+                {!sessionActive ? <Button variant="onBlue" onClick={() => onOpenReconnect()}>Reconnect</Button>: <></>}
+                </HStack>
                 <Spacer />
                 <ViewIcon color="white" />
                 <Switch colorScheme="murfey" id="monitor" />
