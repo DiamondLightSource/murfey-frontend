@@ -31,16 +31,28 @@ import { Table } from "@diamondlightsource/ui-components";
 import { createSession } from "loaders/session_clients";
 import { sessionHandshake } from "loaders/jwt";
 import { useNavigate } from "react-router-dom";
-import React, { ChangeEventHandler } from "react";
+import React, { ChangeEventHandler, useEffect } from "react";
+import { getMachineConfigData } from "loaders/machineConfig";
+
 
 type Visit = components["schemas"]["Visit"];
+type MachineConfig = components["schemas"]["MachineConfig"];
 
 const NewSession = () => {
   const currentVisits = useLoaderData() as Visit[] | null;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedVisit, setSelectedVisit] = React.useState("");
   const [sessionReference, setSessionReference] = React.useState("");
+  const [gainRefDir, setGainRefDir] = React.useState<string | null>();
+  const [acqusitionSoftware, setAcquistionSoftware] = React.useState<string[]>([]);
   const navigate = useNavigate();
+
+  const handleMachineConfig = (mcfg: MachineConfig) => {
+    setGainRefDir(mcfg.gain_reference_directory);
+    setAcquistionSoftware(mcfg.acquisition_software);
+  }
+
+  useEffect(() => {getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))}, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setSessionReference(event.target.value);
@@ -86,7 +98,7 @@ const NewSession = () => {
               isDisabled={selectedVisit === "" ? true : false}
               onClick={() => {
                 startMurfeySession(instrumentName).then((sid: number) => {
-                  navigate(`../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`);
+                  gainRefDir ? navigate(`../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`): (acqusitionSoftware.includes("epu") || acqusitionSoftware.includes("tomo")) ? navigate(`/new_session/parameters/${sid}`): navigate(`/new_session/setup/${sid}`);
                 });
               }}
             >
