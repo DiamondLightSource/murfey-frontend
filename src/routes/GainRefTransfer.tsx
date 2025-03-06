@@ -1,6 +1,6 @@
-import { Box, Heading, HStack, VStack, Input, Checkbox, Modal, ModalOverlay, ModalContent, ModalBody, ModalHeader, Spinner, Tooltip } from "@chakra-ui/react";
+import { Button, Box, Heading, HStack, VStack, Input, Checkbox, Modal, ModalOverlay, ModalContent, ModalBody, ModalHeader, Spinner, Tooltip, Link } from "@chakra-ui/react";
 
-import { useNavigate, useLoaderData, useSearchParams } from "react-router-dom";
+import { Link as LinkRouter, useNavigate, useLoaderData, useSearchParams } from "react-router-dom";
 import { components } from "schema/main";
 import { Table } from "@diamondlightsource/ui-components";
 import { SetupStepper } from "components/setupStepper";
@@ -99,6 +99,14 @@ const GainRefTransfer = () => {
             label={"gainRefData"}
             onClick={SelectGainRef}
           />
+          <Link
+            w={{ base: "100%", md: "19.6%" }}
+            _hover={{ textDecor: "none" }}
+            as={LinkRouter}
+            to={`../new_session/parameters/${searchParams.get("sessid")}`}
+          >
+            <Button variant="onBlue">Skip gain reference</Button>
+          </Link>
           </VStack>
           </HStack>
         </Box>
