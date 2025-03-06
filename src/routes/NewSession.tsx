@@ -163,7 +163,7 @@ const NewSession = () => {
               isDisabled={selectedVisit === "" ? true : false}
               onClick={() => {
                 startMurfeySession(instrumentName).then((sid: number) => {
-                  navigate(`../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`);
+                  gainRefDir ? navigate(`../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`): (acqusitionSoftware.includes("epu") || acqusitionSoftware.includes("tomo")) ? navigate(`/new_session/parameters/${sid}`): navigate(`/new_session/setup/${sid}`);
                 });
               }}
             >
