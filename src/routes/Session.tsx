@@ -251,7 +251,7 @@ const Session = () => {
   const [instrumentName, setInstrumentName] = React.useState("");
   const [machineConfig, setMachineConfig] = React.useState<MachineConfig>();
   const [sessionActive, setSessionActive] = React.useState(false);
-  const [skipExistingProcessing, setSkipExistingProcessing] = React.useState(true);
+  const [skipExistingProcessing, setSkipExistingProcessing] = React.useState(false);
   const [selectedDirectory, setSelectedDirectory] = React.useState("");
   const [rsyncersPaused, setRsyncersPaused] = React.useState(false);
   const baseUrl = sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT
@@ -412,7 +412,7 @@ const Session = () => {
               <FormLabel mb="0">Do not process existing data</FormLabel>
               <Switch
                 id="skip-existing-processing-reconnect"
-                isChecked={true}
+                isChecked={false}
                 onChange={() => {
                   setSkipExistingProcessing(!skipExistingProcessing);
                 }}
