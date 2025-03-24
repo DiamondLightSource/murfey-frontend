@@ -44,7 +44,7 @@ const MultigridSetup = () => {
   useEffect(() => {
     getSessionData(sessid).then((sess) => setSession(sess.session));
   }, []);
-  const activeStep = session != null ? (session.started ? 4 : 3) : 3;
+  const activeStep = session != null ? (session.started ? 3 : 2) : 2;
   
   const handleDirectorySelection = (e: React.ChangeEvent<HTMLSelectElement>) =>
     setSelectedDirectory(e.target.value);
@@ -140,7 +140,7 @@ const MultigridSetup = () => {
                     w={{ base: "100%", md: "19.6%" }}
                     _hover={{ textDecor: "none" }}
                     as={LinkRouter}
-                    to={`../sessions/${sessid}`}
+                    to={`../new_session/parameters/${sessid}`}
                   >
                     <IconButton
                       aria-label="select"

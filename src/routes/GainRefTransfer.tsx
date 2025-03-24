@@ -103,7 +103,7 @@ const GainRefTransfer = () => {
             w={{ base: "100%", md: "19.6%" }}
             _hover={{ textDecor: "none" }}
             as={LinkRouter}
-            to={`../new_session/parameters/${searchParams.get("sessid")}`}
+            to={`../new_session/setup/${searchParams.get("sessid")}`}
           >
             <Button variant="onBlue">Skip gain reference</Button>
           </Link>

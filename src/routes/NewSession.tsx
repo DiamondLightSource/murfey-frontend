@@ -98,7 +98,7 @@ const NewSession = () => {
               isDisabled={selectedVisit === "" ? true : false}
               onClick={() => {
                 startMurfeySession(instrumentName).then((sid: number) => {
-                  gainRefDir ? navigate(`../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`): (acqusitionSoftware.includes("epu") || acqusitionSoftware.includes("tomo")) ? navigate(`/new_session/parameters/${sid}`): navigate(`/new_session/setup/${sid}`);
+                  gainRefDir ? navigate(`../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`): navigate(`/new_session/setup/${sid}`);
                 });
               }}
             >
@@ -163,7 +163,7 @@ const NewSession = () => {
               isDisabled={selectedVisit === "" ? true : false}
               onClick={() => {
                 startMurfeySession(instrumentName).then((sid: number) => {
-                  gainRefDir ? navigate(`../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`): (acqusitionSoftware.includes("epu") || acqusitionSoftware.includes("tomo")) ? navigate(`/new_session/parameters/${sid}`): navigate(`/new_session/setup/${sid}`);
+                  gainRefDir ? navigate(`../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`): navigate(`/new_session/setup/${sid}`);
                 });
               }}
             >
