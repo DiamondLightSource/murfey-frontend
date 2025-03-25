@@ -26,8 +26,8 @@ const SetupStepper = ({ activeStepIndex }: StepperStartConditions) => {
   const steps = [
     { title: "Visit", description: "Select visit" },
     { title: "Gain reference", description: "Transfer and transform" },
+    { title: "Data location", description: "Start data transfer" },
     { title: "Parameters", description: "For processing" },
-    { title: "Confirm", description: "Start data transfer" },
   ];
 
   const { activeStep } = useSteps({
