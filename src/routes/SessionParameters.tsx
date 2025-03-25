@@ -3,6 +3,7 @@ import {
     Button,
     Heading,
     Input,
+    Link,
     Modal,
     ModalOverlay,
     ModalContent,
@@ -14,7 +15,7 @@ import {
   } from "@chakra-ui/react";
   
   import { useDisclosure } from "@chakra-ui/react";
-  import { useLoaderData, useParams } from "react-router-dom";
+  import { Link as LinkRouter, useLoaderData, useParams } from "react-router-dom";
   import { components } from "schema/main";
   import { Table } from "@diamondlightsource/ui-components";
   import { updateSessionProcessingParameters } from "loaders/processingParameters";
@@ -104,6 +105,14 @@ import {
                 <Heading size="xl" color="murfey.50">
                   Session Processing Parameters
                 </Heading>
+                <Link
+                  w={{ base: "100%", md: "19.6%" }}
+                  _hover={{ textDecor: "none" }}
+                  as={LinkRouter}
+                  to={`extra_parameters`}
+                >
+                <Button variant="onBlue">Extra Parameters</Button>
+                </Link>
               </VStack>
             </VStack>
           </Box>

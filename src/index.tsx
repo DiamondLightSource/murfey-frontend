@@ -108,7 +108,7 @@ const router = createBrowserRouter([
         loader: ({ params }) => sessionLoader(queryClient)(params),
       },
       {
-        path: "/sessions/:sessid/processing_parameters",
+        path: "/sessions/:sessid/session_parameters/extra_parameters",
         element: <ProcessingParameters />,
         errorElement: <Error />,
         loader: ({ params }) => processingParametersLoader(queryClient)(params),
