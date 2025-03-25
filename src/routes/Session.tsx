@@ -446,7 +446,7 @@ const Session = () => {
                   w={{ base: "100%", md: "19.6%" }}
                   _hover={{ textDecor: "none" }}
                   as={LinkRouter}
-                  to={`processing_parameters`}
+                  to={`session_parameters`}
                 >
                   <Button variant="onBlue">Processing Parameters</Button>
                 </Link>

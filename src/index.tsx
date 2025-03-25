@@ -18,6 +18,7 @@ import { GainRefTransfer } from "routes/GainRefTransfer";
 import { SessionSetup } from "routes/SessionSetup";
 import { MagTable } from "routes/MagTable";
 import { ProcessingParameters } from "routes/ProcessingParameters";
+import { SessionParameters } from "routes/SessionParameters";
 import { Error } from "routes/Error";
 import {
   clientsLoader,
@@ -29,7 +30,7 @@ import { visitLoader } from "loaders/visits";
 import { gainRefLoader } from "loaders/possibleGainRefs";
 import { instrumentInfoLoader } from "loaders/hub";
 import { magTableLoader } from "loaders/magTable";
-import { processingParametersLoader } from "loaders/processingParameters";
+import { processingParametersLoader, sessionParametersLoader } from "loaders/processingParameters";
 import { dataCollectionGroupsLoader } from "loaders/dataCollectionGroups";
 import { theme } from "styles/theme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -111,6 +112,12 @@ const router = createBrowserRouter([
         element: <ProcessingParameters />,
         errorElement: <Error />,
         loader: ({ params }) => processingParametersLoader(queryClient)(params),
+      },
+      {
+        path: "/sessions/:sessid/session_parameters",
+        element: <SessionParameters />,
+        errorElement: <Error />,
+        loader: ({ params }) => sessionParametersLoader(queryClient)(params),
       },
       {
         path: "/mag_table",

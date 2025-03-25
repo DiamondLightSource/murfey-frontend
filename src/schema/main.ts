@@ -167,10 +167,6 @@ export interface paths {
     /** Send Murfey Message */
     post: operations["send_murfey_message_feedback_post"];
   };
-  "/visits/{visit_name}/spa_processing": {
-    /** Request Spa Processing */
-    post: operations["request_spa_processing_visits__visit_name__spa_processing_post"];
-  };
   "/visits/{visit_name}/{session_id}/flush_spa_processing": {
     /** Flush Spa Processing */
     post: operations["flush_spa_processing_visits__visit_name___session_id__flush_spa_processing_post"];
@@ -367,27 +363,6 @@ export interface paths {
      */
     get: operations["get_msys2_package_file_msys2__system___environment___package__get"];
   };
-  "/microsoft/terminal/releases": {
-    /**
-     * Get Windows Terminal Releases
-     * @description Returns a list of stable Windows Terminal releases from the GitHub repository.
-     */
-    get: operations["get_windows_terminal_releases_microsoft_terminal_releases_get"];
-  };
-  "/microsoft/terminal/releases/{version}": {
-    /**
-     * Get Windows Terminal Version Assets
-     * @description Returns a list of packages for the selected version of Windows Terminal.
-     */
-    get: operations["get_windows_terminal_version_assets_microsoft_terminal_releases__version__get"];
-  };
-  "/microsoft/terminal/releases/{version}/{file_name}": {
-    /**
-     * Get Windows Terminal Package File
-     * @description Returns a package from the GitHub repository.
-     */
-    get: operations["get_windows_terminal_package_file_microsoft_terminal_releases__version___file_name__get"];
-  };
   "/pypi/": {
     /**
      * Get Pypi Index
@@ -441,6 +416,10 @@ export interface paths {
   "/sessions/{session_id}/clem/preprocessing/process_raw_tiffs": {
     /** Process Raw Tiffs */
     post: operations["process_raw_tiffs_sessions__session_id__clem_preprocessing_process_raw_tiffs_post"];
+  };
+  "/sessions/{session_id}/clem/processing/align_and_merge_stacks": {
+    /** Align And Merge Stacks */
+    post: operations["align_and_merge_stacks_sessions__session_id__clem_processing_align_and_merge_stacks_post"];
   };
   "/sessions/{session_id}/cryolo_model": {
     /** Get Cryolo Model Path */
@@ -526,6 +505,12 @@ export interface paths {
     /** Get Instrument Image */
     get: operations["get_instrument_image_instrument__instrument_name__image_get"];
   };
+  "sessions/{session_id}/session_processing_parameters": {
+    /** Get Session Processing Parameters */
+    get: operations["get_session_processing_parameterssessions__session_id__session_processing_parameters_get"];
+    /** Set Session Processing Parameters */
+    post: operations["set_session_processing_parameterssessions__session_id__session_processing_parameters_post"];
+  };
   "/ws/test/{client_id}": {
     /** Close Ws Connection */
     delete: operations["close_ws_connection_ws_test__client_id__delete"];
@@ -534,9 +519,9 @@ export interface paths {
     /** Close Unrecorded Ws Connection */
     delete: operations["close_unrecorded_ws_connection_ws_connect__client_id__delete"];
   };
-  "/instruments/{instrument_name}/visits/{visit_name}/smartem_atlas/": {
+  "/instruments/{instrument_name}/visits/{visit_name}/{session_id}/smartem_atlas/": {
     /** Request Smartem Atlas Analysis */
-    post: operations["request_smartem_atlas_analysis_instruments__instrument_name__visits__visit_name__smartem_atlas__post"];
+    post: operations["request_smartem_atlas_analysis_instruments__instrument_name__visits__visit_name___session_id__smartem_atlas__post"];
   };
   "/instruments/{instrument_name}/k3_ssd": {
     /** Update K3 Ssd Statuses */
@@ -548,6 +533,38 @@ export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
+    /** AlignAndMergeParams */
+    AlignAndMergeParams: {
+      /** Series Name */
+      series_name: string;
+      /** Images */
+      images: string[];
+      /**
+       * Metadata
+       * Format: path
+       */
+      metadata: string;
+      /** Crop To N Frames */
+      crop_to_n_frames?: number;
+      /**
+       * Align Self
+       * @default
+       * @enum {string}
+       */
+      align_self?: "enabled" | "";
+      /**
+       * Flatten
+       * @default
+       * @enum {string}
+       */
+      flatten?: "mean" | "min" | "max" | "";
+      /**
+       * Align Across
+       * @default
+       * @enum {string}
+       */
+      align_across?: "enabled" | "";
+    };
     /** Body_generate_token_token_post */
     Body_generate_token_token_post: {
       /** Grant Type */
@@ -656,6 +673,11 @@ export interface components {
       atlas?: string;
       /** Sample */
       sample?: number;
+      /**
+       * Atlas Pixel Size
+       * @default 0
+       */
+      atlas_pixel_size?: number;
     };
     /** DCParameters */
     DCParameters: {
@@ -717,6 +739,10 @@ export interface components {
       session_id: number;
       /** Tag */
       tag: string;
+      /** Atlas Id */
+      atlas_id?: number;
+      /** Atlas Pixel Size */
+      atlas_pixel_size?: number;
       /**
        * Atlas
        * @default
@@ -724,6 +750,26 @@ export interface components {
       atlas?: string;
       /** Sample */
       sample?: number;
+    };
+    /** EditableSessionProcessingParameters */
+    EditableSessionProcessingParameters: {
+      /**
+       * Gain Ref
+       * @default
+       */
+      gain_ref?: string;
+      /** Dose Per Frame */
+      dose_per_frame?: number;
+      /**
+       * Eer Fractionation File
+       * @default
+       */
+      eer_fractionation_file?: string;
+      /**
+       * Symmetry
+       * @default
+       */
+      symmetry?: string;
     };
     /** File */
     File: {
@@ -804,6 +850,8 @@ export interface components {
        * @default
        */
       image?: string;
+      /** Diameter */
+      diameter?: number;
     };
     /** FractionationParameters */
     FractionationParameters: {
@@ -909,6 +957,10 @@ export interface components {
       thumbnail_size_x?: number;
       /** Thumbnail Size Y */
       thumbnail_size_y?: number;
+      /** Height */
+      height?: number;
+      /** Width */
+      width?: number;
       /** Pixel Size */
       pixel_size?: number;
       /**
@@ -916,6 +968,8 @@ export interface components {
        * @default
        */
       image?: string;
+      /** Angle */
+      angle?: number;
     };
     /** HTTPValidationError */
     HTTPValidationError: {
@@ -1003,13 +1057,11 @@ export interface components {
       rsync_module?: string;
       /**
        * Create Directories
-       * @default {
-       *   "atlas": "atlas"
-       * }
+       * @default [
+       *   "atlas"
+       * ]
        */
-      create_directories?: {
-        [key: string]: string;
-      };
+      create_directories?: string[];
       /**
        * Analyse Created Directories
        * @default []
@@ -1064,11 +1116,6 @@ export interface components {
        * @default false
        */
       allow_removal?: boolean;
-      /**
-       * Modular Spa
-       * @default false
-       */
-      modular_spa?: boolean;
       /**
        * Data Transfer Enabled
        * @default true
@@ -1171,6 +1218,11 @@ export interface components {
        */
       murfey_url?: string;
       /**
+       * Rsync Url
+       * @default
+       */
+      rsync_url?: string;
+      /**
        * Security Configuration Path
        * Format: path
        */
@@ -1180,6 +1232,11 @@ export interface components {
        * @default
        */
       auth_url?: string;
+      /**
+       * Notifications Queue
+       * @default pato_notification
+       */
+      notifications_queue?: string;
     };
     /** MagnificationLookup */
     MagnificationLookup: {
@@ -1224,6 +1281,10 @@ export interface components {
     PreprocessingParametersTomo: {
       /** Dose Per Frame */
       dose_per_frame: number;
+      /** Frame Count */
+      frame_count: number;
+      /** Tilt Axis */
+      tilt_axis: number;
       /** Gain Ref */
       gain_ref?: string;
       /** Experiment Type */
@@ -1259,18 +1320,16 @@ export interface components {
       description: string;
       /** Tag */
       tag: string;
-      /** Data Collection Id */
-      data_collection_id?: number;
       /** Image Number */
       image_number: number;
       /** Pixel Size */
       pixel_size: number;
       /** Dose Per Frame */
       dose_per_frame: number;
-      /** Processing Job */
-      processing_job?: number;
-      /** Autoproc Program Id */
-      autoproc_program_id?: number;
+      /** Frame Count */
+      frame_count: number;
+      /** Tilt Axis */
+      tilt_axis?: number;
       /** Mc Uuid */
       mc_uuid?: number;
       /**
@@ -1318,6 +1377,8 @@ export interface components {
     ProcessingJobParameters: {
       /** Tag */
       tag: string;
+      /** Source */
+      source: string;
       /** Recipe */
       recipe: string;
       /**
@@ -1367,8 +1428,11 @@ export interface components {
       downscale: boolean;
       /** Small Boxsize */
       small_boxsize?: number;
-      /** Eer Fractionation */
-      eer_fractionation: number;
+      /**
+       * Eer Fractionation File
+       * @default
+       */
+      eer_fractionation_file?: string;
       /** Particle Diameter */
       particle_diameter?: number;
       /** Magnification */
@@ -1580,11 +1644,6 @@ export interface components {
        */
       source?: string;
     };
-    /** SPAProcessingParameters */
-    SPAProcessingParameters: {
-      /** Job Id */
-      job_id: number;
-    };
     /** SPARelionParameters */
     SPARelionParameters: {
       /** Pj Id */
@@ -1599,8 +1658,11 @@ export interface components {
       voltage: number;
       /** Motion Corr Binning */
       motion_corr_binning: number;
-      /** Eer Grouping */
-      eer_grouping: number;
+      /**
+       * Eer Fractionation File
+       * @default
+       */
+      eer_fractionation_file?: string;
       /** Symmetry */
       symmetry: string;
       /** Particle Diameter */
@@ -1695,6 +1757,8 @@ export interface components {
        * Format: path
        */
       output_dir: string;
+      /** Tag */
+      tag: string;
       /**
        * Num Preds
        * @default 15
@@ -2797,33 +2861,6 @@ export interface operations {
       };
     };
   };
-  /** Request Spa Processing */
-  request_spa_processing_visits__visit_name__spa_processing_post: {
-    parameters: {
-      path: {
-        visit_name: string;
-      };
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["SPAProcessingParameters"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
   /** Flush Spa Processing */
   flush_spa_processing_visits__visit_name___session_id__flush_spa_processing_post: {
     parameters: {
@@ -3670,65 +3707,6 @@ export interface operations {
     };
   };
   /**
-   * Get Windows Terminal Releases
-   * @description Returns a list of stable Windows Terminal releases from the GitHub repository.
-   */
-  get_windows_terminal_releases_microsoft_terminal_releases_get: {
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: never;
-      };
-    };
-  };
-  /**
-   * Get Windows Terminal Version Assets
-   * @description Returns a list of packages for the selected version of Windows Terminal.
-   */
-  get_windows_terminal_version_assets_microsoft_terminal_releases__version__get: {
-    parameters: {
-      path: {
-        version: string;
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: never;
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  /**
-   * Get Windows Terminal Package File
-   * @description Returns a package from the GitHub repository.
-   */
-  get_windows_terminal_package_file_microsoft_terminal_releases__version___file_name__get: {
-    parameters: {
-      path: {
-        version: string;
-        file_name: string;
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: never;
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  /**
    * Get Pypi Index
    * @description Obtain list of all PyPI packages via the simple API (PEP 503).
    */
@@ -4001,6 +3979,33 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": components["schemas"]["TIFFSeriesInfo"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Align And Merge Stacks */
+  align_and_merge_stacks_sessions__session_id__clem_processing_align_and_merge_stacks_post: {
+    parameters: {
+      path: {
+        session_id: number;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AlignAndMergeParams"];
       };
     };
     responses: {
@@ -4502,6 +4507,55 @@ export interface operations {
       };
     };
   };
+  /** Get Session Processing Parameters */
+  get_session_processing_parameterssessions__session_id__session_processing_parameters_get: {
+    parameters: {
+      path: {
+        session_id: number;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["EditableSessionProcessingParameters"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Set Session Processing Parameters */
+  set_session_processing_parameterssessions__session_id__session_processing_parameters_post: {
+    parameters: {
+      path: {
+        session_id: number;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["EditableSessionProcessingParameters"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["EditableSessionProcessingParameters"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   /** Close Ws Connection */
   close_ws_connection_ws_test__client_id__delete: {
     parameters: {
@@ -4547,11 +4601,12 @@ export interface operations {
     };
   };
   /** Request Smartem Atlas Analysis */
-  request_smartem_atlas_analysis_instruments__instrument_name__visits__visit_name__smartem_atlas__post: {
+  request_smartem_atlas_analysis_instruments__instrument_name__visits__visit_name___session_id__smartem_atlas__post: {
     parameters: {
       path: {
         instrument_name: string;
         visit_name: string;
+        session_id: number;
       };
     };
     requestBody: {
