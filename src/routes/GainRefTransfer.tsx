@@ -32,7 +32,7 @@ const GainRefTransfer = () => {
       }
     }
     if (setup)
-      sessid ? navigate(`/new_session/parameters/${sessid}`) : navigate("/");
+      sessid ? navigate(`/new_session/setup/${sessid}`) : navigate("/");
     else sessid ? navigate(`/sessions/${sessid}`) : navigate("/");
     setProcessing(false);
   };
