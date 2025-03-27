@@ -489,6 +489,10 @@ export interface paths {
     /** Finalise Rsyncer */
     post: operations["finalise_rsyncer_sessions__session_id__finalise_rsyncer_post"];
   };
+  "/sessions/{session_id}/finalise_session": {
+    /** Finalise Session */
+    post: operations["finalise_session_sessions__session_id__finalise_session_post"];
+  };
   "/sessions/{session_id}/remove_rsyncer": {
     /** Remove Rsyncer */
     post: operations["remove_rsyncer_sessions__session_id__remove_rsyncer_post"];
@@ -496,6 +500,10 @@ export interface paths {
   "/sessions/{session_id}/restart_rsyncer": {
     /** Restart Rsyncer */
     post: operations["restart_rsyncer_sessions__session_id__restart_rsyncer_post"];
+  };
+  "/instruments/{instrument_name}/sessions/{session_id}/rsyncer_info": {
+    /** Get Rsyncer Info */
+    get: operations["get_rsyncer_info_instruments__instrument_name__sessions__session_id__rsyncer_info_get"];
   };
   "/instruments": {
     /** Get Instrument Info */
@@ -508,8 +516,6 @@ export interface paths {
   "sessions/{session_id}/session_processing_parameters": {
     /** Get Session Processing Parameters */
     get: operations["get_session_processing_parameterssessions__session_id__session_processing_parameters_get"];
-    /** Set Session Processing Parameters */
-    post: operations["set_session_processing_parameterssessions__session_id__session_processing_parameters_post"];
   };
   "/ws/test/{client_id}": {
     /** Close Ws Connection */
@@ -753,23 +759,14 @@ export interface components {
     };
     /** EditableSessionProcessingParameters */
     EditableSessionProcessingParameters: {
-      /**
-       * Gain Ref
-       * @default
-       */
-      gain_ref?: string;
+      /** Gain Ref */
+      gain_ref: string;
       /** Dose Per Frame */
-      dose_per_frame?: number;
-      /**
-       * Eer Fractionation File
-       * @default
-       */
-      eer_fractionation_file?: string;
-      /**
-       * Symmetry
-       * @default
-       */
-      symmetry?: string;
+      dose_per_frame: number;
+      /** Eer Fractionation File */
+      eer_fractionation_file: string;
+      /** Symmetry */
+      symmetry: string;
     };
     /** File */
     File: {
@@ -1481,6 +1478,31 @@ export interface components {
        * @default 20
        */
       eer_fractionation?: number;
+    };
+    /** RSyncerInfo */
+    RSyncerInfo: {
+      /** Source */
+      source: string;
+      /** Num Files Transferred */
+      num_files_transferred: number;
+      /** Num Files In Queue */
+      num_files_in_queue: number;
+      /** Alive */
+      alive: boolean;
+      /** Stopping */
+      stopping: boolean;
+      /** Destination */
+      destination: string;
+      /** Tag */
+      tag: string;
+      /** Files Transferred */
+      files_transferred: number;
+      /** Files Counted */
+      files_counted: number;
+      /** Transferring */
+      transferring: boolean;
+      /** Session Id */
+      session_id: number;
     };
     /** RegistrationMessage */
     RegistrationMessage: {
@@ -4420,6 +4442,28 @@ export interface operations {
       };
     };
   };
+  /** Finalise Session */
+  finalise_session_sessions__session_id__finalise_session_post: {
+    parameters: {
+      path: {
+        session_id: number;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   /** Remove Rsyncer */
   remove_rsyncer_sessions__session_id__remove_rsyncer_post: {
     parameters: {
@@ -4474,6 +4518,29 @@ export interface operations {
       };
     };
   };
+  /** Get Rsyncer Info */
+  get_rsyncer_info_instruments__instrument_name__sessions__session_id__rsyncer_info_get: {
+    parameters: {
+      path: {
+        instrument_name: string;
+        session_id: number;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["RSyncerInfo"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   /** Get Instrument Info */
   get_instrument_info_instruments_get: {
     responses: {
@@ -4512,33 +4579,6 @@ export interface operations {
     parameters: {
       path: {
         session_id: number;
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          "application/json": components["schemas"]["EditableSessionProcessingParameters"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  /** Set Session Processing Parameters */
-  set_session_processing_parameterssessions__session_id__session_processing_parameters_post: {
-    parameters: {
-      path: {
-        session_id: number;
-      };
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["EditableSessionProcessingParameters"];
       };
     };
     responses: {

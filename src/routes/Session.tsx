@@ -69,13 +69,13 @@ import useWebSocket from "react-use-websocket";
 
 import React, { useEffect } from "react";
 
-type RsyncInstance = components["schemas"]["RsyncInstance"];
+type RSyncerInfo = components["schemas"]["RSyncerInfo"];
 type Session = components["schemas"]["Session"];
 type MachineConfig = components["schemas"]["MachineConfig"];
 type MultigridWatcherSpec = components["schemas"]["MultigridWatcherSetup"];
 
 
-const RsyncCard = (rsyncer: RsyncInstance) => {
+const RsyncCard = (rsyncer: RSyncerInfo) => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [action, setAction] = React.useState("finalise");
@@ -102,7 +102,7 @@ const RsyncCard = (rsyncer: RsyncInstance) => {
 
   return (
     
-    <Card width="100%" bg="murfey.400" borderColor="murfey.300">
+    <Card width="100%" bg={rsyncer.alive ? "murfey.400": "#DF928E"} borderColor="murfey.300">
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -149,23 +149,23 @@ const RsyncCard = (rsyncer: RsyncInstance) => {
             />
             <MenuList>
               {
-              rsyncer.transferring ? (
+              !rsyncer.stopping ? (
               <>
               <MenuItem
                 onClick={() => pauseRsyncer(rsyncer.session_id, rsyncer.source)}
-                isDisabled={!rsyncer.transferring}
+                isDisabled={rsyncer.stopping}
               >
                 Pause
               </MenuItem>
               <MenuItem
                 onClick={() => remove()}
-                isDisabled={!rsyncer.transferring}
+                isDisabled={rsyncer.stopping}
               >
                 Remove
               </MenuItem>
               <MenuItem
                 onClick={() => {finalise()}}
-                isDisabled={!rsyncer.transferring}
+                isDisabled={rsyncer.stopping}
               >
                 Finalise
               </MenuItem>
@@ -208,27 +208,11 @@ const RsyncCard = (rsyncer: RsyncInstance) => {
             <Stat>
               <StatLabel>Transfer progress</StatLabel>
               <StatNumber>
-                {rsyncer.files_transferred} / {rsyncer.files_counted}
+                {rsyncer.num_files_transferred} transferred 
               </StatNumber>
-              <StatHelpText>
-                {(rsyncer.files_transferred ?? 0) >=
-                (rsyncer.files_counted ?? 0) ? (
-                  <HStack>
-                    <MdCheck />
-                    <Text>Up to date</Text>
-                  </HStack>
-                ) : rsyncer.transferring ? (
-                  <HStack>
-                    <FiActivity />
-                    <Text>Working on it</Text>
-                  </HStack>
-                ) : (
-                  <HStack>
-                    <MdOutlineWarning />
-                    <Text>Broken</Text>
-                  </HStack>
-                )}
-              </StatHelpText>
+              <StatNumber>
+                {rsyncer.num_files_in_queue} queued
+              </StatNumber>
             </Stat>
           </Box>
         </Stack>
@@ -245,7 +229,7 @@ const getUrl = (endpoint: string) => {
 const Session = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenReconnect, onOpen: onOpenReconnect, onClose: onCloseReconnect } = useDisclosure();
-  const rsync = useLoaderData() as RsyncInstance[] | null;
+  const rsync = useLoaderData() as RSyncerInfo[] | null;
   const { sessid } = useParams();
   const [UUID, setUUID] = React.useState("");
   const [instrumentName, setInstrumentName] = React.useState("");
@@ -335,10 +319,10 @@ const Session = () => {
   }
   useEffect(() => {checkSessionActivationState()}, []);
 
-  const getTransferring = (r: RsyncInstance) => {return r.transferring;}
+  const getTransferring = (r: RSyncerInfo) => {return r.transferring;}
 
   const checkRsyncStatus = async () => {
-    setRsyncersPaused(rsync ? rsync.every(getTransferring): false);
+    setRsyncersPaused(rsync ? !rsync.every(getTransferring): true);
   }
 
   useEffect(() => {checkRsyncStatus()}, []);
