@@ -19,3 +19,4 @@ export const registerProcessingParameters = async (
 
   return response.data;
 };
+

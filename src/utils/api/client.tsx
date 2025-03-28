@@ -49,7 +49,6 @@ export const client = async (
     body: undefined,
     ...defaultSettings,
   };
-
   console.log(endpoint);
 
   if (body != null) {
@@ -68,12 +67,10 @@ export const client = async (
   try {
     const token = sessionStorage.getItem("token");
     config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
-    if (body != null) {
-      console.log(config);
-      console.log(prefix + endpoint);
-    }
     const response = await fetch(prefix + endpoint, config);
     const isJson = response.headers.get("content-type") === "application/json";
+
+    if(!isJson) console.log(endpoint);
 
     return {
       status: response.status,

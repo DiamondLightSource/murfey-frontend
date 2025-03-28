@@ -7,6 +7,8 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import { Root } from "routes/Root";
+import { DataCollectionGroups } from "routes/DataCollectionGroups";
+import { GridSquares } from "routes/GridSquares";
 import { Home } from "routes/Home";
 import { Hub } from "routes/Hub";
 import { Session } from "routes/Session";
@@ -16,6 +18,7 @@ import { GainRefTransfer } from "routes/GainRefTransfer";
 import { SessionSetup } from "routes/SessionSetup";
 import { MagTable } from "routes/MagTable";
 import { ProcessingParameters } from "routes/ProcessingParameters";
+import { SessionParameters } from "routes/SessionParameters";
 import { Error } from "routes/Error";
 import {
   clientsLoader,
@@ -27,7 +30,8 @@ import { visitLoader } from "loaders/visits";
 import { gainRefLoader } from "loaders/possibleGainRefs";
 import { instrumentInfoLoader } from "loaders/hub";
 import { magTableLoader } from "loaders/magTable";
-import { processingParametersLoader } from "loaders/processingParameters";
+import { processingParametersLoader, sessionParametersLoader } from "loaders/processingParameters";
+import { dataCollectionGroupsLoader } from "loaders/dataCollectionGroups";
 import { theme } from "styles/theme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -35,6 +39,7 @@ import { MultigridSetup } from "routes/MultigridSetup";
 import { machineConfigLoader } from "loaders/machineConfig";
 import { ProtectedRoutes } from "components/protectedRoutes";
 import { Login } from "routes/Login";
+import { gridSquaresLoader } from "loaders/gridSquares";
 
 const { ToastContainer } = createStandaloneToast();
 const container = document.getElementById("root")!;
@@ -73,10 +78,10 @@ const router = createBrowserRouter([
         loader: ({ params }) => rsyncerLoader(queryClient)(params),
       },
       {
-        path: "/new_session",
+        path: "/instruments/:instrumentName/new_session",
         element: <NewSession />,
         errorElement: <Error />,
-        loader: visitLoader(queryClient),
+        loader: ({ params }) => visitLoader(queryClient)(params),
       },
       {
         path: "/new_session/setup/:sessid",
@@ -91,10 +96,10 @@ const router = createBrowserRouter([
         loader: clientsLoader(queryClient),
       },
       {
-        path: "/gain_ref_transfer",
+        path: "/sessions/:sessid/gain_ref_transfer",
         element: <GainRefTransfer />,
         errorElement: <Error />,
-        loader: gainRefLoader(queryClient),
+        loader: ({ params }) => gainRefLoader(queryClient)(params),
       },
       {
         path: "/new_session/parameters/:sessid",
@@ -103,16 +108,34 @@ const router = createBrowserRouter([
         loader: ({ params }) => sessionLoader(queryClient)(params),
       },
       {
-        path: "/sessions/:sessid/processing_parameters",
+        path: "/sessions/:sessid/session_parameters/extra_parameters",
         element: <ProcessingParameters />,
         errorElement: <Error />,
         loader: ({ params }) => processingParametersLoader(queryClient)(params),
+      },
+      {
+        path: "/sessions/:sessid/session_parameters",
+        element: <SessionParameters />,
+        errorElement: <Error />,
+        loader: ({ params }) => sessionParametersLoader(queryClient)(params),
       },
       {
         path: "/mag_table",
         element: <MagTable />,
         errorElement: <Error />,
         loader: magTableLoader(queryClient),
+      },
+      {
+        path: "/sessions/:sessid/data_collection_groups",
+        element: <DataCollectionGroups />,
+        errorElement: <Error />,
+        loader: ({ params }) => dataCollectionGroupsLoader(queryClient)(params),
+      },
+      {
+        path: "/sessions/:sessid/data_collection_groups/:dcgid/grid_squares",
+        element: <GridSquares />,
+        errorElement: <Error />,
+        loader: ({ params }) => gridSquaresLoader(queryClient)(params),
       },
     ],
   },
@@ -129,3 +152,6 @@ root.render(
     </QueryClientProvider>
   </ChakraProvider>,
 );
+
+
+// loader: ({ params }) => gridSquaresLoader(queryClient)(params),

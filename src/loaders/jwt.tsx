@@ -19,10 +19,20 @@ export const getJWT = async (loginDetails: LoginDetails) => {
 };
 
 export const handshake = async () => {
-  const response = await client.post(`activate_instrument_server`, {});
+  const response = await client.post(`instruments/${sessionStorage.getItem("instrumentName")}/activate_instrument_server`, {});
   if (response.status !== 200) {
     return null;
   }
 
   return response.data;
+}
+
+export const sessionHandshake = async (sessid: number) => {
+  const response = await client.post(`instruments/${sessionStorage.getItem("instrumentName")}/sessions/${sessid}/activate_instrument_server`, {});
+  return response.data;
+}
+
+export const sessionTokenCheck = async (sessid: number) => {
+  const response = await client.get(`instruments/${sessionStorage.getItem("instrumentName")}/sessions/${sessid}/active`);
+  return response.data.active;
 }

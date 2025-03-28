@@ -14,34 +14,99 @@ import {
   StatNumber,
   Text,
   VStack,
+  Modal,
+  ModalOverlay,
+  ModalHeader,
+  ModalContent,
+  ModalFooter,
+  ModalCloseButton,
+  ModalBody,
 } from "@chakra-ui/react";
 
+import { useDisclosure } from "@chakra-ui/react";
 import { Link as LinkRouter, useLoaderData, useParams } from "react-router-dom";
 import { components } from "schema/main";
 import { SetupStepper } from "components/setupStepper";
 import { Table } from "@diamondlightsource/ui-components";
 import { createSession } from "loaders/session_clients";
+import { sessionHandshake } from "loaders/jwt";
 import { useNavigate } from "react-router-dom";
-import React, { ChangeEventHandler } from "react";
+import React, { ChangeEventHandler, useEffect } from "react";
+import { getMachineConfigData } from "loaders/machineConfig";
+
 
 type Visit = components["schemas"]["Visit"];
+type MachineConfig = components["schemas"]["MachineConfig"];
 
 const NewSession = () => {
   const currentVisits = useLoaderData() as Visit[] | null;
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedVisit, setSelectedVisit] = React.useState("");
   const [sessionReference, setSessionReference] = React.useState("");
+  const [gainRefDir, setGainRefDir] = React.useState<string | null>();
+  const [acqusitionSoftware, setAcquistionSoftware] = React.useState<string[]>([]);
   const navigate = useNavigate();
+
+  const handleMachineConfig = (mcfg: MachineConfig) => {
+    setGainRefDir(mcfg.gain_reference_directory);
+    setAcquistionSoftware(mcfg.acquisition_software);
+  }
+
+  useEffect(() => {getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))}, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setSessionReference(event.target.value);
+
+  const handleVisitNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedVisit(event.target.value);
+    setSessionReference(event.target.value);
+  }
 
   function selectVisit(data: Record<string, any>, index: number) {
     setSelectedVisit(data.name);
     setSessionReference(data.name);
   }
 
-  return (
+  const instrumentName = sessionStorage.getItem("instrumentName");
+
+  const startMurfeySession = async (iName: string) => {
+    const sid = await createSession(selectedVisit, sessionReference, iName);
+    await sessionHandshake(sid);
+    return sid;
+  }
+
+  return instrumentName ? (
     <div className="rootContainer">
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Create visit</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Input
+              placeholder="Session name"
+              onChange={handleVisitNameChange}
+            />
+            <Input
+              placeholder="Session reference"
+              value={sessionReference}
+              onChange={handleChange}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              isDisabled={selectedVisit === "" ? true : false}
+              onClick={() => {
+                startMurfeySession(instrumentName).then((sid: number) => {
+                  gainRefDir ? navigate(`../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`): navigate(`/new_session/setup/${sid}`);
+                });
+              }}
+            >
+              Create session
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <Box w="100%" bg="murfey.50">
         <Box w="100%" overflow="hidden">
           <VStack className="homeRoot">
@@ -49,6 +114,7 @@ const NewSession = () => {
               <Heading size="xl" color="murfey.50">
                 Current visits
               </Heading>
+              <Button variant="onBlue" onClick={() => onOpen()}>Create visist</Button>
             </VStack>
           </VStack>
         </Box>
@@ -96,8 +162,8 @@ const NewSession = () => {
             <Button
               isDisabled={selectedVisit === "" ? true : false}
               onClick={() => {
-                createSession(selectedVisit, sessionReference).then((sid) => {
-                  navigate(`../gain_ref_transfer?sessid=${sid}&setup=true`);
+                startMurfeySession(instrumentName).then((sid: number) => {
+                  gainRefDir ? navigate(`../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`): navigate(`/new_session/setup/${sid}`);
                 });
               }}
             >
@@ -107,7 +173,7 @@ const NewSession = () => {
         </Box>
       </Box>
     </div>
-  );
+  ): <></>;
 };
 
 export { NewSession };

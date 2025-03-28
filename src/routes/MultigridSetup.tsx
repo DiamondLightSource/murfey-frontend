@@ -1,7 +1,5 @@
 import {
   Box,
-  Button,
-  Divider,
   FormControl,
   FormLabel,
   GridItem,
@@ -11,17 +9,11 @@ import {
   Link,
   Select,
   Stack,
-  Stat,
-  StatHelpText,
-  StatLabel,
-  StatNumber,
   Switch,
-  Text,
   VStack,
 } from "@chakra-ui/react";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 
-import { MdLink } from "react-icons/md";
 import { Link as LinkRouter, useLoaderData, useParams } from "react-router-dom";
 import { components } from "schema/main";
 import { startMultigridWatcher } from "loaders/multigridSetup";
@@ -38,27 +30,27 @@ const MultigridSetup = () => {
   const { sessid } = useParams();
   let initialDirectory = "";
   if (machineConfig)
-    Object.entries(machineConfig.data_directories).forEach(([key, value]) => {
-      if (initialDirectory === "" && value === "detector")
-        initialDirectory = key;
+    machineConfig.data_directories.forEach((value) => {
+      if (initialDirectory === "")
+        initialDirectory = value;
     });
   const [selectedDirectory, setSelectedDirectory] =
     React.useState(initialDirectory);
+  const processByDefault = machineConfig ? machineConfig.process_by_default: true
   const [skipExistingProcessing, setSkipExistingProcessing] =
-    React.useState(false);
+    React.useState(!processByDefault);
   const [session, setSession] = React.useState<Session>();
 
   useEffect(() => {
     getSessionData(sessid).then((sess) => setSession(sess.session));
   }, []);
-  const activeStep = session != null ? (session.started ? 4 : 3) : 3;
+  const activeStep = session != null ? (session.started ? 3 : 2) : 2;
   
   const handleDirectorySelection = (e: React.ChangeEvent<HTMLSelectElement>) =>
     setSelectedDirectory(e.target.value);
 
   const handleSelection = () => {
     if (typeof sessid !== "undefined"){
-      console.log(sessid);
       startMultigridWatcher(
         {
           source: selectedDirectory,
@@ -119,6 +111,7 @@ const MultigridSetup = () => {
                   <FormLabel mb="0">Do not process existing data</FormLabel>
                   <Switch
                     id="skip-existing-processing"
+                    isChecked={!processByDefault}
                     onChange={() => {
                       setSkipExistingProcessing(!skipExistingProcessing);
                     }}
@@ -127,13 +120,11 @@ const MultigridSetup = () => {
                 <HStack>
                   <Select onChange={handleDirectorySelection}>
                     {machineConfig &&
-                    Object.keys(machineConfig.data_directories).length > 0 ? (
-                      Object.entries(machineConfig.data_directories).map(
-                        ([key, value]) => {
-                          return value === "detector" ? (
-                            <option value={key}>{key}</option>
-                          ) : (
-                            <></>
+                    machineConfig.data_directories.length > 0 ? (
+                      machineConfig.data_directories.map(
+                        (value) => {
+                          return (
+                            <option value={value}>{value}</option>
                           );
                         },
                       )
@@ -149,7 +140,7 @@ const MultigridSetup = () => {
                     w={{ base: "100%", md: "19.6%" }}
                     _hover={{ textDecor: "none" }}
                     as={LinkRouter}
-                    to={`../sessions/${sessid}`}
+                    to={`../new_session/parameters/${sessid}`}
                   >
                     <IconButton
                       aria-label="select"

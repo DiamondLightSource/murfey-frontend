@@ -1,7 +1,7 @@
 import { client } from "utils/api/client";
 
 export const getInstrumentName = async () => {
-  const response = await client.get(`instrument_name`);
+  const response = await client.get(`instruments/${sessionStorage.getItem("instrumentName")}/instrument_name`);
 
   if (response.status !== 200) {
     return null;
@@ -10,7 +10,7 @@ export const getInstrumentName = async () => {
 };
 
 export const getInstrumentConnectionStatus = async () => {
-  const response = await client.get(`instrument_server`, {}, false);
+  const response = await client.get(`instruments/${sessionStorage.getItem("instrumentName")}/instrument_server`, {}, false);
 
   if (response.status !== 200) {
     return false;
@@ -28,8 +28,8 @@ export const getUpstreamVisits = async (sessid: number) => {
   return response.data;
 };
 
-export const upstreamDataDownloadRequest = async (visitName: string) => {
-  const response = await client.get(`visit/${visitName}/upstream_tiff_data_request`);
+export const upstreamDataDownloadRequest = async (visitName: string, sessid: number) => {
+  const response = await client.get(`visits/${visitName}/${sessid}/upstream_tiff_data_request`);
 
   if (response.status !== 200) {
     return null;

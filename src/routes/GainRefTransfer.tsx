@@ -1,6 +1,6 @@
-import { Box, Heading, HStack, VStack, Input, Checkbox, Modal, ModalOverlay, ModalContent, ModalBody, ModalHeader, Spinner, Tooltip } from "@chakra-ui/react";
+import { Button, Box, Heading, HStack, VStack, Input, Checkbox, Modal, ModalOverlay, ModalContent, ModalBody, ModalHeader, Spinner, Tooltip, Link } from "@chakra-ui/react";
 
-import { useNavigate, useLoaderData, useSearchParams } from "react-router-dom";
+import { Link as LinkRouter, useNavigate, useLoaderData, useSearchParams } from "react-router-dom";
 import { components } from "schema/main";
 import { Table } from "@diamondlightsource/ui-components";
 import { SetupStepper } from "components/setupStepper";
@@ -26,16 +26,13 @@ const GainRefTransfer = () => {
     const setup = searchParams.get("setup");
     if (sessid) {
       const transferStatus = await transferGainReference(parseInt(sessid), data["full_path"]);
-      console.log(transferStatus);
-      // if (transferStatus.success) { 
       if (true) {
-        const preparedGainReference = await prepareGainReference(parseInt(sessid), data["full_path"], false, falcon, tag);
-        console.log(preparedGainReference.gain_ref);
+        const preparedGainReference = await prepareGainReference(parseInt(sessid), data["full_path"], !falcon, falcon, tag);
         await updateCurrentGainReference(parseInt(sessid), preparedGainReference.gain_ref);
       }
     }
     if (setup)
-      sessid ? navigate(`/new_session/parameters/${sessid}`) : navigate("/");
+      sessid ? navigate(`/new_session/setup/${sessid}`) : navigate("/");
     else sessid ? navigate(`/sessions/${sessid}`) : navigate("/");
     setProcessing(false);
   };
@@ -86,6 +83,10 @@ const GainRefTransfer = () => {
         >
           <HStack>
           <VStack>
+          <Tooltip label="Tag appended to gain reference name">
+            <Input placeholder="Tag (optional)" w="50%" display={"flex"} onChange={(e) => setTag(e.target.value)}/>
+          </Tooltip>
+          <Checkbox isChecked={falcon} onChange={(e) => setFalcon(e.target.checked)}>Falcon</Checkbox>
           <Table
             width='80%'
             data={possibleGainRefs}
@@ -98,10 +99,14 @@ const GainRefTransfer = () => {
             label={"gainRefData"}
             onClick={SelectGainRef}
           />
-          <Tooltip label="Tag appended to gain reference name">
-            <Input placeholder="Tag (optional)" w="50%" display={"flex"} onChange={(e) => setTag(e.target.value)}/>
-          </Tooltip>
-          <Checkbox isChecked={falcon} onChange={(e) => setFalcon(e.target.checked)}>Falcon</Checkbox>
+          <Link
+            w={{ base: "100%", md: "19.6%" }}
+            _hover={{ textDecor: "none" }}
+            as={LinkRouter}
+            to={`../new_session/setup/${searchParams.get("sessid")}`}
+          >
+            <Button variant="onBlue">Skip gain reference</Button>
+          </Link>
           </VStack>
           </HStack>
         </Box>

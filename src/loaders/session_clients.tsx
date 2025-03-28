@@ -51,9 +51,9 @@ export const linkSessionToClient = async (
   return response.data;
 };
 
-export const createSession = async (visit: string, sessionName: string) => {
+export const createSession = async (visit: string, sessionName: string, instrumentName: string) => {
   const response = await client.post(
-    `visits/${visit}/session/${sessionName}`,
+    `instruments/${instrumentName}/visits/${visit}/session/${sessionName}`,
     {},
   );
   if (response.status !== 200) {
@@ -71,13 +71,13 @@ export const deleteSessionData = async (sessid: number) => {
 };
 
 const query = {
-  queryKey: ["homepageSessions"],
+  queryKey: ["homepageSessions", sessionStorage.getItem("instrumentName")],
   queryFn: getSessionsData,
   staleTime: 60000,
 };
 
 const clientQuery = {
-  queryKey: ["homepageClients"],
+  queryKey: ["homepageClients", sessionStorage.getItem("instrumentName")],
   queryFn: getClientData,
   staleTime: 60000,
 };

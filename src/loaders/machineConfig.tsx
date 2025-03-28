@@ -5,7 +5,7 @@ import { Params } from "react-router-dom";
 import { parseDate } from "utils/generic";
 
 export const getMachineConfigData = async () => {
-  const response = await client.get(`machine`);
+  const response = await client.get(`instruments/${sessionStorage.getItem("instrumentName")}/machine`);
 
   if (response.status !== 200) {
     return null;

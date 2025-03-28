@@ -12,12 +12,12 @@ import {
     SimpleGrid,
   } from "@chakra-ui/react";
   
-  import { TbMicroscope, TbSnowflake } from "react-icons/tb";
-  import { Link as LinkRouter, useLoaderData } from "react-router-dom";
-  import { getInstrumentName } from "loaders/general";
-  
-  import React from "react";
-  
+import { TbMicroscope, TbSnowflake } from "react-icons/tb";
+import { Link as LinkRouter, useLoaderData } from "react-router-dom";
+import { getInstrumentName } from "loaders/general";
+
+import React from "react";
+
   const getUrl = (endpoint: string) => {
     return process.env.REACT_APP_HUB_ENDPOINT + endpoint;
   };
@@ -30,6 +30,11 @@ import {
 
   const Hub = () => {
     const instrumentInfo = useLoaderData() as InstrumentInfo[];
+
+    const sessionStorageSetup = (ininfo: InstrumentInfo) => {
+      sessionStorage.setItem("murfeyServerURL", ininfo.instrument_url + "/");
+      sessionStorage.setItem("instrumentName", ininfo.instrument_name);
+    }
   
     return (
     <Box w="100%" overflow="hidden">
@@ -44,7 +49,7 @@ import {
           _hover={{ textDecor: "none" }}
           as={LinkRouter}
           to={`/login`}>
-        <Card align="center" onClick={() => sessionStorage.setItem("murfeyServerURL", ini.instrument_url + "/")}>
+        <Card align="center" onClick={() => sessionStorageSetup(ini)}>
             <CardHeader>
                 <Image src={getUrl(`instrument/${ini.instrument_name}/image`)} />
             </CardHeader>

@@ -41,13 +41,11 @@ const SessionSetup = () => {
 
   const handleSelection = (formData: any) => {
     if (typeof sessid !== "undefined"){
-      const expType = formData.type;
       delete formData.type;
-      if (expType === "SPA")
-        registerProcessingParameters(
-          formData as ProvidedProcessingParameters,
-          parseInt(sessid),
-        );
+      registerProcessingParameters(
+        formData as ProvidedProcessingParameters,
+        parseInt(sessid),
+      );
       setParamsSet(true);
     }
   };
@@ -58,11 +56,11 @@ const SessionSetup = () => {
     );
   const activeStep = session
     ? procParams
-      ? 3
+      ? 4
       : session.session.visit
-        ? 2
+        ? 3
         : 0
-    : 2;
+    : 3;
   let navigate = useNavigate();
   return (
     <div className="rootContainer">
@@ -98,7 +96,7 @@ const SessionSetup = () => {
               onChange={setExpType}
               value={expType}
               colorScheme="murfey"
-              isDisabled={activeStep !== 2 ? true : false}
+              isDisabled={activeStep !== 3 ? true : false}
             >
               <Stack>
                 <Radio value="spa">SPA</Radio>
@@ -134,7 +132,7 @@ const SessionSetup = () => {
               key={sessid}
               _hover={{ textDecor: "none" }}
               as={LinkRouter}
-              to={`../new_session/setup/${sessid}`}
+              to={`../sessions/${sessid}`}
             >
               <Button isDisabled={!paramsSet}>Next</Button>
             </Link>
@@ -143,7 +141,7 @@ const SessionSetup = () => {
               key={sessid}
               _hover={{ textDecor: "none" }}
               as={LinkRouter}
-              to={`../new_session/setup/${sessid}`}
+              to={`../sessions/${sessid}`}
             >
               <Button>Skip</Button>
             </Link>

@@ -70,11 +70,11 @@ const Navbar = ({ links, as, children, logo, ...props }: NavbarProps) => {
   const [instrumentConnectionStatus, setInsrumentConnectionStatus] =
     React.useState(false);
 
-  const resolveName = async () => {
+  const resolveConnectionStatus = async () => {
     const status: boolean = await getInstrumentConnectionStatus();
     setInsrumentConnectionStatus(status);
   };
-  resolveName();
+  resolveConnectionStatus();
 
   return (
     <Box position="sticky" top="0" zIndex={1} w="100%" {...props}>

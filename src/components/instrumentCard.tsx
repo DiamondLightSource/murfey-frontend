@@ -34,7 +34,7 @@ const InstrumentCard = () => {
     >
       <Card align="center">
         <CardHeader>
-          <Image src={getUrl("display/microscope_image/")} />
+          <Image src={getUrl(`display/instruments/${sessionStorage.getItem("instrumentName")}/image/`)} />
         </CardHeader>
         <CardBody>
           <Text>{instrumentName}</Text>

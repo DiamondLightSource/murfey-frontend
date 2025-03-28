@@ -5,7 +5,7 @@ import { Params } from "react-router-dom";
 import { parseDate } from "utils/generic";
 
 const getRsyncerData = async (sessionId: string) => {
-  const response = await client.get(`sessions/${sessionId}/rsyncers`);
+  const response = await client.get(`instruments/${sessionStorage.getItem("instrumentName")}/sessions/${sessionId}/rsyncer_info`);
 
   if (response.status !== 200) {
     return null;

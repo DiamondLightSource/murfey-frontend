@@ -1,11 +1,9 @@
 import { QueryClient } from "@tanstack/react-query";
-import { components } from "schema/main";
 import { client } from "utils/api/client";
 import { Params } from "react-router-dom";
-import { parseDate } from "utils/generic";
 
-const getVisitData = async () => {
-  const response = await client.get(`visits_raw`);
+const getVisitData = async (instrumentName: string) => {
+  const response = await client.get(`instruments/${instrumentName}/visits_raw`);
 
   if (response.status !== 200) {
     return null;
@@ -14,12 +12,19 @@ const getVisitData = async () => {
   return response.data;
 };
 
-const query = {
-  queryKey: ["visits"],
-  queryFn: getVisitData,
-  staleTime: 60000,
+const query = (instrumentName: string) => {
+  return {
+    queryKey: ["visits", instrumentName],
+    queryFn: () => getVisitData(instrumentName),
+    staleTime: 60000,
+  }
 };
 
-export const visitLoader = (queryClient: QueryClient) => async () =>
-  (await queryClient.getQueryData(query.queryKey)) ??
-  (await queryClient.fetchQuery(query));
+export const visitLoader = (queryClient: QueryClient) => async (params: Params) => {
+  if(params.instrumentName){
+    const singleQuery = query(params.instrumentName);
+    return (await queryClient.getQueryData(singleQuery.queryKey)) ??
+    (await queryClient.fetchQuery(singleQuery));
+  }
+  return null;
+};
