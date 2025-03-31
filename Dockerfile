@@ -2,7 +2,6 @@
 # podman build --build-arg API_ENDPOINT=<api_endpoint> ... --no-cache -f Dockerfile -t murfey-frontend:<version> ./
 
 FROM docker.io/library/node:22.13.0-alpine3.20 as build
-# FROM docker.io/library/node:20.11.0-alpine3.19 as build
 
 # Set arguments and environment variables
 ARG DEPLOY_TYPE="production"
@@ -22,7 +21,7 @@ ENV REACT_APP_FEEDBACK_URL=${FEEDBACK_URL}
 WORKDIR /usr/src/app
 
 # Install all Yarn dependencies listed in package.json using versions listed in
-# .lock file as unless they are not sufficient to satisfy package requirements
+# .lock file as-is unless they are cannot satisfy package requirements
 COPY ./package.json ./yarn.lock ./
 RUN yarn install --immutable --check-cache
 
@@ -32,12 +31,14 @@ RUN yarn build
 
 # Start second stage of build(?)
 FROM docker.io/nginxinc/nginx-unprivileged:alpine3.20-slim
-# FROM docker.io/nginxinc/nginx-unprivileged:alpine3.18-slim
 COPY --from=build --chown=nginx /usr/src/app/build /usr/share/nginx/html
+COPY --chown=nginx nginx/conf.d /etc/nginx/nginx.conf
 
 EXPOSE 8080
 CMD [ \
     "nginx", \
+        "-c", \
+        "/tmp/nginx/nginx.conf", \
         "-g", \
         "daemon off;" \
 ]
