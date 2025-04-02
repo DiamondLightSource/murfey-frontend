@@ -93,7 +93,7 @@ const GainRefTransfer = () => {
             headers={[
               { key: "name", label: "Name" },
               { key: "timestamp", label: "Timestamp" },
-              { key: "size", label: "Size [GB]" },
+              { key: "size", label: "Size [MB]" },
               { key: "full_path", label: "Full path" },
             ]}
             label={"gainRefData"}
