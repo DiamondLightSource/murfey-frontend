@@ -59,7 +59,7 @@ import { FiActivity } from "react-icons/fi";
 import { components } from "schema/main";
 import { getInstrumentName } from "loaders/general";
 import { getMachineConfigData } from "loaders/machineConfig";
-import { pauseRsyncer, restartRsyncer, removeRsyncer, finaliseRsyncer } from "loaders/rsyncers";
+import { pauseRsyncer, restartRsyncer, removeRsyncer, finaliseRsyncer, finaliseSession } from "loaders/rsyncers";
 import { getSessionData } from "loaders/session_clients";
 import { sessionTokenCheck, sessionHandshake } from "loaders/jwt";
 import { startMultigridWatcher } from "loaders/multigridSetup";
@@ -292,9 +292,7 @@ const Session = () => {
   });
 
   const finaliseAll = async () => {
-    rsync?.map((r) => {
-      finaliseRsyncer(r.session_id, r.source);
-    });
+    if(sessid) await finaliseSession(parseInt(sessid));
     onClose();
   }
 
