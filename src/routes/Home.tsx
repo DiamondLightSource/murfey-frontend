@@ -46,11 +46,7 @@ const SessionRow = ({ session_clients, title }: SessionRowProps) => {
               <>
                 <HStack>
                   <Tooltip
-                    label={
-                      session_client["clients"].some((c) => c.connected)
-                        ? "Active (live connections)"
-                        : "Inactive"
-                    }
+                    label={session_client.session.name}
                   >
                     <Link
                       w={{ base: "100%", md: "19.6%" }}
@@ -64,9 +60,7 @@ const SessionRow = ({ session_clients, title }: SessionRowProps) => {
                           borderColor: "murfey.400",
                         }}
                         bg={
-                          session_client["clients"].some((c) => c.connected)
-                            ? "murfey.500"
-                            : "murfey.400"
+                          "murfey.500"
                         }
                         overflow="auto"
                         w="calc(100%)"
