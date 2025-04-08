@@ -35,7 +35,7 @@ import {
   };
   
   const nameLabelMap: Map<string, string> = new Map([
-    ["dose_per_frame", "Dose per frame [\u212B / pixel]"],
+    ["dose_per_frame", "Dose per frame [e- / \u212B]"],
     ["gain_ref", "Gain Reference"],
     ["symmetry", "Symmetry"],
     ["eer_fractionation_file", "EER fractionation file (for motion correction)"]
