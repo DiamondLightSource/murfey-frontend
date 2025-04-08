@@ -62,7 +62,7 @@ import { getMachineConfigData } from "loaders/machineConfig";
 import { pauseRsyncer, restartRsyncer, removeRsyncer, finaliseRsyncer, finaliseSession } from "loaders/rsyncers";
 import { getSessionData } from "loaders/session_clients";
 import { sessionTokenCheck, sessionHandshake } from "loaders/jwt";
-import { startMultigridWatcher } from "loaders/multigridSetup";
+import { startMultigridWatcher, setupMultigridWatcher } from "loaders/multigridSetup";
 import { InstrumentCard } from "components/instrumentCard";
 import { UpstreamVisitCard } from "components/upstreamVisitsCard";
 import useWebSocket from "react-use-websocket";
@@ -331,7 +331,7 @@ const Session = () => {
   const handleReconnect = async () => {
     if (typeof sessid !== "undefined"){
       await sessionHandshake(parseInt(sessid));
-      startMultigridWatcher(
+      setupMultigridWatcher(
         {
           source: selectedDirectory,
           skip_existing_processing: skipExistingProcessing,
@@ -340,6 +340,7 @@ const Session = () => {
         } as MultigridWatcherSpec,
         parseInt(sessid),
       );
+      startMultigridWatcher(parseInt(sessid));
     }
   }
 
