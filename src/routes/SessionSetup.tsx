@@ -16,6 +16,7 @@ import { Link as LinkRouter, useParams, useLoaderData, useNavigate } from "react
 import { SetupStepper } from "components/setupStepper";
 import { components } from "schema/main";
 import { getProcessingParameterData } from "loaders/processingParameters";
+import { startMultigridWatcher } from "loaders/multigridSetup";
 import { getSessionData } from "loaders/session_clients";
 import { registerProcessingParameters } from "loaders/sessionSetup";
 
@@ -46,6 +47,7 @@ const SessionSetup = () => {
         formData as ProvidedProcessingParameters,
         parseInt(sessid),
       );
+      startMultigridWatcher(parseInt(sessid));
       setParamsSet(true);
     }
   };

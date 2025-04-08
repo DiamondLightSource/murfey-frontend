@@ -16,7 +16,7 @@ import { ArrowForwardIcon } from "@chakra-ui/icons";
 
 import { Link as LinkRouter, useLoaderData, useParams } from "react-router-dom";
 import { components } from "schema/main";
-import { startMultigridWatcher } from "loaders/multigridSetup";
+import { setupMultigridWatcher } from "loaders/multigridSetup";
 import { getSessionData } from "loaders/session_clients";
 import { SetupStepper } from "components/setupStepper";
 import React, { useEffect } from "react";
@@ -51,7 +51,7 @@ const MultigridSetup = () => {
 
   const handleSelection = () => {
     if (typeof sessid !== "undefined"){
-      startMultigridWatcher(
+      setupMultigridWatcher(
         {
           source: selectedDirectory,
           skip_existing_processing: skipExistingProcessing,
