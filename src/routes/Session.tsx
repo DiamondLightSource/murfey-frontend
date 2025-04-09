@@ -331,7 +331,7 @@ const Session = () => {
   const handleReconnect = async () => {
     if (typeof sessid !== "undefined"){
       await sessionHandshake(parseInt(sessid));
-      setupMultigridWatcher(
+      await setupMultigridWatcher(
         {
           source: selectedDirectory,
           skip_existing_processing: skipExistingProcessing,
@@ -340,7 +340,7 @@ const Session = () => {
         } as MultigridWatcherSpec,
         parseInt(sessid),
       );
-      startMultigridWatcher(parseInt(sessid));
+      await startMultigridWatcher(parseInt(sessid));
     }
   }
 
