@@ -250,7 +250,7 @@ const Session = () => {
     setSelectedDirectory(mcfg["data_directories"][0]);
   } 
 
-  useEffect(() => {getSessionProcessingParameterData().then((params) => {if(params === null) navigate(`/new_session/parameters/${sessid}`);})})
+  useEffect(() => {getSessionProcessingParameterData(sessid).then((params) => {if(params === null) navigate(`/new_session/parameters/${sessid}`);})})
 
   useEffect(() => {getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))}, []);
 
