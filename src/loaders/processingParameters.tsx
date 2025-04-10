@@ -2,7 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { client } from "utils/api/client";
 import { Params } from "react-router-dom";
 
-const getSessionProcessingParameterData = async (sessid: string = "0") => {
+export const getSessionProcessingParameterData = async (sessid: string = "0") => {
   const response = await client.get(
     `sessions/${sessid}/session_processing_parameters`,
   );
