@@ -46,7 +46,7 @@ import { useDisclosure } from "@chakra-ui/react";
 import { ViewIcon } from "@chakra-ui/icons";
 
 import { v4 as uuid4 } from "uuid";
-import { Link as LinkRouter, useLoaderData, useParams } from "react-router-dom";
+import { Link as LinkRouter, useLoaderData, useParams, useNavigate } from "react-router-dom";
 import {
   MdCheck,
   MdDensityMedium,
@@ -61,6 +61,7 @@ import { getInstrumentName } from "loaders/general";
 import { getMachineConfigData } from "loaders/machineConfig";
 import { pauseRsyncer, restartRsyncer, removeRsyncer, finaliseRsyncer, finaliseSession } from "loaders/rsyncers";
 import { getSessionData } from "loaders/session_clients";
+import { getSessionProcessingParameterData } from "loaders/processingParameters";
 import { sessionTokenCheck, sessionHandshake } from "loaders/jwt";
 import { startMultigridWatcher, setupMultigridWatcher } from "loaders/multigridSetup";
 import { InstrumentCard } from "components/instrumentCard";
@@ -97,8 +98,6 @@ const RsyncCard = (rsyncer: RSyncerInfo) => {
       await removeRsyncer(rsyncer.session_id, rsyncer.source);
     onClose();
   }
-
-
 
   return (
     
@@ -231,6 +230,7 @@ const Session = () => {
   const { isOpen: isOpenReconnect, onOpen: onOpenReconnect, onClose: onCloseReconnect } = useDisclosure();
   const rsync = useLoaderData() as RSyncerInfo[] | null;
   const { sessid } = useParams();
+  const navigate = useNavigate();
   const [UUID, setUUID] = React.useState("");
   const [instrumentName, setInstrumentName] = React.useState("");
   const [machineConfig, setMachineConfig] = React.useState<MachineConfig>();
@@ -249,6 +249,8 @@ const Session = () => {
     setMachineConfig(mcfg);
     setSelectedDirectory(mcfg["data_directories"][0]);
   } 
+
+  useEffect(() => {getSessionProcessingParameterData().then((params) => {if(params === null) navigate(`/new_session/parameters/${sessid}`);})})
 
   useEffect(() => {getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))}, []);
 
