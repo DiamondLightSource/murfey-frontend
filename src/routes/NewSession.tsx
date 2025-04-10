@@ -114,7 +114,7 @@ const NewSession = () => {
               <Heading size="xl" color="murfey.50">
                 Current visits
               </Heading>
-              <Button variant="onBlue" onClick={() => onOpen()}>Create visist</Button>
+              <Button variant="onBlue" onClick={() => onOpen()}>Create visit</Button>
             </VStack>
           </VStack>
         </Box>
