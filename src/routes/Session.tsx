@@ -212,6 +212,13 @@ const RsyncCard = (rsyncer: RSyncerInfo) => {
               <StatNumber>
                 {rsyncer.num_files_in_queue} queued
               </StatNumber>
+              {
+                rsyncer.analyser_alive ? 
+                <StatNumber>
+                  {rsyncer.num_files_to_analyse} to analyse
+                </StatNumber>
+                : <></>
+              }
             </Stat>
           </Box>
         </Stack>
