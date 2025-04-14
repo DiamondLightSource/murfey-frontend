@@ -155,14 +155,6 @@ export interface paths {
     /** Get Current Visits */
     get: operations["get_current_visits_instruments__instrument_name__visits_raw_get"];
   };
-  "/visits/{visit_name}/context": {
-    /** Register Context */
-    post: operations["register_context_visits__visit_name__context_post"];
-  };
-  "/visits/{visit_name}/files": {
-    /** Add File */
-    post: operations["add_file_visits__visit_name__files_post"];
-  };
   "/feedback": {
     /** Send Murfey Message */
     post: operations["send_murfey_message_feedback_post"];
@@ -226,6 +218,10 @@ export interface paths {
   "/sessions": {
     /** Get Sessions */
     get: operations["get_sessions_sessions_get"];
+  };
+  "/instruments/{instrument_name}/sessions": {
+    /** Get Sessions By Instrument Name */
+    get: operations["get_sessions_by_instrument_name_instruments__instrument_name__sessions_get"];
   };
   "/instruments/{instrument_name}/clients/{client_id}/session": {
     /** Link Client To Session */
@@ -323,45 +319,165 @@ export interface paths {
      */
     get: operations["parse_cygwin_request_cygwin__request_path__get"];
   };
-  "/msys2/setup-x86_64.exe": {
+  "/msys2/config/pacman.d.zip": {
+    /**
+     * Get Pacman Mirrors
+     * @description Dynamically generates a zip file containing mirrorlist files that have been set
+     * up to mirror the MSYS2 package database for each environment.
+     *
+     * The files in this folder should be pasted into, and overwrite, the 'mirrorlist'
+     * files present in the %MSYS64%\etc\pacman.d folder. The default path to this
+     * folder is C:\msys64\etc\pacman.d.
+     */
+    get: operations["get_pacman_mirrors_msys2_config_pacman_d_zip_get"];
+  };
+  "/msys2/repo/distrib/{setup_file}": {
     /**
      * Get Msys2 Setup
      * @description Obtain and pass through an MSYS2 installer from an official source.
      * This is used during client bootstrapping, and can download and install the
      * MSYS2 distribution that then remains on the client machines.
      */
-    get: operations["get_msys2_setup_msys2_setup_x86_64_exe_get"];
+    get: operations["get_msys2_setup_msys2_repo_distrib__setup_file__get"];
   };
-  "/msys2": {
+  "/msys2/repo/": {
     /**
      * Get Msys2 Main Index
      * @description Returns a simple index displaying valid MSYS2 systems and the latest setup file
      * from the main MSYS2 repository.
      */
-    get: operations["get_msys2_main_index_msys2_get"];
+    get: operations["get_msys2_main_index_msys2_repo__get"];
   };
-  "/msys2/{system}": {
+  "/msys2/repo/{system}/": {
     /**
      * Get Msys2 Environment Index
      * @description Returns a list of all MSYS2 environments for a given system from the main MSYS2
      * repository.
      */
-    get: operations["get_msys2_environment_index_msys2__system__get"];
+    get: operations["get_msys2_environment_index_msys2_repo__system___get"];
   };
-  "/msys2/{system}/{environment}": {
+  "/msys2/repo/{system}/{environment}/": {
     /**
      * Get Msys2 Package Index
      * @description Obtain a list of all available MSYS2 packages for a given environment from the main
      * MSYS2 repo.
      */
-    get: operations["get_msys2_package_index_msys2__system___environment__get"];
+    get: operations["get_msys2_package_index_msys2_repo__system___environment___get"];
   };
-  "/msys2/{system}/{environment}/{package}": {
+  "/msys2/repo/{system}/{environment}/{package}": {
     /**
      * Get Msys2 Package File
      * @description Obtain and pass through a specific download for an MSYS2 package.
      */
-    get: operations["get_msys2_package_file_msys2__system___environment___package__get"];
+    get: operations["get_msys2_package_file_msys2_repo__system___environment___package__get"];
+  };
+  "/rust/cargo/config.toml": {
+    /**
+     * Get Cargo Config
+     * @description Returns a properly configured Cargo config that sets it to look ONLY at the
+     * crates.io mirror.
+     *
+     * The default path for this config on Linux devices is ~/.cargo/config.toml,
+     * and its default path on Windows is %USERPROFILE%\.cargo\config.toml.
+     */
+    get: operations["get_cargo_config_rust_cargo_config_toml_get"];
+  };
+  "/rust/index/": {
+    /**
+     * Get Index Page
+     * @description Returns a mirror of the https://index.crates.io landing page.
+     */
+    get: operations["get_index_page_rust_index__get"];
+  };
+  "/rust/index/config.json": {
+    /**
+     * Get Index Config
+     * @description Download a config.json file used by Cargo to navigate sparse index registries
+     * with.
+     *
+     * The 'dl' key points to our mirror of the static crates.io repository, while
+     * the 'api' key points to an API version of that same registry. Both will be
+     * used by Cargo when searching for and downloading packages.
+     */
+    get: operations["get_index_config_rust_index_config_json_get"];
+  };
+  "/rust/index/{c1}/{c2}/{package}": {
+    /**
+     * Get Index Package Metadata
+     * @description Download the metadata for a given package from the crates.io sparse index.
+     * The path to the metadata file on the server side takes the following form:
+     * /{c1}/{c2}/{package}
+     *
+     * c1 and c2 are 2 characters-long strings that are taken from the first 4
+     * characters of the package name (a-z, A-Z, 0-9, -, _). For 3-letter packages,
+     * c1 = 3, and c2 is the first character of the package.
+     */
+    get: operations["get_index_package_metadata_rust_index__c1___c2___package__get"];
+  };
+  "/rust/index/{n}/{package}": {
+    /**
+     * Get Index Package Metadata For Short Package Names
+     * @description The Rust sparse index' naming scheme for packages with 1-2 characters is
+     * different from the standard path convention. They are stored under
+     * /1/{package} or /2/{package}.
+     */
+    get: operations["get_index_package_metadata_for_short_package_names_rust_index__n___package__get"];
+  };
+  "/rust/crates/{package}/{version}/download": {
+    /**
+     * Get Rust Package Download
+     * @description Obtain and pass through a crate download request for a Rust package via the
+     * sparse index registry.
+     */
+    get: operations["get_rust_package_download_rust_crates__package___version__download_get"];
+  };
+  "/rust/api/v1/crates": {
+    /**
+     * Get Rust Api Package Index
+     * @description Displays the Rust API package index, which returns names of available packages
+     * in a JSON object based on the search query given.
+     */
+    get: operations["get_rust_api_package_index_rust_api_v1_crates_get"];
+  };
+  "/rust/api/v1/crates/{package}": {
+    /**
+     * Get Rust Api Package Info
+     * @description Displays general information for a given Rust package, as a JSON object.
+     * Contains both version information and download information, in addition
+     * to other types of metadata.
+     */
+    get: operations["get_rust_api_package_info_rust_api_v1_crates__package__get"];
+  };
+  "/rust/api/v1/crates/{package}/versions": {
+    /**
+     * Get Rust Api Package Versions
+     * @description Displays all available versions for a particular Rust package, along with download
+     * links for said versions, as a JSON object.
+     */
+    get: operations["get_rust_api_package_versions_rust_api_v1_crates__package__versions_get"];
+  };
+  "/rust/api/v1/crates/{package}/{version}/download": {
+    /**
+     * Get Rust Api Package Download
+     * @description Obtain and pass through a crate download request for a specific Rust package.
+     */
+    get: operations["get_rust_api_package_download_rust_api_v1_crates__package___version__download_get"];
+  };
+  "/rust/crates/{package}/{crate}": {
+    /**
+     * Get Rust Package Crate
+     * @description Obtain and pass through a download for a specific Rust crate. The Rust API
+     * download request actually redirects to the static crate repository, so this
+     * endpoint covers cases where the static crate download link is requested.
+     *
+     * The static Rust package repository has been configured such that only requests
+     * for a specific crate are accepted and handled.
+     * (e.g. https://static.crates.io/crates/anyhow/anyhow-1.0.97.crate will pass)
+     *
+     * A request for any other part of the URL path will be denied.
+     * (e.g. https://static.crates.io/crates/anyhow will fail)
+     */
+    get: operations["get_rust_package_crate_rust_crates__package___crate__get"];
   };
   "/pypi/": {
     /**
@@ -458,8 +574,12 @@ export interface paths {
     get: operations["check_if_session_is_active_instruments__instrument_name__sessions__session_id__active_get"];
   };
   "/sessions/{session_id}/multigrid_watcher": {
+    /** Setup Multigrid Watcher */
+    post: operations["setup_multigrid_watcher_sessions__session_id__multigrid_watcher_post"];
+  };
+  "/sessions/{session_id}/start_multigrid_watcher": {
     /** Start Multigrid Watcher */
-    post: operations["start_multigrid_watcher_sessions__session_id__multigrid_watcher_post"];
+    post: operations["start_multigrid_watcher_sessions__session_id__start_multigrid_watcher_post"];
   };
   "/sessions/{session_id}/provided_processing_parameters": {
     /** Pass Proc Params To Instrument Server */
@@ -513,9 +633,11 @@ export interface paths {
     /** Get Instrument Image */
     get: operations["get_instrument_image_instrument__instrument_name__image_get"];
   };
-  "sessions/{session_id}/session_processing_parameters": {
+  "/sessions/{session_id}/session_processing_parameters": {
     /** Get Session Processing Parameters */
-    get: operations["get_session_processing_parameterssessions__session_id__session_processing_parameters_get"];
+    get: operations["get_session_processing_parameters_sessions__session_id__session_processing_parameters_get"];
+    /** Set Session Processing Parameters */
+    post: operations["set_session_processing_parameters_sessions__session_id__session_processing_parameters_post"];
   };
   "/ws/test/{client_id}": {
     /** Close Ws Connection */
@@ -652,13 +774,6 @@ export interface components {
       /** Id */
       id: number;
     };
-    /** ContextInfo */
-    ContextInfo: {
-      /** Experiment Type */
-      experiment_type: string;
-      /** Acquisition Software */
-      acquisition_software: string;
-    };
     /** CurrentGainRef */
     CurrentGainRef: {
       /** Path */
@@ -759,14 +874,23 @@ export interface components {
     };
     /** EditableSessionProcessingParameters */
     EditableSessionProcessingParameters: {
-      /** Gain Ref */
-      gain_ref: string;
+      /**
+       * Gain Ref
+       * @default
+       */
+      gain_ref?: string;
       /** Dose Per Frame */
-      dose_per_frame: number;
-      /** Eer Fractionation File */
-      eer_fractionation_file: string;
-      /** Symmetry */
-      symmetry: string;
+      dose_per_frame?: number;
+      /**
+       * Eer Fractionation File
+       * @default
+       */
+      eer_fractionation_file?: string;
+      /**
+       * Symmetry
+       * @default
+       */
+      symmetry?: string;
     };
     /** File */
     File: {
@@ -1277,7 +1401,7 @@ export interface components {
     /** PreprocessingParametersTomo */
     PreprocessingParametersTomo: {
       /** Dose Per Frame */
-      dose_per_frame: number;
+      dose_per_frame?: number;
       /** Frame Count */
       frame_count: number;
       /** Tilt Axis */
@@ -1308,48 +1432,6 @@ export interface components {
       eer_fractionation_file?: string;
       /** Eer Fractionation */
       eer_fractionation: number;
-    };
-    /** ProcessFile */
-    ProcessFile: {
-      /** Path */
-      path: string;
-      /** Description */
-      description: string;
-      /** Tag */
-      tag: string;
-      /** Image Number */
-      image_number: number;
-      /** Pixel Size */
-      pixel_size: number;
-      /** Dose Per Frame */
-      dose_per_frame: number;
-      /** Frame Count */
-      frame_count: number;
-      /** Tilt Axis */
-      tilt_axis?: number;
-      /** Mc Uuid */
-      mc_uuid?: number;
-      /**
-       * Voltage
-       * @default 300
-       */
-      voltage?: number;
-      /**
-       * Mc Binning
-       * @default 1
-       */
-      mc_binning?: number;
-      /** Gain Ref */
-      gain_ref?: string;
-      /**
-       * Extract Downscale
-       * @default 1
-       */
-      extract_downscale?: number;
-      /** Eer Fractionation File */
-      eer_fractionation_file?: string;
-      /** Group Tag */
-      group_tag?: string;
     };
     /** ProcessingDetails */
     ProcessingDetails: {
@@ -1487,10 +1569,16 @@ export interface components {
       num_files_transferred: number;
       /** Num Files In Queue */
       num_files_in_queue: number;
+      /** Num Files To Analyse */
+      num_files_to_analyse: number;
       /** Alive */
       alive: boolean;
       /** Stopping */
       stopping: boolean;
+      /** Analyser Alive */
+      analyser_alive: boolean;
+      /** Analyser Stopping */
+      analyser_stopping: boolean;
       /** Destination */
       destination: string;
       /** Tag */
@@ -1865,6 +1953,48 @@ export interface components {
       access_token: string;
       /** Token Type */
       token_type: string;
+    };
+    /** TomoProcessFile */
+    TomoProcessFile: {
+      /** Path */
+      path: string;
+      /** Description */
+      description: string;
+      /** Tag */
+      tag: string;
+      /** Image Number */
+      image_number: number;
+      /** Pixel Size */
+      pixel_size: number;
+      /** Dose Per Frame */
+      dose_per_frame?: number;
+      /** Frame Count */
+      frame_count: number;
+      /** Tilt Axis */
+      tilt_axis?: number;
+      /** Mc Uuid */
+      mc_uuid?: number;
+      /**
+       * Voltage
+       * @default 300
+       */
+      voltage?: number;
+      /**
+       * Mc Binning
+       * @default 1
+       */
+      mc_binning?: number;
+      /** Gain Ref */
+      gain_ref?: string;
+      /**
+       * Extract Downscale
+       * @default 1
+       */
+      extract_downscale?: number;
+      /** Eer Fractionation File */
+      eer_fractionation_file?: string;
+      /** Group Tag */
+      group_tag?: string;
     };
     /** ValidationError */
     ValidationError: {
@@ -2817,50 +2947,6 @@ export interface operations {
       };
     };
   };
-  /** Register Context */
-  register_context_visits__visit_name__context_post: {
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["ContextInfo"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  /** Add File */
-  add_file_visits__visit_name__files_post: {
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["File"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        content: {
-          "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
   /** Send Murfey Message */
   send_murfey_message_feedback_post: {
     requestBody: {
@@ -2977,7 +3063,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["ProcessFile"];
+        "application/json": components["schemas"]["TomoProcessFile"];
       };
     };
     responses: {
@@ -3232,6 +3318,28 @@ export interface operations {
       200: {
         content: {
           "application/json": unknown;
+        };
+      };
+    };
+  };
+  /** Get Sessions By Instrument Name */
+  get_sessions_by_instrument_name_instruments__instrument_name__sessions_get: {
+    parameters: {
+      path: {
+        instrument_name: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["Session"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
         };
       };
     };
@@ -3628,12 +3736,15 @@ export interface operations {
     };
   };
   /**
-   * Get Msys2 Setup
-   * @description Obtain and pass through an MSYS2 installer from an official source.
-   * This is used during client bootstrapping, and can download and install the
-   * MSYS2 distribution that then remains on the client machines.
+   * Get Pacman Mirrors
+   * @description Dynamically generates a zip file containing mirrorlist files that have been set
+   * up to mirror the MSYS2 package database for each environment.
+   *
+   * The files in this folder should be pasted into, and overwrite, the 'mirrorlist'
+   * files present in the %MSYS64%\etc\pacman.d folder. The default path to this
+   * folder is C:\msys64\etc\pacman.d.
    */
-  get_msys2_setup_msys2_setup_x86_64_exe_get: {
+  get_pacman_mirrors_msys2_config_pacman_d_zip_get: {
     responses: {
       /** @description Successful Response */
       200: {
@@ -3642,11 +3753,36 @@ export interface operations {
     };
   };
   /**
+   * Get Msys2 Setup
+   * @description Obtain and pass through an MSYS2 installer from an official source.
+   * This is used during client bootstrapping, and can download and install the
+   * MSYS2 distribution that then remains on the client machines.
+   */
+  get_msys2_setup_msys2_repo_distrib__setup_file__get: {
+    parameters: {
+      path: {
+        setup_file: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
    * Get Msys2 Main Index
    * @description Returns a simple index displaying valid MSYS2 systems and the latest setup file
    * from the main MSYS2 repository.
    */
-  get_msys2_main_index_msys2_get: {
+  get_msys2_main_index_msys2_repo__get: {
     responses: {
       /** @description Successful Response */
       200: {
@@ -3659,7 +3795,7 @@ export interface operations {
    * @description Returns a list of all MSYS2 environments for a given system from the main MSYS2
    * repository.
    */
-  get_msys2_environment_index_msys2__system__get: {
+  get_msys2_environment_index_msys2_repo__system___get: {
     parameters: {
       path: {
         system: string;
@@ -3683,7 +3819,7 @@ export interface operations {
    * @description Obtain a list of all available MSYS2 packages for a given environment from the main
    * MSYS2 repo.
    */
-  get_msys2_package_index_msys2__system___environment__get: {
+  get_msys2_package_index_msys2_repo__system___environment___get: {
     parameters: {
       path: {
         system: string;
@@ -3707,12 +3843,277 @@ export interface operations {
    * Get Msys2 Package File
    * @description Obtain and pass through a specific download for an MSYS2 package.
    */
-  get_msys2_package_file_msys2__system___environment___package__get: {
+  get_msys2_package_file_msys2_repo__system___environment___package__get: {
     parameters: {
       path: {
         system: string;
         environment: string;
         package: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Get Cargo Config
+   * @description Returns a properly configured Cargo config that sets it to look ONLY at the
+   * crates.io mirror.
+   *
+   * The default path for this config on Linux devices is ~/.cargo/config.toml,
+   * and its default path on Windows is %USERPROFILE%\.cargo\config.toml.
+   */
+  get_cargo_config_rust_cargo_config_toml_get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Get Index Page
+   * @description Returns a mirror of the https://index.crates.io landing page.
+   */
+  get_index_page_rust_index__get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Get Index Config
+   * @description Download a config.json file used by Cargo to navigate sparse index registries
+   * with.
+   *
+   * The 'dl' key points to our mirror of the static crates.io repository, while
+   * the 'api' key points to an API version of that same registry. Both will be
+   * used by Cargo when searching for and downloading packages.
+   */
+  get_index_config_rust_index_config_json_get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+    };
+  };
+  /**
+   * Get Index Package Metadata
+   * @description Download the metadata for a given package from the crates.io sparse index.
+   * The path to the metadata file on the server side takes the following form:
+   * /{c1}/{c2}/{package}
+   *
+   * c1 and c2 are 2 characters-long strings that are taken from the first 4
+   * characters of the package name (a-z, A-Z, 0-9, -, _). For 3-letter packages,
+   * c1 = 3, and c2 is the first character of the package.
+   */
+  get_index_package_metadata_rust_index__c1___c2___package__get: {
+    parameters: {
+      path: {
+        c1: string;
+        c2: string;
+        package: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Get Index Package Metadata For Short Package Names
+   * @description The Rust sparse index' naming scheme for packages with 1-2 characters is
+   * different from the standard path convention. They are stored under
+   * /1/{package} or /2/{package}.
+   */
+  get_index_package_metadata_for_short_package_names_rust_index__n___package__get: {
+    parameters: {
+      path: {
+        n: string;
+        package: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Get Rust Package Download
+   * @description Obtain and pass through a crate download request for a Rust package via the
+   * sparse index registry.
+   */
+  get_rust_package_download_rust_crates__package___version__download_get: {
+    parameters: {
+      path: {
+        package: string;
+        version: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Get Rust Api Package Index
+   * @description Displays the Rust API package index, which returns names of available packages
+   * in a JSON object based on the search query given.
+   */
+  get_rust_api_package_index_rust_api_v1_crates_get: {
+    parameters: {
+      query?: {
+        q?: string;
+        per_page?: number;
+        seek?: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Get Rust Api Package Info
+   * @description Displays general information for a given Rust package, as a JSON object.
+   * Contains both version information and download information, in addition
+   * to other types of metadata.
+   */
+  get_rust_api_package_info_rust_api_v1_crates__package__get: {
+    parameters: {
+      path: {
+        package: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Get Rust Api Package Versions
+   * @description Displays all available versions for a particular Rust package, along with download
+   * links for said versions, as a JSON object.
+   */
+  get_rust_api_package_versions_rust_api_v1_crates__package__versions_get: {
+    parameters: {
+      path: {
+        package: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Get Rust Api Package Download
+   * @description Obtain and pass through a crate download request for a specific Rust package.
+   */
+  get_rust_api_package_download_rust_api_v1_crates__package___version__download_get: {
+    parameters: {
+      path: {
+        package: string;
+        version: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: never;
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /**
+   * Get Rust Package Crate
+   * @description Obtain and pass through a download for a specific Rust crate. The Rust API
+   * download request actually redirects to the static crate repository, so this
+   * endpoint covers cases where the static crate download link is requested.
+   *
+   * The static Rust package repository has been configured such that only requests
+   * for a specific crate are accepted and handled.
+   * (e.g. https://static.crates.io/crates/anyhow/anyhow-1.0.97.crate will pass)
+   *
+   * A request for any other part of the URL path will be denied.
+   * (e.g. https://static.crates.io/crates/anyhow will fail)
+   */
+  get_rust_package_crate_rust_crates__package___crate__get: {
+    parameters: {
+      path: {
+        package: string;
+        crate: string;
       };
     };
     responses: {
@@ -4239,8 +4640,8 @@ export interface operations {
       };
     };
   };
-  /** Start Multigrid Watcher */
-  start_multigrid_watcher_sessions__session_id__multigrid_watcher_post: {
+  /** Setup Multigrid Watcher */
+  setup_multigrid_watcher_sessions__session_id__multigrid_watcher_post: {
     parameters: {
       path: {
         session_id: number;
@@ -4249,6 +4650,28 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": components["schemas"]["MultigridWatcherSetup"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Start Multigrid Watcher */
+  start_multigrid_watcher_sessions__session_id__start_multigrid_watcher_post: {
+    parameters: {
+      path: {
+        session_id: number;
       };
     };
     responses: {
@@ -4575,10 +4998,37 @@ export interface operations {
     };
   };
   /** Get Session Processing Parameters */
-  get_session_processing_parameterssessions__session_id__session_processing_parameters_get: {
+  get_session_processing_parameters_sessions__session_id__session_processing_parameters_get: {
     parameters: {
       path: {
         session_id: number;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["EditableSessionProcessingParameters"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Set Session Processing Parameters */
+  set_session_processing_parameters_sessions__session_id__session_processing_parameters_post: {
+    parameters: {
+      path: {
+        session_id: number;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["EditableSessionProcessingParameters"];
       };
     };
     responses: {
