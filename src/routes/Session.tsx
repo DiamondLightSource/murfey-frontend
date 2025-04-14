@@ -160,13 +160,13 @@ const RsyncCard = (rsyncer: RSyncerInfo) => {
                 onClick={() => remove()}
                 isDisabled={rsyncer.stopping}
               >
-                Remove
+                Stop rsync (cannot be resumed)
               </MenuItem>
               <MenuItem
                 onClick={() => {finalise()}}
                 isDisabled={rsyncer.stopping}
               >
-                Finalise
+                Remove all source files and stop
               </MenuItem>
               </>
               ): 
