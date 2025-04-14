@@ -18,6 +18,17 @@ const getSessionsData = async () => {
   };
 };
 
+export const getSessionDataForVisit = async (visit: string, instrumentName: string) => {
+  const response = await client.get(`instruments/${instrumentName}/visits/${visit}/sessions`);
+  if (response.status !== 200) {
+    return [];
+  }
+
+  return {
+    current: response.data,
+  };
+}
+
 const getClientData = async () => {
   const response = await client.get(`clients`);
 
