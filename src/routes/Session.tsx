@@ -148,7 +148,7 @@ const RsyncCard = (rsyncer: RSyncerInfo) => {
             />
             <MenuList>
               {
-              !rsyncer.alive ? (
+              rsyncer.alive ? (
               <>
               <MenuItem
                 onClick={() => pauseRsyncer(rsyncer.session_id, rsyncer.source)}
