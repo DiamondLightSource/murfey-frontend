@@ -31,6 +31,7 @@ import { deleteSessionData } from "loaders/session_clients";
 import { finaliseSession } from "loaders/rsyncers";
 import { sessionTokenCheck } from "loaders/jwt";
 import { InstrumentCard } from "components/instrumentCard";
+import { PuffLoader } from "react-spinners";
 import useWebSocket from "react-use-websocket";
 
 import React, { useEffect } from "react";
@@ -101,7 +102,7 @@ const SessionRow = (session_client: SessionClients) => {
                           borderColor: "murfey.400",
                         }}
                         bg={
-                          "murfey.500"
+                          "murfey.400"
                         }
                         overflow="auto"
                         w="calc(100%)"
@@ -110,6 +111,7 @@ const SessionRow = (session_client: SessionClients) => {
                         borderRadius={5}
                         display={'flex'}
                       >
+                        <HStack>
                         <StatLabel
                           whiteSpace="nowrap"
                           textOverflow="ellipsis"
@@ -118,6 +120,8 @@ const SessionRow = (session_client: SessionClients) => {
                           {session_client.session.name}:{" "}
                           {session_client.session.id}
                         </StatLabel>
+                        {sessionActive ? <PuffLoader size={25} color="red"/>: <></>}
+                        </HStack>
                       </Stat>
                     </Link>
                   </Tooltip>
