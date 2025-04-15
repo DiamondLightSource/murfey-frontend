@@ -18,6 +18,7 @@ import { v4 as uuid4 } from "uuid";
 import { Link as LinkRouter, useLoaderData } from "react-router-dom";
 import { components } from "schema/main";
 import { MdDelete } from "react-icons/md";
+import { GiMagicBroom } from "react-icons/gi";
 import { deleteSessionData } from "loaders/session_clients";
 import { InstrumentCard } from "components/instrumentCard";
 import useWebSocket from "react-use-websocket";
@@ -49,10 +50,10 @@ const SessionRow = ({ session_clients, title }: SessionRowProps) => {
                     label={session_client.session.name}
                   >
                     <Link
-                      w={{ base: "100%", md: "19.6%" }}
                       key={session_client.session.id}
                       _hover={{ textDecor: "none" }}
                       as={LinkRouter}
+                      display={'flex'}
                       to={`../sessions/${session_client.session.id ?? 0}`}
                     >
                       <Stat
@@ -80,6 +81,7 @@ const SessionRow = ({ session_clients, title }: SessionRowProps) => {
                       </Stat>
                     </Link>
                   </Tooltip>
+                  <Tooltip label="Remove from list">
                   <IconButton
                     aria-label="Delete session"
                     icon={<MdDelete />}
@@ -88,6 +90,13 @@ const SessionRow = ({ session_clients, title }: SessionRowProps) => {
                       window.location.reload();
                     }}
                   />
+                  </Tooltip>
+                  <Tooltip label="Clean up visit files">
+                  <IconButton 
+                    aria-label="Clean up session"
+                    icon={<GiMagicBroom />}
+                  />
+                  </Tooltip>
                 </HStack>
               </>
             );
