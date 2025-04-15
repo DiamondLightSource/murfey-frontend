@@ -7,11 +7,19 @@ import {
   HStack,
   IconButton,
   Link,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
   Stack,
   Stat,
   StatLabel,
   Tooltip,
   VStack,
+  useDisclosure,
 } from "@chakra-ui/react";
 
 import { v4 as uuid4 } from "uuid";
@@ -20,6 +28,7 @@ import { components } from "schema/main";
 import { MdDelete } from "react-icons/md";
 import { GiMagicBroom } from "react-icons/gi";
 import { deleteSessionData } from "loaders/session_clients";
+import { finaliseSession } from "loaders/rsyncers";
 import { InstrumentCard } from "components/instrumentCard";
 import useWebSocket from "react-use-websocket";
 
@@ -33,6 +42,15 @@ interface SessionRowProps {
 }
 
 const SessionRow = ({ session_clients, title }: SessionRowProps) => {
+
+  const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
+  const { isOpen: isOpenCleanup, onOpen: onOpenCleanup, onClose: onCloseCleanup } = useDisclosure();
+
+  const cleanupSession = async (sessid: number) => {
+    await finaliseSession(sessid);
+    onCloseCleanup();
+  }
+
   return (
     <VStack w="100%" spacing={0}>
       <Heading textAlign="left" w="100%" size="lg">
@@ -46,6 +64,34 @@ const SessionRow = ({ session_clients, title }: SessionRowProps) => {
             return (
               <>
                 <HStack>
+                <Modal isOpen={isOpenDelete} onClose={onCloseDelete}>
+                  <ModalOverlay />
+                    <ModalContent>
+                      <ModalHeader>Confirm removing session {session_client.session.name} from list</ModalHeader>
+                      <ModalCloseButton />
+                      <ModalBody>Are you sure you want to continue? This action is not reversible</ModalBody>
+                      <ModalFooter>
+                        <Button colorScheme="blue" mr={3} onClick={onCloseDelete}>
+                          Close
+                        </Button>
+                        <Button variant="ghost" onClick={() => {deleteSessionData(session_id); window.location.reload();}}>Confirm</Button>
+                      </ModalFooter>
+                    </ModalContent>
+                  </Modal>
+                  <Modal isOpen={isOpenCleanup} onClose={onCloseCleanup}>
+                  <ModalOverlay />
+                    <ModalContent>
+                      <ModalHeader>Confirm removing files for session {session_client.session.name}</ModalHeader>
+                      <ModalCloseButton />
+                      <ModalBody>Are you sure you want to continue? This action is not reversible</ModalBody>
+                      <ModalFooter>
+                        <Button colorScheme="blue" mr={3} onClick={onCloseCleanup}>
+                          Close
+                        </Button>
+                        <Button variant="ghost" onClick={() => {cleanupSession(session_id);}}>Confirm</Button>
+                      </ModalFooter>
+                    </ModalContent>
+                  </Modal>
                   <Tooltip
                     label={session_client.session.name}
                   >
@@ -85,16 +131,14 @@ const SessionRow = ({ session_clients, title }: SessionRowProps) => {
                   <IconButton
                     aria-label="Delete session"
                     icon={<MdDelete />}
-                    onClick={() => {
-                      deleteSessionData(session_id);
-                      window.location.reload();
-                    }}
+                    onClick={onOpenDelete}
                   />
                   </Tooltip>
                   <Tooltip label="Clean up visit files">
                   <IconButton 
                     aria-label="Clean up session"
                     icon={<GiMagicBroom />}
+                    onClick={onOpenCleanup}
                   />
                   </Tooltip>
                 </HStack>
