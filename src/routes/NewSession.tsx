@@ -28,8 +28,8 @@ import { Link as LinkRouter, useLoaderData, useParams } from "react-router-dom";
 import { components } from "schema/main";
 import { SetupStepper } from "components/setupStepper";
 import { Table } from "@diamondlightsource/ui-components";
-import { createSession } from "loaders/session_clients";
-import { sessionHandshake } from "loaders/jwt";
+import { createSession, getSessionDataForVisit } from "loaders/session_clients";
+import { sessionTokenCheck, sessionHandshake } from "loaders/jwt";
 import { useNavigate } from "react-router-dom";
 import React, { ChangeEventHandler, useEffect } from "react";
 import { getMachineConfigData } from "loaders/machineConfig";
@@ -37,12 +37,15 @@ import { getMachineConfigData } from "loaders/machineConfig";
 
 type Visit = components["schemas"]["Visit"];
 type MachineConfig = components["schemas"]["MachineConfig"];
+type Session = components["schemas"]["Session"];
 
 const NewSession = () => {
   const currentVisits = useLoaderData() as Visit[] | null;
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isOpenVisitCheck, onOpen: onOpenVisitCheck, onClose: onCloseVisitCheck } = useDisclosure();
   const [selectedVisit, setSelectedVisit] = React.useState("");
   const [sessionReference, setSessionReference] = React.useState("");
+  const [activeSessionsForVisit, setActiveSessionsForVisit] = React.useState<(Session | null)[]>([]);
   const [gainRefDir, setGainRefDir] = React.useState<string | null>();
   const [acqusitionSoftware, setAcquistionSoftware] = React.useState<string[]>([]);
   const navigate = useNavigate();
@@ -52,7 +55,15 @@ const NewSession = () => {
     setAcquistionSoftware(mcfg.acquisition_software);
   }
 
+  const instrumentName = sessionStorage.getItem("instrumentName");
+
+  const alreadyActiveSessions = async () => {
+    const sessionsToCheck: Session[] = await getSessionDataForVisit(selectedVisit, instrumentName ?? "");
+    return Promise.all(sessionsToCheck.map(async (session) => {return await sessionTokenCheck(session.id) ? session: null}));
+  }
+
   useEffect(() => {getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))}, []);
+  useEffect(() => {alreadyActiveSessions().then((sessions) => setActiveSessionsForVisit(sessions))}, [selectedVisit]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setSessionReference(event.target.value);
@@ -67,12 +78,18 @@ const NewSession = () => {
     setSessionReference(data.name);
   }
 
-  const instrumentName = sessionStorage.getItem("instrumentName");
-
   const startMurfeySession = async (iName: string) => {
     const sid = await createSession(selectedVisit, sessionReference, iName);
     await sessionHandshake(sid);
     return sid;
+  }
+
+  const handleCreateSession = async (iName: string) => {
+    if((!activeSessionsForVisit.length) || (activeSessionsForVisit.every((elem) => {return elem === null}))){ 
+      const sid = await startMurfeySession(iName);
+      gainRefDir ? navigate(`../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`): navigate(`/new_session/setup/${sid}`);
+    }
+    else onOpenVisitCheck();
   }
 
   return instrumentName ? (
@@ -97,12 +114,51 @@ const NewSession = () => {
             <Button
               isDisabled={selectedVisit === "" ? true : false}
               onClick={() => {
+                handleCreateSession(instrumentName);
+              }}
+            >
+              Create session
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      <Modal isOpen={isOpenVisitCheck} onClose={onCloseVisitCheck}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>An active session already exists for this visit</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            You may want to edit one of the following sessions instead (otherwise you may start multiple transfers for the same source)
+            <VStack>
+            {
+              activeSessionsForVisit.map((session) => 
+                {
+                  return session ? <Link
+                          w={{ base: "100%", md: "19.6%" }}
+                          key="gain_ref"
+                          _hover={{ textDecor: "none" }}
+                          as={LinkRouter}
+                          to={`/sessions/${session.id}`}
+                        >
+                        <Button>
+                          {session.id}
+                        </Button>
+                        </Link>: <></>
+                }
+              )
+            }
+            </VStack>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              isDisabled={selectedVisit === "" ? true : false}
+              onClick={() => {
                 startMurfeySession(instrumentName).then((sid: number) => {
                   gainRefDir ? navigate(`../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`): navigate(`/new_session/setup/${sid}`);
                 });
               }}
             >
-              Create session
+              Ignore and continue
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -162,9 +218,7 @@ const NewSession = () => {
             <Button
               isDisabled={selectedVisit === "" ? true : false}
               onClick={() => {
-                startMurfeySession(instrumentName).then((sid: number) => {
-                  gainRefDir ? navigate(`../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`): navigate(`/new_session/setup/${sid}`);
-                });
+                handleCreateSession(instrumentName);
               }}
             >
               Create session for visit {selectedVisit}
