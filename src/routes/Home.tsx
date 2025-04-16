@@ -69,7 +69,7 @@ const SessionRow = (session_client: SessionClients) => {
                         <Button colorScheme="blue" mr={3} onClick={onCloseDelete}>
                           Close
                         </Button>
-                        <Button variant="ghost" onClick={() => {deleteSessionData(session_client.session.id); window.location.reload();}}>Confirm</Button>
+                        <Button variant="ghost" onClick={() => {deleteSessionData(session_client.session.id).then(() => window.location.reload());}}>Confirm</Button>
                       </ModalFooter>
                     </ModalContent>
                   </Modal>
