@@ -1,4 +1,4 @@
-import { Button, Box, Heading, HStack, VStack, Input, Checkbox, Modal, ModalOverlay, ModalContent, ModalBody, ModalHeader, Spinner, Tooltip, Link } from "@chakra-ui/react";
+import { Button, Box, Heading, HStack, VStack, Input, Checkbox, Modal, ModalOverlay, ModalContent, ModalBody, ModalHeader, Tooltip, Link, Circle } from "@chakra-ui/react";
 
 import { Link as LinkRouter, useNavigate, useLoaderData, useSearchParams } from "react-router-dom";
 import { components } from "schema/main";
@@ -6,6 +6,7 @@ import { Table } from "@diamondlightsource/ui-components";
 import { SetupStepper } from "components/setupStepper";
 import { prepareGainReference, transferGainReference, updateCurrentGainReference } from "loaders/possibleGainRefs";
 import { getMachineConfigData } from "loaders/machineConfig";
+import { CircleLoader } from "react-spinners";
 
 import React from "react";
 
@@ -59,7 +60,7 @@ const GainRefTransfer = () => {
           <ModalContent>
             <ModalHeader>Processing gain reference</ModalHeader>
             <ModalBody>
-              <Spinner />
+              <CircleLoader />
             </ModalBody>
           </ModalContent>
         </Modal>

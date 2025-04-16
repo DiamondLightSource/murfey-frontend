@@ -9640,6 +9640,11 @@ react-scripts@5.0.1:
   optionalDependencies:
     fsevents "^2.3.2"
 
+react-spinners@^0.16.1:
+  version "0.16.1"
+  resolved "https://registry.yarnpkg.com/react-spinners/-/react-spinners-0.16.1.tgz#06832db2ae96d6a3f4997dbbce28c7ef7aa357ca"
+  integrity sha512-hYDQp2mmmv3a3JZZZYOi3+jW7C/ro51Ny71TfkRXhoPBb6wZuK9BgdvYbTnSAUrQCrVnOLSpWfZatncUTb6n5w==
+
 react-style-singleton@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/react-style-singleton/-/react-style-singleton-2.2.1.tgz#f99e420492b2d8f34d38308ff660b60d0b1205b4"
