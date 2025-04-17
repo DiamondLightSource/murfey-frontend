@@ -217,7 +217,7 @@ const Home = () => {
             <HStack w="100%" display="flex" px="10vw">
               <VStack mt="0 !important" w="100%" px="10vw" display="flex">
                 <Heading textAlign="left" w="100%" size="lg">
-                  {"Exisitng Sessions"}
+                  {"Existing Sessions"}
                 </Heading>
                 <Divider borderColor="murfey.300" />
                 {sessions && sessions.current.length > 0 ? sessions.current.map((current) => {
