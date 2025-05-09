@@ -1,9 +1,6 @@
 import {
   Button,
   Box,
-  FormControl,
-  FormLabel,
-  Input,
   RadioGroup,
   Radio,
   Stack,
@@ -12,7 +9,7 @@ import {
   Heading,
 } from "@chakra-ui/react";
 import { getForm } from "components/forms";
-import { Link as LinkRouter, useParams, useLoaderData, useNavigate } from "react-router-dom";
+import { Link as LinkRouter, useParams, useLoaderData } from "react-router-dom";
 import { SetupStepper } from "components/setupStepper";
 import { components } from "schema/main";
 import { getProcessingParameterData } from "loaders/processingParameters";

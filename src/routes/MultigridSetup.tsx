@@ -16,7 +16,7 @@ import { ArrowForwardIcon } from "@chakra-ui/icons";
 
 import { Link as LinkRouter, useLoaderData, useParams } from "react-router-dom";
 import { components } from "schema/main";
-import { setupMultigridWatcher } from "loaders/multigridSetup";
+import { setupMultigridWatcher, startMultigridWatcher } from "loaders/multigridSetup";
 import { getSessionData } from "loaders/session_clients";
 import { SetupStepper } from "components/setupStepper";
 import React, { useEffect } from "react";
@@ -60,6 +60,7 @@ const MultigridSetup = () => {
         } as MultigridWatcherSpec,
         parseInt(sessid),
       );
+      if(!recipesDefined) startMultigridWatcher(parseInt(sessid));
     }
   };
 
