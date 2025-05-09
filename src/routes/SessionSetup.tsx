@@ -141,7 +141,7 @@ const SessionSetup = () => {
               as={LinkRouter}
               to={`../sessions/${sessid}`}
             >
-              <Button>Skip</Button>
+              <Button onClick={() => sessid !== undefined ? startMultigridWatcher(parseInt(sessid), false): null}>Skip</Button>
             </Link>
           </Box>
         </Stack>

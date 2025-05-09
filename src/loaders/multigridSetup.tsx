@@ -22,15 +22,32 @@ export const setupMultigridWatcher = async (
 
 export const startMultigridWatcher = async (
   sessionId: number,
+  process: boolean = true,
 ) => {
-  const response = await client.post(
-    `sessions/${sessionId}/start_multigrid_watcher`,
-    {},
-  );
+  if(process){
+    const response = await client.post(
+      `sessions/${sessionId}/start_multigrid_watcher`,
+      {},
+    );
 
-  if (response.status !== 200) {
-    return null;
+    if (response.status !== 200) {
+      return null;
+    }
+  
+    return response.data;
+  }
+  else{
+    const response = await client.post(
+      `sessions/${sessionId}/start_multigrid_watcher?process=false`,
+      {},
+    );
+
+    if (response.status !== 200) {
+      return null;
+    }
+  
+    return response.data;
   }
 
-  return response.data;
+  return null;
 };
