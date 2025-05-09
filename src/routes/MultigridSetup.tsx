@@ -49,6 +49,8 @@ const MultigridSetup = () => {
   const handleDirectorySelection = (e: React.ChangeEvent<HTMLSelectElement>) =>
     setSelectedDirectory(e.target.value);
 
+  const recipesDefined = machineConfig ? machineConfig.recipes ? Object.keys(machineConfig.recipes).length !== 0: false: false;
+
   const handleSelection = () => {
     if (typeof sessid !== "undefined"){
       setupMultigridWatcher(
@@ -140,7 +142,7 @@ const MultigridSetup = () => {
                     w={{ base: "100%", md: "19.6%" }}
                     _hover={{ textDecor: "none" }}
                     as={LinkRouter}
-                    to={`../new_session/parameters/${sessid}`}
+                    to={recipesDefined ? `../new_session/parameters/${sessid}`: `../sessions/${sessid}`}
                   >
                     <IconButton
                       aria-label="select"

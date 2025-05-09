@@ -63,7 +63,6 @@ const SessionSetup = () => {
         ? 3
         : 0
     : 3;
-  let navigate = useNavigate();
   return (
     <div className="rootContainer">
       <Box w="100%" bg="murfey.50">
