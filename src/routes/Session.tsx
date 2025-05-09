@@ -257,7 +257,9 @@ const Session = () => {
     setSelectedDirectory(mcfg["data_directories"][0]);
   } 
 
-  useEffect(() => {getSessionProcessingParameterData(sessid).then((params) => {if(params === null) navigate(`/new_session/parameters/${sessid}`);})})
+  const recipesDefined = machineConfig ? machineConfig.recipes ? Object.keys(machineConfig.recipes).length !== 0: false: false;
+
+  useEffect(() => {getSessionProcessingParameterData(sessid).then((params) => {if(params === null && recipesDefined) navigate(`/new_session/parameters/${sessid}`);})})
 
   useEffect(() => {getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))}, []);
 
