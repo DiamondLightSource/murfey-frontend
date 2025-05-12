@@ -14,7 +14,7 @@ import { SetupStepper } from "components/setupStepper";
 import { components } from "schema/main";
 import { getProcessingParameterData } from "loaders/processingParameters";
 import { startMultigridWatcher } from "loaders/multigridSetup";
-import { getSessionData } from "loaders/session_clients";
+import { getSessionData, updateSession } from "loaders/session_clients";
 import { registerProcessingParameters } from "loaders/sessionSetup";
 
 import React, { useEffect } from "react";
@@ -48,6 +48,13 @@ const SessionSetup = () => {
       setParamsSet(true);
     }
   };
+
+  const handleSkip = () => {
+    if (sessid !== undefined){
+      updateSession(parseInt(sessid), false);
+      startMultigridWatcher(parseInt(sessid));
+    }
+  }
 
   if (session)
     getProcessingParameterData(session.session.id.toString()).then((params) =>
@@ -141,7 +148,7 @@ const SessionSetup = () => {
               as={LinkRouter}
               to={`../sessions/${sessid}`}
             >
-              <Button onClick={() => sessid !== undefined ? startMultigridWatcher(parseInt(sessid), false): null}>Skip</Button>
+              <Button onClick={handleSkip}>Skip</Button>
             </Link>
           </Box>
         </Stack>

@@ -72,6 +72,17 @@ export const createSession = async (visit: string, sessionName: string, instrume
   return response.data;
 };
 
+export const updateSession = async (sessionID: number, process: boolean = true) => {
+  const response = await client.post(
+    `sessions/${sessionID}?process=${process ? 'true': 'false'}`,
+    {},
+  );
+  if (response.status !== 200) {
+    return null;
+  }
+  return response.data;
+}
+
 export const deleteSessionData = async (sessid: number) => {
   const response = await client.delete(`sessions/${sessid}`);
   if (response.status !== 200) {
