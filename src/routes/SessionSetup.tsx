@@ -148,7 +148,7 @@ const SessionSetup = () => {
               as={LinkRouter}
               to={`../sessions/${sessid}`}
             >
-              <Button onClick={handleSkip}>Skip</Button>
+              <Button onClick={handleSkip}>Disable Processing</Button>
             </Link>
           </Box>
         </Stack>

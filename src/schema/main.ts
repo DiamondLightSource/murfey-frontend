@@ -1833,6 +1833,11 @@ export interface components {
        * @default
        */
       instrument_name?: string;
+      /**
+       * Process
+       * @default
+       */
+      process?: boolean;
     };
     /** SessionClients */
     SessionClients: {

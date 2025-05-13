@@ -257,16 +257,16 @@ const Session = () => {
     setSelectedDirectory(mcfg["data_directories"][0]);
   } 
 
-  const recipesDefined = machineConfig ? machineConfig.recipes ? Object.keys(machineConfig.recipes).length !== 0: false: false;
-
-  useEffect(() => {getSessionProcessingParameterData(sessid).then((params) => {if(params === null && recipesDefined) navigate(`/new_session/parameters/${sessid}`);})})
-
-  useEffect(() => {getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))}, []);
-
   useEffect(() => {
     getSessionData(sessid).then((sess) => setSession(sess.session));
     setUUID(uuid4());
   }, []);
+
+  const recipesDefined = machineConfig ? machineConfig.recipes ? Object.keys(machineConfig.recipes).length !== 0: false: false;
+
+  useEffect(() => {getSessionProcessingParameterData(sessid).then((params) => {if(params === null && recipesDefined && session !== undefined && session.process) navigate(`/new_session/parameters/${sessid}`);})})
+
+  useEffect(() => {getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))}, []);
 
   const parseWebsocketMessage = (message: any) => {
     let parsedMessage: any = {};
