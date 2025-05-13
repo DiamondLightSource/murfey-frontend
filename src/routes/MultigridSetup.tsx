@@ -51,16 +51,16 @@ const MultigridSetup = () => {
 
   const recipesDefined = machineConfig ? machineConfig.recipes ? Object.keys(machineConfig.recipes).length !== 0: false: false;
 
-  const handleSelection = () => {
+  const handleSelection = async () => {
     if (typeof sessid !== "undefined"){
-      setupMultigridWatcher(
+      await setupMultigridWatcher(
         {
           source: selectedDirectory,
           skip_existing_processing: skipExistingProcessing,
         } as MultigridWatcherSpec,
         parseInt(sessid),
       );
-      if(!recipesDefined) startMultigridWatcher(parseInt(sessid));
+      if(!recipesDefined) await startMultigridWatcher(parseInt(sessid));
     }
   };
 
