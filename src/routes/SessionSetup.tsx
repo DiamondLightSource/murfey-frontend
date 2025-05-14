@@ -1,9 +1,6 @@
 import {
   Button,
   Box,
-  FormControl,
-  FormLabel,
-  Input,
   RadioGroup,
   Radio,
   Stack,
@@ -12,12 +9,12 @@ import {
   Heading,
 } from "@chakra-ui/react";
 import { getForm } from "components/forms";
-import { Link as LinkRouter, useParams, useLoaderData, useNavigate } from "react-router-dom";
+import { Link as LinkRouter, useParams, useLoaderData } from "react-router-dom";
 import { SetupStepper } from "components/setupStepper";
 import { components } from "schema/main";
 import { getProcessingParameterData } from "loaders/processingParameters";
 import { startMultigridWatcher } from "loaders/multigridSetup";
-import { getSessionData } from "loaders/session_clients";
+import { getSessionData, updateSession } from "loaders/session_clients";
 import { registerProcessingParameters } from "loaders/sessionSetup";
 
 import React, { useEffect } from "react";
@@ -52,6 +49,13 @@ const SessionSetup = () => {
     }
   };
 
+  const handleSkip = async () => {
+    if (sessid !== undefined){
+      await updateSession(parseInt(sessid), false);
+      startMultigridWatcher(parseInt(sessid));
+    }
+  }
+
   if (session)
     getProcessingParameterData(session.session.id.toString()).then((params) =>
       setProcParams(params),
@@ -63,7 +67,6 @@ const SessionSetup = () => {
         ? 3
         : 0
     : 3;
-  let navigate = useNavigate();
   return (
     <div className="rootContainer">
       <Box w="100%" bg="murfey.50">
@@ -145,7 +148,7 @@ const SessionSetup = () => {
               as={LinkRouter}
               to={`../sessions/${sessid}`}
             >
-              <Button>Skip</Button>
+              <Button onClick={handleSkip}>Disable Processing</Button>
             </Link>
           </Box>
         </Stack>

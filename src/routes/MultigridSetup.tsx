@@ -16,7 +16,7 @@ import { ArrowForwardIcon } from "@chakra-ui/icons";
 
 import { Link as LinkRouter, useLoaderData, useParams } from "react-router-dom";
 import { components } from "schema/main";
-import { setupMultigridWatcher } from "loaders/multigridSetup";
+import { setupMultigridWatcher, startMultigridWatcher } from "loaders/multigridSetup";
 import { getSessionData } from "loaders/session_clients";
 import { SetupStepper } from "components/setupStepper";
 import React, { useEffect } from "react";
@@ -49,15 +49,18 @@ const MultigridSetup = () => {
   const handleDirectorySelection = (e: React.ChangeEvent<HTMLSelectElement>) =>
     setSelectedDirectory(e.target.value);
 
-  const handleSelection = () => {
+  const recipesDefined = machineConfig ? machineConfig.recipes ? Object.keys(machineConfig.recipes).length !== 0: false: false;
+
+  const handleSelection = async () => {
     if (typeof sessid !== "undefined"){
-      setupMultigridWatcher(
+      await setupMultigridWatcher(
         {
           source: selectedDirectory,
           skip_existing_processing: skipExistingProcessing,
         } as MultigridWatcherSpec,
         parseInt(sessid),
       );
+      if(!recipesDefined) await startMultigridWatcher(parseInt(sessid));
     }
   };
 
@@ -140,7 +143,7 @@ const MultigridSetup = () => {
                     w={{ base: "100%", md: "19.6%" }}
                     _hover={{ textDecor: "none" }}
                     as={LinkRouter}
-                    to={`../new_session/parameters/${sessid}`}
+                    to={recipesDefined ? `../new_session/parameters/${sessid}`: `../sessions/${sessid}`}
                   >
                     <IconButton
                       aria-label="select"
