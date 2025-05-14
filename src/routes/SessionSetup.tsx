@@ -49,9 +49,9 @@ const SessionSetup = () => {
     }
   };
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
     if (sessid !== undefined){
-      updateSession(parseInt(sessid), false);
+      await updateSession(parseInt(sessid), false);
       startMultigridWatcher(parseInt(sessid));
     }
   }
