@@ -100,7 +100,7 @@ const RsyncCard = (rsyncer: RSyncerInfo) => {
   }
 
   return (
-    
+
     <Card width="100%" bg={rsyncer.alive ? "murfey.400": "#DF928E"} borderColor="murfey.300">
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -169,7 +169,7 @@ const RsyncCard = (rsyncer: RSyncerInfo) => {
                 Remove all source files and stop
               </MenuItem>
               </>
-              ): 
+              ):
               <>
               <MenuItem onClick={() => restartRsyncer(rsyncer.session_id, rsyncer.source)}>
                 Start
@@ -207,13 +207,13 @@ const RsyncCard = (rsyncer: RSyncerInfo) => {
             <Stat>
               <StatLabel>Transfer progress</StatLabel>
               <StatNumber>
-                {rsyncer.num_files_transferred} transferred 
+                {rsyncer.num_files_transferred} transferred
               </StatNumber>
               <StatNumber>
                 {rsyncer.num_files_in_queue} queued
               </StatNumber>
               {
-                rsyncer.analyser_alive ? 
+                rsyncer.analyser_alive ?
                 <StatNumber>
                   {rsyncer.num_files_to_analyse} to analyse
                 </StatNumber>
@@ -255,12 +255,14 @@ const Session = () => {
   const handleMachineConfig = (mcfg: MachineConfig) => {
     setMachineConfig(mcfg);
     setSelectedDirectory(mcfg["data_directories"][0]);
-  } 
+  }
 
+  // Use existing UUID if present; otherwise, generate a new UUID
   useEffect(() => {
-    getSessionData(sessid).then((sess) => setSession(sess.session));
-    setUUID(uuid4());
-  }, []);
+    if (!UUID) {
+      setUUID(uuid4());
+    }
+  }, [UUID]);
 
   const recipesDefined = machineConfig ? machineConfig.recipes ? Object.keys(machineConfig.recipes).length !== 0: false: false;
 
@@ -293,14 +295,22 @@ const Session = () => {
     }
   };
 
-  useWebSocket(url + `ws/connect/${UUID}`, {
-    onOpen: () => {
-      console.log("WebSocket connection established.");
-    },
-    onMessage: (event) => {
-      parseWebsocketMessage(event.data);
-    },
-  });
+  // Establish websocket connection to the backend
+  useWebSocket(
+    // 'null' is passed to 'useWebSocket()' if UUID is not yet set to
+    // prevent malformed connections
+    UUID ? url + `ws/connect/${UUID}` : null,
+    UUID
+      ? {
+          onOpen: () => {
+            console.log("WebSocket connection established.");
+          },
+          onMessage: (event) => {
+            parseWebsocketMessage(event.data);
+          },
+        }
+      : undefined
+  );
 
   const finaliseAll = async () => {
     if(sessid) await finaliseSession(parseInt(sessid));
