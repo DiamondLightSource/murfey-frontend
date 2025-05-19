@@ -57,7 +57,7 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     formDataSPA.dose_per_frame = formData.get("dose");
-    formDataSPA.symmetry = formData.get("symmetry1") as string + formData.get("symmetry2") as string;
+    formDataSPA.symmetry = (["T", "O"].includes(formData.get("symmetry1") as string)) ? formData.get("symmetry1") as string: formData.get("symmetry1") as string + formData.get("symmetry2") as string;
     formDataSPA.particle_diameter = formData.get("detect-particle-size")? null: formData.get("particle-diameter");
     formDataSPA.eer_fractionation = formData.get("eer-grouping");
     callback(formDataSPA);
