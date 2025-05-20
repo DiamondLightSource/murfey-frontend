@@ -134,7 +134,7 @@ const SessionRow = (session_client: SessionClients) => {
                   />
                   </Tooltip>
                   <Tooltip label="Clean up visit files">
-                  <IconButton 
+                  <IconButton
                     aria-label="Clean up session"
                     icon={<GiMagicBroom />}
                     onClick={onOpenCleanup}
@@ -178,18 +178,28 @@ const Home = () => {
     }
   };
 
-
-  //const wsid = uuid1();
-  useEffect(() => {setUUID(uuid4());}, []);
-  useWebSocket(url + `ws/connect/${UUID}`, {
-    onOpen: () => {
-      console.log("WebSocket connection established.");
-    },
-    onMessage: (event) => {
-      parseWebsocketMessage(event.data);
-    },
-  });
-
+  // Use existing UUID if present; otherwise, generate a new UUID
+  useEffect(() => {
+    if (!UUID) {
+      setUUID(uuid4());
+    }
+  }, [UUID]);
+  // Establish websocket connection to the backend
+  useWebSocket(
+    // 'null' is passed to 'useWebSocket()' if UUID is not yet set to
+    // prevent malformed connections
+    UUID ? url + `ws/connect/${UUID}` : null,
+    UUID
+      ? {
+          onOpen: () => {
+            console.log("WebSocket connection established.");
+          },
+          onMessage: (event) => {
+            parseWebsocketMessage(event.data);
+          },
+        }
+      : undefined
+  );
 
   return (
     <div className="rootContainer">
