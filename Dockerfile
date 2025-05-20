@@ -1,7 +1,9 @@
 # Build commmand template:
 # podman build --build-arg API_ENDPOINT=<api_endpoint> ... --no-cache -f Dockerfile -t murfey-frontend:<version> ./
 
-FROM docker.io/library/node:22.13.0-alpine3.20 as build
+# Start first stage
+FROM docker.io/library/node:24.0.1-alpine3.21 as build
+# Released 2025-05-09
 
 # Set arguments and environment variables
 ARG DEPLOY_TYPE="production"
@@ -29,8 +31,10 @@ RUN yarn install --immutable --check-cache
 COPY ./ ./
 RUN yarn build
 
-# Start second stage of build(?)
-FROM docker.io/nginxinc/nginx-unprivileged:alpine3.20-slim
+# Start second stage
+FROM docker.io/nginxinc/nginx-unprivileged:alpine3.21-slim
+# Released 2025-05-12
+
 COPY --from=build --chown=nginx /usr/src/app/build /usr/share/nginx/html
 COPY --chown=nginx nginx/conf.d /etc/nginx/nginx.conf
 
