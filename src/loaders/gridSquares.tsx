@@ -5,7 +5,7 @@ import { Params } from "react-router-dom";
 const getGridSquares = async (sessid: string = "0", dataCollectionGroupId: string = "0") => {
   console.log("getting grid squares");
   const response = await client.get(
-    `sessions/${sessid}/data_collection_groups/${dataCollectionGroupId}/grid_squares`,
+    `session_info/spa/sessions/${sessid}/data_collection_groups/${dataCollectionGroupId}/grid_squares`,
   );
 
   if (response.status !== 200) {
@@ -17,7 +17,7 @@ const getGridSquares = async (sessid: string = "0", dataCollectionGroupId: strin
 
 const getNumMovies = async (sessid: string, dataCollectionGroupId: string, gridSquareId: number) => {
   const response = await client.get(
-    `sessions/${sessid}/data_collection_groups/${dataCollectionGroupId}/grid_squares/${gridSquareId}/num_movies`,
+    `session_info/spa/sessions/${sessid}/data_collection_groups/${dataCollectionGroupId}/grid_squares/${gridSquareId}/num_movies`,
   );
 
   if (response.status !== 200) {
@@ -30,7 +30,7 @@ const getNumMovies = async (sessid: string, dataCollectionGroupId: string, gridS
 
 const getFoilHoles = async (sessid: string, dataCollectionGroupId: string, gridSquareId: number) => {
   const response = await client.get(
-    `sessions/${sessid}/data_collection_groups/${dataCollectionGroupId}/grid_squares/${gridSquareId}/foil_holes`,
+    `session_info/spa/sessions/${sessid}/data_collection_groups/${dataCollectionGroupId}/grid_squares/${gridSquareId}/foil_holes`,
   );
 
   if (response.status !== 200) {

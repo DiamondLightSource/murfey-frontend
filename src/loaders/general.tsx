@@ -20,7 +20,7 @@ export const getInstrumentConnectionStatus = async () => {
 };
 
 export const getUpstreamVisits = async (sessid: number) => {
-  const response = await client.get(`sessions/${sessid}/upstream_visits`);
+  const response = await client.get(`session_info/correlative/sessions/${sessid}/upstream_visits`);
 
   if (response.status !== 200) {
     return null;
@@ -29,7 +29,7 @@ export const getUpstreamVisits = async (sessid: number) => {
 };
 
 export const upstreamDataDownloadRequest = async (visitName: string, sessid: number) => {
-  const response = await client.get(`visits/${visitName}/${sessid}/upstream_tiff_data_request`);
+  const response = await client.get(`session_info/correlative/visits/${visitName}/${sessid}/upstream_tiff_data_request`);
 
   if (response.status !== 200) {
     return null;

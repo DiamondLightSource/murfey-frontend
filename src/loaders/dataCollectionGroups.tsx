@@ -5,7 +5,7 @@ import { Params } from "react-router-dom";
 const getDataCollectionGroups = async (sessid: string = "0") => {
   console.log("data collection groups gather");
   const response = await client.get(
-    `sessions/${sessid}/data_collection_groups`,
+    `session_info/sessions/${sessid}/data_collection_groups`,
   );
 
   if (response.status !== 200) {

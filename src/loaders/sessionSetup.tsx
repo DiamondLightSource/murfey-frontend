@@ -9,7 +9,7 @@ export const registerProcessingParameters = async (
   sessionId: number,
 ) => {
   const response = await client.post(
-    `sessions/${sessionId}/provided_processing_parameters`,
+    `instrument_server/sessions/${sessionId}/provided_processing_parameters`,
     processingParameters,
   );
 
