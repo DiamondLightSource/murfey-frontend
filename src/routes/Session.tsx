@@ -5,7 +5,6 @@ import {
   Card,
   CardBody,
   CardHeader,
-  Divider,
   FormControl,
   FormLabel,
   Flex,
@@ -13,7 +12,6 @@ import {
   Heading,
   HStack,
   IconButton,
-  Image,
   Link,
   Menu,
   MenuButton,
@@ -32,12 +30,10 @@ import {
   Stack,
   StackDivider,
   Stat,
-  StatHelpText,
   StatLabel,
   StatNumber,
   Switch,
   Text,
-  Tooltip,
   VStack,
   useToast,
 } from "@chakra-ui/react";
@@ -48,19 +44,15 @@ import { ViewIcon } from "@chakra-ui/icons";
 import { v4 as uuid4 } from "uuid";
 import { Link as LinkRouter, useLoaderData, useParams, useNavigate } from "react-router-dom";
 import {
-  MdCheck,
   MdDensityMedium,
   MdFileUpload,
-  MdOutlineWarning,
   MdOutlineGridOn,
   MdPause,
 } from "react-icons/md";
-import { FiActivity } from "react-icons/fi";
 import { components } from "schema/main";
 import { getInstrumentName } from "loaders/general";
 import { getMachineConfigData } from "loaders/machineConfig";
-import { pauseRsyncer, restartRsyncer, removeRsyncer, finaliseRsyncer, finaliseSession } from "loaders/rsyncers";
-import { getSessionData } from "loaders/session_clients";
+import { pauseRsyncer, restartRsyncer, removeRsyncer, finaliseRsyncer, finaliseSession, flushSkippedRsyncer } from "loaders/rsyncers";
 import { getSessionProcessingParameterData } from "loaders/processingParameters";
 import { sessionTokenCheck, sessionHandshake } from "loaders/jwt";
 import { startMultigridWatcher, setupMultigridWatcher } from "loaders/multigridSetup";
@@ -157,6 +149,12 @@ const RsyncCard = (rsyncer: RSyncerInfo) => {
                 Pause
               </MenuItem>
               <MenuItem
+                onClick={() => flushSkippedRsyncer(rsyncer.session_id, rsyncer.source)}
+                isDisabled={rsyncer.stopping}
+              >
+                Flush skipped files
+              </MenuItem>
+              <MenuItem
                 onClick={() => remove()}
                 isDisabled={rsyncer.stopping}
               >
@@ -211,6 +209,9 @@ const RsyncCard = (rsyncer: RSyncerInfo) => {
               </StatNumber>
               <StatNumber>
                 {rsyncer.num_files_in_queue} queued
+              </StatNumber>
+              <StatNumber>
+                {rsyncer.num_files_skipped} skipped
               </StatNumber>
               {
                 rsyncer.analyser_alive ?
