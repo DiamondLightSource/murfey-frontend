@@ -1,18 +1,13 @@
 import {
   Box,
   Button,
-  Divider,
-  GridItem,
+  Card,
+  CardBody,
   Input,
   Heading,
-  HStack,
   Link,
   Stack,
-  Stat,
-  StatHelpText,
-  StatLabel,
-  StatNumber,
-  Text,
+  HStack,
   VStack,
   Modal,
   ModalOverlay,
@@ -21,18 +16,22 @@ import {
   ModalFooter,
   ModalCloseButton,
   ModalBody,
+  IconButton,
+  Tooltip,
+  Text,
 } from "@chakra-ui/react";
 
 import { useDisclosure } from "@chakra-ui/react";
-import { Link as LinkRouter, useLoaderData, useParams } from "react-router-dom";
+import { Link as LinkRouter, useLoaderData } from "react-router-dom";
 import { components } from "schema/main";
 import { SetupStepper } from "components/setupStepper";
 import { Table } from "@diamondlightsource/ui-components";
 import { createSession, getSessionDataForVisit } from "loaders/session_clients";
 import { sessionTokenCheck, sessionHandshake } from "loaders/jwt";
 import { useNavigate } from "react-router-dom";
-import React, { ChangeEventHandler, useEffect } from "react";
+import React, { useEffect } from "react";
 import { getMachineConfigData } from "loaders/machineConfig";
+import { FaCalendar } from "react-icons/fa";
 
 
 type Visit = components["schemas"]["Visit"];
@@ -43,10 +42,13 @@ const NewSession = () => {
   const currentVisits = useLoaderData() as Visit[] | null;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenVisitCheck, onOpen: onOpenVisitCheck, onClose: onCloseVisitCheck } = useDisclosure();
+  const { isOpen: isOpenCalendar, onOpen: onOpenCalendar, onClose: onCloseCalendar } = useDisclosure();
   const [selectedVisit, setSelectedVisit] = React.useState("");
   const [sessionReference, setSessionReference] = React.useState("");
   const [activeSessionsForVisit, setActiveSessionsForVisit] = React.useState<(Session | null)[]>([]);
   const [gainRefDir, setGainRefDir] = React.useState<string | null>();
+  const [endTime, setEndTime] = React.useState<Date>(new Date());
+
   const [acqusitionSoftware, setAcquistionSoftware] = React.useState<string[]>([]);
   const navigate = useNavigate();
 
@@ -76,10 +78,11 @@ const NewSession = () => {
   function selectVisit(data: Record<string, any>, index: number) {
     setSelectedVisit(data.name);
     setSessionReference(data.name);
+    setEndTime(new Date((Date.parse(data.end) + 3600)*1000));
   }
 
   const startMurfeySession = async (iName: string) => {
-    const sid = await createSession(selectedVisit, sessionReference, iName);
+    const sid = await createSession(selectedVisit, sessionReference, iName, endTime);
     await sessionHandshake(sid);
     return sid;
   }
@@ -91,6 +94,9 @@ const NewSession = () => {
     }
     else onOpenVisitCheck();
   }
+
+  console.log(endTime)
+  console.log(endTime.toISOString())
 
   return instrumentName ? (
     <div className="rootContainer">
@@ -163,6 +169,16 @@ const NewSession = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <Modal isOpen={isOpenCalendar} onClose={onCloseCalendar} size={"xl"}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Select data transfer end time</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <input aria-label="Date and time" type="datetime-local" defaultValue={endTime.toISOString().substring(0, 16)} onChange={(e) => {setEndTime(new Date(Date.parse(e.target.value)))}}/>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
       <Box w="100%" bg="murfey.50">
         <Box w="100%" overflow="hidden">
           <VStack className="homeRoot">
@@ -215,14 +231,31 @@ const NewSession = () => {
               value={sessionReference}
               onChange={handleChange}
             />
-            <Button
-              isDisabled={selectedVisit === "" ? true : false}
-              onClick={() => {
-                handleCreateSession(instrumentName);
-              }}
-            >
-              Create session for visit {selectedVisit}
-            </Button>
+            <VStack>
+                <Card>
+                <CardBody>
+                <HStack>
+                <VStack>
+                <Text>Transfers will stop after:</Text>
+                <Text>{endTime.toString()}</Text>
+                </VStack>
+                <Tooltip label="Set end time for data transfer">
+                <IconButton aria-label="calendar-for-end-time" onClick={() => onOpenCalendar()}>
+                  <FaCalendar/>
+                </IconButton>
+                </Tooltip>
+                </HStack>
+                </CardBody>
+                </Card>
+              <Button
+                isDisabled={selectedVisit === "" ? true : false}
+                onClick={() => {
+                  handleCreateSession(instrumentName);
+                }}
+              >
+                Create session for visit {selectedVisit}
+              </Button>
+            </VStack>
           </Stack>
         </Box>
       </Box>
