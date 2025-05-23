@@ -1591,6 +1591,7 @@ export interface components {
       transferring: boolean;
       /** Session Id */
       session_id: number;
+      num_files_skipped: number;
     };
     /** RegistrationMessage */
     RegistrationMessage: {
