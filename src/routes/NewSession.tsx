@@ -95,9 +95,6 @@ const NewSession = () => {
     else onOpenVisitCheck();
   }
 
-  console.log(endTime)
-  console.log(endTime.toISOString())
-
   return instrumentName ? (
     <div className="rootContainer">
       <Modal isOpen={isOpen} onClose={onClose}>
