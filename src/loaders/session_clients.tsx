@@ -7,7 +7,7 @@ export const includePage = (endpoint: string, limit: number, page: number) =>
   `${endpoint}${endpoint.includes("?") ? "&" : "?"}page=${page - 1}&limit=${limit}`;
 
 const getSessionsData = async () => {
-  const response = await client.get(`session_info/instrument_name/${sessionStorage.getItem("instrumentName")}/sessions`);
+  const response = await client.get(`session_info/instruments/${sessionStorage.getItem("instrumentName")}/sessions`);
 
   if (response.status !== 200) {
     return null;

@@ -1,7 +1,7 @@
 import { client } from "utils/api/client";
 
 export const getInstrumentName = async () => {
-  const response = await client.get(`instruments/${sessionStorage.getItem("instrumentName")}/instrument_name`);
+  const response = await client.get(`display/instruments/${sessionStorage.getItem("instrumentName")}/instrument_name`);
 
   if (response.status !== 200) {
     return null;
@@ -10,7 +10,7 @@ export const getInstrumentName = async () => {
 };
 
 export const getInstrumentConnectionStatus = async () => {
-  const response = await client.get(`instruments/${sessionStorage.getItem("instrumentName")}/instrument_server`, {}, false);
+  const response = await client.get(`instrument_server/instruments/${sessionStorage.getItem("instrumentName")}/instrument_server`, {}, false);
 
   if (response.status !== 200) {
     return false;
