@@ -36,9 +36,9 @@ import useWebSocket from "react-use-websocket";
 
 import React, { useEffect } from "react";
 
-type SessionClients = components["schemas"]["SessionClients"];
+type Session = components["schemas"]["Session"];
 
-const SessionRow = (session_client: SessionClients) => {
+const SessionRow = (session: Session) => {
 
   const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
   const { isOpen: isOpenCleanup, onOpen: onOpenCleanup, onClose: onCloseCleanup } = useDisclosure();
@@ -50,52 +50,52 @@ const SessionRow = (session_client: SessionClients) => {
 
   const [sessionActive, setSessionActive] = React.useState(false);
 
-  useEffect(() => {sessionTokenCheck(session_client.session.id).then((active) => setSessionActive(active))}, []);
+  useEffect(() => {sessionTokenCheck(session.id).then((active) => setSessionActive(active))}, []);
 
   return (
     <VStack w="100%" spacing={0}>
       <Stack w="100%" spacing={5} py="0.8em">
-        {session_client ?
+        {session ?
             (
               <>
                 <HStack>
                 <Modal isOpen={isOpenDelete} onClose={onCloseDelete}>
                   <ModalOverlay />
                     <ModalContent>
-                      <ModalHeader>Confirm removing session {session_client.session.name} from list</ModalHeader>
+                      <ModalHeader>Confirm removing session {session.name} from list</ModalHeader>
                       <ModalCloseButton />
                       <ModalBody>Are you sure you want to continue? This action is not reversible</ModalBody>
                       <ModalFooter>
                         <Button colorScheme="blue" mr={3} onClick={onCloseDelete}>
                           Close
                         </Button>
-                        <Button variant="ghost" onClick={() => {deleteSessionData(session_client.session.id).then(() => window.location.reload());}}>Confirm</Button>
+                        <Button variant="ghost" onClick={() => {deleteSessionData(session.id).then(() => window.location.reload());}}>Confirm</Button>
                       </ModalFooter>
                     </ModalContent>
                   </Modal>
                   <Modal isOpen={isOpenCleanup} onClose={onCloseCleanup}>
                   <ModalOverlay />
                     <ModalContent>
-                      <ModalHeader>Confirm removing files for session {session_client.session.name}</ModalHeader>
+                      <ModalHeader>Confirm removing files for session {session.name}</ModalHeader>
                       <ModalCloseButton />
                       <ModalBody>Are you sure you want to continue? This action is not reversible</ModalBody>
                       <ModalFooter>
                         <Button colorScheme="blue" mr={3} onClick={onCloseCleanup}>
                           Close
                         </Button>
-                        <Button variant="ghost" onClick={() => {cleanupSession(session_client.session.id);}}>Confirm</Button>
+                        <Button variant="ghost" onClick={() => {cleanupSession(session.id);}}>Confirm</Button>
                       </ModalFooter>
                     </ModalContent>
                   </Modal>
                   <Tooltip
-                    label={session_client.session.name}
+                    label={session.name}
                   >
                     <Link
-                      key={session_client.session.id}
+                      key={session.id}
                       _hover={{ textDecor: "none" }}
                       as={LinkRouter}
                       display={'flex'}
-                      to={`../sessions/${session_client.session.id ?? 0}`}
+                      to={`../sessions/${session.id ?? 0}`}
                     >
                       <Stat
                         _hover={{
@@ -117,8 +117,8 @@ const SessionRow = (session_client: SessionClients) => {
                           textOverflow="ellipsis"
                           overflow="hidden"
                         >
-                          {session_client.session.name}:{" "}
-                          {session_client.session.id}
+                          {session.name}:{" "}
+                          {session.id}
                         </StatLabel>
                         {sessionActive ? <PuffLoader size={25} color="red"/>: <></>}
                         </HStack>
@@ -159,7 +159,7 @@ const SessionRow = (session_client: SessionClients) => {
 
 const Home = () => {
   const sessions = useLoaderData() as {
-    current: SessionClients[];
+    current: Session[];
   } | null;
   const [ UUID, setUUID ] = React.useState("");
   const baseUrl = sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT

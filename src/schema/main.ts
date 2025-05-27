@@ -1838,6 +1838,7 @@ export interface components {
        * @default
        */
       process?: boolean;
+      visit_end_time: string;
     };
     /** SessionClients */
     SessionClients: {
