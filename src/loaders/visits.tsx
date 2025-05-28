@@ -3,7 +3,7 @@ import { client } from "utils/api/client";
 import { Params } from "react-router-dom";
 
 const getVisitData = async (instrumentName: string) => {
-  const response = await client.get(`instruments/${instrumentName}/visits_raw`);
+  const response = await client.get(`session_info/instruments/${instrumentName}/visits_raw`);
 
   if (response.status !== 200) {
     return null;

@@ -21,7 +21,6 @@ import { ProcessingParameters } from "routes/ProcessingParameters";
 import { SessionParameters } from "routes/SessionParameters";
 import { Error } from "routes/Error";
 import {
-  clientsLoader,
   sessionsLoader,
   sessionLoader,
 } from "loaders/session_clients";
@@ -90,12 +89,6 @@ const router = createBrowserRouter([
         loader: machineConfigLoader(queryClient),
       },
       {
-        path: "/link_session",
-        element: <SessionLinker />,
-        errorElement: <Error />,
-        loader: clientsLoader(queryClient),
-      },
-      {
         path: "/sessions/:sessid/gain_ref_transfer",
         element: <GainRefTransfer />,
         errorElement: <Error />,
@@ -152,6 +145,3 @@ root.render(
     </QueryClientProvider>
   </ChakraProvider>,
 );
-
-
-// loader: ({ params }) => gridSquaresLoader(queryClient)(params),

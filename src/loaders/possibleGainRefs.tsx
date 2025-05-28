@@ -3,7 +3,7 @@ import { client } from "utils/api/client";
 import { Params } from "react-router-dom";
 
 const getGainRefData = async (sessionId: string) => {
-  const response = await client.get(`instruments/${sessionStorage.getItem("instrumentName")}/sessions/${sessionId}/possible_gain_references`);
+  const response = await client.get(`instrument_server/instruments/${sessionStorage.getItem("instrumentName")}/sessions/${sessionId}/possible_gain_references`);
 
   if (response.status !== 200) {
     return null;
@@ -16,7 +16,7 @@ export const transferGainReference = async (
   sessionId: number,
   gainRef: string,
 ) => {
-  const response = await client.post(`sessions/${sessionId}/upload_gain_reference`, {
+  const response = await client.post(`instrument_server/sessions/${sessionId}/upload_gain_reference`, {
     gain_path: gainRef,
   });
   if (response.status !== 200) {
@@ -32,7 +32,7 @@ export const prepareGainReference = async (
   eer: boolean = false,
   tag: string = "",
 ) => {
-  const response = await client.post(`sessions/${sessionId}/process_gain`, {
+  const response = await client.post(`file_manipulation/sessions/${sessionId}/process_gain`, {
     gain_ref: gainRef,
     rescale: rescale,
     eer: eer,
@@ -48,7 +48,7 @@ export const updateCurrentGainReference = async (
   sessionId: number,
   gainRef: string,
 ) => {
-  const response = await client.put(`sessions/${sessionId}/current_gain_ref`, {
+  const response = await client.put(`session_info/sessions/${sessionId}/current_gain_ref`, {
     path: gainRef,
   });
   if (response.status !== 200) {

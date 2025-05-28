@@ -5,7 +5,7 @@ import { Params } from "react-router-dom";
 import { parseDate } from "utils/generic";
 
 const getRsyncerData = async (sessionId: string) => {
-  const response = await client.get(`instruments/${sessionStorage.getItem("instrumentName")}/sessions/${sessionId}/rsyncer_info`);
+  const response = await client.get(`instrument_server/instruments/${sessionStorage.getItem("instrumentName")}/sessions/${sessionId}/rsyncer_info`);
 
   if (response.status !== 200) {
     return null;
@@ -17,7 +17,7 @@ const getRsyncerData = async (sessionId: string) => {
 export const pauseRsyncer = async (sessionId: number, source: string) => {
   console.log("stopping rsyncer");
 
-  const response = await client.post(`sessions/${sessionId}/stop_rsyncer`, {
+  const response = await client.post(`instrument_server/sessions/${sessionId}/stop_rsyncer`, {
     source: source,
   });
 
@@ -33,7 +33,7 @@ export const pauseRsyncer = async (sessionId: number, source: string) => {
 export const restartRsyncer = async (sessionId: number, source: string) => {
   console.log("stopping rsyncer");
 
-  const response = await client.post(`sessions/${sessionId}/restart_rsyncer`, {
+  const response = await client.post(`instrument_server/sessions/${sessionId}/restart_rsyncer`, {
     source: source,
   });
 
@@ -48,7 +48,7 @@ export const restartRsyncer = async (sessionId: number, source: string) => {
 
 export const finaliseRsyncer = async (sessionId: number, source: string) => {
 
-  const response = await client.post(`sessions/${sessionId}/finalise_rsyncer`, {
+  const response = await client.post(`instrument_server/sessions/${sessionId}/finalise_rsyncer`, {
     source: source,
   });
 
@@ -63,7 +63,7 @@ export const finaliseRsyncer = async (sessionId: number, source: string) => {
 
 export const finaliseSession = async (sessionId: number) => {
 
-  const response = await client.post(`sessions/${sessionId}/finalise_session`, {});
+  const response = await client.post(`instrument_server/sessions/${sessionId}/finalise_session`, {});
 
   if (response.status !== 200) {
     return null;
@@ -77,7 +77,7 @@ export const finaliseSession = async (sessionId: number) => {
 export const removeRsyncer = async (sessionId: number, source: string) => {
   console.log("removing rsyncer");
 
-  const response = await client.post(`sessions/${sessionId}/remove_rsyncer`, {
+  const response = await client.post(`instrument_server/sessions/${sessionId}/remove_rsyncer`, {
     source: source,
   });
 

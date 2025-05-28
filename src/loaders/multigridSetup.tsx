@@ -9,7 +9,7 @@ export const setupMultigridWatcher = async (
   sessionId: number,
 ) => {
   const response = await client.post(
-    `sessions/${sessionId}/multigrid_watcher`,
+    `instrument_server/sessions/${sessionId}/multigrid_watcher`,
     multigridWatcher,
   );
 
@@ -24,7 +24,7 @@ export const startMultigridWatcher = async (
   sessionId: number,
 ) => {
   const response = await client.post(
-    `sessions/${sessionId}/start_multigrid_watcher`,
+    `instrument_server/sessions/${sessionId}/start_multigrid_watcher`,
     {},
   );
 

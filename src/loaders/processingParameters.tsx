@@ -4,7 +4,7 @@ import { Params } from "react-router-dom";
 
 export const getSessionProcessingParameterData = async (sessid: string = "0") => {
   const response = await client.get(
-    `sessions/${sessid}/session_processing_parameters`,
+    `session_parameters/sessions/${sessid}/session_processing_parameters`,
   );
 
   if (response.status !== 200) {
@@ -16,7 +16,7 @@ export const getSessionProcessingParameterData = async (sessid: string = "0") =>
 
 const getProcessingParameterData = async (sessid: string = "0") => {
   const response = await client.get(
-    `sessions/${sessid}/spa_processing_parameters`,
+    `session_info/spa/sessions/${sessid}/spa_processing_parameters`,
   );
 
   if (response.status !== 200) {
@@ -27,7 +27,7 @@ const getProcessingParameterData = async (sessid: string = "0") => {
 };
 
 export const updateSessionProcessingParameters = async (sessid: string, params: any = {}) => {
-  const response = await client.post(`sessions/${sessid}/session_processing_parameters`, {
+  const response = await client.post(`session_parameters/sessions/${sessid}/session_processing_parameters`, {
     gain_ref: params["gainRef"] ?? "",
     dose_per_frame: params["dosePerFrame"] ?? null,
     eer_fractionation_file: params["eerFractionationFile"] ?? "",
