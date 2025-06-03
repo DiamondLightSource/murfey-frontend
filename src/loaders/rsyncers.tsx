@@ -77,7 +77,7 @@ export const removeRsyncer = async (sessionId: number, source: string) => {
 
 export const flushSkippedRsyncer = async (sessionId: number, source: string) => {
 
-  const response = await client.post(`sessions/${sessionId}/flush_skipped_rsyncer`, {
+  const response = await client.post(`instrument_server/sessions/${sessionId}/flush_skipped_rsyncer`, {
     source: source,
   });
 
