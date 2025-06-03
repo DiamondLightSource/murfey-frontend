@@ -73,6 +73,17 @@ export const updateSession = async (sessionID: number, process: boolean = true) 
   return response.data;
 }
 
+export const updateVisitEndTime = async (sessionID: number, sessionEndTime: Date) => {
+  const response = await client.post(
+    `instrument_server/sessions/${sessionID}/multigrid_controller/visit_end_time?end_time=${sessionEndTime.toISOString()}`,
+    {},
+  );
+  if (response.status !== 200) {
+    return null;
+  }
+  return response.data;
+}
+
 export const deleteSessionData = async (sessid: number) => {
   const response = await client.delete(`session_info/sessions/${sessid}`);
   if (response.status !== 200) {

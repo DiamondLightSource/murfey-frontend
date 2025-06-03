@@ -51,6 +51,7 @@ import {
 } from "react-icons/md";
 import { components } from "schema/main";
 import { getInstrumentName } from "loaders/general";
+import { updateVisitEndTime } from "loaders/session_clients";
 import { getMachineConfigData } from "loaders/machineConfig";
 import { pauseRsyncer, restartRsyncer, removeRsyncer, finaliseRsyncer, finaliseSession, flushSkippedRsyncer } from "loaders/rsyncers";
 import { getSessionProcessingParameterData } from "loaders/processingParameters";
@@ -61,6 +62,7 @@ import { UpstreamVisitCard } from "components/upstreamVisitsCard";
 import useWebSocket from "react-use-websocket";
 
 import React, { useEffect } from "react";
+import { FaCalendar } from "react-icons/fa";
 
 type RSyncerInfo = components["schemas"]["RSyncerInfo"];
 type Session = components["schemas"]["Session"];
@@ -236,6 +238,7 @@ const getUrl = (endpoint: string) => {
 const Session = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenReconnect, onOpen: onOpenReconnect, onClose: onCloseReconnect } = useDisclosure();
+  const { isOpen: isOpenCalendar, onOpen: onOpenCalendar, onClose: onCloseCalendar } = useDisclosure();
   const rsync = useLoaderData() as RSyncerInfo[] | null;
   const { sessid } = useParams();
   const navigate = useNavigate();
@@ -246,6 +249,7 @@ const Session = () => {
   const [skipExistingProcessing, setSkipExistingProcessing] = React.useState(false);
   const [selectedDirectory, setSelectedDirectory] = React.useState("");
   const [rsyncersPaused, setRsyncersPaused] = React.useState(false);
+  const [visitEndTime, setVisitEndTime] = React.useState<Date>(new Date());
   const baseUrl = sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT
   const url = baseUrl
     ? baseUrl.replace("http", "ws")
@@ -341,6 +345,11 @@ const Session = () => {
 
   const getTransferring = (r: RSyncerInfo) => {return r.transferring;}
 
+  const registerEndTimeUpdate = async (newEndTime: Date) => {
+    if(typeof sessid !== "undefined") await updateVisitEndTime(parseInt(sessid), newEndTime);
+    onCloseCalendar();
+  }
+
   const checkRsyncStatus = async () => {
     setRsyncersPaused(rsync ? !rsync.every(getTransferring): true);
   }
@@ -435,6 +444,22 @@ const Session = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <Modal isOpen={isOpenCalendar} onClose={onCloseCalendar} size={"xl"}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Select data transfer end time</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <input aria-label="Date and time" type="datetime-local" onChange={(e) => setVisitEndTime(new Date(Date.parse(e.target.value)))}/>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onCloseCalendar}>
+              Cancel
+            </Button>
+            <Button variant="ghost" onClick={() => {registerEndTimeUpdate(visitEndTime)}}>Confirm</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <Box w="100%" bg="murfey.50">
         <Box w="100%" overflow="hidden">
           <VStack className="homeRoot">
@@ -457,6 +482,11 @@ const Session = () => {
                 </Link>
                 </HStack>
                 {!sessionActive ? <Button variant="onBlue" onClick={() => onOpenReconnect()}>Reconnect</Button>: <></>}
+                </HStack>
+                <HStack>
+                  <IconButton aria-label="calendar-to-change-end-time" variant="onBlue" onClick={() => onOpenCalendar()}>
+                    <FaCalendar/>
+                  </IconButton>
                 </HStack>
                 <Spacer />
                 <ViewIcon color="white" />
