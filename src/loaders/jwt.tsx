@@ -10,7 +10,7 @@ export const getJWT = async (loginDetails: LoginDetails) => {
   formData.append("username", loginDetails.username);
   formData.append("password", loginDetails.password);
 
-  const response = await client.post(`token`, formData);
+  const response = await client.post(`auth/token`, formData);
   if (response.status !== 200) {
     return null;
   }

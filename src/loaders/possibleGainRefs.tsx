@@ -32,7 +32,7 @@ export const prepareGainReference = async (
   eer: boolean = false,
   tag: string = "",
 ) => {
-  const response = await client.post(`file_manipulation/sessions/${sessionId}/process_gain`, {
+  const response = await client.post(`file_io/frontend/sessions/${sessionId}/process_gain`, {
     gain_ref: gainRef,
     rescale: rescale,
     eer: eer,

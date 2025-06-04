@@ -541,15 +541,15 @@ export interface paths {
     /** Get Cryolo Model Path */
     get: operations["get_cryolo_model_path_sessions__session_id__cryolo_model_get"];
   };
-  "/token": {
+  "auth/token": {
     /** Generate Token */
     post: operations["generate_token_token_post"];
   };
-  "/sessions/{session_id}/token": {
+  "auth/sessions/{session_id}/token": {
     /** Mint Session Token */
     get: operations["mint_session_token_sessions__session_id__token_get"];
   };
-  "/validate_token": {
+  "auth/validate_token": {
     /** Simple Token Validation */
     get: operations["simple_token_validation_validate_token_get"];
   };
