@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query'
-import { client, getPrefix } from 'utils/api/client'
+import { client } from 'utils/api/client'
 
 const getInstrumentInfo = async () => {
     const response = await client.hub_get(`instruments`)

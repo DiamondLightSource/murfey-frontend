@@ -3,8 +3,12 @@ import { components } from 'schema/main'
 import { client } from 'utils/api/client'
 import { Params } from 'react-router-dom'
 
-export const includePage = (endpoint: string, limit: number, page: number) =>
-    `${endpoint}${endpoint.includes('?') ? '&' : '?'}page=${page - 1}&limit=${limit}`
+export const includePage = (endpoint: string, limit: number, page: number): string => {
+
+    const delimiter = endpoint.includes('?') ? '&' : '?'
+    const pageNo = page - 1
+    return `${endpoint}${delimiter}page=${pageNo}&limit=${limit}`
+}
 
 const getSessionsData = async () => {
     const response = await client.get(
