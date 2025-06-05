@@ -41,26 +41,26 @@ const NavLinks = ({ links, as }: BaseLinkProps) => (
     <>
         {links
             ? links.map((link) => (
-                  <Link
-                      height="100%"
-                      alignItems="center"
-                      display="flex"
-                      px={2}
-                      textDecor="none"
-                      as={as}
-                      borderTop="4px solid transparent"
-                      borderBottom="4px solid transparent"
-                      color="murfey.50"
-                      _hover={{
-                          color: 'murfey.500',
-                          borderBottom: 'solid 4px',
-                      }}
-                      to={link.route}
-                      key={link.label}
-                  >
-                      {link.label}
-                  </Link>
-              ))
+                <Link
+                    height="100%"
+                    alignItems="center"
+                    display="flex"
+                    px={2}
+                    textDecor="none"
+                    as={as}
+                    borderTop="4px solid transparent"
+                    borderBottom="4px solid transparent"
+                    color="murfey.50"
+                    _hover={{
+                        color: 'murfey.500',
+                        borderBottom: 'solid 4px',
+                    }}
+                    to={link.route}
+                    key={link.label}
+                >
+                    {link.label}
+                </Link>
+            ))
             : null}
     </>
 )

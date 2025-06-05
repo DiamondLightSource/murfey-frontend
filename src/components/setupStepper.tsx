@@ -14,25 +14,48 @@ import {
 
 import React from 'react'
 
-const getUrl = (endpoint: string) => {
-    return (
-        (sessionStorage.getItem('murfeyServerURL') ??
-            process.env.REACT_APP_API_ENDPOINT) + endpoint
-    )
-}
-
 interface StepperStartConditions {
     activeStepIndex: number
 }
 
-const SetupStepper = ({ activeStepIndex }: StepperStartConditions) => {
-    const steps = [
-        { title: 'Visit', description: 'Select visit' },
-        { title: 'Gain reference', description: 'Transfer and transform' },
-        { title: 'Data location', description: 'Start data transfer' },
-        { title: 'Parameters', description: 'For processing' },
-    ]
 
+interface Step {
+    title: string,
+    description: string
+}
+
+const steps: Step[] = [
+    { title: 'Visit', description: 'Select visit' },
+    { title: 'Gain reference', description: 'Transfer and transform' },
+    { title: 'Data location', description: 'Start data transfer' },
+    { title: 'Parameters', description: 'For processing' },
+]
+
+type StepDisplayProps = {
+    step: Step,
+    index: number
+}
+
+function StepDisplay({ index, step }: StepDisplayProps) {
+    return <Step key={index}>
+        <StepIndicator>
+            <StepStatus
+                complete={<StepIcon />}
+                incomplete={<StepNumber />}
+                active={<StepNumber />} />
+        </StepIndicator>
+
+        <Box flexShrink="0">
+            <StepTitle>{step.title}</StepTitle>
+            <StepDescription>{step.description}</StepDescription>
+        </Box>
+
+        <StepSeparator />
+    </Step>
+}
+
+
+const SetupStepper = ({ activeStepIndex }: StepperStartConditions) => {
     const { activeStep } = useSteps({
         index: activeStepIndex,
         count: steps.length,
@@ -41,22 +64,7 @@ const SetupStepper = ({ activeStepIndex }: StepperStartConditions) => {
     return (
         <Stepper index={activeStep}>
             {steps.map((step, index) => (
-                <Step key={index}>
-                    <StepIndicator>
-                        <StepStatus
-                            complete={<StepIcon />}
-                            incomplete={<StepNumber />}
-                            active={<StepNumber />}
-                        />
-                    </StepIndicator>
-
-                    <Box flexShrink="0">
-                        <StepTitle>{step.title}</StepTitle>
-                        <StepDescription>{step.description}</StepDescription>
-                    </Box>
-
-                    <StepSeparator />
-                </Step>
+                <StepDisplay step={step} index={index} />
             ))}
         </Stepper>
     )

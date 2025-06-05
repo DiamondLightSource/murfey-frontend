@@ -21,6 +21,7 @@ import { Table } from '@diamondlightsource/ui-components'
 import { updateSessionProcessingParameters } from 'loaders/processingParameters'
 
 import React from 'react'
+import { angstromHtmlChar } from 'utils/constants'
 
 type EditableSessionParameters =
     components['schemas']['EditableSessionProcessingParameters']
@@ -36,7 +37,7 @@ type ProcessingTable = {
 }
 
 const nameLabelMap: Map<string, string> = new Map([
-    ['dose_per_frame', 'Dose per frame [e- / \u212B]'],
+    ['dose_per_frame', `Dose per frame [e- / ${angstromHtmlChar}]`],
     ['gain_ref', 'Gain Reference'],
     ['symmetry', 'Symmetry'],
     [

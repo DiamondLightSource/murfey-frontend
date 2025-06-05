@@ -17,21 +17,31 @@ import { startMultigridWatcher } from 'loaders/multigridSetup'
 import { getSessionData, updateSession } from 'loaders/session_clients'
 import { registerProcessingParameters } from 'loaders/sessionSetup'
 
-import React, { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 type SessionClients = components['schemas']['SessionClients']
 type ProvidedProcessingParameters =
     components['schemas']['ProvidedProcessingParameters']
 type Session = components['schemas']['Session']
 
+// 1. Constant key list
+export const EXPERIMENT_TYPES = ['spa', 'tomography'] as const
+
+// 2. Type derived from the constant
+export type ExperimentType = typeof EXPERIMENT_TYPES[number]
+
+const isValidExpType = (val: string): val is ExperimentType =>
+    EXPERIMENT_TYPES.includes(val as ExperimentType)
+
+
 const SessionSetup = () => {
     const session = useLoaderData() as SessionClients | null
-    const [expType, setExpType] = React.useState('spa')
-    const [procParams, setProcParams] = React.useState()
+    const [expType, setExpType] = useState<ExperimentType>("spa")
+    const [procParams, setProcParams] = useState()
     const { sessid } = useParams()
-    const [paramsSet, setParamsSet] = React.useState(false)
+    const [paramsSet, setParamsSet] = useState(false)
 
-    const [_session, setSession] = React.useState<Session>()
+    const [_session, setSession] = useState<Session>()
 
     useEffect(() => {
         getSessionData(sessid).then((sess) => setSession(sess.session))
@@ -64,8 +74,8 @@ const SessionSetup = () => {
         ? procParams
             ? 4
             : session.session.visit
-              ? 3
-              : 0
+                ? 3
+                : 0
         : 3
     return (
         <div className="rootContainer">
@@ -106,14 +116,21 @@ const SessionSetup = () => {
                         display={'flex'}
                     >
                         <RadioGroup
-                            onChange={setExpType}
+                            onChange={v => {
+                                if (isValidExpType(v)) {
+                                    setExpType(v as ExperimentType)
+                                } else {
+                                    window.alert("wrong experiment type")
+                                }
+                            }
+                            }
                             value={expType}
                             colorScheme="murfey"
                             isDisabled={activeStep !== 3 ? true : false}
                         >
                             <Stack>
-                                <Radio value="spa">SPA</Radio>
-                                <Radio value="tomography">Tomography</Radio>
+                                <Radio value={EXPERIMENT_TYPES[0]}>SPA</Radio>
+                                <Radio value={EXPERIMENT_TYPES[1]}>Tomography</Radio>
                             </Stack>
                         </RadioGroup>
                     </Box>

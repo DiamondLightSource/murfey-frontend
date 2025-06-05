@@ -17,16 +17,12 @@ import { components } from 'schema/main'
 import { getFoilHoles, getNumMovies } from 'loaders/gridSquares'
 
 import { useState, useEffect } from 'react'
+import { getUrlFromSessionStorage } from './getUrlFromSessionStorage'
 
 type GridSquare = components['schemas']['GridSquare']
 type FoilHole = components['schemas']['FoilHole']
 
-const getUrl = (endpoint: string) => {
-    return (
-        (sessionStorage.getItem('murfeyServerURL') ??
-            process.env.REACT_APP_API_ENDPOINT) + endpoint
-    )
-}
+const zip = (a: number[], b: number[]) => a.map((k, i) => [k, b[i]])
 
 const GridSquareCard = (
     gs: GridSquare,
@@ -40,27 +36,28 @@ const GridSquareCard = (
     const [foilHoleNames, setFoilHoleNames] = useState<number[]>([])
     const [foilHoleImages, setFoilHoleImages] = useState<(string | null)[]>([])
     const [sliderValue, setSliderValue] = useState(10)
+
     const foilHoleSetup = (foilHoles: FoilHole[]) => {
         let xpositions: number[] = []
-        let ypositions = []
+        let ypositions: number[] = []
         let names: number[] = []
         let images: (string | null)[] = []
         for (let i = 0; i < foilHoles.length; i++) {
-            const unscaledx = foilHoles[i].x_location
-            const x =
-                gs.thumbnail_size_x && gs.readout_area_x && unscaledx
-                    ? unscaledx * (gs.thumbnail_size_x / gs.readout_area_x)
-                    : unscaledx
-            const unscaledy = foilHoles[i].y_location
-            const y =
-                gs.thumbnail_size_y && gs.readout_area_y && unscaledy
-                    ? unscaledy * (gs.thumbnail_size_y / gs.readout_area_y)
-                    : unscaledy
+            let x: number | undefined = foilHoles[i].x_location
+            if (gs.thumbnail_size_x && gs.readout_area_x && x) {
+                x = x * (gs.thumbnail_size_x / gs.readout_area_x)
+            }
+            let y = foilHoles[i].y_location
+            if (gs.thumbnail_size_y && gs.readout_area_y && y) {
+                y = y * (gs.thumbnail_size_y / gs.readout_area_y)
+            }
             if (x) xpositions.push(Math.floor(x))
             if (y) ypositions.push(Math.floor(y))
             if (x) names.push(foilHoles[i].name)
             const image = foilHoles[i].image
-            if (x) image ? images.push(image) : images.push(null)
+            if (x) {
+                images.push(image ?? null)
+            }
         }
         setFoilHoleXPositions(xpositions)
         setFoilHoleYPositions(ypositions)
@@ -68,6 +65,7 @@ const GridSquareCard = (
         setFoilHoleImages(images)
         setNumFoilHoles(foilHoles.length)
     }
+
     useEffect(() => {
         getFoilHoles(sessid ?? '0', dcgid ?? '0', gs.name).then((fhs) =>
             foilHoleSetup(fhs)
@@ -77,10 +75,9 @@ const GridSquareCard = (
         )
     }, [])
 
-    const zip = (a: number[], b: number[]) => a.map((k, i) => [k, b[i]])
 
     const foilHoleTooltip = (fhName: number, fhImage: string | null) => {
-        const fhImageUrl = getUrl(
+        const fhImageUrl = getUrlFromSessionStorage(
             `display/sessions/${sessid}/data_collection_groups/${dcgid}/grid_squares/${gs.name}/foil_holes/${fhName}/image`
         )
         return (
@@ -91,15 +88,17 @@ const GridSquareCard = (
         )
     }
 
+    const imgUrl = getUrlFromSessionStorage(
+        `display/sessions/${sessid}/data_collection_groups/${dcgid}/grid_squares/${gs.name}/image`
+    )
+
     return (
         <Card align="center" display="flex">
             <CardHeader>{gs.name}</CardHeader>
             <CardBody>
                 <Box position="relative" display="flex">
                     <Image
-                        src={getUrl(
-                            `display/sessions/${sessid}/data_collection_groups/${dcgid}/grid_squares/${gs.name}/image`
-                        )}
+                        src={imgUrl}
                     />
                     <svg
                         width={gs.thumbnail_size_x}

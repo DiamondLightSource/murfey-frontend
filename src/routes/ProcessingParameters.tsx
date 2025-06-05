@@ -19,6 +19,7 @@ import { Table } from '@diamondlightsource/ui-components'
 import { MdEditNote } from 'react-icons/md'
 
 import React from 'react'
+import { angstromHtmlChar } from 'utils/constants'
 
 type ProcessingDetails = components['schemas']['ProcessingDetails']
 
@@ -35,13 +36,13 @@ type ProcessingTable = {
 const nameLabelMap: Map<string, string> = new Map([
     ['pj_id', 'Processing Job ID'],
     ['angpix', 'Pixel Size [m]'],
-    ['dose_per_frame', 'Dose per frame [e- / \u212B]'],
+    ['dose_per_frame', `Dose per frame [e- / ${angstromHtmlChar}]`],
     ['gain_ref', 'Gain Reference'],
     ['voltage', 'Voltage [kV]'],
     ['motion_corr_binning', 'Motion correction binning factor'],
     ['eer_grouping', 'EER Grouping'],
     ['symmetry', 'Symmetry'],
-    ['particle_diameter', 'Particle Diameter [\u212B]'],
+    ['particle_diameter', `Particle Diameter ${angstromHtmlChar}]`],
     ['downscale', 'Downscaling During Extraction'],
     ['do_icebreaker_jobs', 'Perform IceBreaker Jobs'],
     ['boxsize', 'Box Size'],
