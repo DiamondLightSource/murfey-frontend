@@ -1,25 +1,24 @@
-import { QueryClient } from "@tanstack/react-query";
-import { components } from "schema/main";
-import { client } from "utils/api/client";
-import { Params } from "react-router-dom";
-import { parseDate } from "utils/generic";
+import { QueryClient } from '@tanstack/react-query'
+import { client } from 'utils/api/client'
 
 export const getMachineConfigData = async () => {
-  const response = await client.get(`session_info/instruments/${sessionStorage.getItem("instrumentName")}/machine`);
+    const response = await client.get(
+        `session_info/instruments/${sessionStorage.getItem('instrumentName')}/machine`
+    )
 
-  if (response.status !== 200) {
-    return null;
-  }
+    if (response.status !== 200) {
+        return null
+    }
 
-  return response.data;
-};
+    return response.data
+}
 
 const query = {
-  queryKey: ["machineConfig"],
-  queryFn: getMachineConfigData,
-  staleTime: 60000,
-};
+    queryKey: ['machineConfig'],
+    queryFn: getMachineConfigData,
+    staleTime: 60000,
+}
 
 export const machineConfigLoader = (queryClient: QueryClient) => async () =>
-  (await queryClient.getQueryData(query.queryKey)) ??
-  (await queryClient.fetchQuery(query));
+    (await queryClient.getQueryData(query.queryKey)) ??
+    (await queryClient.fetchQuery(query))

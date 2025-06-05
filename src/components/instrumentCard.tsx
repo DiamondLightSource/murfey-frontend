@@ -1,47 +1,46 @@
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  Image,
-  Link,
-  Text,
-} from "@chakra-ui/react";
+import { Card, CardBody, CardHeader, Image, Link, Text } from '@chakra-ui/react'
 
-import { Link as LinkRouter } from "react-router-dom";
-import { getInstrumentName } from "loaders/general";
+import { getInstrumentName } from 'loaders/general'
+import { Link as LinkRouter } from 'react-router-dom'
 
-import React, { useEffect } from "react";
+import { useEffect, useState } from 'react'
+import { getUrlFromSessionStorage } from './getUrlFromSessionStorage'
 
-const getUrl = (endpoint: string) => {
-  return (sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT) + endpoint;
-};
+
 
 const InstrumentCard = () => {
-  const [instrumentName, setInstrumentName] = React.useState("");
+    const [instrumentName, setInstrumentName] = useState<string>('')
 
-  const resolveName = async () => {
-    const name: string = await getInstrumentName();
-    setInstrumentName(name);
-  };
-  useEffect(() => {resolveName()}, []);
+    const resolveName = async () => {
+        const name: string = await getInstrumentName()
+        setInstrumentName(name)
+    }
+    useEffect(() => {
+        resolveName()
+    }, [])
 
-  return (
-    <Link
-      key="ag_table"
-      _hover={{ textDecor: "none" }}
-      as={LinkRouter}
-      to={`../mag_table`}
-    >
-      <Card align="center">
-        <CardHeader>
-          <Image src={getUrl(`display/instruments/${sessionStorage.getItem("instrumentName")}/image/`)} />
-        </CardHeader>
-        <CardBody>
-          <Text>{instrumentName}</Text>
-        </CardBody>
-      </Card>
-    </Link>
-  );
-};
+    const imgUrl = getUrlFromSessionStorage(
+        `display/instruments/${sessionStorage.getItem('instrumentName')}/image/`
+    )
+    return (
+        <Link
+            key="ag_table"
+            _hover={{ textDecor: 'none' }}
+            as={LinkRouter}
+            to={`../mag_table`}
+        >
+            <Card align="center">
+                <CardHeader>
+                    <Image
+                        src={imgUrl}
+                    />
+                </CardHeader>
+                <CardBody>
+                    <Text>{instrumentName}</Text>
+                </CardBody>
+            </Card>
+        </Link>
+    )
+}
 
-export { InstrumentCard };
+export { InstrumentCard }

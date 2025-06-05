@@ -1,62 +1,73 @@
 import {
-  Box,
-  Step,
-  StepDescription,
-  StepIcon,
-  StepIndicator,
-  StepNumber,
-  StepSeparator,
-  StepStatus,
-  StepTitle,
-  Stepper,
-  useSteps,
-} from "@chakra-ui/react";
+    Box,
+    Step,
+    StepDescription,
+    StepIcon,
+    StepIndicator,
+    StepNumber,
+    StepSeparator,
+    StepStatus,
+    StepTitle,
+    Stepper,
+    useSteps,
+} from '@chakra-ui/react'
 
-import React from "react";
-
-const getUrl = (endpoint: string) => {
-  return (sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT) + endpoint;
-};
+import React from 'react'
 
 interface StepperStartConditions {
-  activeStepIndex: number;
+    activeStepIndex: number
 }
 
-const SetupStepper = ({ activeStepIndex }: StepperStartConditions) => {
-  const steps = [
-    { title: "Visit", description: "Select visit" },
-    { title: "Gain reference", description: "Transfer and transform" },
-    { title: "Data location", description: "Start data transfer" },
-    { title: "Parameters", description: "For processing" },
-  ];
 
-  const { activeStep } = useSteps({
-    index: activeStepIndex,
-    count: steps.length,
-  });
+interface Step {
+    title: string,
+    description: string
+}
 
-  return (
-    <Stepper index={activeStep}>
-      {steps.map((step, index) => (
-        <Step key={index}>
-          <StepIndicator>
+const steps: Step[] = [
+    { title: 'Visit', description: 'Select visit' },
+    { title: 'Gain reference', description: 'Transfer and transform' },
+    { title: 'Data location', description: 'Start data transfer' },
+    { title: 'Parameters', description: 'For processing' },
+]
+
+type StepDisplayProps = {
+    step: Step,
+    index: number
+}
+
+function StepDisplay({ index, step }: StepDisplayProps) {
+    return <Step key={index}>
+        <StepIndicator>
             <StepStatus
-              complete={<StepIcon />}
-              incomplete={<StepNumber />}
-              active={<StepNumber />}
-            />
-          </StepIndicator>
+                complete={<StepIcon />}
+                incomplete={<StepNumber />}
+                active={<StepNumber />} />
+        </StepIndicator>
 
-          <Box flexShrink="0">
+        <Box flexShrink="0">
             <StepTitle>{step.title}</StepTitle>
             <StepDescription>{step.description}</StepDescription>
-          </Box>
+        </Box>
 
-          <StepSeparator />
-        </Step>
-      ))}
-    </Stepper>
-  );
-};
+        <StepSeparator />
+    </Step>
+}
 
-export { SetupStepper };
+
+const SetupStepper = ({ activeStepIndex }: StepperStartConditions) => {
+    const { activeStep } = useSteps({
+        index: activeStepIndex,
+        count: steps.length,
+    })
+
+    return (
+        <Stepper index={activeStep}>
+            {steps.map((step, index) => (
+                <StepDisplay step={step} index={index} />
+            ))}
+        </Stepper>
+    )
+}
+
+export { SetupStepper }

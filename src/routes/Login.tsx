@@ -1,45 +1,85 @@
-import { Button, Input, VStack, Link, FormControl, Card, CardBody, Heading, HStack } from "@chakra-ui/react";
-import { Link as LinkRouter, useNavigate, Navigate } from "react-router-dom";
-import { TbMicroscope, TbSnowflake } from "react-icons/tb";
+import {
+    Button,
+    Card,
+    CardBody,
+    FormControl,
+    Heading,
+    HStack,
+    Input,
+    VStack
+} from '@chakra-ui/react'
+import { TbMicroscope, TbSnowflake } from 'react-icons/tb'
+import { Navigate, useNavigate } from 'react-router-dom'
 
-import { getJWT, handshake } from "loaders/jwt";
+import { getJWT } from 'loaders/jwt'
 
-import React from "react";
+import { ChangeEvent, useState } from 'react'
 
 const Login = () => {
-  const [username, setUsername] = React.useState("");
-  const handleUsername = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setUsername(event.target.value);
-  const [password, setPassword] = React.useState("");
-  const handlePassword = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setPassword(event.target.value);
+    const [username, setUsername] = useState<string>('')
+    const handleUsername = (event: ChangeEvent<HTMLInputElement>) =>
+        setUsername(event.target.value)
+    const [password, setPassword] = useState<string>('')
+    const handlePassword = (event: ChangeEvent<HTMLInputElement>) =>
+        setPassword(event.target.value)
 
-  const navigate = useNavigate();
+    const navigate = useNavigate()
 
-  return sessionStorage.getItem("murfeyServerURL") ? (
-    <VStack bg="murfey.700" justifyContent="start" alignItems="start" display="flex" w="100%" px="10vw" py="1vh">
-    <Heading size="xl" color="murfey.50">
-      <HStack> <TbSnowflake/> <TbMicroscope/> </HStack> Murfey Login 
-    </Heading>
-    <Card>
-      <CardBody>
-    <FormControl>
-      <Input placeholder="Username" onChange={handleUsername} />
-      <Input placeholder="Password" onChange={handlePassword} type="password" />
-        <Button
-          onClick={() => {
-            getJWT({ username: username, password: password })
-              .then((jwt) => sessionStorage.setItem("token", jwt.access_token))
-              .then(() => navigate("/home"));
-          }}
-        >
-          Login
-        </Button>
-    </FormControl>
-    </CardBody>
-    </Card>
+    const url = sessionStorage.getItem('murfeyServerURL')
+    if (!url) {
+
+        <Navigate to="/hub" replace />
+    }
+    const handleLoginButtonClick = () => {
+        getJWT({
+            username: username,
+            password: password,
+        })
+            .then((jwt) => sessionStorage.setItem(
+                'token',
+                jwt.access_token
+            )
+            )
+            .then(() => navigate('/home'))
+    }
+
+    // todo fix the {' '} setup
+    return <VStack
+        bg="murfey.700"
+        justifyContent="start"
+        alignItems="start"
+        display="flex"
+        w="100%"
+        px="10vw"
+        py="1vh"
+    >
+        <Heading size="xl" color="murfey.50">
+            <HStack>
+                {' '}
+                <TbSnowflake /> <TbMicroscope />{' '}
+            </HStack>{' '}
+            Murfey Login
+        </Heading>
+        <Card>
+            <CardBody>
+                <FormControl>
+                    <Input
+                        placeholder="Username"
+                        onChange={handleUsername}
+                    />
+                    <Input
+                        placeholder="Password"
+                        onChange={handlePassword}
+                        type="password"
+                    />
+                    <Button
+                        onClick={handleLoginButtonClick}
+                    >
+                        Login
+                    </Button>
+                </FormControl>
+            </CardBody>
+        </Card>
     </VStack>
-  ) : <Navigate to="/hub" replace />;
-};
-
-export { Login };
+}
+export { Login }

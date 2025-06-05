@@ -1,37 +1,34 @@
-import { QueryClient } from "@tanstack/react-query";
-import { client } from "utils/api/client";
-import { components } from "schema/main";
+import { QueryClient } from '@tanstack/react-query'
+import { client } from 'utils/api/client'
+import { components } from 'schema/main'
 
-type MultigridWatcherSpec = components["schemas"]["MultigridWatcherSetup"];
+type MultigridWatcherSpec = components['schemas']['MultigridWatcherSetup']
 
 export const setupMultigridWatcher = async (
-  multigridWatcher: MultigridWatcherSpec,
-  sessionId: number,
+    multigridWatcher: MultigridWatcherSpec,
+    sessionId: number
 ) => {
-  const response = await client.post(
-    `instrument_server/sessions/${sessionId}/multigrid_watcher`,
-    multigridWatcher,
-  );
+    const response = await client.post(
+        `instrument_server/sessions/${sessionId}/multigrid_watcher`,
+        multigridWatcher
+    )
 
-  if (response.status !== 200) {
-    return null;
-  }
+    if (response.status !== 200) {
+        return null
+    }
 
-  return response.data;
-};
+    return response.data
+}
 
-export const startMultigridWatcher = async (
-  sessionId: number,
-) => {
-  const response = await client.post(
-    `instrument_server/sessions/${sessionId}/start_multigrid_watcher`,
-    {},
-  );
+export const startMultigridWatcher = async (sessionId: number) => {
+    const response = await client.post(
+        `instrument_server/sessions/${sessionId}/start_multigrid_watcher`,
+        {}
+    )
 
-  if (response.status !== 200) {
-    return null;
-  }
+    if (response.status !== 200) {
+        return null
+    }
 
-  return response.data;
-
-};
+    return response.data
+}
