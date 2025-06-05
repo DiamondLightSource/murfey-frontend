@@ -6,3 +6,8 @@ export type InstrumentInfo = {
     display_name: string;
     instrument_url: string;
 };
+
+export type ProcessingDetails = components['schemas']['ProcessingDetails']
+export type RSyncerInfo = components['schemas']['RSyncerInfo']
+export type MachineConfig = components['schemas']['MachineConfig']
+export type MultigridWatcherSpec = components['schemas']['MultigridWatcherSetup']

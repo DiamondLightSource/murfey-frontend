@@ -1,7 +1,6 @@
-import { Box, HStack, Tag, Text, Link, Progress, Icon } from '@chakra-ui/react'
-import { Outlet, useLoaderData, Link as LinkRouter } from 'react-router-dom'
+import { Box } from '@chakra-ui/react'
 import { Navbar } from 'components/navbar'
-import { MdSignalWifi4Bar } from 'react-icons/md'
+import { Outlet } from 'react-router-dom'
 
 import 'styles/main.css'
 

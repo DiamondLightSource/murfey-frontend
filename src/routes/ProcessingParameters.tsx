@@ -19,55 +19,47 @@ import { Table } from '@diamondlightsource/ui-components'
 import { MdEditNote } from 'react-icons/md'
 import { ChangeEvent, useState } from 'react'
 import { nameLabelMap } from './nameLabelMap'
+import { ProcessingDetails } from 'utils/types'
 
-type ProcessingDetails = components['schemas']['ProcessingDetails']
 
 type ProcessingRow = {
     parameterName: string
     parameterValue?: string | number | boolean
 }
 
-type ProcessingTable = {
+export type ProcessingTable = {
     processingRows: ProcessingRow[]
     tag: string
 }
 
-function getStartExtraRows(procParams: ProcessingDetails[] | null, tableRows: ProcessingTable[]): ProcessingTable[] {
-    let tableRowsExtra = [] as ProcessingTable[]
-    procParams?.map((p) => {
-        let tr: ProcessingTable = {
-            processingRows: [],
-            tag: '',
-        }
-        let tre: ProcessingTable = {
-            processingRows: [],
-            tag: '',
-        }
-        Object.entries(p?.relion_params ? p?.relion_params : {}).forEach(
-            ([key, value]) => tr.processingRows.push({
-                parameterName: nameLabelMap.get(key) ?? key,
-                parameterValue: value === true
-                    ? 'True'
-                    : value === false
-                        ? 'False'
-                        : value,
-            })
-        )
-        tr.tag = p?.relion_params.pj_id.toString()
-        tableRows.push(tr)
-        Object.entries(p?.feedback_params ? p?.feedback_params : {}).forEach(
-            ([key, value]) => tre.processingRows.push({
-                parameterName: nameLabelMap.get(key) ?? key,
-                parameterValue: value === true
-                    ? 'True'
-                    : value === false
-                        ? 'False'
-                        : value,
-            })
-        )
-        tre.tag = p?.feedback_params.pj_id.toString()
-        tableRowsExtra.push(tre)
+export function getStartExtraRows(
+    procParams: ProcessingDetails[] | null,
+    tableRows: ProcessingTable[]
+): ProcessingTable[] {
+    const convertParams = (params: Record<string, any> | undefined): ProcessingRow[] =>
+        Object.entries(params ?? {}).map(([key, value]) => ({
+            parameterName: nameLabelMap.get(key) ?? key,
+            parameterValue:
+                value === true ? 'True' : value === false ? 'False' : value,
+        }))
+
+    const tableRowsExtra: ProcessingTable[] = []
+
+    procParams?.forEach((p) => {
+        const relionRows = convertParams(p.relion_params)
+        const feedbackRows = convertParams(p.feedback_params)
+
+        tableRows.push({
+            processingRows: relionRows,
+            tag: p.relion_params?.pj_id?.toString() ?? '',
+        })
+
+        tableRowsExtra.push({
+            processingRows: feedbackRows,
+            tag: p.feedback_params?.pj_id?.toString() ?? '',
+        })
     })
+
     return tableRowsExtra
 }
 
@@ -136,47 +128,41 @@ const ProcessingParameters = () => {
                             </AccordionPanel>
                         </AccordionItem>
                     )}
-                    {showExtra ? (
-                        tableRowsExtra.map((tre) => {
-                            return (
-                                <AccordionItem>
-                                    <AccordionButton bg="murfey.500">
-                                        <Box
-                                            as="span"
-                                            flex="1"
-                                            textAlign="left"
-                                        >
-                                            Extra Processing Parameters
-                                            (Processing Job ID {tre.tag})
-                                        </Box>
-                                        <AccordionIcon />
-                                    </AccordionButton>
-                                    <AccordionPanel>
-                                        <IconButton
-                                            aria-label="Edit parameters"
-                                            icon={<MdEditNote />}
-                                        />
-                                        <Table
-                                            data={tre.processingRows}
-                                            headers={[
-                                                {
-                                                    key: 'parameterName',
-                                                    label: 'Parameter',
-                                                },
-                                                {
-                                                    key: 'parameterValue',
-                                                    label: 'Value',
-                                                },
-                                            ]}
-                                            label={'processingParameterData'}
-                                        />
-                                    </AccordionPanel>
-                                </AccordionItem>
-                            )
-                        })
-                    ) : (
-                        <></>
-                    )}
+                    {showExtra && tableRowsExtra.map((tre) => <AccordionItem>
+                        <AccordionButton bg="murfey.500">
+                            <Box
+                                as="span"
+                                flex="1"
+                                textAlign="left"
+                            >
+                                Extra Processing Parameters
+                                (Processing Job ID {tre.tag})
+                            </Box>
+                            <AccordionIcon />
+                        </AccordionButton>
+                        <AccordionPanel>
+                            <IconButton
+                                aria-label="Edit parameters"
+                                icon={<MdEditNote />}
+                            />
+                            <Table
+                                data={tre.processingRows}
+                                headers={[
+                                    {
+                                        key: 'parameterName',
+                                        label: 'Parameter',
+                                    },
+                                    {
+                                        key: 'parameterValue',
+                                        label: 'Value',
+                                    },
+                                ]}
+                                label={'processingParameterData'}
+                            />
+                        </AccordionPanel>
+                    </AccordionItem>
+                    )
+                    }
                 </Accordion>
             </Box>
         </div>
