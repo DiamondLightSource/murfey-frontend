@@ -51,10 +51,10 @@ export const linkSessionToClient = async (
   return response.data;
 };
 
-export const createSession = async (visit: string, sessionName: string, instrumentName: string) => {
+export const createSession = async (visit: string, sessionName: string, instrumentName: string, sessionEndTime: Date) => {
   const response = await client.post(
     `session_info/instruments/${instrumentName}/visits/${visit}/session/${sessionName}`,
-    {},
+    {"end_time": sessionEndTime.toISOString()},
   );
   if (response.status !== 200) {
     return null;
@@ -65,6 +65,17 @@ export const createSession = async (visit: string, sessionName: string, instrume
 export const updateSession = async (sessionID: number, process: boolean = true) => {
   const response = await client.post(
     `session_info/sessions/${sessionID}?process=${process ? 'true': 'false'}`,
+    {},
+  );
+  if (response.status !== 200) {
+    return null;
+  }
+  return response.data;
+}
+
+export const updateVisitEndTime = async (sessionID: number, sessionEndTime: Date) => {
+  const response = await client.post(
+    `instrument_server/sessions/${sessionID}/multigrid_controller/visit_end_time?end_time=${sessionEndTime.toISOString()}`,
     {},
   );
   if (response.status !== 200) {
