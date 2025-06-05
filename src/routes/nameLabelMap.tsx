@@ -1,0 +1,28 @@
+import { angstromHtmlChar } from 'utils/constants';
+
+export const nameLabelMap: Map<string, string> = new Map([
+    ['pj_id', 'Processing Job ID'],
+    ['angpix', 'Pixel Size [m]'],
+    ['dose_per_frame', `Dose per frame [e- / ${angstromHtmlChar}]`],
+    ['gain_ref', 'Gain Reference'],
+    ['voltage', 'Voltage [kV]'],
+    ['motion_corr_binning', 'Motion correction binning factor'],
+    ['eer_grouping', 'EER Grouping'],
+    ['symmetry', 'Symmetry'],
+    ['particle_diameter', `Particle Diameter ${angstromHtmlChar}]`],
+    ['downscale', 'Downscaling During Extraction'],
+    ['do_icebreaker_jobs', 'Perform IceBreaker Jobs'],
+    ['boxsize', 'Box Size'],
+    ['small_boxsize', 'Downscaled Box Size'],
+    ['mask_diameter', 'Mask Diameter for Classification'],
+    ['estimate_particle_diameter', 'Automatically Estimate Particle Diameter'],
+    ['hold_class2d', '2D Classification Held'],
+    ['rerun_class2d', 'First 2D Classification Batch Needs to be Rerun'],
+    ['rerun_class3d', '3D Classification Needs to be Rerun'],
+    ['class_selection_score', 'Class Selection Threshold'],
+    ['star_combination_job', 'Job Number for Rebatching Job'],
+    ['initial_model', 'Initial Model'],
+    ['next_job', 'Next Job Number'],
+    ['picker_murfey_id', 'Murfey ID of Picker for Use in ISPyB'],
+    ['picker_ispyb_id', 'ISPyB Particle Picker ID'],
+]);
