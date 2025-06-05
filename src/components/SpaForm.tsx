@@ -14,7 +14,7 @@ import {
     Switch,
     VStack
 } from '@chakra-ui/react'
-import { FormEvent } from 'react'
+import { ChangeEvent, FormEvent, useState } from 'react'
 import { angstromHtmlChar } from 'utils/constants'
 
 
@@ -27,41 +27,43 @@ export const formDataSPA: Record<string, any> = {
     eer_fractionation: 20,
 }
 
+
+function validateData(formData: FormData): Record<string, any> {
+    formDataSPA.dose_per_frame = formData.get('dose')
+    formDataSPA.symmetry = ['T', 'O'].includes(
+        formData.get('symmetry1') as string
+    )
+        ? (formData.get('symmetry1') as string)
+        : (((formData.get('symmetry1') as string) +
+            formData.get('symmetry2')) as string)
+    formDataSPA.particle_diameter = formData.get('detect-particle-size')
+        ? null
+        : formData.get('particle-diameter')
+    formDataSPA.eer_fractionation = formData.get('eer-grouping')
+    return formDataSPA
+}
+
 export const SpaForm = (submissionCallback: (arg0: any) => void) => {
     const validateInt = (char: string) => {
         return /\d/.test(char)
     }
-    const validateFloat = (char: string) => {
-        return /^\d*\.?\d*$/.test(char)
-    }
-    const [symmetryType, setSymmetryType] = React.useState('C')
-    const [particleDetection, setParticleDetection] = React.useState(true)
-    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    // const validateFloat = (char: string) => {
+    //     return /^\d*\.?\d*$/.test(char)
+    // }
+    const [symmetryType, setSymmetryType] = useState('C')
+    const [particleDetection, setParticleDetection] = useState(true)
+    const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
         setSymmetryType(event.target.value)
     }
-    const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSwitchChange = (_: ChangeEvent<HTMLInputElement>) => {
         setParticleDetection(!particleDetection)
-    }
-    const parseAndSendFormData = (formData: FormData
-    ) => {
-        formDataSPA.dose_per_frame = formData.get('dose')
-        formDataSPA.symmetry = ['T', 'O'].includes(
-            formData.get('symmetry1') as string
-        )
-            ? (formData.get('symmetry1') as string)
-            : (((formData.get('symmetry1') as string) +
-                formData.get('symmetry2')) as string)
-        formDataSPA.particle_diameter = formData.get('detect-particle-size')
-            ? null
-            : formData.get('particle-diameter')
-        formDataSPA.eer_fractionation = formData.get('eer-grouping')
-        submissionCallback(formDataSPA)
     }
 
     const handleFormSubmission = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const formData = new FormData(e.currentTarget)
-        parseAndSendFormData(formData)
+        const data = validateData(formData)
+        submissionCallback(data)
     }
 
     return (

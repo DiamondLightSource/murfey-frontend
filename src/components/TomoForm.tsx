@@ -10,6 +10,7 @@ import { formDataSPA } from './SpaForm'
 import { angstromHtmlChar } from 'utils/constants'
 
 
+// NOTE: is this necessary?
 const formDataTomo: Record<string, any> = {
     type: 'tomo',
     dose_per_frame: 0.5,
