@@ -106,95 +106,38 @@ const NewSession = () => {
             })
         ) {
             const sid = await startMurfeySession(iName)
-            gainRefDir
-                ? navigate(
-                    `../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`
-                )
-                : navigate(`/new_session/setup/${sid}`)
+            const path = gainRefDir ? `../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true` : `/new_session/setup/${sid}`
+            navigate(path)
         } else onOpenVisitCheck()
+    }
+
+    if (!instrumentName) {
+        return <Heading size='l' >No instrument name is known</Heading>
     }
 
     return instrumentName ? (
         <div className="rootContainer">
-            <Modal isOpen={isOpen} onClose={onClose}>
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>Create visit</ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                        <Input
-                            placeholder="Session name"
-                            onChange={handleVisitNameChange}
-                        />
-                        <Input
-                            placeholder="Session reference"
-                            value={sessionReference}
-                            onChange={handleChange}
-                        />
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button
-                            isDisabled={selectedVisit === '' ? true : false}
-                            onClick={() => {
-                                handleCreateSession(instrumentName)
-                            }}
-                        >
-                            Create session
-                        </Button>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
-            <Modal isOpen={isOpenVisitCheck} onClose={onCloseVisitCheck}>
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>
-                        An active session already exists for this visit
-                    </ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                        You may want to edit one of the following sessions
-                        instead (otherwise you may start multiple transfers for
-                        the same source)
-                        <VStack>
-                            {activeSessionsForVisit.map((session) => {
-                                return session ? (
-                                    <Link
-                                        w={{ base: '100%', md: '19.6%' }}
-                                        key="gain_ref"
-                                        _hover={{ textDecor: 'none' }}
-                                        as={LinkRouter}
-                                        to={`/sessions/${session.id}`}
-                                    >
-                                        <Button>{session.id}</Button>
-                                    </Link>
-                                ) : (
-                                    <></>
-                                )
-                            })}
-                        </VStack>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button
-                            isDisabled={selectedVisit === '' ? true : false}
-                            onClick={() => {
-                                startMurfeySession(instrumentName).then(
-                                    (sid: number) => {
-                                        gainRefDir
-                                            ? navigate(
-                                                `../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`
-                                            )
-                                            : navigate(
-                                                `/new_session/setup/${sid}`
-                                            )
-                                    }
-                                )
-                            }}
-                        >
-                            Ignore and continue
-                        </Button>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
+            <CreateSessionModal
+                isOpen={isOpen}
+                onClose={onClose}
+                handleVisitNameChange={handleVisitNameChange}
+                sessionReference={sessionReference}
+                handleChange={handleChange}
+                selectedVisit={selectedVisit}
+                handleCreateSession={handleCreateSession}
+                instrumentName={instrumentName}
+            />
+            <EditSessionModal
+                isOpenVisitCheck={isOpenVisitCheck}
+                onCloseVisitCheck={onCloseVisitCheck}
+                activeSessionsForVisit={activeSessionsForVisit}
+                selectedVisit={selectedVisit}
+                startMurfeySession={startMurfeySession}
+                instrumentName={instrumentName}
+                gainRefDir={gainRefDir}
+                navigateCallback={navigate}
+            />
+
             <Box w="100%" bg="murfey.50">
                 <Box w="100%" overflow="hidden">
                     <VStack className="homeRoot">
@@ -258,7 +201,7 @@ const NewSession = () => {
                             onChange={handleChange}
                         />
                         <Button
-                            isDisabled={selectedVisit === '' ? true : false}
+                            isDisabled={selectedVisit === ''}
                             onClick={() => {
                                 handleCreateSession(instrumentName)
                             }}
@@ -275,3 +218,104 @@ const NewSession = () => {
 }
 
 export { NewSession }
+
+type EditSessionModalProps = {
+    isOpenVisitCheck: boolean
+    onCloseVisitCheck: () => void
+    activeSessionsForVisit: (Session | null)[]
+    selectedVisit: string
+    startMurfeySession: (iName: string) => Promise<any>
+    instrumentName: string
+    gainRefDir: string | null | undefined,
+    navigateCallback: (url: string) => void
+}
+
+function EditSessionModal({ isOpenVisitCheck, onCloseVisitCheck, activeSessionsForVisit, selectedVisit, instrumentName, startMurfeySession, navigateCallback, gainRefDir }: EditSessionModalProps) {
+    return <Modal isOpen={isOpenVisitCheck} onClose={onCloseVisitCheck}>
+        <ModalOverlay />
+        <ModalContent>
+            <ModalHeader>
+                An active session already exists for this visit
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+                You may want to edit one of the following sessions
+                instead (otherwise you may start multiple transfers for
+                the same source)
+                <VStack>
+                    {activeSessionsForVisit.map((session) => {
+                        return session ? (
+                            <Link
+                                w={{ base: '100%', md: '19.6%' }}
+                                key="gain_ref"
+                                _hover={{ textDecor: 'none' }}
+                                as={LinkRouter}
+                                to={`/sessions/${session.id}`}
+                            >
+                                <Button>{session.id}</Button>
+                            </Link>
+                        ) : (
+                            <Heading size='l'>No sessions available</Heading>
+                        )
+                    })}
+                </VStack>
+            </ModalBody>
+            <ModalFooter>
+                <Button
+                    isDisabled={selectedVisit === ''}
+                    onClick={() => {
+                        startMurfeySession(instrumentName).then(
+                            (sid: number) => {
+                                const path = gainRefDir ? `../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true` : `/new_session/setup/${sid}`
+                                navigateCallback(path)
+                            }
+                        )
+                    }}
+                >
+                    Ignore and continue
+                </Button>
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
+}
+
+type CreateSessionModalProps = {
+    isOpen: boolean
+    onClose: () => void
+    handleVisitNameChange: (event: ChangeEvent<HTMLInputElement>) => void
+    sessionReference: string
+    handleChange: (event: ChangeEvent<HTMLInputElement>) => void
+    selectedVisit: string
+    handleCreateSession: (iName: string) => Promise<void>
+    instrumentName: string
+}
+
+function CreateSessionModal({ isOpen, onClose, handleVisitNameChange, sessionReference, handleChange, handleCreateSession, instrumentName, selectedVisit }: CreateSessionModalProps) {
+    return <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+            <ModalHeader>Create visit</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+                <Input
+                    placeholder="Session name"
+                    onChange={handleVisitNameChange} />
+                <Input
+                    placeholder="Session reference"
+                    value={sessionReference}
+                    onChange={handleChange} />
+            </ModalBody>
+            <ModalFooter>
+                <Button
+                    isDisabled={selectedVisit === ''}
+                    onClick={() => {
+                        handleCreateSession(instrumentName)
+                    }}
+                >
+                    Create session
+                </Button>
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
+}
+
