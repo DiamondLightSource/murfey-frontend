@@ -1,11 +1,12 @@
-import { Box, RadioGroup, Radio, Stack } from '@chakra-ui/react'
+import { Box, Radio, RadioGroup, Stack } from '@chakra-ui/react'
 import { getForm } from 'components/forms'
 
-import React from 'react'
+import { useState } from 'react'
+import { ExperimentType, isValidExpType } from 'utils/ExperimentType'
 
 const UserParameters = () => {
-    const [expType, setExpType] = React.useState('spa')
-    const [procParams, setProcParams] = React.useState()
+    const [expType, setExpType] = useState<ExperimentType>('spa')
+    const [procParams, setProcParams] = useState()
     return (
         <Stack>
             <Box
@@ -17,7 +18,14 @@ const UserParameters = () => {
                 borderColor={'murfey.400'}
             >
                 <RadioGroup
-                    onChange={setExpType}
+                    onChange={(v) => {
+                        if (isValidExpType(v)) {
+                            setExpType(v as ExperimentType)
+                        } else {
+                            window.alert("wrong experiment type")
+                        }
+                    }
+                    }
                     value={expType}
                     colorScheme="murfey"
                 >
@@ -37,7 +45,7 @@ const UserParameters = () => {
             >
                 {getForm(expType, setProcParams)}
             </Box>
-        </Stack>
+        </Stack >
     )
 }
 

@@ -20,7 +20,7 @@ import { components } from 'schema/main'
 import { Table } from '@diamondlightsource/ui-components'
 import { updateSessionProcessingParameters } from 'loaders/processingParameters'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { angstromHtmlChar } from 'utils/constants'
 
 type EditableSessionParameters =
@@ -46,20 +46,22 @@ const nameLabelMap: Map<string, string> = new Map([
     ],
 ])
 
+// todo possibly derive this from the map keys
+type EditableParameter =
+    | 'gain_ref'
+    | 'dose_per_frame'
+    | 'eer_fractionation_file'
+    | 'symmetry'
+    | ''
+
 const SessionParameters = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { sessid } = useParams()
     const sessionParams = useLoaderData() as EditableSessionParameters | null
     let tableRows = [] as ProcessingRow[]
-    type EditableParameter =
-        | 'gain_ref'
-        | 'dose_per_frame'
-        | 'eer_fractionation_file'
-        | 'symmetry'
-        | ''
-    const [paramName, setParamName] = React.useState('')
-    const [paramValue, setParamValue] = React.useState('')
-    const [paramKey, setParamKey] = React.useState<EditableParameter>('')
+    const [paramName, setParamName] = useState('')
+    const [paramValue, setParamValue] = useState('')
+    const [paramKey, setParamKey] = useState<EditableParameter>('')
     Object.entries(sessionParams ? sessionParams : {}).forEach(([key, value]) =>
         tableRows.push({
             parameterName: nameLabelMap.get(key) ?? key,

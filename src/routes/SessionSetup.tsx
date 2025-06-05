@@ -1,45 +1,37 @@
 import {
-    Button,
     Box,
-    RadioGroup,
-    Radio,
-    Stack,
-    Link,
-    VStack,
+    Button,
     Heading,
+    Link,
+    Radio,
+    RadioGroup,
+    Stack,
+    VStack,
 } from '@chakra-ui/react'
 import { getForm } from 'components/forms'
-import { Link as LinkRouter, useParams, useLoaderData } from 'react-router-dom'
 import { SetupStepper } from 'components/setupStepper'
-import { components } from 'schema/main'
-import { getProcessingParameterData } from 'loaders/processingParameters'
 import { startMultigridWatcher } from 'loaders/multigridSetup'
+import { getProcessingParameterData } from 'loaders/processingParameters'
 import { getSessionData, updateSession } from 'loaders/session_clients'
 import { registerProcessingParameters } from 'loaders/sessionSetup'
+import { Link as LinkRouter, useLoaderData, useParams } from 'react-router-dom'
+import { components } from 'schema/main'
 
 import { useEffect, useState } from 'react'
+import { ProcessingDetails } from 'utils/types'
+import { ExperimentType, isValidExpType, EXPERIMENT_TYPES } from '../utils/ExperimentType'
 
 type SessionClients = components['schemas']['SessionClients']
 type ProvidedProcessingParameters =
     components['schemas']['ProvidedProcessingParameters']
 type Session = components['schemas']['Session']
 
-// 1. Constant key list
-export const EXPERIMENT_TYPES = ['spa', 'tomography'] as const
-
-// 2. Type derived from the constant
-export type ExperimentType = typeof EXPERIMENT_TYPES[number]
-
-const isValidExpType = (val: string): val is ExperimentType =>
-    EXPERIMENT_TYPES.includes(val as ExperimentType)
-
-
 const SessionSetup = () => {
     const session = useLoaderData() as SessionClients | null
     const [expType, setExpType] = useState<ExperimentType>("spa")
-    const [procParams, setProcParams] = useState()
+    const [procParams, setProcParams] = useState<ProcessingDetails[]>([])
     const { sessid } = useParams()
-    const [paramsSet, setParamsSet] = useState(false)
+    const [paramsSet, setParamsSet] = useState<boolean>(false)
 
     const [_session, setSession] = useState<Session>()
 
@@ -70,6 +62,7 @@ const SessionSetup = () => {
         getProcessingParameterData(session.session.id.toString()).then(
             (params) => setProcParams(params)
         )
+    // todo this is duplicated logic, would be better with an enum
     const activeStep = session
         ? procParams
             ? 4
