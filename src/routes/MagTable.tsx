@@ -1,54 +1,53 @@
 import {
-    Button,
     Box,
+    Button,
+    FormControl,
     Heading,
     HStack,
     IconButton,
     Input,
-    VStack,
-    TableContainer,
-    Table,
-    Thead,
-    Tbody,
-    Tfoot,
-    Tr,
-    Th,
-    Td,
-    Text,
-    TableCaption,
     Modal,
-    ModalOverlay,
-    ModalHeader,
-    ModalFooter,
-    ModalContent,
     ModalBody,
     ModalCloseButton,
-    FormControl,
+    ModalContent,
+    ModalHeader,
+    ModalOverlay,
+    Table,
+    TableCaption,
+    TableContainer,
+    Tbody,
+    Td,
+    Text,
+    Tfoot,
+    Th,
+    Thead,
+    Tr,
     useDisclosure,
+    VStack
 } from '@chakra-ui/react'
 
-import { CheckIcon, EditIcon } from '@chakra-ui/icons'
 
-import { Link as LinkRouter, useLoaderData } from 'react-router-dom'
-import { components } from 'schema/main'
-import { MdAdd, MdHorizontalRule } from 'react-icons/md'
 import { addMagTableRow, removeMagTableRow } from 'loaders/magTable'
+import { MdAdd, MdHorizontalRule } from 'react-icons/md'
+import { useLoaderData } from 'react-router-dom'
+import { components } from 'schema/main'
 
-import React from 'react'
+import { FormEvent } from 'react'
 
 type MagTableRow = components['schemas']['MagnificationLookup']
 
 const MagTable = () => {
     const magTable = useLoaderData() as MagTableRow[] | null
     const { isOpen, onOpen, onClose } = useDisclosure()
-    const [numNewRows, setNumNewRows] = React.useState(0)
+    // todo unused variable
+    // const [numNewRows, setNumNewRows] = useState(0)
 
     const handleRemoveRow = (mag: number) => {
         removeMagTableRow(mag)
         window.location.reload()
     }
 
-    const handleForm = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleForm = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         const formData = new FormData(event.currentTarget)
         const mag = parseInt(formData.get('magnification') as string)
@@ -125,41 +124,7 @@ const MagTable = () => {
                                         </ModalContent>
                                     </Modal>
                                     <Tbody>
-                                        {magTable && magTable.length > 0 ? (
-                                            magTable.map((row) => {
-                                                return (
-                                                    <Tr>
-                                                        <Td>
-                                                            <Text>
-                                                                {
-                                                                    row.magnification
-                                                                }
-                                                            </Text>
-                                                        </Td>
-                                                        <Td>
-                                                            <Text>
-                                                                {row.pixel_size}
-                                                            </Text>
-                                                        </Td>
-                                                        <Td>
-                                                            <IconButton
-                                                                aria-label="Remove row from database"
-                                                                icon={
-                                                                    <MdHorizontalRule />
-                                                                }
-                                                                onClick={() =>
-                                                                    handleRemoveRow(
-                                                                        row.magnification
-                                                                    )
-                                                                }
-                                                            ></IconButton>
-                                                        </Td>
-                                                    </Tr>
-                                                )
-                                            })
-                                        ) : (
-                                            <></>
-                                        )}
+                                        {magTable && magTable.length > 0 && magTable.map((row) => <MagTableRow row={row} handleRemoveRow={handleRemoveRow} />)}
                                     </Tbody>
                                     <Tfoot>
                                         <HStack>
@@ -182,3 +147,36 @@ const MagTable = () => {
 }
 
 export { MagTable }
+
+type MagTableRowProps = {
+    row: {
+        magnification: number
+        pixel_size: number
+    }
+    handleRemoveRow: (mag: number) => void
+}
+
+function MagTableRow({ row, handleRemoveRow }: MagTableRowProps) {
+    return <Tr>
+        <Td>
+            <Text>
+                {row.magnification}
+            </Text>
+        </Td>
+        <Td>
+            <Text>
+                {row.pixel_size}
+            </Text>
+        </Td>
+        <Td>
+            <IconButton
+                aria-label="Remove row from database"
+                icon={<MdHorizontalRule />}
+                onClick={() => handleRemoveRow(
+                    row.magnification
+                )}
+            ></IconButton>
+        </Td>
+    </Tr>
+}
+

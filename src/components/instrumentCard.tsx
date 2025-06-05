@@ -3,7 +3,7 @@ import { Card, CardBody, CardHeader, Image, Link, Text } from '@chakra-ui/react'
 import { getInstrumentName } from 'loaders/general'
 import { Link as LinkRouter } from 'react-router-dom'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { getUrlFromSessionStorage } from './getUrlFromSessionStorage'
 
 

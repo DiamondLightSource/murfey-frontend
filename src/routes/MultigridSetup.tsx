@@ -1,3 +1,4 @@
+import { ArrowForwardIcon } from '@chakra-ui/icons'
 import {
     Box,
     FormControl,
@@ -12,53 +13,52 @@ import {
     Switch,
     VStack,
 } from '@chakra-ui/react'
-import { ArrowForwardIcon } from '@chakra-ui/icons'
 
-import { Link as LinkRouter, useLoaderData, useParams } from 'react-router-dom'
-import { components } from 'schema/main'
+import { SetupStepper } from 'components/setupStepper'
 import {
     setupMultigridWatcher,
     startMultigridWatcher,
 } from 'loaders/multigridSetup'
 import { getSessionData } from 'loaders/session_clients'
-import { SetupStepper } from 'components/setupStepper'
-import React, { useEffect } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
+import { Link as LinkRouter, useLoaderData, useParams } from 'react-router-dom'
+import { components } from 'schema/main'
 
 type MachineConfig = components['schemas']['MachineConfig']
 type MultigridWatcherSpec = components['schemas']['MultigridWatcherSetup']
 type Session = components['schemas']['Session']
 
+function getInitialDirectory(machineConfig: MachineConfig | null) {
+    return machineConfig?.data_directories.find(Boolean) ?? ''
+}
+
 const MultigridSetup = () => {
     const machineConfig = useLoaderData() as MachineConfig | null
     const { sessid } = useParams()
-    let initialDirectory = ''
-    if (machineConfig)
-        machineConfig.data_directories.forEach((value) => {
-            if (initialDirectory === '') initialDirectory = value
-        })
+    const initialDirectory = getInitialDirectory(machineConfig)
     const [selectedDirectory, setSelectedDirectory] =
-        React.useState(initialDirectory)
-    const processByDefault = machineConfig
+        useState(initialDirectory)
+
+    const processByDefault: boolean | undefined = machineConfig
         ? machineConfig.process_by_default
         : true
+
     const [skipExistingProcessing, setSkipExistingProcessing] =
-        React.useState(!processByDefault)
-    const [session, setSession] = React.useState<Session>()
+        useState(!processByDefault)
+    const [session, setSession] = useState<Session>()
 
     useEffect(() => {
-        getSessionData(sessid).then((sess) => setSession(sess.session))
+        getSessionData(sessid).then((sessionData) => setSession(sessionData.session))
     }, [])
+
+    // todo better to have the step as enum, not hardcoded int
     const activeStep = session != null ? (session.started ? 3 : 2) : 2
 
     const handleDirectorySelection = (
-        e: React.ChangeEvent<HTMLSelectElement>
+        e: ChangeEvent<HTMLSelectElement>
     ) => setSelectedDirectory(e.target.value)
 
-    const recipesDefined = machineConfig
-        ? machineConfig.recipes
-            ? Object.keys(machineConfig.recipes).length !== 0
-            : false
-        : false
+    const recipesAreDefined: boolean = [machineConfig, machineConfig?.recipes, Object.keys(machineConfig?.recipes!).length !== 0].every(v => v)
 
     const handleSelection = async () => {
         if (typeof sessid !== 'undefined') {
@@ -69,9 +69,13 @@ const MultigridSetup = () => {
                 } as MultigridWatcherSpec,
                 parseInt(sessid)
             )
-            if (!recipesDefined) await startMultigridWatcher(parseInt(sessid))
+            if (!recipesAreDefined) await startMultigridWatcher(parseInt(sessid))
         }
     }
+
+    const targetLink = recipesAreDefined
+        ? `../new_session/parameters/${sessid}`
+        : `../sessions/${sessid}`
 
     return (
         <div className="rootContainer">
@@ -144,16 +148,10 @@ const MultigridSetup = () => {
                                 <HStack>
                                     <Select onChange={handleDirectorySelection}>
                                         {machineConfig &&
-                                        machineConfig.data_directories.length >
+                                            machineConfig.data_directories.length >
                                             0 ? (
                                             machineConfig.data_directories.map(
-                                                (value) => {
-                                                    return (
-                                                        <option value={value}>
-                                                            {value}
-                                                        </option>
-                                                    )
-                                                }
+                                                (value) => <option value={value}> {value} </option>
                                             )
                                         ) : (
                                             <GridItem colSpan={5}>
@@ -171,11 +169,7 @@ const MultigridSetup = () => {
                                         w={{ base: '100%', md: '19.6%' }}
                                         _hover={{ textDecor: 'none' }}
                                         as={LinkRouter}
-                                        to={
-                                            recipesDefined
-                                                ? `../new_session/parameters/${sessid}`
-                                                : `../sessions/${sessid}`
-                                        }
+                                        to={targetLink}
                                     >
                                         <IconButton
                                             aria-label="select"
@@ -194,3 +188,4 @@ const MultigridSetup = () => {
 }
 
 export { MultigridSetup }
+

@@ -33,28 +33,29 @@ import {
 import { getMachineConfigData } from 'loaders/machineConfig'
 import { CircleLoader } from 'react-spinners'
 
-import React from 'react'
+import React, { useState } from 'react'
 
 type File = components['schemas']['File']
 
 const GainRefTransfer = () => {
-    const possibleGainRefs = useLoaderData() as File[] | null
+    const possibleGainRefs = useLoaderData() as File[] | []
+    // NOTE why is setSearchParams unused?
     let [searchParams, setSearchParams] = useSearchParams()
     const navigate = useNavigate()
-    const [processing, setProcessing] = React.useState(false)
-    const [tag, setTag] = React.useState('')
-    const [falcon, setFalcon] = React.useState(false)
-    const [falconPreset, setFalconPreset] = React.useState(false)
+    const [processing, setProcessing] = useState<boolean>(false)
+    const [tag, setTag] = useState<string>('')
+    const [falcon, setFalcon] = useState<boolean>(false)
+    const [falconPreset, setFalconPreset] = useState<boolean>(false)
 
     const SelectGainRef = async (data: Record<string, any>, index: number) => {
         setProcessing(true)
         const sessid = searchParams.get('sessid')
-        const setup = searchParams.get('setup')
         if (sessid) {
             const transferStatus = await transferGainReference(
                 parseInt(sessid),
                 data['full_path']
             )
+            // todo why if true?
             if (true) {
                 const preparedGainReference = await prepareGainReference(
                     parseInt(sessid),
@@ -69,9 +70,14 @@ const GainRefTransfer = () => {
                 )
             }
         }
-        if (setup)
-            sessid ? navigate(`/new_session/setup/${sessid}`) : navigate('/')
-        else sessid ? navigate(`/sessions/${sessid}`) : navigate('/')
+        const setup = searchParams.get('setup')
+        const path = sessid
+            ? setup
+                ? `/new_session/setup/${sessid}`
+                : `/sessions/${sessid}`
+            : '/'
+
+        navigate(path)
         setProcessing(false)
     }
 

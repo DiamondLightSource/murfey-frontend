@@ -1,22 +1,13 @@
-import { Box, Button, Heading, HStack, VStack, Link } from '@chakra-ui/react'
+import { Box, Heading, VStack } from '@chakra-ui/react'
 
+import { Table } from '@diamondlightsource/ui-components'
 import {
-    useNavigate,
     useLoaderData,
-    useParams,
-    Link as LinkRouter,
+    useNavigate,
+    useParams
 } from 'react-router-dom'
 import { components } from 'schema/main'
-import { Table } from '@diamondlightsource/ui-components'
-import { SetupStepper } from 'components/setupStepper'
-import {
-    prepareGainReference,
-    transferGainReference,
-    updateCurrentGainReference,
-} from 'loaders/possibleGainRefs'
-import { getMachineConfigData } from 'loaders/machineConfig'
 
-import { useState } from 'react'
 
 type DataCollectionGroup = components['schemas']['DataCollectionGroup']
 
@@ -27,7 +18,7 @@ const DataCollectionGroups = () => {
     const { sessid } = useParams()
     const navigate = useNavigate()
 
-    const SelectDataCollectionGroup = async (
+    const dataCollectionGroupRedirect = async (
         data: Record<string, any>,
         index: number
     ) => {
@@ -73,7 +64,7 @@ const DataCollectionGroups = () => {
                                 { key: 'atlas', label: 'Atlas' },
                             ]}
                             label={'dataCollectionGroupsData'}
-                            onClick={SelectDataCollectionGroup}
+                            onClick={dataCollectionGroupRedirect}
                         />
                     ) : (
                         <></>

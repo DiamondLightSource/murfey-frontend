@@ -10,9 +10,9 @@ interface ErrorType {
 }
 
 const Error = () => {
-    const [heading, setHeading] = useState('')
-    const [message, setMessage] = useState('')
-    const [details, setDetails] = useState('')
+    const [heading, setHeading] = useState<string>('')
+    const [message, setMessage] = useState<string>('')
+    const [details, setDetails] = useState<string>('')
     const error = useRouteError() as ErrorType
 
     useEffect(() => {

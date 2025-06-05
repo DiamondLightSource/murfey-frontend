@@ -1,32 +1,15 @@
 import {
-    Card,
-    CardBody,
-    CardHeader,
-    Image,
-    Link,
-    Text,
+    Box,
     HStack,
     Heading,
-    VStack,
-    Box,
     SimpleGrid,
+    VStack
 } from '@chakra-ui/react'
+import { InstrumentInfoCard } from 'components/InstrumentInfoCard'
 
 import { TbMicroscope, TbSnowflake } from 'react-icons/tb'
-import { Link as LinkRouter, useLoaderData } from 'react-router-dom'
-import { getInstrumentName } from 'loaders/general'
-
-import React from 'react'
-
-const getUrl = (endpoint: string) => {
-    return process.env.REACT_APP_HUB_ENDPOINT + endpoint
-}
-
-type InstrumentInfo = {
-    instrument_name: string
-    display_name: string
-    instrument_url: string
-}
+import { useLoaderData } from 'react-router-dom'
+import { InstrumentInfo } from 'utils/types'
 
 const Hub = () => {
     const instrumentInfo = useLoaderData() as InstrumentInfo[]
@@ -65,40 +48,10 @@ const Hub = () => {
                 display="flex"
                 w="100%"
             >
-                {instrumentInfo ? (
-                    instrumentInfo.map((ini) => {
-                        return (
-                            <Link
-                                w={{ base: '100%', md: '19.6%' }}
-                                _hover={{ textDecor: 'none' }}
-                                as={LinkRouter}
-                                to={
-                                    process.env.REACT_APP_BACKEND_AUTH_TYPE ===
-                                    'cookie'
-                                        ? `/home`
-                                        : `/login`
-                                }
-                            >
-                                <Card
-                                    align="center"
-                                    onClick={() => sessionStorageSetup(ini)}
-                                >
-                                    <CardHeader>
-                                        <Image
-                                            src={getUrl(
-                                                `instrument/${ini.instrument_name}/image`
-                                            )}
-                                        />
-                                    </CardHeader>
-                                    <CardBody>
-                                        <Text>{ini.display_name}</Text>
-                                    </CardBody>
-                                </Card>
-                            </Link>
-                        )
-                    })
+                {instrumentInfo.length !== 0 ? (
+                    instrumentInfo.map((i) => <InstrumentInfoCard sessionStorageSetup={sessionStorageSetup} ini={i} />)
                 ) : (
-                    <></>
+                    <Heading>No instrument info available</Heading>
                 )}
             </SimpleGrid>
         </Box>

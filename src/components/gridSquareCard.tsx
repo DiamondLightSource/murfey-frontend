@@ -24,10 +24,14 @@ type FoilHole = components['schemas']['FoilHole']
 
 const zip = (a: number[], b: number[]) => a.map((k, i) => [k, b[i]])
 
-const GridSquareCard = (
-    gs: GridSquare,
-    sessid: string | undefined,
+interface GridSquareCardProps {
+    gs: GridSquare
+    sessid: string | undefined
     dcgid: string | undefined
+}
+
+const GridSquareCard = ({ gs, sessid, dcgid }:
+    GridSquareCardProps
 ) => {
     const [numFoilHoles, setNumFoilHoles] = useState(0)
     const [numMovies, setNumMovies] = useState(0)
@@ -37,6 +41,7 @@ const GridSquareCard = (
     const [foilHoleImages, setFoilHoleImages] = useState<(string | null)[]>([])
     const [sliderValue, setSliderValue] = useState(10)
 
+    // TODO ideally this is simplified
     const foilHoleSetup = (foilHoles: FoilHole[]) => {
         let xpositions: number[] = []
         let ypositions: number[] = []

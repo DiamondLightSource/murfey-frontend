@@ -2,222 +2,31 @@ import {
     Box,
     Button,
     Divider,
-    GridItem,
     Heading,
     HStack,
-    IconButton,
     Link,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
-    ModalBody,
-    ModalCloseButton,
-    Stack,
-    Stat,
-    StatLabel,
-    Tooltip,
-    VStack,
-    useDisclosure,
+    VStack
 } from '@chakra-ui/react'
 
-import { v4 as uuid4 } from 'uuid'
-import { Link as LinkRouter, useLoaderData } from 'react-router-dom'
-import { components } from 'schema/main'
-import { MdDelete } from 'react-icons/md'
-import { GiMagicBroom } from 'react-icons/gi'
-import { deleteSessionData } from 'loaders/session_clients'
-import { finaliseSession } from 'loaders/rsyncers'
-import { sessionTokenCheck } from 'loaders/jwt'
 import { InstrumentCard } from 'components/instrumentCard'
-import { PuffLoader } from 'react-spinners'
-import useWebSocket from 'react-use-websocket'
+import { Link as LinkRouter, useLoaderData } from 'react-router-dom'
+import useWebSocket, { Options } from 'react-use-websocket'
+import { v4 as uuid4 } from 'uuid'
 
-import React, { useEffect } from 'react'
-
-type Session = components['schemas']['Session']
-
-const SessionRow = (session: Session) => {
-    const {
-        isOpen: isOpenDelete,
-        onOpen: onOpenDelete,
-        onClose: onCloseDelete,
-    } = useDisclosure()
-    const {
-        isOpen: isOpenCleanup,
-        onOpen: onOpenCleanup,
-        onClose: onCloseCleanup,
-    } = useDisclosure()
-
-    const cleanupSession = async (sessid: number) => {
-        await finaliseSession(sessid)
-        onCloseCleanup()
-    }
-
-    const [sessionActive, setSessionActive] = React.useState(false)
-
-    useEffect(() => {
-        sessionTokenCheck(session.id).then((active) => setSessionActive(active))
-    }, [])
-
-    return (
-        <VStack w="100%" spacing={0}>
-            <Stack w="100%" spacing={5} py="0.8em">
-                {session ? (
-                    <>
-                        <HStack>
-                            <Modal
-                                isOpen={isOpenDelete}
-                                onClose={onCloseDelete}
-                            >
-                                <ModalOverlay />
-                                <ModalContent>
-                                    <ModalHeader>
-                                        Confirm removing session {session.name}{' '}
-                                        from list
-                                    </ModalHeader>
-                                    <ModalCloseButton />
-                                    <ModalBody>
-                                        Are you sure you want to continue? This
-                                        action is not reversible
-                                    </ModalBody>
-                                    <ModalFooter>
-                                        <Button
-                                            colorScheme="blue"
-                                            mr={3}
-                                            onClick={onCloseDelete}
-                                        >
-                                            Close
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            onClick={() => {
-                                                deleteSessionData(
-                                                    session.id
-                                                ).then(() =>
-                                                    window.location.reload()
-                                                )
-                                            }}
-                                        >
-                                            Confirm
-                                        </Button>
-                                    </ModalFooter>
-                                </ModalContent>
-                            </Modal>
-                            <Modal
-                                isOpen={isOpenCleanup}
-                                onClose={onCloseCleanup}
-                            >
-                                <ModalOverlay />
-                                <ModalContent>
-                                    <ModalHeader>
-                                        Confirm removing files for session{' '}
-                                        {session.name}
-                                    </ModalHeader>
-                                    <ModalCloseButton />
-                                    <ModalBody>
-                                        Are you sure you want to continue? This
-                                        action is not reversible
-                                    </ModalBody>
-                                    <ModalFooter>
-                                        <Button
-                                            colorScheme="blue"
-                                            mr={3}
-                                            onClick={onCloseCleanup}
-                                        >
-                                            Close
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            onClick={() => {
-                                                cleanupSession(session.id)
-                                            }}
-                                        >
-                                            Confirm
-                                        </Button>
-                                    </ModalFooter>
-                                </ModalContent>
-                            </Modal>
-                            <Tooltip label={session.name}>
-                                <Link
-                                    key={session.id}
-                                    _hover={{ textDecor: 'none' }}
-                                    as={LinkRouter}
-                                    display={'flex'}
-                                    to={`../sessions/${session.id ?? 0}`}
-                                >
-                                    <Stat
-                                        _hover={{
-                                            borderColor: 'murfey.400',
-                                        }}
-                                        bg={'murfey.400'}
-                                        overflow="auto"
-                                        w="calc(100%)"
-                                        p={2}
-                                        border="1px solid grey"
-                                        borderRadius={5}
-                                        display={'flex'}
-                                    >
-                                        <HStack>
-                                            <StatLabel
-                                                whiteSpace="nowrap"
-                                                textOverflow="ellipsis"
-                                                overflow="hidden"
-                                            >
-                                                {session.name}: {session.id}
-                                            </StatLabel>
-                                            {sessionActive ? (
-                                                <PuffLoader
-                                                    size={25}
-                                                    color="red"
-                                                />
-                                            ) : (
-                                                <></>
-                                            )}
-                                        </HStack>
-                                    </Stat>
-                                </Link>
-                            </Tooltip>
-                            <Tooltip label="Remove from list">
-                                <IconButton
-                                    aria-label="Delete session"
-                                    icon={<MdDelete />}
-                                    onClick={onOpenDelete}
-                                    isDisabled={sessionActive}
-                                />
-                            </Tooltip>
-                            <Tooltip label="Clean up visit files">
-                                <IconButton
-                                    aria-label="Clean up session"
-                                    icon={<GiMagicBroom />}
-                                    onClick={onOpenCleanup}
-                                    isDisabled={!sessionActive}
-                                />
-                            </Tooltip>
-                        </HStack>
-                    </>
-                ) : (
-                    <GridItem colSpan={5}>
-                        <Heading textAlign="center" py={4} variant="notFound">
-                            None Found
-                        </Heading>
-                    </GridItem>
-                )}
-            </Stack>
-        </VStack>
-    )
-}
+import { useEffect, useState } from 'react'
+import { Session } from "utils/types"
+import { SessionRow } from 'components/SessionRow'
 
 const Home = () => {
     const sessions = useLoaderData() as {
         current: Session[]
     } | null
-    const [UUID, setUUID] = React.useState('')
+    const [UUID, setUUID] = useState('')
     const baseUrl =
         sessionStorage.getItem('murfeyServerURL') ??
         process.env.REACT_APP_API_ENDPOINT
     const url = baseUrl ? baseUrl.replace('http', 'ws') : 'ws://localhost:8000'
+
     const parseWebsocketMessage = (message: any) => {
         let parsedMessage: any = {}
         try {
@@ -236,22 +45,23 @@ const Home = () => {
             setUUID(uuid4())
         }
     }, [UUID])
+
+    // 'null' is passed to 'useWebSocket()' if UUID is not yet set to
+    // prevent malformed connections
+    const wsUrl = UUID ? `${url}ws/connect/${UUID}` : null
+    const wsOptions: Options | undefined = UUID
+        ? {
+            onOpen: () => {
+                console.log('WebSocket connection established.')
+            },
+            onMessage: (event) => {
+                parseWebsocketMessage(event.data)
+            },
+        }
+        : undefined
+
     // Establish websocket connection to the backend
-    useWebSocket(
-        // 'null' is passed to 'useWebSocket()' if UUID is not yet set to
-        // prevent malformed connections
-        UUID ? url + `ws/connect/${UUID}` : null,
-        UUID
-            ? {
-                  onOpen: () => {
-                      console.log('WebSocket connection established.')
-                  },
-                  onMessage: (event) => {
-                      parseWebsocketMessage(event.data)
-                  },
-              }
-            : undefined
-    )
+    useWebSocket(wsUrl, wsOptions)
 
     return (
         <div className="rootContainer">
@@ -304,7 +114,7 @@ const Home = () => {
                                     sessions.current.map((current) => {
                                         return (
                                             <VStack w="100%" spacing={5}>
-                                                {SessionRow(current)}
+                                                <SessionRow id={current.id} name={current.name} visit_end_time={current.visit_end_time} />
                                             </VStack>
                                         )
                                     })

@@ -1,65 +1,56 @@
 import {
     Box,
     Button,
-    Divider,
-    GridItem,
-    Input,
     Heading,
-    HStack,
+    Input,
     Link,
-    Stack,
-    Stat,
-    StatHelpText,
-    StatLabel,
-    StatNumber,
-    Text,
-    VStack,
     Modal,
-    ModalOverlay,
-    ModalHeader,
+    ModalBody,
+    ModalCloseButton,
     ModalContent,
     ModalFooter,
-    ModalCloseButton,
-    ModalBody,
+    ModalHeader,
+    ModalOverlay,
+    Stack,
+    VStack
 } from '@chakra-ui/react'
 
 import { useDisclosure } from '@chakra-ui/react'
-import { Link as LinkRouter, useLoaderData, useParams } from 'react-router-dom'
-import { components } from 'schema/main'
-import { SetupStepper } from 'components/setupStepper'
 import { Table } from '@diamondlightsource/ui-components'
-import { createSession, getSessionDataForVisit } from 'loaders/session_clients'
-import { sessionTokenCheck, sessionHandshake } from 'loaders/jwt'
-import { useNavigate } from 'react-router-dom'
-import React, { ChangeEventHandler, useEffect } from 'react'
+import { SetupStepper } from 'components/setupStepper'
+import { sessionHandshake, sessionTokenCheck } from 'loaders/jwt'
 import { getMachineConfigData } from 'loaders/machineConfig'
+import { createSession, getSessionDataForVisit } from 'loaders/session_clients'
+import React, { ChangeEvent, useEffect, useState } from 'react'
+import { Link as LinkRouter, useLoaderData, useNavigate } from 'react-router-dom'
+import { components } from 'schema/main'
 
 type Visit = components['schemas']['Visit']
 type MachineConfig = components['schemas']['MachineConfig']
 type Session = components['schemas']['Session']
 
 const NewSession = () => {
-    const currentVisits = useLoaderData() as Visit[] | null
+    const currentVisits = useLoaderData() as Visit[] | []
     const { isOpen, onOpen, onClose } = useDisclosure()
     const {
         isOpen: isOpenVisitCheck,
         onOpen: onOpenVisitCheck,
         onClose: onCloseVisitCheck,
     } = useDisclosure()
-    const [selectedVisit, setSelectedVisit] = React.useState('')
-    const [sessionReference, setSessionReference] = React.useState('')
-    const [activeSessionsForVisit, setActiveSessionsForVisit] = React.useState<
+    const [selectedVisit, setSelectedVisit] = useState<string>('')
+    const [sessionReference, setSessionReference] = useState<string>('')
+    const [activeSessionsForVisit, setActiveSessionsForVisit] = useState<
         (Session | null)[]
     >([])
-    const [gainRefDir, setGainRefDir] = React.useState<string | null>()
-    const [acqusitionSoftware, setAcquistionSoftware] = React.useState<
+    const [gainRefDir, setGainRefDir] = useState<string | null>()
+    const [acqusitionSoftwares, setAcquistionSoftwares] = useState<
         string[]
     >([])
     const navigate = useNavigate()
 
     const handleMachineConfig = (mcfg: MachineConfig) => {
         setGainRefDir(mcfg.gain_reference_directory)
-        setAcquistionSoftware(mcfg.acquisition_software)
+        setAcquistionSoftwares(mcfg.acquisition_software)
     }
 
     const instrumentName = sessionStorage.getItem('instrumentName')
@@ -79,17 +70,18 @@ const NewSession = () => {
     useEffect(() => {
         getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))
     }, [])
+
     useEffect(() => {
         alreadyActiveSessions().then((sessions) =>
             setActiveSessionsForVisit(sessions)
         )
     }, [selectedVisit])
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) =>
         setSessionReference(event.target.value)
 
     const handleVisitNameChange = (
-        event: React.ChangeEvent<HTMLInputElement>
+        event: ChangeEvent<HTMLInputElement>
     ) => {
         setSelectedVisit(event.target.value)
         setSessionReference(event.target.value)
@@ -116,8 +108,8 @@ const NewSession = () => {
             const sid = await startMurfeySession(iName)
             gainRefDir
                 ? navigate(
-                      `../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`
-                  )
+                    `../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`
+                )
                 : navigate(`/new_session/setup/${sid}`)
         } else onOpenVisitCheck()
     }
@@ -189,11 +181,11 @@ const NewSession = () => {
                                     (sid: number) => {
                                         gainRefDir
                                             ? navigate(
-                                                  `../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`
-                                              )
+                                                `../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`
+                                            )
                                             : navigate(
-                                                  `/new_session/setup/${sid}`
-                                              )
+                                                `/new_session/setup/${sid}`
+                                            )
                                     }
                                 )
                             }}

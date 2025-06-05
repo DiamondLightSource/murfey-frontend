@@ -1,17 +1,12 @@
 import {
     Box,
     Heading,
-    HStack,
-    VStack,
-    CardBody,
-    Card,
-    CardHeader,
-    Image,
+    VStack
 } from '@chakra-ui/react'
 
-import { useNavigate, useLoaderData, useParams } from 'react-router-dom'
-import { components } from 'schema/main'
 import { GridSquareCard } from 'components/gridSquareCard'
+import { useLoaderData, useParams } from 'react-router-dom'
+import { components } from 'schema/main'
 
 type GridSquare = components['schemas']['GridSquare']
 
@@ -25,13 +20,6 @@ const GridSquares = () => {
         gridSquares.length
     )
     const { sessid, dcgid } = useParams()
-
-    const getUrl = (endpoint: string) => {
-        return (
-            (sessionStorage.getItem('murfeyServerURL') ??
-                process.env.REACT_APP_API_ENDPOINT) + endpoint
-        )
-    }
 
     const res = (
         <div className="rootContainer">
@@ -62,10 +50,10 @@ const GridSquares = () => {
                 >
                     {gridSquares && gridSquares.length > 0 ? (
                         gridSquares.map((gs) =>
-                            GridSquareCard(gs, sessid, dcgid)
+                            <GridSquareCard gs={gs} sessid={sessid} dcgid={dcgid} />
                         )
                     ) : (
-                        <></>
+                        <Heading size='m' color='murfey.100'> No grid squares available</Heading>
                     )}
                 </Box>
             </Box>
