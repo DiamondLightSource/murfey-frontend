@@ -65,6 +65,12 @@ const router = createBrowserRouter([
     errorElement: <Error />,
     children: [
       {
+        path: "/",
+        element: <Hub />,
+        errorElement: <Error />,
+        loader: instrumentInfoLoader(queryClient),
+      },
+      {
         path: "/home",
         element: <Home />,
         errorElement: <Error />,
