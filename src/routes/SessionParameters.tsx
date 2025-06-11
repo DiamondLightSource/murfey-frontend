@@ -13,34 +13,34 @@ import {
     ModalCloseButton,
     VStack,
   } from "@chakra-ui/react";
-  
+
   import { useDisclosure } from "@chakra-ui/react";
   import { Link as LinkRouter, useLoaderData, useParams } from "react-router-dom";
   import { components } from "schema/main";
   import { Table } from "@diamondlightsource/ui-components";
   import { updateSessionProcessingParameters } from "loaders/processingParameters";
-  
+
   import React from "react";
 
   type EditableSessionParameters = components["schemas"]["EditableSessionProcessingParameters"];
-  
+
   type ProcessingRow = {
     parameterName: string;
     parameterValue?: string | number | boolean;
   };
-  
+
   type ProcessingTable = {
     processingRows: ProcessingRow[];
     tag: string;
   };
-  
+
   const nameLabelMap: Map<string, string> = new Map([
     ["dose_per_frame", "Dose per frame [e- / \u212B]"],
     ["gain_ref", "Gain Reference"],
     ["symmetry", "Symmetry"],
     ["eer_fractionation_file", "EER fractionation file (for motion correction)"]
   ]);
-  
+
   const SessionParameters = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { sessid } = useParams();
@@ -59,14 +59,14 @@ import {
     ))
     let table = {processingRows: tableRows, tag: "Session"} as ProcessingTable;
 
-    const handleParameterEdit = () => {
+    const handleParameterEdit = async () => {
       const data = {
         gainRef: (paramKey === "gain_ref") ? paramValue: "",
-        dosePerFrame: (paramKey === "dose_per_frame") ? paramValue: null,
+        dosePerFrame: (paramKey === "dose_per_frame") ? parseFloat(paramValue): null,
         eerFractionationFile: (paramKey === "eer_fractionation_file") ? paramValue: "",
         symmetry: (paramKey === "symmetry") ? paramValue: "",
       };
-      updateSessionProcessingParameters(sessid ?? "0", data);
+      await updateSessionProcessingParameters(sessid ?? "0", data);
       onClose();
       window.location.reload();
     }
@@ -78,7 +78,7 @@ import {
       setParamKey(data["parameterKey"]);
       onOpen();
     };
- 
+
     return (
       <div className="rootContainer">
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -116,7 +116,7 @@ import {
               </VStack>
             </VStack>
           </Box>
-          <Table 
+          <Table
             data={table.processingRows}
             headers={[
               { key: "parameterName", label: "Parameter" },
@@ -130,6 +130,5 @@ import {
       </div>
     );
   };
-  
+
   export { SessionParameters };
-  
