@@ -155,5 +155,3 @@ client.put = async (
 
 export const prependApiUrl = (url: string) =>
   `${getPrefix((sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT))}${url}`;
-
-
