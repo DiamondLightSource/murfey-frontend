@@ -5,7 +5,6 @@ import {
   Card,
   CardBody,
   CardHeader,
-  Divider,
   FormControl,
   FormLabel,
   Flex,
@@ -13,7 +12,6 @@ import {
   Heading,
   HStack,
   IconButton,
-  Image,
   Link,
   Menu,
   MenuButton,
@@ -32,12 +30,10 @@ import {
   Stack,
   StackDivider,
   Stat,
-  StatHelpText,
   StatLabel,
   StatNumber,
   Switch,
   Text,
-  Tooltip,
   VStack,
   useToast,
 } from "@chakra-ui/react";
@@ -48,19 +44,16 @@ import { ViewIcon } from "@chakra-ui/icons";
 import { v4 as uuid4 } from "uuid";
 import { Link as LinkRouter, useLoaderData, useParams, useNavigate } from "react-router-dom";
 import {
-  MdCheck,
   MdDensityMedium,
   MdFileUpload,
-  MdOutlineWarning,
   MdOutlineGridOn,
   MdPause,
 } from "react-icons/md";
-import { FiActivity } from "react-icons/fi";
 import { components } from "schema/main";
 import { getInstrumentName } from "loaders/general";
+import { updateVisitEndTime, getSessionData } from "loaders/session_clients";
 import { getMachineConfigData } from "loaders/machineConfig";
-import { pauseRsyncer, restartRsyncer, removeRsyncer, finaliseRsyncer, finaliseSession } from "loaders/rsyncers";
-import { getSessionData } from "loaders/session_clients";
+import { pauseRsyncer, restartRsyncer, removeRsyncer, finaliseRsyncer, finaliseSession, flushSkippedRsyncer } from "loaders/rsyncers";
 import { getSessionProcessingParameterData } from "loaders/processingParameters";
 import { sessionTokenCheck, sessionHandshake } from "loaders/jwt";
 import { startMultigridWatcher, setupMultigridWatcher } from "loaders/multigridSetup";
@@ -69,6 +62,7 @@ import { UpstreamVisitCard } from "components/upstreamVisitsCard";
 import useWebSocket from "react-use-websocket";
 
 import React, { useEffect } from "react";
+import { FaCalendar } from "react-icons/fa";
 
 type RSyncerInfo = components["schemas"]["RSyncerInfo"];
 type Session = components["schemas"]["Session"];
@@ -157,6 +151,12 @@ const RsyncCard = (rsyncer: RSyncerInfo) => {
                 Pause
               </MenuItem>
               <MenuItem
+                onClick={() => flushSkippedRsyncer(rsyncer.session_id, rsyncer.source)}
+                isDisabled={rsyncer.stopping}
+              >
+                Flush skipped files
+              </MenuItem>
+              <MenuItem
                 onClick={() => remove()}
                 isDisabled={rsyncer.stopping}
               >
@@ -212,6 +212,9 @@ const RsyncCard = (rsyncer: RSyncerInfo) => {
               <StatNumber>
                 {rsyncer.num_files_in_queue} queued
               </StatNumber>
+              <StatNumber>
+                {rsyncer.num_files_skipped} skipped
+              </StatNumber>
               {
                 rsyncer.analyser_alive ?
                 <StatNumber>
@@ -235,6 +238,7 @@ const getUrl = (endpoint: string) => {
 const Session = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenReconnect, onOpen: onOpenReconnect, onClose: onCloseReconnect } = useDisclosure();
+  const { isOpen: isOpenCalendar, onOpen: onOpenCalendar, onClose: onCloseCalendar } = useDisclosure();
   const rsync = useLoaderData() as RSyncerInfo[] | null;
   const { sessid } = useParams();
   const navigate = useNavigate();
@@ -245,6 +249,7 @@ const Session = () => {
   const [skipExistingProcessing, setSkipExistingProcessing] = React.useState(false);
   const [selectedDirectory, setSelectedDirectory] = React.useState("");
   const [rsyncersPaused, setRsyncersPaused] = React.useState(false);
+  const [visitEndTime, setVisitEndTime] = React.useState<Date>(new Date());
   const baseUrl = sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT
   const url = baseUrl
     ? baseUrl.replace("http", "ws")
@@ -269,6 +274,19 @@ const Session = () => {
   useEffect(() => {getSessionProcessingParameterData(sessid).then((params) => {if(params === null && recipesDefined && session !== undefined && session.process) navigate(`/new_session/parameters/${sessid}`);})})
 
   useEffect(() => {getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))}, []);
+
+  // Helper function to update the Session page with data from backend
+  const loadSession = async () => {
+    const sess = await getSessionData(sessid);
+    if (sess) {
+      setSession(sess.session);
+    }
+  };
+
+  // Load Session page upon initialisation
+  useEffect(() => {
+    loadSession();
+  }, [sessid]);
 
   const parseWebsocketMessage = (message: any) => {
     let parsedMessage: any = {};
@@ -340,6 +358,30 @@ const Session = () => {
 
   const getTransferring = (r: RSyncerInfo) => {return r.transferring;}
 
+  // Helper fnction format datetime to pass into input fields
+  const formatDateTimeLocal = (date: Date): string => {
+    const pad = (n: number) => n.toString().padStart(2, '0')
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const hour = pad(date.getHours());
+    const min = pad(date.getMinutes());
+    return `${year}-${month}-${day}T${hour}:${min}`;
+  }
+
+  // Set the default visit end time if none was provided
+  const defaultVisitEndTime = session?.visit_end_time
+    ? formatDateTimeLocal(new Date(session.visit_end_time))
+    : formatDateTimeLocal(new Date());
+
+  const registerEndTimeUpdate = async (newEndTime: Date) => {
+    if(typeof sessid !== "undefined") {
+      await updateVisitEndTime(parseInt(sessid), newEndTime);
+      await loadSession();  // Refresh the page with new details
+    }
+    onCloseCalendar();
+  }
+
   const checkRsyncStatus = async () => {
     setRsyncersPaused(rsync ? !rsync.every(getTransferring): true);
   }
@@ -364,7 +406,6 @@ const Session = () => {
       await startMultigridWatcher(parseInt(sessid));
     }
   }
-
 
   return (
     <div className="rootContainer">
@@ -434,12 +475,52 @@ const Session = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <Modal isOpen={isOpenCalendar} onClose={onCloseCalendar} size={"xl"}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Select data transfer end time</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <input
+              aria-label="Date and time"
+              type="datetime-local"
+              defaultValue={defaultVisitEndTime}
+              onChange={(e) => setVisitEndTime(new Date(e.target.value))}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onCloseCalendar}>
+              Cancel
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => registerEndTimeUpdate(visitEndTime)}
+            >
+              Confirm
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <Box w="100%" bg="murfey.50">
         <Box w="100%" overflow="hidden">
           <VStack className="homeRoot">
             <VStack bg="murfey.700" justifyContent="start" alignItems="start" display="flex" w="100%" px="10vw" py="1vh">
               <Heading size="xl" color="murfey.50">
                 Session {sessid}: {session ? session.visit : null}
+                {/* Display visit end time if set for this session */}
+                {session?.visit_end_time && (
+                  ` [Transfer ends at ${new Date(session.visit_end_time).toLocaleString(
+                    undefined,
+                    {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                    }
+                  )}]`
+                )}
               </Heading>
               <HStack>
                 <HStack>
@@ -456,6 +537,11 @@ const Session = () => {
                 </Link>
                 </HStack>
                 {!sessionActive ? <Button variant="onBlue" onClick={() => onOpenReconnect()}>Reconnect</Button>: <></>}
+                </HStack>
+                <HStack>
+                  <IconButton aria-label="calendar-to-change-end-time" variant="onBlue" onClick={() => onOpenCalendar()}>
+                    <FaCalendar/>
+                  </IconButton>
                 </HStack>
                 <Spacer />
                 <ViewIcon color="white" />
