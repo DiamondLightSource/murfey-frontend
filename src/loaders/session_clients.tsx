@@ -28,13 +28,12 @@ export const getSessionDataForVisit = async (visit: string, instrumentName: stri
   return response.data;
 }
 
-const getSessionData = async (sessid: string = "0") => {
+export const getSessionData = async (sessid: string = "0") => {
   const response = await client.get(`session_info/session/${sessid}`);
 
   if (response.status !== 200) {
     return null;
   }
-
   return response.data;
 };
 
@@ -119,5 +118,3 @@ export const sessionLoader =
       (await queryClient.fetchQuery(singleQuery))
     );
   };
-
-export { getSessionData };
