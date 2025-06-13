@@ -275,14 +275,17 @@ const Session = () => {
 
   useEffect(() => {getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))}, []);
 
-  // Load up session information from backend
+  // Helper function to update the Session page with data from backend
+  const loadSession = async () => {
+    const sess = await getSessionData(sessid);
+    if (sess) {
+      setSession(sess.session);
+    }
+  };
+
+  // Load Session page upon initialisation
   useEffect(() => {
-    (async () => {
-      const sess = await getSessionData(sessid);
-      if (sess) {
-        setSession(sess.session);
-      }
-    })();
+    loadSession();
   }, [sessid]);
 
   const parseWebsocketMessage = (message: any) => {
@@ -355,8 +358,27 @@ const Session = () => {
 
   const getTransferring = (r: RSyncerInfo) => {return r.transferring;}
 
+  // Helper fnction format datetime to pass into input fields
+  const formatDateTimeLocal = (date: Date): string => {
+    const pad = (n: number) => n.toString().padStart(2, '0')
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const hour = pad(date.getHours());
+    const min = pad(date.getMinutes());
+    return `${year}-${month}-${day}T${hour}:${min}`;
+  }
+
+  // Set the default visit end time if none was provided
+  const defaultVisitEndTime = session?.visit_end_time
+    ? formatDateTimeLocal(new Date(session.visit_end_time))
+    : formatDateTimeLocal(new Date());
+
   const registerEndTimeUpdate = async (newEndTime: Date) => {
-    if(typeof sessid !== "undefined") await updateVisitEndTime(parseInt(sessid), newEndTime);
+    if(typeof sessid !== "undefined") {
+      await updateVisitEndTime(parseInt(sessid), newEndTime);
+      await loadSession();  // Refresh the page with new details
+    }
     onCloseCalendar();
   }
 
@@ -459,13 +481,23 @@ const Session = () => {
           <ModalHeader>Select data transfer end time</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <input aria-label="Date and time" type="datetime-local" onChange={(e) => setVisitEndTime(new Date(Date.parse(e.target.value)))}/>
+            <input
+              aria-label="Date and time"
+              type="datetime-local"
+              defaultValue={defaultVisitEndTime}
+              onChange={(e) => setVisitEndTime(new Date(e.target.value))}
+            />
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={onCloseCalendar}>
               Cancel
             </Button>
-            <Button variant="ghost" onClick={() => {registerEndTimeUpdate(visitEndTime)}}>Confirm</Button>
+            <Button
+              variant="ghost"
+              onClick={() => registerEndTimeUpdate(visitEndTime)}
+            >
+              Confirm
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -475,6 +507,20 @@ const Session = () => {
             <VStack bg="murfey.700" justifyContent="start" alignItems="start" display="flex" w="100%" px="10vw" py="1vh">
               <Heading size="xl" color="murfey.50">
                 Session {sessid}: {session ? session.visit : null}
+                {/* Display visit end time if set for this session */}
+                {session?.visit_end_time && (
+                  ` [Transfer ends at ${new Date(session.visit_end_time).toLocaleString(
+                    undefined,
+                    {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                    }
+                  )}]`
+                )}
               </Heading>
               <HStack>
                 <HStack>
