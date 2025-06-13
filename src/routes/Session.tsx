@@ -51,7 +51,7 @@ import {
 } from "react-icons/md";
 import { components } from "schema/main";
 import { getInstrumentName } from "loaders/general";
-import { updateVisitEndTime } from "loaders/session_clients";
+import { updateVisitEndTime, getSessionData } from "loaders/session_clients";
 import { getMachineConfigData } from "loaders/machineConfig";
 import { pauseRsyncer, restartRsyncer, removeRsyncer, finaliseRsyncer, finaliseSession, flushSkippedRsyncer } from "loaders/rsyncers";
 import { getSessionProcessingParameterData } from "loaders/processingParameters";
@@ -275,6 +275,16 @@ const Session = () => {
 
   useEffect(() => {getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))}, []);
 
+  // Load up session information from backend
+  useEffect(() => {
+    (async () => {
+      const sess = await getSessionData(sessid);
+      if (sess) {
+        setSession(sess.session);
+      }
+    })();
+  }, [sessid]);
+
   const parseWebsocketMessage = (message: any) => {
     let parsedMessage: any = {};
     try {
@@ -374,7 +384,6 @@ const Session = () => {
       await startMultigridWatcher(parseInt(sessid));
     }
   }
-
 
   return (
     <div className="rootContainer">
