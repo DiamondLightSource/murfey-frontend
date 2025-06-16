@@ -241,24 +241,20 @@ const Session = () => {
   const { isOpen: isOpenCalendar, onOpen: onOpenCalendar, onClose: onCloseCalendar } = useDisclosure();
   const { sessid } = useParams();
   const navigate = useNavigate();
-  const [UUID, setUUID] = React.useState("");
-  const [instrumentName, setInstrumentName] = React.useState("");
-  const [machineConfig, setMachineConfig] = React.useState<MachineConfig>();
   const [sessionActive, setSessionActive] = React.useState(false);
+  const [session, setSession] = React.useState<Session>();
   const [skipExistingProcessing, setSkipExistingProcessing] = React.useState(false);
   const [selectedDirectory, setSelectedDirectory] = React.useState("");
   const [visitEndTime, setVisitEndTime] = React.useState<Date>(new Date());
   const baseUrl = sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT
+
+  // Set URL for websocket connection
   const url = baseUrl
     ? baseUrl.replace("http", "ws")
     : "ws://localhost:8000";
-  const toast = useToast();
-  const [session, setSession] = React.useState<Session>();
 
-  const handleMachineConfig = (mcfg: MachineConfig) => {
-    setMachineConfig(mcfg);
-    setSelectedDirectory(mcfg["data_directories"][0]);
-  }
+  // Set up UUID for websocket connection
+  const [UUID, setUUID] = React.useState("");
 
   // Use existing UUID if present; otherwise, generate a new UUID
   useEffect(() => {
@@ -267,49 +263,8 @@ const Session = () => {
     }
   }, [UUID]);
 
-  const recipesDefined = machineConfig ? machineConfig.recipes ? Object.keys(machineConfig.recipes).length !== 0: false: false;
-
-  useEffect(() => {getSessionProcessingParameterData(sessid).then((params) => {if(params === null && recipesDefined && session !== undefined && session.process) navigate(`/new_session/parameters/${sessid}`);})})
-
-  useEffect(() => {getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))}, []);
-
-  // Helper function to update the Session page with data from backend
-  const loadSession = async () => {
-    const sess = await getSessionData(sessid);
-    if (sess) {
-      setSession(sess.session);
-    }
-  };
-
-  // Load Session page upon initialisation
-  useEffect(() => {
-    loadSession();
-  }, [sessid]);
-
-  // Set up RSyncer handling
-  const rsyncerLoaderData = useLoaderData() as RSyncerInfo[] | null;
-  const [rsyncers, setRsyncers] = React.useState<RSyncerInfo[]>(rsyncerLoaderData ?? []);
-  const [rsyncersPaused, setRsyncersPaused] = React.useState(false);
-
-  // Poll Rsyncer every few seconds
-  useEffect(() => {
-    if (!sessid) return; // Don't run it until a Session has been successfully created
-
-    const fetchData = async () => {
-      try {
-        const data = await getRsyncerData(sessid) ;
-        setRsyncers(data)
-      } catch (err) {
-        console.error("Error polling rsyncers:", err)
-      }
-    };
-    fetchData();  // Fetch data once
-
-    // Set it to run every 2s
-    const interval = setInterval(fetchData, 2000);
-    return () => clearInterval(interval);
-  }, [sessid]);
-
+  // Websocket helper function to parse incoming messages
+  const toast = useToast();
   const parseWebsocketMessage = (message: any) => {
     let parsedMessage: any = {};
     try {
@@ -347,12 +302,63 @@ const Session = () => {
           },
           onMessage: (event) => {
             parseWebsocketMessage(event.data);
-            console.log(`Received the following websocket message:`, event.data)
           },
         }
       : undefined
   );
 
+
+  // Get machine config and set up related settings
+  const [machineConfig, setMachineConfig] = React.useState<MachineConfig>();
+  const handleMachineConfig = (mcfg: MachineConfig) => {
+    setMachineConfig(mcfg);
+    setSelectedDirectory(mcfg["data_directories"][0]);
+  }
+
+  const recipesDefined = machineConfig ? machineConfig.recipes ? Object.keys(machineConfig.recipes).length !== 0: false: false;
+
+  useEffect(() => {getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))}, []);
+
+  useEffect(() => {getSessionProcessingParameterData(sessid).then((params) => {if(params === null && recipesDefined && session !== undefined && session.process) navigate(`/new_session/parameters/${sessid}`);})})
+
+  // Session helper function to update the page with data from backend
+  const loadSession = async () => {
+    const sess = await getSessionData(sessid);
+    if (sess) {
+      setSession(sess.session);
+    }
+  };
+
+  // Load Session page upon initialisation
+  useEffect(() => {
+    loadSession();
+  }, [sessid]);
+
+  // Set up RSyncer handling
+  const rsyncerLoaderData = useLoaderData() as RSyncerInfo[] | null;
+  const [rsyncers, setRsyncers] = React.useState<RSyncerInfo[]>(rsyncerLoaderData ?? []);
+  const [rsyncersPaused, setRsyncersPaused] = React.useState(false);
+
+  // Poll Rsyncer every few seconds
+  useEffect(() => {
+    if (!sessid) return; // Don't run it until a Session has been successfully created
+
+    const fetchData = async () => {
+      try {
+        const data = await getRsyncerData(sessid) ;
+        setRsyncers(data)
+      } catch (err) {
+        console.error("Error polling rsyncers:", err)
+      }
+    };
+    fetchData();  // Fetch data once
+
+    // Set it to run every 2s
+    const interval = setInterval(fetchData, 2000);
+    return () => clearInterval(interval);
+  }, [sessid]);
+
+  // Other Rsync-related functions
   const finaliseAll = async () => {
     if(sessid) await finaliseSession(parseInt(sessid));
     onClose();
@@ -365,6 +371,17 @@ const Session = () => {
     setRsyncersPaused(true);
   }
 
+  const checkRsyncStatus = async () => {
+    setRsyncersPaused(rsyncers ? !rsyncers.every(getTransferring): true);
+  }
+
+  useEffect(() => {checkRsyncStatus()}, []);
+
+  const getTransferring = (r: RSyncerInfo) => {return r.transferring;}
+
+
+  // Get and set the instrument name
+  const [instrumentName, setInstrumentName] = React.useState("");
   const resolveName = async () => {
     const name: string = await getInstrumentName();
     setInstrumentName(name);
@@ -379,7 +396,6 @@ const Session = () => {
   }
   useEffect(() => {checkSessionActivationState()}, []);
 
-  const getTransferring = (r: RSyncerInfo) => {return r.transferring;}
 
   // Helper fnction format datetime to pass into input fields
   const formatDateTimeLocal = (date: Date): string => {
@@ -404,12 +420,6 @@ const Session = () => {
     }
     onCloseCalendar();
   }
-
-  const checkRsyncStatus = async () => {
-    setRsyncersPaused(rsyncers ? !rsyncers.every(getTransferring): true);
-  }
-
-  useEffect(() => {checkRsyncStatus()}, []);
 
   const handleDirectorySelection = (e: React.ChangeEvent<HTMLSelectElement>) =>
     setSelectedDirectory(e.target.value);
