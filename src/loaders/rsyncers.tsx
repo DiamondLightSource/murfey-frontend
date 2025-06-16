@@ -2,7 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { client } from "utils/api/client";
 import { Params } from "react-router-dom";
 
-const getRsyncerData = async (sessionId: string) => {
+export const getRsyncerData = async (sessionId: string) => {
   const response = await client.get(`instrument_server/instruments/${sessionStorage.getItem("instrumentName")}/sessions/${sessionId}/rsyncer_info`);
 
   if (response.status !== 200) {
