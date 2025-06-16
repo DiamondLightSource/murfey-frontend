@@ -53,7 +53,7 @@ import { components } from "schema/main";
 import { getInstrumentName } from "loaders/general";
 import { updateVisitEndTime, getSessionData } from "loaders/session_clients";
 import { getMachineConfigData } from "loaders/machineConfig";
-import { pauseRsyncer, restartRsyncer, removeRsyncer, finaliseRsyncer, finaliseSession, flushSkippedRsyncer } from "loaders/rsyncers";
+import { getRsyncerData, pauseRsyncer, restartRsyncer, removeRsyncer, finaliseRsyncer, finaliseSession, flushSkippedRsyncer } from "loaders/rsyncers";
 import { getSessionProcessingParameterData } from "loaders/processingParameters";
 import { sessionTokenCheck, sessionHandshake } from "loaders/jwt";
 import { startMultigridWatcher, setupMultigridWatcher } from "loaders/multigridSetup";
@@ -239,7 +239,6 @@ const Session = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenReconnect, onOpen: onOpenReconnect, onClose: onCloseReconnect } = useDisclosure();
   const { isOpen: isOpenCalendar, onOpen: onOpenCalendar, onClose: onCloseCalendar } = useDisclosure();
-  const rsync = useLoaderData() as RSyncerInfo[] | null;
   const { sessid } = useParams();
   const navigate = useNavigate();
   const [UUID, setUUID] = React.useState("");
@@ -248,7 +247,6 @@ const Session = () => {
   const [sessionActive, setSessionActive] = React.useState(false);
   const [skipExistingProcessing, setSkipExistingProcessing] = React.useState(false);
   const [selectedDirectory, setSelectedDirectory] = React.useState("");
-  const [rsyncersPaused, setRsyncersPaused] = React.useState(false);
   const [visitEndTime, setVisitEndTime] = React.useState<Date>(new Date());
   const baseUrl = sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT
   const url = baseUrl
@@ -288,6 +286,30 @@ const Session = () => {
     loadSession();
   }, [sessid]);
 
+  // Set up RSyncer handling
+  const rsyncerLoaderData = useLoaderData() as RSyncerInfo[] | null;
+  const [rsyncers, setRsyncers] = React.useState<RSyncerInfo[]>(rsyncerLoaderData ?? []);
+  const [rsyncersPaused, setRsyncersPaused] = React.useState(false);
+
+  // Poll Rsyncer every few seconds
+  useEffect(() => {
+    if (!sessid) return; // Don't run it until a Session has been successfully created
+
+    const fetchData = async () => {
+      try {
+        const data = await getRsyncerData(sessid) ;
+        setRsyncers(data)
+      } catch (err) {
+        console.error("Error polling rsyncers:", err)
+      }
+    };
+    fetchData();  // Fetch data once
+
+    // Set it to run every 2s
+    const interval = setInterval(fetchData, 2000);
+    return () => clearInterval(interval);
+  }, [sessid]);
+
   const parseWebsocketMessage = (message: any) => {
     let parsedMessage: any = {};
     try {
@@ -325,6 +347,7 @@ const Session = () => {
           },
           onMessage: (event) => {
             parseWebsocketMessage(event.data);
+            console.log(`Received the following websocket message:`, event.data)
           },
         }
       : undefined
@@ -336,7 +359,7 @@ const Session = () => {
   }
 
   const pauseAll = async () => {
-    rsync?.map((r) => {
+    rsyncers?.map((r) => {
       pauseRsyncer(r.session_id, r.source);
     });
     setRsyncersPaused(true);
@@ -383,7 +406,7 @@ const Session = () => {
   }
 
   const checkRsyncStatus = async () => {
-    setRsyncersPaused(rsync ? !rsync.every(getTransferring): true);
+    setRsyncersPaused(rsyncers ? !rsyncers.every(getTransferring): true);
   }
 
   useEffect(() => {checkRsyncStatus()}, []);
@@ -398,8 +421,8 @@ const Session = () => {
         {
           source: selectedDirectory,
           skip_existing_processing: skipExistingProcessing,
-          destination_overrides: rsync ? Object.fromEntries(rsync.map((r) => [r.source, r.destination])): {},
-          rsync_restarts: rsync ? rsync.map((r) => r.source): [],
+          destination_overrides: rsyncers ? Object.fromEntries(rsyncers.map((r) => [r.source, r.destination])): {},
+          rsync_restarts: rsyncers ? rsyncers.map((r) => r.source): [],
         } as MultigridWatcherSpec,
         parseInt(sessid),
       );
@@ -556,8 +579,8 @@ const Session = () => {
         <Box mt="1em" w="95%" justifyContent={"center"} alignItems={"center"}>
           <Flex align="stretch">
             <Stack w="100%" spacing={5} py="0.8em" px="1em">
-              {rsync && rsync.length > 0 ? (
-                rsync.map((r) => {
+              {rsyncers && rsyncers.length > 0 ? (
+                rsyncers.map((r) => {
                   return RsyncCard(r);
                 })
               ) : (
