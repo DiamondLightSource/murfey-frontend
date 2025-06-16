@@ -70,7 +70,15 @@ type MachineConfig = components["schemas"]["MachineConfig"];
 type MultigridWatcherSpec = components["schemas"]["MultigridWatcherSetup"];
 
 
-const RsyncCard = (rsyncer: RSyncerInfo) => {
+const RsyncCard = ({
+  rsyncer,
+  onRemove,
+  onFinalise,
+}: {
+  rsyncer: RSyncerInfo;
+  onRemove: (id: number, source: string) => void;
+  onFinalise: (id: number, source: string) => void;
+}) => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [action, setAction] = React.useState("finalise");
@@ -86,15 +94,20 @@ const RsyncCard = (rsyncer: RSyncerInfo) => {
   }
 
   const handleRsyncerAction = async () => {
-    if(action === "finalise")
+    if(action === "finalise") {
       await finaliseRsyncer(rsyncer.session_id, rsyncer.source);
-    else if(action === "remove")
+      // Run the function passed in from 'Session'
+      onFinalise(rsyncer.session_id, rsyncer.source);
+    }
+    else if(action === "remove") {
       await removeRsyncer(rsyncer.session_id, rsyncer.source);
+      // Run the function passed in from 'Session'
+      onRemove(rsyncer.session_id, rsyncer.source);
+    }
     onClose();
   }
 
   return (
-
     <Card width="100%" bg={rsyncer.alive ? "murfey.400": "#DF928E"} borderColor="murfey.300">
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -321,6 +334,7 @@ const Session = () => {
 
   useEffect(() => {getSessionProcessingParameterData(sessid).then((params) => {if(params === null && recipesDefined && session !== undefined && session.process) navigate(`/new_session/parameters/${sessid}`);})})
 
+
   // Session helper function to update the page with data from backend
   const loadSession = async () => {
     const sess = await getSessionData(sessid);
@@ -333,6 +347,7 @@ const Session = () => {
   useEffect(() => {
     loadSession();
   }, [sessid]);
+
 
   // Set up RSyncer handling
   const rsyncerLoaderData = useLoaderData() as RSyncerInfo[] | null;
@@ -359,6 +374,28 @@ const Session = () => {
   }, [sessid]);
 
   // Other Rsync-related functions
+  const handleRemoveRsyncer = async (sessionId: number, source: string) => {
+    // Safely update the displayed Rsync cards after a 'remove' call is made
+    try {
+      await removeRsyncer(sessionId, source);
+      const updatedData = await getRsyncerData(String(sessionId));
+      setRsyncers(updatedData);
+    } catch (err) {
+      console.error("Failed to remove rsyncer:", err);
+    }
+  };
+
+  const handleFinaliseRsyncer = async (sessionId: number, source: string) => {
+    // Safely update the displayed Rsync cards after a 'finalise' call is made
+    try {
+      await finaliseRsyncer(sessionId, source);
+      const updatedData = await getRsyncerData(String(sessionId));
+      setRsyncers(updatedData);
+    } catch (err) {
+      console.error("Failed to finalise rsyncer:", err);
+    }
+  };
+
   const finaliseAll = async () => {
     if(sessid) await finaliseSession(parseInt(sessid));
     onClose();
@@ -590,9 +627,15 @@ const Session = () => {
           <Flex align="stretch">
             <Stack w="100%" spacing={5} py="0.8em" px="1em">
               {rsyncers && rsyncers.length > 0 ? (
-                rsyncers.map((r) => {
-                  return RsyncCard(r);
-                })
+                rsyncers.map((r): React.ReactElement => (
+                  <RsyncCard
+                    key={`${r.session_id}-${r.source}`} // Used by 'map' for ID-ing elements
+                    rsyncer={r}
+                    // Pass the handler functions through to the RsyncCard object
+                    onRemove={handleRemoveRsyncer}
+                    onFinalise={handleFinaliseRsyncer}
+                  />
+                ))
               ) : (
                 <GridItem colSpan={5}>
                   <Heading textAlign="center" py={4} variant="notFound">
