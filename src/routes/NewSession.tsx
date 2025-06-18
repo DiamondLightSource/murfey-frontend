@@ -32,6 +32,7 @@ import { useNavigate } from "react-router-dom";
 import React, { useEffect } from "react";
 import { getMachineConfigData } from "loaders/machineConfig";
 import { FaCalendar } from "react-icons/fa";
+import { convertUTCToUKNaive, convertUKNaiveToUTC, formatUTCISOToUKLocal } from "utils/generic";
 
 
 type Visit = components["schemas"]["Visit"];
@@ -39,7 +40,18 @@ type MachineConfig = components["schemas"]["MachineConfig"];
 type Session = components["schemas"]["Session"];
 
 const NewSession = () => {
+
+  // Load visits and add columns where they are formatted
   const currentVisits = useLoaderData() as Visit[] | null;
+  const formattedVisits: Visit[] = currentVisits
+    ? currentVisits.map(visit => ({
+      ...visit,
+      // Add new columns with the formatted timestamps for use in the table
+      startFormatted: formatUTCISOToUKLocal(visit.start),
+      endFormatted: formatUTCISOToUKLocal(visit.end),
+    }))
+  : [];
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenVisitCheck, onOpen: onOpenVisitCheck, onClose: onCloseVisitCheck } = useDisclosure();
   const { isOpen: isOpenCalendar, onOpen: onOpenCalendar, onClose: onCloseCalendar } = useDisclosure();
@@ -47,10 +59,26 @@ const NewSession = () => {
   const [sessionReference, setSessionReference] = React.useState("");
   const [activeSessionsForVisit, setActiveSessionsForVisit] = React.useState<(Session | null)[]>([]);
   const [gainRefDir, setGainRefDir] = React.useState<string | null>();
-  const [endTime, setEndTime] = React.useState<Date>(new Date());
+  const [endTime, setEndTime] = React.useState<Date | null>(null);
+  const [proposedEndTime, setProposedEndTime] = React.useState<Date | null>(null);
 
   const [acqusitionSoftware, setAcquistionSoftware] = React.useState<string[]>([]);
   const navigate = useNavigate();
+
+  // Upon initialisation, zero out seconds field
+  const defaultVisitEndTime = (() => {
+    let now = new Date();
+    let timestamp = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      now.getHours(),
+      now.getMinutes(),
+      0, // Set seconds to 0
+      0  // Set milliseconds to 0
+    ).toISOString();
+    return timestamp;
+  })();
 
   const handleMachineConfig = (mcfg: MachineConfig) => {
     setGainRefDir(mcfg.gain_reference_directory);
@@ -78,7 +106,10 @@ const NewSession = () => {
   function selectVisit(data: Record<string, any>, index: number) {
     setSelectedVisit(data.name);
     setSessionReference(data.name);
-    setEndTime(new Date((Date.parse(data.end) + 3600)*1000));
+    // Add an hour to the listed end time
+    const endTime = new Date(new Date(data.end).getTime() + (3600 * 1000));
+    console.log(`endTime evaluates to:`, endTime.toISOString())
+    setEndTime(endTime);
   }
 
   const startMurfeySession = async (iName: string) => {
@@ -88,7 +119,7 @@ const NewSession = () => {
   }
 
   const handleCreateSession = async (iName: string) => {
-    if((!activeSessionsForVisit.length) || (activeSessionsForVisit.every((elem) => {return elem === null}))){ 
+    if((!activeSessionsForVisit.length) || (activeSessionsForVisit.every((elem) => {return elem === null}))){
       const sid = await startMurfeySession(iName);
       gainRefDir ? navigate(`../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`): navigate(`/new_session/setup/${sid}`);
     }
@@ -133,23 +164,19 @@ const NewSession = () => {
           <ModalBody>
             You may want to edit one of the following sessions instead (otherwise you may start multiple transfers for the same source)
             <VStack>
-            {
-              activeSessionsForVisit.map((session) => 
-                {
-                  return session ? <Link
-                          w={{ base: "100%", md: "19.6%" }}
-                          key="gain_ref"
-                          _hover={{ textDecor: "none" }}
-                          as={LinkRouter}
-                          to={`/sessions/${session.id}`}
-                        >
-                        <Button>
-                          {session.id}
-                        </Button>
-                        </Link>: <></>
-                }
-              )
-            }
+              {activeSessionsForVisit.map((session) => {
+                return session ? <Link
+                  w={{ base: "100%", md: "19.6%" }}
+                  key="gain_ref"
+                  _hover={{ textDecor: "none" }}
+                  as={LinkRouter}
+                  to={`/sessions/${session.id}`}
+                >
+                <Button>
+                  {session.id}
+                </Button>
+                </Link>: <></>
+              })}
             </VStack>
           </ModalBody>
           <ModalFooter>
@@ -172,8 +199,43 @@ const NewSession = () => {
           <ModalHeader>Select data transfer end time</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <input aria-label="Date and time" type="datetime-local" defaultValue={endTime.toISOString().substring(0, 16)} onChange={(e) => {setEndTime(new Date(Date.parse(e.target.value)))}}/>
+            <input
+              aria-label="Date and time"
+              type="datetime-local"
+              // Convert UTC into local UK time, and set seconds to 0
+              defaultValue={convertUTCToUKNaive(defaultVisitEndTime).slice(0, 16) + ":00"}
+              onChange={(e) => {
+                // The seconds field is removed when it's 0, so add it back
+                let timestamp = e.target.value
+                timestamp += ":00"
+                // Find the equivalent UTC time and save that
+                let newEndTime = new Date(convertUKNaiveToUTC(timestamp))
+                setProposedEndTime(newEndTime)
+                }}
+            />
           </ModalBody>
+          <ModalFooter>
+            <Button
+              colorScheme="blue" mr={3}
+              onClick={() => {
+                onCloseCalendar();
+                setProposedEndTime(null);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                if (proposedEndTime) {
+                  setEndTime(proposedEndTime)
+                  onCloseCalendar()
+                }
+              }}
+            >
+              Confirm
+            </Button>
+          </ModalFooter>
         </ModalContent>
       </Modal>
       <Box w="100%" bg="murfey.50">
@@ -204,11 +266,11 @@ const NewSession = () => {
           display={"flex"}
         >
           <Table
-            data={currentVisits}
+            data={formattedVisits}
             headers={[
               { key: "name", label: "Name" },
-              { key: "start", label: "Start Time" },
-              { key: "end", label: "End Time" },
+              { key: "startFormatted", label: "Start Time" },
+              { key: "endFormatted", label: "End Time" },
               { key: "proposal_title", label: "Description" },
             ]}
             label={"visitData"}
@@ -234,7 +296,22 @@ const NewSession = () => {
                 <HStack>
                 <VStack>
                 <Text>Transfers will stop after:</Text>
-                <Text>{endTime.toString()}</Text>
+                <Text>
+                  {endTime
+                    ? new Intl.DateTimeFormat("en-GB", {
+                      timeZone: "Europe/London",
+                      weekday: "short",
+                      year: "numeric",
+                      month: "short",
+                      day: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                      timeZoneName: "short",
+                      hour12: false,
+                    }).format(endTime)
+                    : "NOT SET"}
+                </Text>
                 </VStack>
                 <Tooltip label="Set end time for data transfer">
                 <IconButton aria-label="calendar-for-end-time" onClick={() => onOpenCalendar()}>
