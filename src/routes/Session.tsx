@@ -63,6 +63,7 @@ import useWebSocket from "react-use-websocket";
 
 import React, { useEffect } from "react";
 import { FaCalendar } from "react-icons/fa";
+import { convertUKNaiveToUTC, convertUTCToUKNaive } from "utils/generic";
 
 type RSyncerInfo = components["schemas"]["RSyncerInfo"];
 type Session = components["schemas"]["Session"];
@@ -258,7 +259,9 @@ const Session = () => {
   const [session, setSession] = React.useState<Session>();
   const [skipExistingProcessing, setSkipExistingProcessing] = React.useState(false);
   const [selectedDirectory, setSelectedDirectory] = React.useState("");
-  const [visitEndTime, setVisitEndTime] = React.useState<Date>(new Date());
+  const [visitEndTime, setVisitEndTime] = React.useState<Date | null>(null);
+  const [proposedVisitEndTime, setProposedVisitEndTime] = React.useState<Date | null>(null);
+  const [triggerVisitEndTimeUpdate, setTriggerVisitEndTimeUpdate] = React.useState<Boolean>(false);
   const baseUrl = sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT
 
   // Set URL for websocket connection
@@ -434,29 +437,48 @@ const Session = () => {
   useEffect(() => {checkSessionActivationState()}, []);
 
 
-  // Helper fnction format datetime to pass into input fields
-  const formatDateTimeLocal = (date: Date): string => {
-    const pad = (n: number) => n.toString().padStart(2, '0')
-    const year = date.getFullYear();
-    const month = pad(date.getMonth() + 1);
-    const day = pad(date.getDate());
-    const hour = pad(date.getHours());
-    const min = pad(date.getMinutes());
-    return `${year}-${month}-${day}T${hour}:${min}`;
-  }
-
-  // Set the default visit end time if none was provided
+  // Set the default visit end time (in UTC) if none was provided
   const defaultVisitEndTime = session?.visit_end_time
-    ? formatDateTimeLocal(new Date(session.visit_end_time))
-    : formatDateTimeLocal(new Date());
+    ? (() => {
+      let endTime = session.visit_end_time
+      console.log("Using the visit end time from database:", endTime)
+      return endTime
+    })()
+    : (() => {
+      const now = new Date();
+      const fallback = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        now.getHours(),
+        now.getMinutes(),
+        0, // Set seconds to 0
+        0  // Set milliseconds to 0
+      ).toISOString();
+      console.log("Using fallback", fallback)
+      return fallback
+    })();
 
-  const registerEndTimeUpdate = async (newEndTime: Date) => {
-    if(typeof sessid !== "undefined") {
-      await updateVisitEndTime(parseInt(sessid), newEndTime);
-      await loadSession();  // Refresh the page with new details
+  // Set the visit end time upon loading of the initial session
+  useEffect(() => {
+    if (session && session.visit_end_time) {
+      setVisitEndTime(new Date(session.visit_end_time));
+    } else {
+      setVisitEndTime(null);
     }
-    onCloseCalendar();
-  }
+  }, [session]);
+
+  // Update the visit end time only after it's been confirmed
+  useEffect(() => {
+    if (!triggerVisitEndTimeUpdate || !visitEndTime || typeof sessid === "undefined") return;
+    let registerEndTimeUpdate = async () => {
+      await updateVisitEndTime(parseInt(sessid), visitEndTime);
+      await loadSession();  // Refresh the page with new details
+      onCloseCalendar()
+      setTriggerVisitEndTimeUpdate(false)
+    };
+    registerEndTimeUpdate();
+  }, [visitEndTime, triggerVisitEndTimeUpdate]);
 
   const handleDirectorySelection = (e: React.ChangeEvent<HTMLSelectElement>) =>
     setSelectedDirectory(e.target.value);
@@ -554,17 +576,33 @@ const Session = () => {
             <input
               aria-label="Date and time"
               type="datetime-local"
-              defaultValue={defaultVisitEndTime}
-              onChange={(e) => setVisitEndTime(new Date(e.target.value))}
+              defaultValue={convertUTCToUKNaive(defaultVisitEndTime)}
+              onChange={(e) => {
+                let timestamp = e.target.value
+                timestamp += ":00"
+                const newVisitEndTime = new Date(convertUKNaiveToUTC(timestamp))
+                setProposedVisitEndTime(newVisitEndTime)
+              }}
             />
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onCloseCalendar}>
+            <Button
+              colorScheme="blue" mr={3}
+              onClick={() => {
+                onCloseCalendar();
+                setProposedVisitEndTime(null);
+              }}
+            >
               Cancel
             </Button>
             <Button
               variant="ghost"
-              onClick={() => registerEndTimeUpdate(visitEndTime)}
+              onClick={() => {
+                if (proposedVisitEndTime) {
+                  setVisitEndTime(proposedVisitEndTime)
+                  setTriggerVisitEndTimeUpdate(true)
+                }
+              }}
             >
               Confirm
             </Button>
@@ -578,18 +616,17 @@ const Session = () => {
               <Heading size="xl" color="murfey.50">
                 Session {sessid}: {session ? session.visit : null}
                 {/* Display visit end time if set for this session */}
-                {session?.visit_end_time && (
-                  ` [Transfer ends at ${new Date(session.visit_end_time).toLocaleString(
-                    undefined,
-                    {
-                      day: "2-digit",
-                      month: "long",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: false,
-                    }
-                  )}]`
+                {visitEndTime && (
+                  <> [Transfer ends at {visitEndTime.toLocaleString("en-GB", {
+                    weekday: "short",
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                    timeZoneName: "short",
+                  })}]</>
                 )}
               </Heading>
               <HStack>
