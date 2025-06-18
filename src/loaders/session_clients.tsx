@@ -2,6 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { components } from "schema/main";
 import { client } from "utils/api/client";
 import { Params } from "react-router-dom";
+import { convertUTCToUKNaive, convertUKNaiveToUTC } from "utils/generic";
 
 export const includePage = (endpoint: string, limit: number, page: number) =>
   `${endpoint}${endpoint.includes("?") ? "&" : "?"}page=${page - 1}&limit=${limit}`;
@@ -34,6 +35,15 @@ export const getSessionData = async (sessid: string = "0") => {
   if (response.status !== 200) {
     return null;
   }
+
+  // Convert naive times into UTC
+  response.data = {
+    ...response.data,
+    session: {
+      ...response.data.session,
+      visit_end_time: convertUKNaiveToUTC(response.data.session.visit_end_time),
+    }
+  };
   return response.data;
 };
 
@@ -50,10 +60,13 @@ export const linkSessionToClient = async (
   return response.data;
 };
 
-export const createSession = async (visit: string, sessionName: string, instrumentName: string, sessionEndTime: Date) => {
+export const createSession = async (visit: string, sessionName: string, instrumentName: string, sessionEndTime: Date | null) => {
+  const ukEndTime = sessionEndTime
+    ? convertUTCToUKNaive(sessionEndTime.toISOString())
+    : null;
   const response = await client.post(
     `session_info/instruments/${instrumentName}/visits/${visit}/session/${sessionName}`,
-    {"end_time": sessionEndTime.toISOString()},
+    {"end_time": ukEndTime},
   );
   if (response.status !== 200) {
     return null;
@@ -73,8 +86,9 @@ export const updateSession = async (sessionID: number, process: boolean = true) 
 }
 
 export const updateVisitEndTime = async (sessionID: number, sessionEndTime: Date) => {
+  const ukEndTime = convertUTCToUKNaive(sessionEndTime.toISOString())
   const response = await client.post(
-    `instrument_server/sessions/${sessionID}/multigrid_controller/visit_end_time?end_time=${sessionEndTime.toISOString()}`,
+    `instrument_server/sessions/${sessionID}/multigrid_controller/visit_end_time?end_time=${ukEndTime}`,
     {},
   );
   if (response.status !== 200) {
