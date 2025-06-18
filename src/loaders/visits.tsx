@@ -1,13 +1,22 @@
+import { components } from "schema/main";
 import { QueryClient } from "@tanstack/react-query";
 import { client } from "utils/api/client";
 import { Params } from "react-router-dom";
+import { convertUKNaiveToUTC } from "utils/generic";
 
+type Visit = components["schemas"]["Visit"];
 const getVisitData = async (instrumentName: string) => {
   const response = await client.get(`session_info/instruments/${instrumentName}/visits_raw`);
-
   if (response.status !== 200) {
     return null;
   }
+
+  // Convert naive times into UTC
+  response.data = response.data.map((item: Visit) => ({
+    ...item,
+    start: convertUKNaiveToUTC(item.start),
+    end: convertUKNaiveToUTC(item.end),
+  }));
 
   return response.data;
 };
