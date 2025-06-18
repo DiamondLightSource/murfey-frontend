@@ -35,8 +35,8 @@ export const getSessionData = async (sessid: string = "0") => {
   if (response.status !== 200) {
     return null;
   }
-
-  // Convert naive times into UTC
+  // Convert naive times into UTC, if set
+  if (!response.data.session.visit_end_time) return response.data;
   response.data = {
     ...response.data,
     session: {
