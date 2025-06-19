@@ -108,7 +108,6 @@ const NewSession = () => {
     setSessionReference(data.name);
     // Add an hour to the listed end time
     const endTime = new Date(new Date(data.end).getTime() + (3600 * 1000));
-    console.log(`endTime evaluates to:`, endTime.toISOString())
     setEndTime(endTime);
   }
 

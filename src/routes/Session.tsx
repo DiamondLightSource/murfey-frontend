@@ -441,7 +441,6 @@ const Session = () => {
   const defaultVisitEndTime = session?.visit_end_time
     ? (() => {
       let endTime = session.visit_end_time
-      console.log("Using the visit end time from database:", endTime)
       return endTime
     })()
     : (() => {
@@ -455,7 +454,6 @@ const Session = () => {
         0, // Set seconds to 0
         0  // Set milliseconds to 0
       ).toISOString();
-      console.log("Using fallback", fallback)
       return fallback
     })();
 
