@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 
 import { TbMicroscope, TbSnowflake } from "react-icons/tb";
-import { Link as useLoaderData, useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import React, { useEffect } from "react";
 
 
