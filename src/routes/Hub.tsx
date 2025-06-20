@@ -1,21 +1,19 @@
 import {
-    Card,
-    CardBody,
-    CardHeader,
-    Image,
-    Link,
-    Text,
-    HStack,
-    Heading,
-    VStack,
-    Box,
-    SimpleGrid,
-  } from "@chakra-ui/react";
+  Card,
+  CardBody,
+  CardHeader,
+  Image,
+  Link,
+  Text,
+  HStack,
+  Heading,
+  VStack,
+  Box,
+  SimpleGrid,
+} from "@chakra-ui/react";
 
 import { TbMicroscope, TbSnowflake } from "react-icons/tb";
 import { Link as LinkRouter, useLoaderData } from "react-router-dom";
-import { getInstrumentName } from "loaders/general";
-
 import React, { useEffect } from "react";
 
 const getUrl = (endpoint: string) => {
