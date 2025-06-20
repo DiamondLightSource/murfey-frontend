@@ -16,30 +16,48 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  return sessionStorage.getItem("murfeyServerURL") ? (
-    <VStack bg="murfey.700" justifyContent="start" alignItems="start" display="flex" w="100%" px="10vw" py="1vh">
-    <Heading size="xl" color="murfey.50">
-      <HStack> <TbSnowflake/> <TbMicroscope/> </HStack> Murfey Login 
-    </Heading>
-    <Card>
-      <CardBody>
-    <FormControl>
-      <Input placeholder="Username" onChange={handleUsername} />
-      <Input placeholder="Password" onChange={handlePassword} type="password" />
-        <Button
-          onClick={() => {
-            getJWT({ username: username, password: password })
-              .then((jwt) => sessionStorage.setItem("token", jwt.access_token))
-              .then(() => navigate("/home"));
-          }}
-        >
-          Login
-        </Button>
-    </FormControl>
-    </CardBody>
-    </Card>
+  return sessionStorage.getItem("murfeyServerURL")
+  ? (
+    <VStack
+      bg="murfey.700"
+      justifyContent="start"
+      alignItems="start"
+      display="flex"
+      w="100%"
+      px="10vw"
+      py="1vh"
+    >
+      <Heading size="xl" color="murfey.50">
+        <HStack> <TbSnowflake/> <TbMicroscope/> </HStack>
+        Murfey Login
+      </Heading>
+      <Card>
+        <CardBody>
+          <FormControl>
+            <Input placeholder="Username" onChange={handleUsername} />
+            <Input placeholder="Password" onChange={handlePassword} type="password" />
+              <Button
+                onClick={() => {
+                  getJWT({ username: username, password: password })
+                    .then((jwt) => sessionStorage.setItem("token", jwt.access_token))
+                    .then(() => {
+                      let instrumentName = sessionStorage.getItem("instrumentName")
+                      if (instrumentName) {
+                        navigate(`/home?instrumentName=${encodeURIComponent(instrumentName)}`)
+                      } else {
+                        console.error("Could not find instument information")
+                      }
+                    });
+                }}
+              >
+                Login
+              </Button>
+          </FormControl>
+        </CardBody>
+      </Card>
     </VStack>
-  ) : <Navigate to="/hub" replace />;
+  )
+  : <Navigate to="/hub" replace />;
 };
 
 export { Login };
