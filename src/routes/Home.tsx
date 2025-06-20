@@ -23,7 +23,7 @@ import {
 } from "@chakra-ui/react";
 
 import { v4 as uuid4 } from "uuid";
-import { Link as LinkRouter, useLoaderData } from "react-router-dom";
+import { Link as LinkRouter, useLoaderData, useSearchParams, useNavigate } from "react-router-dom";
 import { components } from "schema/main";
 import { MdDelete } from "react-icons/md";
 import { GiMagicBroom } from "react-icons/gi";
@@ -36,8 +36,8 @@ import useWebSocket from "react-use-websocket";
 
 import React, { useEffect } from "react";
 
-type Session = components["schemas"]["Session"];
 
+type Session = components["schemas"]["Session"];
 const SessionRow = (session: Session) => {
 
   const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
@@ -50,7 +50,9 @@ const SessionRow = (session: Session) => {
 
   const [sessionActive, setSessionActive] = React.useState(false);
 
-  useEffect(() => {sessionTokenCheck(session.id).then((active) => setSessionActive(active))}, []);
+  useEffect(() => {
+    sessionTokenCheck(session.id).then((active) => setSessionActive(active))
+  }, []);
 
   return (
     <VStack w="100%" spacing={0}>
@@ -69,7 +71,14 @@ const SessionRow = (session: Session) => {
                         <Button colorScheme="blue" mr={3} onClick={onCloseDelete}>
                           Close
                         </Button>
-                        <Button variant="ghost" onClick={() => {deleteSessionData(session.id).then(() => window.location.reload());}}>Confirm</Button>
+                        <Button
+                          variant="ghost"
+                          onClick={() => {
+                            deleteSessionData(session.id).then(() => window.location.reload());
+                          }}
+                        >
+                          Confirm
+                        </Button>
                       </ModalFooter>
                     </ModalContent>
                   </Modal>
@@ -157,10 +166,21 @@ const SessionRow = (session: Session) => {
   );
 };
 
-const Home = () => {
+export const Home = () => {
+  // Get session data from the loader
   const sessions = useLoaderData() as {
     current: Session[];
   } | null;
+
+  // Clean the URL after loading the page
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (searchParams.has("instrumentName")) {
+      navigate("/home", { replace: true });
+    }
+  }, [searchParams, navigate]);
+
   const [ UUID, setUUID ] = React.useState("");
   const baseUrl = sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT
   const url = baseUrl
@@ -250,5 +270,3 @@ const Home = () => {
     </div>
   );
 };
-
-export { Home };
