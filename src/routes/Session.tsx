@@ -5,7 +5,6 @@ import {
   Card,
   CardBody,
   CardHeader,
-  Divider,
   FormControl,
   FormLabel,
   Flex,
@@ -13,7 +12,6 @@ import {
   Heading,
   HStack,
   IconButton,
-  Image,
   Link,
   Menu,
   MenuButton,
@@ -32,12 +30,10 @@ import {
   Stack,
   StackDivider,
   Stat,
-  StatHelpText,
   StatLabel,
   StatNumber,
   Switch,
   Text,
-  Tooltip,
   VStack,
   useToast,
 } from "@chakra-ui/react";
@@ -48,19 +44,16 @@ import { ViewIcon } from "@chakra-ui/icons";
 import { v4 as uuid4 } from "uuid";
 import { Link as LinkRouter, useLoaderData, useParams, useNavigate } from "react-router-dom";
 import {
-  MdCheck,
   MdDensityMedium,
   MdFileUpload,
-  MdOutlineWarning,
   MdOutlineGridOn,
   MdPause,
 } from "react-icons/md";
-import { FiActivity } from "react-icons/fi";
 import { components } from "schema/main";
 import { getInstrumentName } from "loaders/general";
+import { updateVisitEndTime, getSessionData } from "loaders/session_clients";
 import { getMachineConfigData } from "loaders/machineConfig";
-import { pauseRsyncer, restartRsyncer, removeRsyncer, finaliseRsyncer, finaliseSession } from "loaders/rsyncers";
-import { getSessionData } from "loaders/session_clients";
+import { getRsyncerData, pauseRsyncer, restartRsyncer, removeRsyncer, finaliseRsyncer, finaliseSession, flushSkippedRsyncer } from "loaders/rsyncers";
 import { getSessionProcessingParameterData } from "loaders/processingParameters";
 import { sessionTokenCheck, sessionHandshake } from "loaders/jwt";
 import { startMultigridWatcher, setupMultigridWatcher } from "loaders/multigridSetup";
@@ -69,6 +62,8 @@ import { UpstreamVisitCard } from "components/upstreamVisitsCard";
 import useWebSocket from "react-use-websocket";
 
 import React, { useEffect } from "react";
+import { FaCalendar } from "react-icons/fa";
+import { convertUKNaiveToUTC, convertUTCToUKNaive } from "utils/generic";
 
 type RSyncerInfo = components["schemas"]["RSyncerInfo"];
 type Session = components["schemas"]["Session"];
@@ -76,7 +71,15 @@ type MachineConfig = components["schemas"]["MachineConfig"];
 type MultigridWatcherSpec = components["schemas"]["MultigridWatcherSetup"];
 
 
-const RsyncCard = (rsyncer: RSyncerInfo) => {
+const RsyncCard = ({
+  rsyncer,
+  onRemove,
+  onFinalise,
+}: {
+  rsyncer: RSyncerInfo;
+  onRemove: (id: number, source: string) => void;
+  onFinalise: (id: number, source: string) => void;
+}) => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [action, setAction] = React.useState("finalise");
@@ -92,15 +95,20 @@ const RsyncCard = (rsyncer: RSyncerInfo) => {
   }
 
   const handleRsyncerAction = async () => {
-    if(action === "finalise")
+    if(action === "finalise") {
       await finaliseRsyncer(rsyncer.session_id, rsyncer.source);
-    else if(action === "remove")
+      // Run the function passed in from 'Session'
+      onFinalise(rsyncer.session_id, rsyncer.source);
+    }
+    else if(action === "remove") {
       await removeRsyncer(rsyncer.session_id, rsyncer.source);
+      // Run the function passed in from 'Session'
+      onRemove(rsyncer.session_id, rsyncer.source);
+    }
     onClose();
   }
 
   return (
-
     <Card width="100%" bg={rsyncer.alive ? "murfey.400": "#DF928E"} borderColor="murfey.300">
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -155,6 +163,12 @@ const RsyncCard = (rsyncer: RSyncerInfo) => {
                 isDisabled={rsyncer.stopping}
               >
                 Pause
+              </MenuItem>
+              <MenuItem
+                onClick={() => flushSkippedRsyncer(rsyncer.session_id, rsyncer.source)}
+                isDisabled={rsyncer.stopping}
+              >
+                Flush skipped files
               </MenuItem>
               <MenuItem
                 onClick={() => remove()}
@@ -212,6 +226,9 @@ const RsyncCard = (rsyncer: RSyncerInfo) => {
               <StatNumber>
                 {rsyncer.num_files_in_queue} queued
               </StatNumber>
+              <StatNumber>
+                {rsyncer.num_files_skipped} skipped
+              </StatNumber>
               {
                 rsyncer.analyser_alive ?
                 <StatNumber>
@@ -235,27 +252,25 @@ const getUrl = (endpoint: string) => {
 const Session = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenReconnect, onOpen: onOpenReconnect, onClose: onCloseReconnect } = useDisclosure();
-  const rsync = useLoaderData() as RSyncerInfo[] | null;
+  const { isOpen: isOpenCalendar, onOpen: onOpenCalendar, onClose: onCloseCalendar } = useDisclosure();
   const { sessid } = useParams();
   const navigate = useNavigate();
-  const [UUID, setUUID] = React.useState("");
-  const [instrumentName, setInstrumentName] = React.useState("");
-  const [machineConfig, setMachineConfig] = React.useState<MachineConfig>();
   const [sessionActive, setSessionActive] = React.useState(false);
+  const [session, setSession] = React.useState<Session>();
   const [skipExistingProcessing, setSkipExistingProcessing] = React.useState(false);
   const [selectedDirectory, setSelectedDirectory] = React.useState("");
-  const [rsyncersPaused, setRsyncersPaused] = React.useState(false);
+  const [visitEndTime, setVisitEndTime] = React.useState<Date | null>(null);
+  const [proposedVisitEndTime, setProposedVisitEndTime] = React.useState<Date | null>(null);
+  const [triggerVisitEndTimeUpdate, setTriggerVisitEndTimeUpdate] = React.useState<Boolean>(false);
   const baseUrl = sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT
+
+  // Set URL for websocket connection
   const url = baseUrl
     ? baseUrl.replace("http", "ws")
     : "ws://localhost:8000";
-  const toast = useToast();
-  const [session, setSession] = React.useState<Session>();
 
-  const handleMachineConfig = (mcfg: MachineConfig) => {
-    setMachineConfig(mcfg);
-    setSelectedDirectory(mcfg["data_directories"][0]);
-  }
+  // Set up UUID for websocket connection
+  const [UUID, setUUID] = React.useState("");
 
   // Use existing UUID if present; otherwise, generate a new UUID
   useEffect(() => {
@@ -264,12 +279,8 @@ const Session = () => {
     }
   }, [UUID]);
 
-  const recipesDefined = machineConfig ? machineConfig.recipes ? Object.keys(machineConfig.recipes).length !== 0: false: false;
-
-  useEffect(() => {getSessionProcessingParameterData(sessid).then((params) => {if(params === null && recipesDefined && session !== undefined && session.process) navigate(`/new_session/parameters/${sessid}`);})})
-
-  useEffect(() => {getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))}, []);
-
+  // Websocket helper function to parse incoming messages
+  const toast = useToast();
   const parseWebsocketMessage = (message: any) => {
     let parsedMessage: any = {};
     try {
@@ -312,18 +323,105 @@ const Session = () => {
       : undefined
   );
 
+
+  // Get machine config and set up related settings
+  const [machineConfig, setMachineConfig] = React.useState<MachineConfig>();
+  const handleMachineConfig = (mcfg: MachineConfig) => {
+    setMachineConfig(mcfg);
+    setSelectedDirectory(mcfg["data_directories"][0]);
+  }
+
+  const recipesDefined = machineConfig ? machineConfig.recipes ? Object.keys(machineConfig.recipes).length !== 0: false: false;
+
+  useEffect(() => {getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))}, []);
+
+  useEffect(() => {getSessionProcessingParameterData(sessid).then((params) => {if(params === null && recipesDefined && session !== undefined && session.process) navigate(`/new_session/parameters/${sessid}`);})})
+
+
+  // Session helper function to update the page with data from backend
+  const loadSession = async () => {
+    const sess = await getSessionData(sessid);
+    if (sess) {
+      setSession(sess.session);
+    }
+  };
+
+  // Load Session page upon initialisation
+  useEffect(() => {
+    loadSession();
+  }, [sessid]);
+
+
+  // Set up RSyncer handling
+  const rsyncerLoaderData = useLoaderData() as RSyncerInfo[] | null;
+  const [rsyncers, setRsyncers] = React.useState<RSyncerInfo[]>(rsyncerLoaderData ?? []);
+  const [rsyncersPaused, setRsyncersPaused] = React.useState(false);
+
+  // Poll Rsyncer every few seconds
+  useEffect(() => {
+    if (!sessid) return; // Don't run it until a Session has been successfully created
+
+    const fetchData = async () => {
+      try {
+        const data = await getRsyncerData(sessid) ;
+        setRsyncers(data)
+      } catch (err) {
+        console.error("Error polling rsyncers:", err)
+      }
+    };
+    fetchData();  // Fetch data once
+
+    // Set it to run every 2s
+    const interval = setInterval(fetchData, 2000);
+    return () => clearInterval(interval);
+  }, [sessid]);
+
+  // Other Rsync-related functions
+  const handleRemoveRsyncer = async (sessionId: number, source: string) => {
+    // Safely update the displayed Rsync cards after a 'remove' call is made
+    try {
+      await removeRsyncer(sessionId, source);
+      const updatedData = await getRsyncerData(String(sessionId));
+      setRsyncers(updatedData);
+    } catch (err) {
+      console.error("Failed to remove rsyncer:", err);
+    }
+  };
+
+  const handleFinaliseRsyncer = async (sessionId: number, source: string) => {
+    // Safely update the displayed Rsync cards after a 'finalise' call is made
+    try {
+      await finaliseRsyncer(sessionId, source);
+      const updatedData = await getRsyncerData(String(sessionId));
+      setRsyncers(updatedData);
+    } catch (err) {
+      console.error("Failed to finalise rsyncer:", err);
+    }
+  };
+
   const finaliseAll = async () => {
     if(sessid) await finaliseSession(parseInt(sessid));
     onClose();
   }
 
   const pauseAll = async () => {
-    rsync?.map((r) => {
+    rsyncers?.map((r) => {
       pauseRsyncer(r.session_id, r.source);
     });
     setRsyncersPaused(true);
   }
 
+  const checkRsyncStatus = async () => {
+    setRsyncersPaused(rsyncers ? !rsyncers.every(getTransferring): true);
+  }
+
+  useEffect(() => {checkRsyncStatus()}, []);
+
+  const getTransferring = (r: RSyncerInfo) => {return r.transferring;}
+
+
+  // Get and set the instrument name
+  const [instrumentName, setInstrumentName] = React.useState("");
   const resolveName = async () => {
     const name: string = await getInstrumentName();
     setInstrumentName(name);
@@ -338,13 +436,47 @@ const Session = () => {
   }
   useEffect(() => {checkSessionActivationState()}, []);
 
-  const getTransferring = (r: RSyncerInfo) => {return r.transferring;}
 
-  const checkRsyncStatus = async () => {
-    setRsyncersPaused(rsync ? !rsync.every(getTransferring): true);
-  }
+  // Set the default visit end time (in UTC) if none was provided
+  const defaultVisitEndTime = session?.visit_end_time
+    ? (() => {
+      let endTime = session.visit_end_time
+      return endTime
+    })()
+    : (() => {
+      const now = new Date();
+      const fallback = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        now.getHours(),
+        now.getMinutes(),
+        0, // Set seconds to 0
+        0  // Set milliseconds to 0
+      ).toISOString();
+      return fallback
+    })();
 
-  useEffect(() => {checkRsyncStatus()}, []);
+  // Set the visit end time upon loading of the initial session
+  useEffect(() => {
+    if (session && session.visit_end_time) {
+      setVisitEndTime(new Date(session.visit_end_time));
+    } else {
+      setVisitEndTime(null);
+    }
+  }, [session]);
+
+  // Update the visit end time only after it's been confirmed
+  useEffect(() => {
+    if (!triggerVisitEndTimeUpdate || !visitEndTime || typeof sessid === "undefined") return;
+    let registerEndTimeUpdate = async () => {
+      await updateVisitEndTime(parseInt(sessid), visitEndTime);
+      await loadSession();  // Refresh the page with new details
+      onCloseCalendar()
+      setTriggerVisitEndTimeUpdate(false)
+    };
+    registerEndTimeUpdate();
+  }, [visitEndTime, triggerVisitEndTimeUpdate]);
 
   const handleDirectorySelection = (e: React.ChangeEvent<HTMLSelectElement>) =>
     setSelectedDirectory(e.target.value);
@@ -356,15 +488,14 @@ const Session = () => {
         {
           source: selectedDirectory,
           skip_existing_processing: skipExistingProcessing,
-          destination_overrides: rsync ? Object.fromEntries(rsync.map((r) => [r.source, r.destination])): {},
-          rsync_restarts: rsync ? rsync.map((r) => r.source): [],
+          destination_overrides: rsyncers ? Object.fromEntries(rsyncers.map((r) => [r.source, r.destination])): {},
+          rsync_restarts: rsyncers ? rsyncers.map((r) => r.source): [],
         } as MultigridWatcherSpec,
         parseInt(sessid),
       );
       await startMultigridWatcher(parseInt(sessid));
     }
   }
-
 
   return (
     <div className="rootContainer">
@@ -434,12 +565,67 @@ const Session = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <Modal isOpen={isOpenCalendar} onClose={onCloseCalendar} size={"xl"}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Select data transfer end time</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <input
+              aria-label="Date and time"
+              type="datetime-local"
+              defaultValue={convertUTCToUKNaive(defaultVisitEndTime)}
+              onChange={(e) => {
+                let timestamp = e.target.value
+                timestamp += ":00"
+                const newVisitEndTime = new Date(convertUKNaiveToUTC(timestamp))
+                setProposedVisitEndTime(newVisitEndTime)
+              }}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              colorScheme="blue" mr={3}
+              onClick={() => {
+                onCloseCalendar();
+                setProposedVisitEndTime(null);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                if (proposedVisitEndTime) {
+                  setVisitEndTime(proposedVisitEndTime)
+                  setTriggerVisitEndTimeUpdate(true)
+                }
+              }}
+            >
+              Confirm
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <Box w="100%" bg="murfey.50">
         <Box w="100%" overflow="hidden">
           <VStack className="homeRoot">
             <VStack bg="murfey.700" justifyContent="start" alignItems="start" display="flex" w="100%" px="10vw" py="1vh">
               <Heading size="xl" color="murfey.50">
                 Session {sessid}: {session ? session.visit : null}
+                {/* Display visit end time if set for this session */}
+                {visitEndTime && (
+                  <> [Transfer ends at {visitEndTime.toLocaleString("en-GB", {
+                    weekday: "short",
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                    timeZoneName: "short",
+                  })}]</>
+                )}
               </Heading>
               <HStack>
                 <HStack>
@@ -457,6 +643,11 @@ const Session = () => {
                 </HStack>
                 {!sessionActive ? <Button variant="onBlue" onClick={() => onOpenReconnect()}>Reconnect</Button>: <></>}
                 </HStack>
+                <HStack>
+                  <IconButton aria-label="calendar-to-change-end-time" variant="onBlue" onClick={() => onOpenCalendar()}>
+                    <FaCalendar/>
+                  </IconButton>
+                </HStack>
                 <Spacer />
                 <ViewIcon color="white" />
                 <Switch colorScheme="murfey" id="monitor" />
@@ -470,10 +661,16 @@ const Session = () => {
         <Box mt="1em" w="95%" justifyContent={"center"} alignItems={"center"}>
           <Flex align="stretch">
             <Stack w="100%" spacing={5} py="0.8em" px="1em">
-              {rsync && rsync.length > 0 ? (
-                rsync.map((r) => {
-                  return RsyncCard(r);
-                })
+              {rsyncers && rsyncers.length > 0 ? (
+                rsyncers.map((r): React.ReactElement => (
+                  <RsyncCard
+                    key={`${r.session_id}-${r.source}`} // Used by 'map' for ID-ing elements
+                    rsyncer={r}
+                    // Pass the handler functions through to the RsyncCard object
+                    onRemove={handleRemoveRsyncer}
+                    onFinalise={handleFinaliseRsyncer}
+                  />
+                ))
               ) : (
                 <GridItem colSpan={5}>
                   <Heading textAlign="center" py={4} variant="notFound">

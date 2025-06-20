@@ -1,10 +1,8 @@
 import { QueryClient } from "@tanstack/react-query";
-import { components } from "schema/main";
 import { client } from "utils/api/client";
 import { Params } from "react-router-dom";
-import { parseDate } from "utils/generic";
 
-const getRsyncerData = async (sessionId: string) => {
+export const getRsyncerData = async (sessionId: string) => {
   const response = await client.get(`instrument_server/instruments/${sessionStorage.getItem("instrumentName")}/sessions/${sessionId}/rsyncer_info`);
 
   if (response.status !== 200) {
@@ -15,7 +13,6 @@ const getRsyncerData = async (sessionId: string) => {
 };
 
 export const pauseRsyncer = async (sessionId: number, source: string) => {
-  console.log("stopping rsyncer");
 
   const response = await client.post(`instrument_server/sessions/${sessionId}/stop_rsyncer`, {
     source: source,
@@ -25,13 +22,10 @@ export const pauseRsyncer = async (sessionId: number, source: string) => {
     return null;
   }
 
-  console.log(response.data);
-
   return response.data;
 };
 
 export const restartRsyncer = async (sessionId: number, source: string) => {
-  console.log("stopping rsyncer");
 
   const response = await client.post(`instrument_server/sessions/${sessionId}/restart_rsyncer`, {
     source: source,
@@ -40,8 +34,6 @@ export const restartRsyncer = async (sessionId: number, source: string) => {
   if (response.status !== 200) {
     return null;
   }
-
-  console.log(response.data);
 
   return response.data;
 };
@@ -56,8 +48,6 @@ export const finaliseRsyncer = async (sessionId: number, source: string) => {
     return null;
   }
 
-  console.log(response.data);
-
   return response.data;
 };
 
@@ -69,13 +59,10 @@ export const finaliseSession = async (sessionId: number) => {
     return null;
   }
 
-  console.log(response.data);
-
   return response.data;
 };
 
 export const removeRsyncer = async (sessionId: number, source: string) => {
-  console.log("removing rsyncer");
 
   const response = await client.post(`instrument_server/sessions/${sessionId}/remove_rsyncer`, {
     source: source,
@@ -85,7 +72,18 @@ export const removeRsyncer = async (sessionId: number, source: string) => {
     return null;
   }
 
-  console.log(response.data);
+  return response.data;
+};
+
+export const flushSkippedRsyncer = async (sessionId: number, source: string) => {
+
+  const response = await client.post(`instrument_server/sessions/${sessionId}/flush_skipped_rsyncer`, {
+    source: source,
+  });
+
+  if (response.status !== 200) {
+    return null;
+  }
 
   return response.data;
 };

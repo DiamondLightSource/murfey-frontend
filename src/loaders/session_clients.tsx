@@ -2,6 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { components } from "schema/main";
 import { client } from "utils/api/client";
 import { Params } from "react-router-dom";
+import { convertUTCToUKNaive, convertUKNaiveToUTC } from "utils/generic";
 
 export const includePage = (endpoint: string, limit: number, page: number) =>
   `${endpoint}${endpoint.includes("?") ? "&" : "?"}page=${page - 1}&limit=${limit}`;
@@ -28,13 +29,21 @@ export const getSessionDataForVisit = async (visit: string, instrumentName: stri
   return response.data;
 }
 
-const getSessionData = async (sessid: string = "0") => {
+export const getSessionData = async (sessid: string = "0") => {
   const response = await client.get(`session_info/session/${sessid}`);
 
   if (response.status !== 200) {
     return null;
   }
-
+  // Convert naive times into UTC, if set
+  if (!response.data.session.visit_end_time) return response.data;
+  response.data = {
+    ...response.data,
+    session: {
+      ...response.data.session,
+      visit_end_time: convertUKNaiveToUTC(response.data.session.visit_end_time),
+    }
+  };
   return response.data;
 };
 
@@ -51,10 +60,13 @@ export const linkSessionToClient = async (
   return response.data;
 };
 
-export const createSession = async (visit: string, sessionName: string, instrumentName: string) => {
+export const createSession = async (visit: string, sessionName: string, instrumentName: string, sessionEndTime: Date | null) => {
+  const ukEndTime = sessionEndTime
+    ? convertUTCToUKNaive(sessionEndTime.toISOString())
+    : null;
   const response = await client.post(
     `session_info/instruments/${instrumentName}/visits/${visit}/session/${sessionName}`,
-    {},
+    {"end_time": ukEndTime},
   );
   if (response.status !== 200) {
     return null;
@@ -65,6 +77,18 @@ export const createSession = async (visit: string, sessionName: string, instrume
 export const updateSession = async (sessionID: number, process: boolean = true) => {
   const response = await client.post(
     `session_info/sessions/${sessionID}?process=${process ? 'true': 'false'}`,
+    {},
+  );
+  if (response.status !== 200) {
+    return null;
+  }
+  return response.data;
+}
+
+export const updateVisitEndTime = async (sessionID: number, sessionEndTime: Date) => {
+  const ukEndTime = convertUTCToUKNaive(sessionEndTime.toISOString())
+  const response = await client.post(
+    `instrument_server/sessions/${sessionID}/multigrid_controller/visit_end_time?end_time=${ukEndTime}`,
     {},
   );
   if (response.status !== 200) {
@@ -108,5 +132,3 @@ export const sessionLoader =
       (await queryClient.fetchQuery(singleQuery))
     );
   };
-
-export { getSessionData };
