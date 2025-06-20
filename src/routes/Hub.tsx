@@ -3,7 +3,6 @@ import {
   CardBody,
   CardHeader,
   Image,
-  Link,
   Text,
   HStack,
   Heading,
@@ -13,8 +12,9 @@ import {
 } from "@chakra-ui/react";
 
 import { TbMicroscope, TbSnowflake } from "react-icons/tb";
-import { Link as LinkRouter, useLoaderData } from "react-router-dom";
+import { Link as useLoaderData, useNavigate } from "react-router-dom";
 import React, { useEffect } from "react";
+
 
 const getUrl = (endpoint: string) => {
   return process.env.REACT_APP_HUB_ENDPOINT + endpoint;
@@ -28,21 +28,26 @@ type InstrumentInfo = {
 
 export const Hub = () => {
   const instrumentInfo = useLoaderData() as InstrumentInfo[];
-  const [sessionStorageInfo, setSessionStorageInfo] = React.useState<(InstrumentInfo | null)>(null);
+  const navigate = useNavigate();
 
   // When first landing on this page, clear stored session info from browser
   useEffect(() => {
-    console.log("Resetting storage information")
     sessionStorage.removeItem("murfeyServerURL")
     sessionStorage.removeItem("instrumentName")
   }, []);
 
-  // Saves the correct info into browser Session Storage
-  useEffect(() => {
-    if (!sessionStorageInfo) return;
-    sessionStorage.setItem("murfeyServerURL", sessionStorageInfo.instrument_url + "/");
-    sessionStorage.setItem("instrumentName", sessionStorageInfo.instrument_name);
-  }, [sessionStorageInfo]);
+  const navigateToInstrumentHome = (iinfo: InstrumentInfo) => {
+    // Update browser session storage info
+    sessionStorage.setItem("murfeyServerURL", iinfo.instrument_url + "/");
+    sessionStorage.setItem("instrumentName", iinfo.instrument_name);
+
+    // Direct users to /login only if authenticating with 'password'
+    if (process.env.REACT_APP_BACKEND_AUTH_TYPE === "cookie") {
+      navigate(`/home?instrumentName=${encodeURIComponent(iinfo.instrument_name)}`);
+    } else {
+      navigate(`/login`, { replace: true });
+    }
+  };
 
   return (
     <Box w="100%" overflow="hidden">
@@ -71,26 +76,19 @@ export const Hub = () => {
     >
       {instrumentInfo
         ? (instrumentInfo.map((ini) => {return (
-          <Link
+          <Card
             w={{ base: "100%", md: "19.6%" }}
             _hover={{ textDecor: "none" }}
-            as={LinkRouter}
-            to={
-              // Direct users to /login only if authenticating with 'password'
-              process.env.REACT_APP_BACKEND_AUTH_TYPE === "cookie"
-              ? `/home`
-              : `/login`
-            }
+            align="center"
+            onClick={() => navigateToInstrumentHome(ini)}
           >
-            <Card align="center" onClick={() => setSessionStorageInfo(ini)}>
-              <CardHeader>
-                <Image src={getUrl(`instrument/${ini.instrument_name}/image`)} />
-              </CardHeader>
-              <CardBody>
-                <Text>{ini.display_name}</Text>
-              </CardBody>
-            </Card>
-          </Link>);
+            <CardHeader>
+              <Image src={getUrl(`instrument/${ini.instrument_name}/image`)} />
+            </CardHeader>
+            <CardBody>
+              <Text>{ini.display_name}</Text>
+            </CardBody>
+          </Card>);
         }))
         : <></>
       }
