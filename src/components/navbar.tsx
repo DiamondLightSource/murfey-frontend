@@ -36,34 +36,6 @@ export interface NavbarProps extends BaseLinkProps, BoxProps {
   children?: React.ReactElement;
 }
 
-const NavLinks = ({ links, as }: BaseLinkProps) => (
-  <>
-    {links
-      ? links.map((link) => (
-          <Link
-            height="100%"
-            alignItems="center"
-            display="flex"
-            px={2}
-            textDecor="none"
-            as={as}
-            borderTop="4px solid transparent"
-            borderBottom="4px solid transparent"
-            color="murfey.50"
-            _hover={{
-              color: "murfey.500",
-              borderBottom: "solid 4px",
-            }}
-            to={link.route}
-            key={link.label}
-          >
-            {link.label}
-          </Link>
-        ))
-      : null}
-  </>
-);
-
 export const Navbar = ({ links, as, children, logo, ...props }: NavbarProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [instrumentConnectionStatus, setInsrumentConnectionStatus] =
@@ -83,7 +55,7 @@ export const Navbar = ({ links, as, children, logo, ...props }: NavbarProps) => 
     resolveConnectionStatus();  // Fetch data once to start with
 
     // Set it to run every 4s
-    const interval = setInterval(resolveConnectionStatus, 8000);
+    const interval = setInterval(resolveConnectionStatus, 10000);
     return () => clearInterval(interval);
   }, []);
 
