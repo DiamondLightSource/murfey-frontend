@@ -70,11 +70,23 @@ const Navbar = ({ links, as, children, logo, ...props }: NavbarProps) => {
   const [instrumentConnectionStatus, setInsrumentConnectionStatus] =
     React.useState(false);
 
-  const resolveConnectionStatus = async () => {
-    const status: boolean = await getInstrumentConnectionStatus();
-    setInsrumentConnectionStatus(status);
-  };
-  resolveConnectionStatus();
+  // Check connectivity every few seconds
+  React.useEffect(() => {
+    const resolveConnectionStatus = async () => {
+      try {
+        const status: boolean = await getInstrumentConnectionStatus();
+        setInsrumentConnectionStatus(status)
+      } catch (err) {
+        console.error("Error checking connection status:", err);
+        setInsrumentConnectionStatus(false)
+      }
+    };
+    resolveConnectionStatus();  // Fetch data once to start with
+
+    // Set it to run every 4s
+    const interval = setInterval(resolveConnectionStatus, 8000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <Box position="sticky" top="0" zIndex={1} w="100%" {...props}>
@@ -111,7 +123,7 @@ const Navbar = ({ links, as, children, logo, ...props }: NavbarProps) => {
           ) : null}
           <Link as={LinkRouter} to="/hub">
           <Tooltip label="Back to the Hub">
-            <IconButton 
+            <IconButton
               size={"sm"}
               icon={<><TbSnowflake/><TbMicroscope/></>}
               aria-label={"Back to the Hub"}
