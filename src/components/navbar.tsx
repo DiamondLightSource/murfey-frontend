@@ -7,7 +7,6 @@ import {
   useDisclosure,
   Image,
   Tooltip,
-  VStack,
   BoxProps,
   Icon,
 } from "@chakra-ui/react";
@@ -17,7 +16,7 @@ import {
   MdSignalWifi4Bar,
   MdOutlineSignalWifiBad,
 } from "react-icons/md";
-import { TbMicroscope, TbSnowflake } from "react-icons/tb";
+import { TbMicroscope, TbSnowflake, TbHomeCog } from "react-icons/tb";
 import { getInstrumentConnectionStatus } from "loaders/general";
 import { Link as LinkRouter } from "react-router-dom";
 import React from "react";
@@ -65,7 +64,7 @@ const NavLinks = ({ links, as }: BaseLinkProps) => (
   </>
 );
 
-const Navbar = ({ links, as, children, logo, ...props }: NavbarProps) => {
+export const Navbar = ({ links, as, children, logo, ...props }: NavbarProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [instrumentConnectionStatus, setInsrumentConnectionStatus] =
     React.useState(false);
@@ -92,7 +91,7 @@ const Navbar = ({ links, as, children, logo, ...props }: NavbarProps) => {
     <Box position="sticky" top="0" zIndex={1} w="100%" {...props}>
       <Flex
         bg="murfey.800"
-        px={{ base: 4, md: "7.5vw" }}
+        px={{ base: 4, md: "2vw" }}
         h={12}
         alignItems={"center"}
         justifyContent={"space-between"}
@@ -107,38 +106,38 @@ const Navbar = ({ links, as, children, logo, ...props }: NavbarProps) => {
           _hover={{ background: "transparent", color: "murfey.500" }}
           onClick={isOpen ? onClose : onOpen}
         />
-        <HStack h="100%" spacing={8} alignItems={"center"}>
-          {logo ? (
-            <Link as={LinkRouter} to="/home">
-              <Box maxW="5rem">
+        <HStack h="100%" spacing={4} alignItems={"center"}>
+          {logo
+            ? (<Box maxW="5rem">
                 <Image
-                  alt="Home"
-                  _hover={{ filter: "brightness(70%)" }}
+                  alt=""
                   fit="cover"
                   paddingBottom={{ md: "6px", base: 0 }}
                   src={logo}
                 />
-              </Box>
-            </Link>
-          ) : null}
+              </Box>)
+            : null
+          }
           <Link as={LinkRouter} to="/hub">
-          <Tooltip label="Back to the Hub">
-            <IconButton
-              size={"sm"}
-              icon={<><TbSnowflake/><TbMicroscope/></>}
-              aria-label={"Back to the Hub"}
-              _hover={{ background: "transparent", color: "murfey.500" }}
-            />
-          </Tooltip>
+            <Tooltip label="Back to the Hub">
+              <IconButton
+                size={"sm"}
+                icon={<><TbHomeCog/></>}
+                aria-label={"Back to the Hub"}
+                _hover={{ background: "transparent", color: "murfey.500" }}
+              />
+            </Tooltip>
           </Link>
-          <HStack
-            h="100%"
-            as={"nav"}
-            spacing={4}
-            display={{ base: "none", md: "flex" }}
-          >
-            <NavLinks links={links} as={as} />
-          </HStack>
+          <Link as={LinkRouter} to="/home">
+            <Tooltip label="Back to the microscope">
+              <IconButton
+                size={"sm"}
+                icon={<><TbSnowflake/><TbMicroscope/></>}
+                aria-label={"Back to the microscope"}
+                _hover={{ background: "transparent", color: "murfey.500" }}
+              />
+            </Tooltip>
+          </Link>
           <Tooltip
             label={
               instrumentConnectionStatus
@@ -157,21 +156,7 @@ const Navbar = ({ links, as, children, logo, ...props }: NavbarProps) => {
             />
           </Tooltip>
         </HStack>
-        <Flex alignItems={"center"}>{children}</Flex>
       </Flex>
-      {isOpen && (
-        <VStack
-          bg="murfey.700"
-          borderBottom="1px solid"
-          borderColor="murfey.500"
-          as={"nav"}
-          spacing={4}
-        >
-          <NavLinks links={links} as={as} />
-        </VStack>
-      )}
     </Box>
   );
 };
-
-export { Navbar };
