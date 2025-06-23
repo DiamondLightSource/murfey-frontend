@@ -335,7 +335,13 @@ const Session = () => {
 
   useEffect(() => {getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))}, []);
 
-  useEffect(() => {getSessionProcessingParameterData(sessid).then((params) => {if(params === null && recipesDefined && session !== undefined && session.process) navigate(`/new_session/parameters/${sessid}`);})})
+  useEffect(() => {
+    getSessionProcessingParameterData(sessid).then((params) => {
+      if(params === null && recipesDefined && session !== undefined && session.process) {
+        navigate(`/new_session/parameters/${sessid}`)
+      };
+    });
+  }, [sessid])
 
 
   // Session helper function to update the page with data from backend
