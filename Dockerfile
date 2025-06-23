@@ -29,8 +29,11 @@ COPY ./package.json ./yarn.lock ./
 RUN yarn install --immutable --check-cache
 
 # Copy across files needed to build the app and build it
+# Standardise permissions to account for different default permissions between devs
 COPY ./ ./
-RUN yarn build
+RUN yarn build && \
+    chmod -R o+r /usr/src/app/build && \
+    find /usr/src/app/build -type d -exec chmod o+rx {} +
 
 # Start second stage
 FROM docker.io/nginxinc/nginx-unprivileged:alpine3.21-slim
