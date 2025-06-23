@@ -335,7 +335,13 @@ const Session = () => {
 
   useEffect(() => {getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))}, []);
 
-  useEffect(() => {getSessionProcessingParameterData(sessid).then((params) => {if(params === null && recipesDefined && session !== undefined && session.process) navigate(`/new_session/parameters/${sessid}`);})})
+  useEffect(() => {
+    getSessionProcessingParameterData(sessid).then((params) => {
+      if(params === null && recipesDefined && session !== undefined && session.process) {
+        navigate(`/new_session/parameters/${sessid}`)
+      };
+    });
+  }, [sessid])
 
 
   // Session helper function to update the page with data from backend
@@ -371,8 +377,8 @@ const Session = () => {
     };
     fetchData();  // Fetch data once
 
-    // Set it to run every 2s
-    const interval = setInterval(fetchData, 2000);
+    // Set it to run every 5s
+    const interval = setInterval(fetchData, 5000);
     return () => clearInterval(interval);
   }, [sessid]);
 
@@ -525,22 +531,22 @@ const Session = () => {
             <HStack>
             <FormLabel mb="0">Data directory</FormLabel>
             <Select onChange={handleDirectorySelection}>
-              {machineConfig &&
-              machineConfig["data_directories"].length > 0 ? (
-                machineConfig["data_directories"].map(
+              {machineConfig && machineConfig["data_directories"].length > 0
+                ? (machineConfig["data_directories"].map(
                   (value) => {
                     return (
                       <option value={value}>{value}</option>
                     );
                   },
+                ))
+                : (
+                  <GridItem colSpan={5}>
+                    <Heading textAlign="center" py={4} variant="notFound">
+                      No Data Directories Found
+                    </Heading>
+                  </GridItem>
                 )
-              ) : (
-                <GridItem colSpan={5}>
-                  <Heading textAlign="center" py={4} variant="notFound">
-                    No Data Directories Found
-                  </Heading>
-                </GridItem>
-              )}
+              }
             </Select>
             </HStack>
             <HStack>
@@ -661,8 +667,8 @@ const Session = () => {
         <Box mt="1em" w="95%" justifyContent={"center"} alignItems={"center"}>
           <Flex align="stretch">
             <Stack w="100%" spacing={5} py="0.8em" px="1em">
-              {rsyncers && rsyncers.length > 0 ? (
-                rsyncers.map((r): React.ReactElement => (
+              {rsyncers && rsyncers.length > 0
+                ? (rsyncers.map((r): React.ReactElement => (
                   <RsyncCard
                     key={`${r.session_id}-${r.source}`} // Used by 'map' for ID-ing elements
                     rsyncer={r}
@@ -670,14 +676,15 @@ const Session = () => {
                     onRemove={handleRemoveRsyncer}
                     onFinalise={handleFinaliseRsyncer}
                   />
-                ))
-              ) : (
-                <GridItem colSpan={5}>
-                  <Heading textAlign="center" py={4} variant="notFound">
-                    No RSyncers Found
-                  </Heading>
-                </GridItem>
-              )}
+                )))
+                : (
+                  <GridItem colSpan={5}>
+                    <Heading textAlign="center" py={4} variant="notFound">
+                      No RSyncers Found
+                    </Heading>
+                  </GridItem>
+                )
+              }
             </Stack>
             <Spacer />
             <Stack spacing={5} py="0.8em" px="1em">

@@ -1,5 +1,4 @@
 import { QueryClient } from "@tanstack/react-query";
-import { components } from "schema/main";
 import { client } from "utils/api/client";
 import { Params } from "react-router-dom";
 import { convertUTCToUKNaive, convertUKNaiveToUTC } from "utils/generic";
@@ -8,12 +7,9 @@ export const includePage = (endpoint: string, limit: number, page: number) =>
   `${endpoint}${endpoint.includes("?") ? "&" : "?"}page=${page - 1}&limit=${limit}`;
 
 const getSessionsData = async () => {
+  if (!sessionStorage.getItem("instrumentName")) return null;
   const response = await client.get(`session_info/instruments/${sessionStorage.getItem("instrumentName")}/sessions`);
-
-  if (response.status !== 200) {
-    return null;
-  }
-
+  if (response.status !== 200) return null;
   return {
     current: response.data,
   };
@@ -22,19 +18,14 @@ const getSessionsData = async () => {
 export const getSessionDataForVisit = async (visit: string, instrumentName: string) => {
   if(visit === "" || instrumentName === "") return [];
   const response = await client.get(`session_info/instruments/${instrumentName}/visits/${visit}/sessions`);
-  if (response.status !== 200) {
-    return [];
-  }
-
+  if (response.status !== 200) return [];
   return response.data;
-}
+};
 
 export const getSessionData = async (sessid: string = "0") => {
   const response = await client.get(`session_info/session/${sessid}`);
 
-  if (response.status !== 200) {
-    return null;
-  }
+  if (response.status !== 200) return null;
   // Convert naive times into UTC, if set
   if (!response.data.session.visit_end_time) return response.data;
   response.data = {
@@ -54,9 +45,7 @@ export const linkSessionToClient = async (
   const response = await client.post(`session_info/clients/${client_id}/session`, {
     session_name: sessionName,
   });
-  if (response.status !== 200) {
-    return null;
-  }
+  if (response.status !== 200) return null;
   return response.data;
 };
 
@@ -68,9 +57,7 @@ export const createSession = async (visit: string, sessionName: string, instrume
     `session_info/instruments/${instrumentName}/visits/${visit}/session/${sessionName}`,
     {"end_time": ukEndTime},
   );
-  if (response.status !== 200) {
-    return null;
-  }
+  if (response.status !== 200) return null;
   return response.data;
 };
 
@@ -79,9 +66,7 @@ export const updateSession = async (sessionID: number, process: boolean = true) 
     `session_info/sessions/${sessionID}?process=${process ? 'true': 'false'}`,
     {},
   );
-  if (response.status !== 200) {
-    return null;
-  }
+  if (response.status !== 200) return null;
   return response.data;
 }
 
@@ -91,30 +76,40 @@ export const updateVisitEndTime = async (sessionID: number, sessionEndTime: Date
     `instrument_server/sessions/${sessionID}/multigrid_controller/visit_end_time?end_time=${ukEndTime}`,
     {},
   );
-  if (response.status !== 200) {
-    return null;
-  }
+  if (response.status !== 200) return null;
   return response.data;
 }
 
 export const deleteSessionData = async (sessid: number) => {
   const response = await client.delete(`session_info/sessions/${sessid}`);
-  if (response.status !== 200) {
-    return null;
-  }
+  if (response.status !== 200) return null;
   return response.data;
 };
 
-const query = {
-  queryKey: ["homepageSessions", sessionStorage.getItem("instrumentName")],
-  queryFn: getSessionsData,
-  staleTime: 60000,
+export const sessionsLoader = (queryClient: QueryClient) => async ({ request }: { request: Request }) => {
+  // Get instrument name from the URL query
+  // By looking for a query, this prompts the loader to reload
+  const url = new URL(request.url);
+  const instrumentName =
+    url.searchParams.get("instrumentName") ||
+    sessionStorage.getItem("instrumentName");
+
+  const queryKey = ["homepageSessions", instrumentName];
+  const queryFn = async () => {
+    if (!instrumentName) return null;
+    const data = await getSessionsData()
+    if (!data) return null;
+    return data;
+  }
+  const query = {
+      queryKey: queryKey,
+      queryFn: queryFn,
+  }
+  return (
+    (await queryClient.getQueryData(queryKey)) ??
+    (await queryClient.fetchQuery(query))
+  );
 };
-
-export const sessionsLoader = (queryClient: QueryClient) => async () =>
-  (await queryClient.getQueryData(query.queryKey)) ??
-  (await queryClient.fetchQuery(query));
-
 
 const queryBuilder = (sessid: string = "0") => {
   return {

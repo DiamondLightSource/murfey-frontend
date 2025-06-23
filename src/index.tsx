@@ -49,6 +49,10 @@ const queryClient = new QueryClient({
 
 const router = createBrowserRouter([
   {
+    path: "/",
+    element: <Navigate to="/hub" replace />,
+  },
+  {
     path: "/hub",
     element: <Hub />,
     errorElement: <Error />,
@@ -64,12 +68,6 @@ const router = createBrowserRouter([
     element: <ProtectedRoutes />,
     errorElement: <Error />,
     children: [
-      {
-        path: "/",
-        element: <Hub />,
-        errorElement: <Error />,
-        loader: instrumentInfoLoader(queryClient),
-      },
       {
         path: "/home",
         element: <Home />,
