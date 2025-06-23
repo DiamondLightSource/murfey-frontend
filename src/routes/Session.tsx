@@ -377,8 +377,8 @@ const Session = () => {
     };
     fetchData();  // Fetch data once
 
-    // Set it to run every 2s
-    const interval = setInterval(fetchData, 2000);
+    // Set it to run every 5s
+    const interval = setInterval(fetchData, 5000);
     return () => clearInterval(interval);
   }, [sessid]);
 
