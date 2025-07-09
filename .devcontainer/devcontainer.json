@@ -1,5 +1,5 @@
 {
-  "name": "Squid - User Interfaces",
+  "name": "Murfey Frontend",
   "build": {
     // Sets the run context to one level up instead of the .devcontainer folder.
     "context": "..",
@@ -15,7 +15,7 @@
     }
   },
   // Create a '.inputrc' file in the user's home directory if it doesn't exist
-  "initializeCommand": "bash -c 'for i in $HOME/.inputrc; do [ -f $i ] || touch $i; done'",
+  // "initializeCommand": "bash -c 'for i in $HOME/.inputrc; do [ -f $i ] || touch $i; done'",
   "runArgs": [
     "--net=host",
     "--security-opt=label=disable",
@@ -29,20 +29,18 @@
     8080
   ],
   "mounts": [
-    "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind",
-    "source=${localEnv:HOME}/.inputrc,target=/root/.inputrc,type=bind"
+    // "source=${localEnv:HOME}/.inputrc,target=/root/.inputrc,type=bind",
+    "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind"
   ],
   "customizations": {
     "vscode": {
       // Add the IDs of extensions you want installed when the container is created.
       "extensions": [
         "christian-kohler.path-intellisense",
-        "espenp.prettier-vscode",
         "foxundermoon.shell-format",
-        "rvest.vs-code-prettier-eslint",
         "rodrigovallades.es7-react-js",
         "kamikillerto.vscode-colorize",
-        "naumovs.color-highlight"
+        "rvest.vs-code-prettier-eslint"
       ]
     }
   },
