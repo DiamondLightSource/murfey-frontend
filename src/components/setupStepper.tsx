@@ -10,30 +10,33 @@ import {
   StepTitle,
   Stepper,
   useSteps,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react'
 
-import React from "react";
+import React from 'react'
 
 const getUrl = (endpoint: string) => {
-  return (sessionStorage.getItem("murfeyServerURL") ?? process.env.REACT_APP_API_ENDPOINT) + endpoint;
-};
+  return (
+    (sessionStorage.getItem('murfeyServerURL') ??
+      process.env.REACT_APP_API_ENDPOINT) + endpoint
+  )
+}
 
 interface StepperStartConditions {
-  activeStepIndex: number;
+  activeStepIndex: number
 }
 
 const SetupStepper = ({ activeStepIndex }: StepperStartConditions) => {
   const steps = [
-    { title: "Visit", description: "Select visit" },
-    { title: "Gain reference", description: "Transfer and transform" },
-    { title: "Data location", description: "Start data transfer" },
-    { title: "Parameters", description: "For processing" },
-  ];
+    { title: 'Visit', description: 'Select visit' },
+    { title: 'Gain reference', description: 'Transfer and transform' },
+    { title: 'Data location', description: 'Start data transfer' },
+    { title: 'Parameters', description: 'For processing' },
+  ]
 
   const { activeStep } = useSteps({
     index: activeStepIndex,
     count: steps.length,
-  });
+  })
 
   return (
     <Stepper index={activeStep}>
@@ -56,7 +59,7 @@ const SetupStepper = ({ activeStepIndex }: StepperStartConditions) => {
         </Step>
       ))}
     </Stepper>
-  );
-};
+  )
+}
 
-export { SetupStepper };
+export { SetupStepper }

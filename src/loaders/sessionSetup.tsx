@@ -1,21 +1,22 @@
-import { QueryClient } from "@tanstack/react-query";
-import { client } from "utils/api/client";
-import { components } from "schema/main";
+import { QueryClient } from '@tanstack/react-query'
+import { client } from 'utils/api/client'
+import { components } from 'schema/main'
 
-type ProvidedProcessingParameters = components["schemas"]["ProvidedProcessingParameters"];
+type ProvidedProcessingParameters =
+  components['schemas']['ProvidedProcessingParameters']
 
 export const registerProcessingParameters = async (
   processingParameters: ProvidedProcessingParameters,
-  sessionId: number,
+  sessionId: number
 ) => {
   const response = await client.post(
     `instrument_server/sessions/${sessionId}/provided_processing_parameters`,
-    processingParameters,
-  );
+    processingParameters
+  )
 
   if (response.status !== 200) {
-    return null;
+    return null
   }
 
-  return response.data;
-};
+  return response.data
+}

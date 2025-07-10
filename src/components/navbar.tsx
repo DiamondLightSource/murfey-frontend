@@ -9,112 +9,126 @@ import {
   Tooltip,
   BoxProps,
   Icon,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react'
 import {
   MdMenu,
   MdClose,
   MdSignalWifi4Bar,
   MdOutlineSignalWifiBad,
-} from "react-icons/md";
-import { TbMicroscope, TbSnowflake, TbHomeCog } from "react-icons/tb";
-import { getInstrumentConnectionStatus } from "loaders/general";
-import { Link as LinkRouter } from "react-router-dom";
-import React from "react";
+} from 'react-icons/md'
+import { TbMicroscope, TbSnowflake, TbHomeCog } from 'react-icons/tb'
+import { getInstrumentConnectionStatus } from 'loaders/general'
+import { Link as LinkRouter } from 'react-router-dom'
+import React from 'react'
 
 export interface LinkDescriptor {
-  label: string;
-  route: string;
+  label: string
+  route: string
 }
 
 interface BaseLinkProps {
-  links?: LinkDescriptor[];
-  as?: React.ElementType;
+  links?: LinkDescriptor[]
+  as?: React.ElementType
 }
 
 export interface NavbarProps extends BaseLinkProps, BoxProps {
-  logo?: string | null;
-  children?: React.ReactElement;
+  logo?: string | null
+  children?: React.ReactElement
 }
 
-export const Navbar = ({ links, as, children, logo, ...props }: NavbarProps) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+export const Navbar = ({
+  links,
+  as,
+  children,
+  logo,
+  ...props
+}: NavbarProps) => {
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const [instrumentConnectionStatus, setInsrumentConnectionStatus] =
-    React.useState(false);
+    React.useState(false)
 
   // Check connectivity every few seconds
   React.useEffect(() => {
     const resolveConnectionStatus = async () => {
       try {
-        const status: boolean = await getInstrumentConnectionStatus();
+        const status: boolean = await getInstrumentConnectionStatus()
         setInsrumentConnectionStatus(status)
       } catch (err) {
-        console.error("Error checking connection status:", err);
+        console.error('Error checking connection status:', err)
         setInsrumentConnectionStatus(false)
       }
-    };
-    resolveConnectionStatus();  // Fetch data once to start with
+    }
+    resolveConnectionStatus() // Fetch data once to start with
 
     // Set it to run every 4s
-    const interval = setInterval(resolveConnectionStatus, 10000);
-    return () => clearInterval(interval);
-  }, []);
+    const interval = setInterval(resolveConnectionStatus, 10000)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <Box position="sticky" top="0" zIndex={1} w="100%" {...props}>
       <Flex
         bg="murfey.800"
-        px={{ base: 4, md: "2vw" }}
+        px={{ base: 4, md: '2vw' }}
         h={12}
-        alignItems={"center"}
-        justifyContent={"space-between"}
+        alignItems={'center'}
+        justifyContent={'space-between'}
       >
         <IconButton
-          size={"sm"}
+          size={'sm'}
           icon={isOpen ? <MdClose /> : <MdMenu />}
-          aria-label={"Open Menu"}
-          display={{ md: "none" }}
+          aria-label={'Open Menu'}
+          display={{ md: 'none' }}
           bg="transparent"
           border="none"
-          _hover={{ background: "transparent", color: "murfey.500" }}
+          _hover={{ background: 'transparent', color: 'murfey.500' }}
           onClick={isOpen ? onClose : onOpen}
         />
-        <HStack h="100%" spacing={4} alignItems={"center"}>
-          {logo
-            ? (<Box maxW="5rem">
-                <Image
-                  alt=""
-                  fit="cover"
-                  paddingBottom={{ md: "6px", base: 0 }}
-                  src={logo}
-                />
-              </Box>)
-            : null
-          }
+        <HStack h="100%" spacing={4} alignItems={'center'}>
+          {logo ? (
+            <Box maxW="5rem">
+              <Image
+                alt=""
+                fit="cover"
+                paddingBottom={{ md: '6px', base: 0 }}
+                src={logo}
+              />
+            </Box>
+          ) : null}
           <Link as={LinkRouter} to="/hub">
             <Tooltip label="Back to the Hub">
               <IconButton
-                size={"sm"}
-                icon={<><TbHomeCog/></>}
-                aria-label={"Back to the Hub"}
-                _hover={{ background: "transparent", color: "murfey.500" }}
+                size={'sm'}
+                icon={
+                  <>
+                    <TbHomeCog />
+                  </>
+                }
+                aria-label={'Back to the Hub'}
+                _hover={{ background: 'transparent', color: 'murfey.500' }}
               />
             </Tooltip>
           </Link>
           <Link as={LinkRouter} to="/home">
             <Tooltip label="Back to the microscope">
               <IconButton
-                size={"sm"}
-                icon={<><TbSnowflake/><TbMicroscope/></>}
-                aria-label={"Back to the microscope"}
-                _hover={{ background: "transparent", color: "murfey.500" }}
+                size={'sm'}
+                icon={
+                  <>
+                    <TbSnowflake />
+                    <TbMicroscope />
+                  </>
+                }
+                aria-label={'Back to the microscope'}
+                _hover={{ background: 'transparent', color: 'murfey.500' }}
               />
             </Tooltip>
           </Link>
           <Tooltip
             label={
               instrumentConnectionStatus
-                ? "Connected to instrument server"
-                : "No instrument server connection"
+                ? 'Connected to instrument server'
+                : 'No instrument server connection'
             }
             placement="bottom"
           >
@@ -124,11 +138,11 @@ export const Navbar = ({ links, as, children, logo, ...props }: NavbarProps) => 
                   ? MdSignalWifi4Bar
                   : MdOutlineSignalWifiBad
               }
-              color={instrumentConnectionStatus ? "white" : "red"}
+              color={instrumentConnectionStatus ? 'white' : 'red'}
             />
           </Tooltip>
         </HStack>
       </Flex>
     </Box>
-  );
-};
+  )
+}

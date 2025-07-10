@@ -1,23 +1,32 @@
-import { Button, Input, VStack, Link, FormControl, Card, CardBody, Heading, HStack } from "@chakra-ui/react";
-import { Link as LinkRouter, useNavigate, Navigate } from "react-router-dom";
-import { TbMicroscope, TbSnowflake } from "react-icons/tb";
+import {
+  Button,
+  Input,
+  VStack,
+  Link,
+  FormControl,
+  Card,
+  CardBody,
+  Heading,
+  HStack,
+} from '@chakra-ui/react'
+import { Link as LinkRouter, useNavigate, Navigate } from 'react-router-dom'
+import { TbMicroscope, TbSnowflake } from 'react-icons/tb'
 
-import { getJWT, handshake } from "loaders/jwt";
+import { getJWT, handshake } from 'loaders/jwt'
 
-import React from "react";
+import React from 'react'
 
 const Login = () => {
-  const [username, setUsername] = React.useState("");
+  const [username, setUsername] = React.useState('')
   const handleUsername = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setUsername(event.target.value);
-  const [password, setPassword] = React.useState("");
+    setUsername(event.target.value)
+  const [password, setPassword] = React.useState('')
   const handlePassword = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setPassword(event.target.value);
+    setPassword(event.target.value)
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  return sessionStorage.getItem("murfeyServerURL")
-  ? (
+  return sessionStorage.getItem('murfeyServerURL') ? (
     <VStack
       bg="murfey.700"
       justifyContent="start"
@@ -28,36 +37,49 @@ const Login = () => {
       py="1vh"
     >
       <Heading size="xl" color="murfey.50">
-        <HStack> <TbSnowflake/> <TbMicroscope/> </HStack>
+        <HStack>
+          {' '}
+          <TbSnowflake /> <TbMicroscope />{' '}
+        </HStack>
         Murfey Login
       </Heading>
       <Card>
         <CardBody>
           <FormControl>
             <Input placeholder="Username" onChange={handleUsername} />
-            <Input placeholder="Password" onChange={handlePassword} type="password" />
-              <Button
-                onClick={() => {
-                  getJWT({ username: username, password: password })
-                    .then((jwt) => sessionStorage.setItem("token", jwt.access_token))
-                    .then(() => {
-                      let instrumentName = sessionStorage.getItem("instrumentName")
-                      if (instrumentName) {
-                        navigate(`/home?instrumentName=${encodeURIComponent(instrumentName)}`)
-                      } else {
-                        console.error("Could not find instument information")
-                      }
-                    });
-                }}
-              >
-                Login
-              </Button>
+            <Input
+              placeholder="Password"
+              onChange={handlePassword}
+              type="password"
+            />
+            <Button
+              onClick={() => {
+                getJWT({ username: username, password: password })
+                  .then((jwt) =>
+                    sessionStorage.setItem('token', jwt.access_token)
+                  )
+                  .then(() => {
+                    let instrumentName =
+                      sessionStorage.getItem('instrumentName')
+                    if (instrumentName) {
+                      navigate(
+                        `/home?instrumentName=${encodeURIComponent(instrumentName)}`
+                      )
+                    } else {
+                      console.error('Could not find instument information')
+                    }
+                  })
+              }}
+            >
+              Login
+            </Button>
           </FormControl>
         </CardBody>
       </Card>
     </VStack>
+  ) : (
+    <Navigate to="/hub" replace />
   )
-  : <Navigate to="/hub" replace />;
-};
+}
 
-export { Login };
+export { Login }
