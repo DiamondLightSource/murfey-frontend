@@ -1,0 +1,55 @@
+{
+  "name": "Murfey Frontend",
+  "build": {
+    // Sets the run context to one level up instead of the .devcontainer folder.
+    "context": "..",
+    // Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
+    "dockerfile": "./Dockerfile",
+    "target": "dev"
+  },
+  // Features to add to the dev container. More info: https://containers.dev/features.
+  "features": {
+    // Some default things like git config, zsh and ssh keys
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "upgradePackages": false
+    }
+  },
+  // Create a '.inputrc' file in the user's home directory if it doesn't exist
+  // "initializeCommand": "bash -c 'for i in $HOME/.inputrc; do [ -f $i ] || touch $i; done'",
+  "runArgs": [
+    "--net=host",
+    "--security-opt=label=disable",
+    // Mount the user sockets folder
+    "-v${localEnv:XDG_RUNTIME_DIR}:${localEnv:XDG_RUNTIME_DIR}",
+    // add the docker socket environment variable to the container
+    "-e=DOCKER_HOST=${localEnv:DOCKER_HOST}"
+  ],
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  "forwardPorts": [
+    8080
+  ],
+  "mounts": [
+    // "source=${localEnv:HOME}/.inputrc,target=/root/.inputrc,type=bind",
+    "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind"
+  ],
+  "customizations": {
+    "vscode": {
+      // Add the IDs of extensions you want installed when the container is created.
+      "extensions": [
+        "christian-kohler.path-intellisense",
+        "foxundermoon.shell-format",
+        "rodrigovallades.es7-react-js",
+        "kamikillerto.vscode-colorize",
+        "rvest.vs-code-prettier-eslint"
+      ]
+    }
+  },
+  // make the workspace folder the same inside and outside of the container
+  "workspaceMount": "source=${localWorkspaceFolder},target=${localWorkspaceFolder},type=bind",
+  "workspaceFolder": "${localWorkspaceFolder}",
+  // for rootless we must not to mess with user ids inside the container
+  "updateRemoteUserUID": false,
+  // for rootless we are root inside the container
+  "remoteUser": "root",
+  "postStartCommand": "yarn"
+}
