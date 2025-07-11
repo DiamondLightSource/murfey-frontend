@@ -194,7 +194,7 @@ components:
       properties:
         detail:
           items:
-            $ref: "#/components/schemas/ValidationError"
+            $ref: '#/components/schemas/ValidationError'
           title: Detail
           type: array
       title: HTTPValidationError
@@ -469,7 +469,7 @@ components:
           title: Processing Job
           type: integer
         source:
-          default: ""
+          default: ''
           title: Source
           type: string
         tag:
@@ -501,7 +501,7 @@ components:
           title: Session Id
           type: integer
         session_name:
-          default: ""
+          default: ''
           title: Session Name
           type: string
       title: SessionInfo
@@ -675,7 +675,7 @@ paths:
     get:
       operationId: root__get
       responses:
-        "200":
+        '200':
           content:
             text/html:
               schema:
@@ -685,13 +685,13 @@ paths:
   /bootstrap/:
     get:
       description:
-        "Return a website containing instructions for installing the Murfey
+        'Return a website containing instructions for installing the Murfey
         client on a
 
-        machine with no internet access."
+        machine with no internet access.'
       operationId: get_bootstrap_instructions_bootstrap__get
       responses:
-        "200":
+        '200':
           content:
             text/html:
               schema:
@@ -703,17 +703,17 @@ paths:
   /bootstrap/murfey.whl:
     get:
       description:
-        "Return a wheel file containing the latest release version of Murfey.
+        'Return a wheel file containing the latest release version of Murfey.
         We should
 
         not have to worry about the exact Python compatibility here, as long as
 
         murfey.bootstrap is compatible with all relevant versions of Python.
 
-        This also ignores yanked releases, which again should be fine."
+        This also ignores yanked releases, which again should be fine.'
       operationId: get_murfey_wheel_bootstrap_murfey_whl_get
       responses:
-        "200":
+        '200':
           description: Successful Response
       summary: Get Murfey Wheel
       tags:
@@ -721,17 +721,17 @@ paths:
   /bootstrap/pip.whl:
     get:
       description:
-        "Return a static version of pip. This does not need to be the newest
+        'Return a static version of pip. This does not need to be the newest
         or best,
 
         but has to be compatible with all supported Python versions.
 
         This is only used during bootstrapping by the client to identify and then
 
-        download the actually newest appropriate version of pip."
+        download the actually newest appropriate version of pip.'
       operationId: get_pip_wheel_bootstrap_pip_whl_get
       responses:
-        "200":
+        '200':
           description: Successful Response
       summary: Get Pip Wheel
       tags:
@@ -740,7 +740,7 @@ paths:
     get:
       operationId: get_clients_clients_get
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
@@ -757,16 +757,16 @@ paths:
             title: Client Id
             type: integer
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Get Rsyncers For Client
   /clients/{client_id}/session:
@@ -780,16 +780,16 @@ paths:
             title: Client Id
             type: integer
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Remove Session
     post:
@@ -805,19 +805,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/SessionInfo"
+              $ref: '#/components/schemas/SessionInfo'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Link Client To Session
   /clients/{client_id}/spa_processing_parameters:
@@ -831,7 +831,7 @@ paths:
             title: Client Id
             type: integer
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
@@ -842,11 +842,11 @@ paths:
                   Parameters Get
                 type: array
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Get Spa Proc Params
     post:
@@ -862,32 +862,32 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ProcessingParametersSPA"
+              $ref: '#/components/schemas/ProcessingParametersSPA'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Register Spa Proc Params
   /cygwin/setup-x86_64.exe:
     get:
       description:
-        "Obtain and past though a Cygwin installer from an official source.
+        'Obtain and past though a Cygwin installer from an official source.
 
         This is used during client bootstrapping and can download and install the
 
-        Cygwin distribution that then remains on the client machines."
+        Cygwin distribution that then remains on the client machines.'
       operationId: get_cygwin_setup_cygwin_setup_x86_64_exe_get
       responses:
-        "200":
+        '200':
           description: Successful Response
       summary: Get Cygwin Setup
       tags:
@@ -904,13 +904,13 @@ paths:
             title: Request Path
             type: string
       responses:
-        "200":
+        '200':
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Parse Cygwin Request
       tags:
@@ -922,26 +922,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RegistrationMessage"
+              $ref: '#/components/schemas/RegistrationMessage'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Send Murfey Message
   /machine/:
     get:
       operationId: machine_info_machine__get
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
@@ -951,7 +951,7 @@ paths:
     get:
       operationId: get_mic_microscope__get
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
@@ -961,7 +961,7 @@ paths:
     get:
       operationId: get_mic_image_microscope_image__get
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
@@ -971,7 +971,7 @@ paths:
     get:
       operationId: new_client_id_new_client_id__get
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
@@ -988,13 +988,13 @@ paths:
             title: Package
             type: string
       responses:
-        "200":
+        '200':
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Get Plugin Wheel
       tags:
@@ -1004,7 +1004,7 @@ paths:
       description: Obtain list of all PyPI packages via the simple API (PEP 503).
       operationId: get_pypi_index_pypi__get
       responses:
-        "200":
+        '200':
           description: Successful Response
       summary: Get Pypi Index
       tags:
@@ -1012,12 +1012,12 @@ paths:
   /pypi/{package}/:
     get:
       description:
-        "Obtain list of all package downloads from PyPI via the simple
+        'Obtain list of all package downloads from PyPI via the simple
         API (PEP 503),
 
         and rewrite all download URLs to point to this server,
 
-        underneath the current directory."
+        underneath the current directory.'
       operationId: get_pypi_package_downloads_list_pypi__package___get
       parameters:
         - in: path
@@ -1027,13 +1027,13 @@ paths:
             title: Package
             type: string
       responses:
-        "200":
+        '200':
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Get Pypi Package Downloads List
       tags:
@@ -1056,13 +1056,13 @@ paths:
             title: Filename
             type: string
       responses:
-        "200":
+        '200':
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Get Pypi File
       tags:
@@ -1071,7 +1071,7 @@ paths:
     get:
       operationId: get_sessions_sessions_get
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
@@ -1088,16 +1088,16 @@ paths:
             title: Session Id
             type: integer
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Remove Session By Id
   /version:
@@ -1108,27 +1108,27 @@ paths:
           name: client_version
           required: false
           schema:
-            default: ""
+            default: ''
             title: Client Version
             type: string
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Get Version
   /visits/:
     get:
       operationId: all_visit_info_visits__get
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
@@ -1145,16 +1145,16 @@ paths:
             title: Visit Name
             type: string
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Visit Info
     post:
@@ -1170,19 +1170,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ClientInfo"
+              $ref: '#/components/schemas/ClientInfo'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Register Client To Visit
   /visits/{visit_name}/align:
@@ -1192,19 +1192,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TiltSeriesProcessingDetails"
+              $ref: '#/components/schemas/TiltSeriesProcessingDetails'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Request Tilt Series Alignment
   /visits/{visit_name}/context:
@@ -1214,19 +1214,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ContextInfo"
+              $ref: '#/components/schemas/ContextInfo'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Register Context
   /visits/{visit_name}/eer_fractionation_file:
@@ -1243,10 +1243,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/FractionationParameters"
+              $ref: '#/components/schemas/FractionationParameters'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
@@ -1255,11 +1255,11 @@ paths:
                   Fractionation File Post
                 type: object
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Write Eer Fractionation File
   /visits/{visit_name}/files:
@@ -1269,19 +1269,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/File"
+              $ref: '#/components/schemas/File'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Add File
   /visits/{visit_name}/increment_rsync_file_count:
@@ -1298,19 +1298,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RsyncerInfo"
+              $ref: '#/components/schemas/RsyncerInfo'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Increment Rsync File Count
   /visits/{visit_name}/increment_rsync_transferred_files:
@@ -1327,19 +1327,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RsyncerInfo"
+              $ref: '#/components/schemas/RsyncerInfo'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Increment Rsync Transferred Files
   /visits/{visit_name}/process_gain:
@@ -1355,19 +1355,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/GainReference"
+              $ref: '#/components/schemas/GainReference'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Process Gain
   /visits/{visit_name}/rsyncer:
@@ -1384,19 +1384,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RsyncerInfo"
+              $ref: '#/components/schemas/RsyncerInfo'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Register Rsyncer
   /visits/{visit_name}/smartem_atlas/:
@@ -1413,19 +1413,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/SmartEMAtlasRequest"
+              $ref: '#/components/schemas/SmartEMAtlasRequest'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Request Smartem Atlas Analysis
   /visits/{visit_name}/spa_processing:
@@ -1442,19 +1442,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/SPAProcessingParameters"
+              $ref: '#/components/schemas/SPAProcessingParameters'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Request Spa Processing
   /visits/{visit_name}/suggested_path:
@@ -1470,19 +1470,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/SuggestedPathParameters"
+              $ref: '#/components/schemas/SuggestedPathParameters'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Suggest Path
   /visits/{visit_name}/tilt:
@@ -1499,19 +1499,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TiltInfo"
+              $ref: '#/components/schemas/TiltInfo'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Register Tilt
   /visits/{visit_name}/tilt_series:
@@ -1528,19 +1528,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TiltSeriesInfo"
+              $ref: '#/components/schemas/TiltSeriesInfo'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Register Tilt Series
   /visits/{visit_name}/tomography_preprocess:
@@ -1557,19 +1557,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ProcessFile"
+              $ref: '#/components/schemas/ProcessFile'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Request Tomography Preprocessing
   /visits/{visit_name}/write_connections_file:
@@ -1585,19 +1585,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ConnectionFileParameters"
+              $ref: '#/components/schemas/ConnectionFileParameters'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Write Conn File
   /visits/{visit_name}/{client_id}/completed_tilt_series:
@@ -1620,19 +1620,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CompletedTiltSeries"
+              $ref: '#/components/schemas/CompletedTiltSeries'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Register Completed Tilt Series
   /visits/{visit_name}/{client_id}/flush_spa_processing:
@@ -1652,16 +1652,16 @@ paths:
             title: Client Id
             type: integer
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Flush Spa Processing
   /visits/{visit_name}/{client_id}/register_data_collection_group:
@@ -1684,19 +1684,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/DCGroupParameters"
+              $ref: '#/components/schemas/DCGroupParameters'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Register Dc Group
   /visits/{visit_name}/{client_id}/register_processing_job:
@@ -1718,19 +1718,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ProcessingJobParameters"
+              $ref: '#/components/schemas/ProcessingJobParameters'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Register Proc
   /visits/{visit_name}/{client_id}/spa_preprocess:
@@ -1753,19 +1753,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/SPAProcessFile"
+              $ref: '#/components/schemas/SPAProcessFile'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Request Spa Preprocessing
   /visits/{visit_name}/{client_id}/start_data_collection:
@@ -1787,31 +1787,31 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/DCParameters"
+              $ref: '#/components/schemas/DCParameters'
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Start Dc
   /visits_raw:
     get:
       operationId: get_current_visits_visits_raw_get
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
                 items:
-                  $ref: "#/components/schemas/Visit"
+                  $ref: '#/components/schemas/Visit'
                 title: Response Get Current Visits Visits Raw Get
                 type: array
           description: Successful Response
@@ -1827,22 +1827,22 @@ paths:
             title: Client Id
             type: integer
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema: {}
           description: Successful Response
-        "422":
+        '422':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HTTPValidationError"
+                $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       summary: Close Ws Connection
       tags:
         - websocket
 tags:
-  - description: "
+  - description: '
 
       API endpoints related to installing Murfey on a client.
 
@@ -1862,7 +1862,7 @@ tags:
 
       required.
 
-      "
+      '
     externalDocs:
       description: PEP 503
       url: https://www.python.org/dev/peps/pep-0503/
