@@ -28,7 +28,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "format": "yarn prettier \"**/*.{js,jsx,ts,tsx,json,md,yml,yaml,html,css,scss}\" --write",
-    "lint": "yarn eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix"
+    "lint": "yarn eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix",
+    "prepare": "husky install"
   },
   "eslintConfig": {
     "extends": [
@@ -49,6 +50,13 @@
       "last 1 safari version"
     ]
   },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml,html,css,scss}": "prettier --write"
+  },
   "devDependencies": {
     "@babel/core": "^7.0.0-0",
     "@babel/plugin-syntax-flow": "^7.14.5",
@@ -65,6 +73,9 @@
     "eslint-config-prettier": "^10.1.5",
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-prettier": "^5.5.0",
+    "husky": "^8.0.0",
+    "husky-init": "^8.0.0",
+    "lint-staged": "^16.1.2",
     "openapi-typescript": "^6.7.2",
     "prettier": "^3.6.0",
     "react-scripts": "^5.0.1",
