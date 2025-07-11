@@ -1,0 +1,13 @@
+# Ignore everything by default
+**
+
+# Whitelist only the files and folders needed for building
+!nginx/
+!public/
+!src/
+!.dockerignore
+!.prettierrc
+!Dockerfile
+!package.json
+!tsconfig.json
+!yarn.lock
