@@ -12,9 +12,9 @@
     "@emotion/styled": "^11.11.0",
     "@tanstack/react-query": "^5.81.2",
     "framer-motion": "^11.11.4",
-    "react": "18.3.1",
+    "react": "^18.3.1",
     "react-collapsible": "^2.10.0",
-    "react-dom": "18.3.1",
+    "react-dom": "^18.3.1",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.20.1",
     "react-spinners": "^0.16.1",
@@ -25,14 +25,17 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "lint": "yarn prettier \"src/**/*.{js,jsx,ts,tsx}\" --write",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "format": "yarn prettier \"**/*.{js,jsx,ts,tsx,json,md,yml,yaml,html,css,scss}\" --write",
+    "lint": "yarn eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix",
+    "prepare": "husky install"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
+      "react-app/jest",
+      "plugin:prettier/recommended"
     ]
   },
   "browserslist": {
@@ -46,6 +49,13 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml,html,css,scss}": "prettier --write"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-0",
@@ -63,6 +73,9 @@
     "eslint-config-prettier": "^10.1.5",
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-prettier": "^5.5.0",
+    "husky": "^8.0.0",
+    "husky-init": "^8.0.0",
+    "lint-staged": "^16.1.2",
     "openapi-typescript": "^6.7.2",
     "prettier": "^3.6.0",
     "react-scripts": "^5.0.1",

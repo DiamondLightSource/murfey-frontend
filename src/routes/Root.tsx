@@ -1,9 +1,9 @@
-import { Box, HStack, Tag, Text, Link, Progress, Icon } from "@chakra-ui/react";
-import { Outlet, useLoaderData, Link as LinkRouter } from "react-router-dom";
-import { Navbar } from "components/navbar";
-import { MdSignalWifi4Bar } from "react-icons/md";
+import { Box, HStack, Tag, Text, Link, Progress, Icon } from '@chakra-ui/react'
+import { Outlet, useLoaderData, Link as LinkRouter } from 'react-router-dom'
+import { Navbar } from 'components/navbar'
+import { MdSignalWifi4Bar } from 'react-icons/md'
 
-import "styles/main.css";
+import 'styles/main.css'
 
 const Root = () => {
   return (
@@ -15,7 +15,7 @@ const Root = () => {
         <Outlet />
       </Box>
     </div>
-  );
-};
+  )
+}
 
-export { Root };
+export { Root }

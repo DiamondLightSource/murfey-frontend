@@ -3,287 +3,286 @@
  * Do not make direct changes to the file.
  */
 
-
 export interface paths {
-  "/": {
+  '/': {
     /** Root */
-    get: operations["root__get"];
-  };
-  "/machine": {
+    get: operations['root__get']
+  }
+  '/machine': {
     /** Machine Info */
-    get: operations["machine_info_machine_get"];
-  };
-  "/instruments/{instrument_name}/machine": {
+    get: operations['machine_info_machine_get']
+  }
+  '/instruments/{instrument_name}/machine': {
     /** Machine Info By Name */
-    get: operations["machine_info_by_name_instruments__instrument_name__machine_get"];
-  };
-  "/microscope_image/": {
+    get: operations['machine_info_by_name_instruments__instrument_name__machine_get']
+  }
+  '/microscope_image/': {
     /** Get Mic Image */
-    get: operations["get_mic_image_microscope_image__get"];
-  };
-  "/mag_table/": {
+    get: operations['get_mic_image_microscope_image__get']
+  }
+  '/mag_table/': {
     /** Get Mag Table */
-    get: operations["get_mag_table_mag_table__get"];
+    get: operations['get_mag_table_mag_table__get']
     /** Add To Mag Table */
-    post: operations["add_to_mag_table_mag_table__post"];
-  };
-  "/mag_table/{mag}": {
+    post: operations['add_to_mag_table_mag_table__post']
+  }
+  '/mag_table/{mag}': {
     /** Remove Mag Table Row */
-    delete: operations["remove_mag_table_row_mag_table__mag__delete"];
-  };
-  "/instruments/{instrument_name}/instrument_name": {
+    delete: operations['remove_mag_table_row_mag_table__mag__delete']
+  }
+  '/instruments/{instrument_name}/instrument_name': {
     /** Get Instrument Display Name */
-    get: operations["get_instrument_display_name_instruments__instrument_name__instrument_name_get"];
-  };
-  "/instruments/{instrument_name}/visits/": {
+    get: operations['get_instrument_display_name_instruments__instrument_name__instrument_name_get']
+  }
+  '/instruments/{instrument_name}/visits/': {
     /** All Visit Info */
-    get: operations["all_visit_info_instruments__instrument_name__visits__get"];
-  };
-  "/visits/{visit_name}": {
+    get: operations['all_visit_info_instruments__instrument_name__visits__get']
+  }
+  '/visits/{visit_name}': {
     /** Visit Info */
-    get: operations["visit_info_visits__visit_name__get"];
+    get: operations['visit_info_visits__visit_name__get']
     /** Register Client To Visit */
-    post: operations["register_client_to_visit_visits__visit_name__post"];
-  };
-  "/num_movies": {
+    post: operations['register_client_to_visit_visits__visit_name__post']
+  }
+  '/num_movies': {
     /** Count Number Of Movies */
-    get: operations["count_number_of_movies_num_movies_get"];
-  };
-  "/sessions/{session_id}/rsyncer": {
+    get: operations['count_number_of_movies_num_movies_get']
+  }
+  '/sessions/{session_id}/rsyncer': {
     /** Register Rsyncer */
-    post: operations["register_rsyncer_sessions__session_id__rsyncer_post"];
-  };
-  "/sessions/{session_id}/rsyncer/{source}": {
+    post: operations['register_rsyncer_sessions__session_id__rsyncer_post']
+  }
+  '/sessions/{session_id}/rsyncer/{source}': {
     /** Delete Rsyncer */
-    delete: operations["delete_rsyncer_sessions__session_id__rsyncer__source__delete"];
-  };
-  "/sessions/{session_id}/rsyncer_stopped": {
+    delete: operations['delete_rsyncer_sessions__session_id__rsyncer__source__delete']
+  }
+  '/sessions/{session_id}/rsyncer_stopped': {
     /** Register Stopped Rsyncer */
-    post: operations["register_stopped_rsyncer_sessions__session_id__rsyncer_stopped_post"];
-  };
-  "/sessions/{session_id}/rsyncer_started": {
+    post: operations['register_stopped_rsyncer_sessions__session_id__rsyncer_stopped_post']
+  }
+  '/sessions/{session_id}/rsyncer_started': {
     /** Register Restarted Rsyncer */
-    post: operations["register_restarted_rsyncer_sessions__session_id__rsyncer_started_post"];
-  };
-  "/clients/{client_id}/rsyncers": {
+    post: operations['register_restarted_rsyncer_sessions__session_id__rsyncer_started_post']
+  }
+  '/clients/{client_id}/rsyncers': {
     /** Get Rsyncers For Client */
-    get: operations["get_rsyncers_for_client_clients__client_id__rsyncers_get"];
-  };
-  "/session/{session_id}": {
+    get: operations['get_rsyncers_for_client_clients__client_id__rsyncers_get']
+  }
+  '/session/{session_id}': {
     /** Get Session */
-    get: operations["get_session_session__session_id__get"];
-  };
-  "/visits/{visit_name}/increment_rsync_file_count": {
+    get: operations['get_session_session__session_id__get']
+  }
+  '/visits/{visit_name}/increment_rsync_file_count': {
     /** Increment Rsync File Count */
-    post: operations["increment_rsync_file_count_visits__visit_name__increment_rsync_file_count_post"];
-  };
-  "/visits/{visit_name}/increment_rsync_transferred_files": {
+    post: operations['increment_rsync_file_count_visits__visit_name__increment_rsync_file_count_post']
+  }
+  '/visits/{visit_name}/increment_rsync_transferred_files': {
     /** Increment Rsync Transferred Files */
-    post: operations["increment_rsync_transferred_files_visits__visit_name__increment_rsync_transferred_files_post"];
-  };
-  "/visits/{visit_name}/increment_rsync_transferred_files_prometheus": {
+    post: operations['increment_rsync_transferred_files_visits__visit_name__increment_rsync_transferred_files_post']
+  }
+  '/visits/{visit_name}/increment_rsync_transferred_files_prometheus': {
     /** Increment Rsync Transferred Files Prometheus */
-    post: operations["increment_rsync_transferred_files_prometheus_visits__visit_name__increment_rsync_transferred_files_prometheus_post"];
-  };
-  "/sessions/{session_id}/spa_processing_parameters": {
+    post: operations['increment_rsync_transferred_files_prometheus_visits__visit_name__increment_rsync_transferred_files_prometheus_post']
+  }
+  '/sessions/{session_id}/spa_processing_parameters': {
     /** Get Spa Proc Param Details */
-    get: operations["get_spa_proc_param_details_sessions__session_id__spa_processing_parameters_get"];
+    get: operations['get_spa_proc_param_details_sessions__session_id__spa_processing_parameters_get']
     /** Register Spa Proc Params */
-    post: operations["register_spa_proc_params_sessions__session_id__spa_processing_parameters_post"];
-  };
-  "/sessions/{session_id}/tomography_preprocessing_parameters": {
+    post: operations['register_spa_proc_params_sessions__session_id__spa_processing_parameters_post']
+  }
+  '/sessions/{session_id}/tomography_preprocessing_parameters': {
     /** Register Tomo Preproc Params */
-    post: operations["register_tomo_preproc_params_sessions__session_id__tomography_preprocessing_parameters_post"];
-  };
-  "/clients/{client_id}/tomography_processing_parameters": {
+    post: operations['register_tomo_preproc_params_sessions__session_id__tomography_preprocessing_parameters_post']
+  }
+  '/clients/{client_id}/tomography_processing_parameters': {
     /** Register Tomo Proc Params */
-    post: operations["register_tomo_proc_params_clients__client_id__tomography_processing_parameters_post"];
-  };
-  "/clients/{client_id}/spa_processing_parameters": {
+    post: operations['register_tomo_proc_params_clients__client_id__tomography_processing_parameters_post']
+  }
+  '/clients/{client_id}/spa_processing_parameters': {
     /** Get Spa Proc Params */
-    get: operations["get_spa_proc_params_clients__client_id__spa_processing_parameters_get"];
-  };
-  "/sessions/{session_id}/grid_squares": {
+    get: operations['get_spa_proc_params_clients__client_id__spa_processing_parameters_get']
+  }
+  '/sessions/{session_id}/grid_squares': {
     /** Get Grid Squares */
-    get: operations["get_grid_squares_sessions__session_id__grid_squares_get"];
-  };
-  "/sessions/{session_id}/data_collection_groups/{dcgid}/grid_squares": {
+    get: operations['get_grid_squares_sessions__session_id__grid_squares_get']
+  }
+  '/sessions/{session_id}/data_collection_groups/{dcgid}/grid_squares': {
     /** Get Grid Squares From Dcg */
-    get: operations["get_grid_squares_from_dcg_sessions__session_id__data_collection_groups__dcgid__grid_squares_get"];
-  };
-  "/sessions/{session_id}/data_collection_groups/{dcgid}/grid_squares/{gsid}/num_movies": {
+    get: operations['get_grid_squares_from_dcg_sessions__session_id__data_collection_groups__dcgid__grid_squares_get']
+  }
+  '/sessions/{session_id}/data_collection_groups/{dcgid}/grid_squares/{gsid}/num_movies': {
     /** Get Number Of Movies From Grid Square */
-    get: operations["get_number_of_movies_from_grid_square_sessions__session_id__data_collection_groups__dcgid__grid_squares__gsid__num_movies_get"];
-  };
-  "/sessions/{session_id}/data_collection_groups/{dcgid}/grid_squares/{gsid}/foil_holes": {
+    get: operations['get_number_of_movies_from_grid_square_sessions__session_id__data_collection_groups__dcgid__grid_squares__gsid__num_movies_get']
+  }
+  '/sessions/{session_id}/data_collection_groups/{dcgid}/grid_squares/{gsid}/foil_holes': {
     /** Get Foil Holes From Grid Square */
-    get: operations["get_foil_holes_from_grid_square_sessions__session_id__data_collection_groups__dcgid__grid_squares__gsid__foil_holes_get"];
-  };
-  "/sessions/{session_id}/data_collection_groups/{dcgid}/grid_squares/{gsid}/foil_holes/{fhid}/num_movies": {
+    get: operations['get_foil_holes_from_grid_square_sessions__session_id__data_collection_groups__dcgid__grid_squares__gsid__foil_holes_get']
+  }
+  '/sessions/{session_id}/data_collection_groups/{dcgid}/grid_squares/{gsid}/foil_holes/{fhid}/num_movies': {
     /** Get Number Of Movies From Foil Hole */
-    get: operations["get_number_of_movies_from_foil_hole_sessions__session_id__data_collection_groups__dcgid__grid_squares__gsid__foil_holes__fhid__num_movies_get"];
-  };
-  "/sessions/{session_id}/grid_square/{gsid}": {
+    get: operations['get_number_of_movies_from_foil_hole_sessions__session_id__data_collection_groups__dcgid__grid_squares__gsid__foil_holes__fhid__num_movies_get']
+  }
+  '/sessions/{session_id}/grid_square/{gsid}': {
     /** Register Grid Square */
-    post: operations["register_grid_square_sessions__session_id__grid_square__gsid__post"];
-  };
-  "/sessions/{session_id}/foil_hole/{fh_name}": {
+    post: operations['register_grid_square_sessions__session_id__grid_square__gsid__post']
+  }
+  '/sessions/{session_id}/foil_hole/{fh_name}': {
     /** Get Foil Hole */
-    get: operations["get_foil_hole_sessions__session_id__foil_hole__fh_name__get"];
-  };
-  "/sessions/{session_id}/grid_square/{gs_name}/foil_hole": {
+    get: operations['get_foil_hole_sessions__session_id__foil_hole__fh_name__get']
+  }
+  '/sessions/{session_id}/grid_square/{gs_name}/foil_hole': {
     /** Register Foil Hole */
-    post: operations["register_foil_hole_sessions__session_id__grid_square__gs_name__foil_hole_post"];
-  };
-  "/visits/{visit_name}/tilt_series": {
+    post: operations['register_foil_hole_sessions__session_id__grid_square__gs_name__foil_hole_post']
+  }
+  '/visits/{visit_name}/tilt_series': {
     /** Register Tilt Series */
-    post: operations["register_tilt_series_visits__visit_name__tilt_series_post"];
-  };
-  "/visits/{visit_name}/{client_id}/completed_tilt_series": {
+    post: operations['register_tilt_series_visits__visit_name__tilt_series_post']
+  }
+  '/visits/{visit_name}/{client_id}/completed_tilt_series': {
     /** Register Completed Tilt Series */
-    post: operations["register_completed_tilt_series_visits__visit_name___client_id__completed_tilt_series_post"];
-  };
-  "/clients/{client_id}/tilt_series/{tilt_series_tag}/tilts": {
+    post: operations['register_completed_tilt_series_visits__visit_name___client_id__completed_tilt_series_post']
+  }
+  '/clients/{client_id}/tilt_series/{tilt_series_tag}/tilts': {
     /** Get Tilts */
-    get: operations["get_tilts_clients__client_id__tilt_series__tilt_series_tag__tilts_get"];
-  };
-  "/visits/{visit_name}/{client_id}/tilt": {
+    get: operations['get_tilts_clients__client_id__tilt_series__tilt_series_tag__tilts_get']
+  }
+  '/visits/{visit_name}/{client_id}/tilt': {
     /** Register Tilt */
-    post: operations["register_tilt_visits__visit_name___client_id__tilt_post"];
-  };
-  "/instruments/{instrument_name}/visits_raw": {
+    post: operations['register_tilt_visits__visit_name___client_id__tilt_post']
+  }
+  '/instruments/{instrument_name}/visits_raw': {
     /** Get Current Visits */
-    get: operations["get_current_visits_instruments__instrument_name__visits_raw_get"];
-  };
-  "/feedback": {
+    get: operations['get_current_visits_instruments__instrument_name__visits_raw_get']
+  }
+  '/feedback': {
     /** Send Murfey Message */
-    post: operations["send_murfey_message_feedback_post"];
-  };
-  "/visits/{visit_name}/{session_id}/flush_spa_processing": {
+    post: operations['send_murfey_message_feedback_post']
+  }
+  '/visits/{visit_name}/{session_id}/flush_spa_processing': {
     /** Flush Spa Processing */
-    post: operations["flush_spa_processing_visits__visit_name___session_id__flush_spa_processing_post"];
-  };
-  "/visits/{visit_name}/{session_id}/spa_preprocess": {
+    post: operations['flush_spa_processing_visits__visit_name___session_id__flush_spa_processing_post']
+  }
+  '/visits/{visit_name}/{session_id}/spa_preprocess': {
     /** Request Spa Preprocessing */
-    post: operations["request_spa_preprocessing_visits__visit_name___session_id__spa_preprocess_post"];
-  };
-  "/visits/{visit_name}/{client_id}/flush_tomography_processing": {
+    post: operations['request_spa_preprocessing_visits__visit_name___session_id__spa_preprocess_post']
+  }
+  '/visits/{visit_name}/{client_id}/flush_tomography_processing': {
     /** Flush Tomography Processing */
-    post: operations["flush_tomography_processing_visits__visit_name___client_id__flush_tomography_processing_post"];
-  };
-  "/visits/{visit_name}/{client_id}/tomography_preprocess": {
+    post: operations['flush_tomography_processing_visits__visit_name___client_id__flush_tomography_processing_post']
+  }
+  '/visits/{visit_name}/{client_id}/tomography_preprocess': {
     /** Request Tomography Preprocessing */
-    post: operations["request_tomography_preprocessing_visits__visit_name___client_id__tomography_preprocess_post"];
-  };
-  "/version": {
+    post: operations['request_tomography_preprocessing_visits__visit_name___client_id__tomography_preprocess_post']
+  }
+  '/version': {
     /** Get Version */
-    get: operations["get_version_version_get"];
-  };
-  "/visits/{visit_name}/{session_id}/suggested_path": {
+    get: operations['get_version_version_get']
+  }
+  '/visits/{visit_name}/{session_id}/suggested_path': {
     /** Suggest Path */
-    post: operations["suggest_path_visits__visit_name___session_id__suggested_path_post"];
-  };
-  "/sessions/{session_id}/data_collection_groups": {
+    post: operations['suggest_path_visits__visit_name___session_id__suggested_path_post']
+  }
+  '/sessions/{session_id}/data_collection_groups': {
     /** Get Dc Groups */
-    get: operations["get_dc_groups_sessions__session_id__data_collection_groups_get"];
-  };
-  "/sessions/{session_id}/data_collection_groups/{dcgid}/data_collections": {
+    get: operations['get_dc_groups_sessions__session_id__data_collection_groups_get']
+  }
+  '/sessions/{session_id}/data_collection_groups/{dcgid}/data_collections': {
     /** Get Data Collections */
-    get: operations["get_data_collections_sessions__session_id__data_collection_groups__dcgid__data_collections_get"];
-  };
-  "/visits/{visit_name}/{session_id}/register_data_collection_group": {
+    get: operations['get_data_collections_sessions__session_id__data_collection_groups__dcgid__data_collections_get']
+  }
+  '/visits/{visit_name}/{session_id}/register_data_collection_group': {
     /** Register Dc Group */
-    post: operations["register_dc_group_visits__visit_name___session_id__register_data_collection_group_post"];
-  };
-  "/visits/{visit_name}/{session_id}/start_data_collection": {
+    post: operations['register_dc_group_visits__visit_name___session_id__register_data_collection_group_post']
+  }
+  '/visits/{visit_name}/{session_id}/start_data_collection': {
     /** Start Dc */
-    post: operations["start_dc_visits__visit_name___session_id__start_data_collection_post"];
-  };
-  "/visits/{visit_name}/{session_id}/register_processing_job": {
+    post: operations['start_dc_visits__visit_name___session_id__start_data_collection_post']
+  }
+  '/visits/{visit_name}/{session_id}/register_processing_job': {
     /** Register Proc */
-    post: operations["register_proc_visits__visit_name___session_id__register_processing_job_post"];
-  };
-  "/sessions/{session_id}/process_gain": {
+    post: operations['register_proc_visits__visit_name___session_id__register_processing_job_post']
+  }
+  '/sessions/{session_id}/process_gain': {
     /** Process Gain */
-    post: operations["process_gain_sessions__session_id__process_gain_post"];
-  };
-  "/new_client_id/": {
+    post: operations['process_gain_sessions__session_id__process_gain_post']
+  }
+  '/new_client_id/': {
     /** New Client Id */
-    get: operations["new_client_id_new_client_id__get"];
-  };
-  "/clients": {
+    get: operations['new_client_id_new_client_id__get']
+  }
+  '/clients': {
     /** Get Clients */
-    get: operations["get_clients_clients_get"];
-  };
-  "/sessions": {
+    get: operations['get_clients_clients_get']
+  }
+  '/sessions': {
     /** Get Sessions */
-    get: operations["get_sessions_sessions_get"];
-  };
-  "/instruments/{instrument_name}/sessions": {
+    get: operations['get_sessions_sessions_get']
+  }
+  '/instruments/{instrument_name}/sessions': {
     /** Get Sessions By Instrument Name */
-    get: operations["get_sessions_by_instrument_name_instruments__instrument_name__sessions_get"];
-  };
-  "/instruments/{instrument_name}/clients/{client_id}/session": {
+    get: operations['get_sessions_by_instrument_name_instruments__instrument_name__sessions_get']
+  }
+  '/instruments/{instrument_name}/clients/{client_id}/session': {
     /** Link Client To Session */
-    post: operations["link_client_to_session_instruments__instrument_name__clients__client_id__session_post"];
-  };
-  "/clients/{client_id}/session": {
+    post: operations['link_client_to_session_instruments__instrument_name__clients__client_id__session_post']
+  }
+  '/clients/{client_id}/session': {
     /** Remove Session */
-    delete: operations["remove_session_clients__client_id__session_delete"];
-  };
-  "/sessions/{session_id}/rsyncers": {
+    delete: operations['remove_session_clients__client_id__session_delete']
+  }
+  '/sessions/{session_id}/rsyncers': {
     /** Get Rsyncers For Session */
-    get: operations["get_rsyncers_for_session_sessions__session_id__rsyncers_get"];
-  };
-  "/sessions/{session_id}": {
+    get: operations['get_rsyncers_for_session_sessions__session_id__rsyncers_get']
+  }
+  '/sessions/{session_id}': {
     /** Remove Session By Id */
-    delete: operations["remove_session_by_id_sessions__session_id__delete"];
-  };
-  "/visits/{visit_name}/{session_id}/eer_fractionation_file": {
+    delete: operations['remove_session_by_id_sessions__session_id__delete']
+  }
+  '/visits/{visit_name}/{session_id}/eer_fractionation_file': {
     /** Write Eer Fractionation File */
-    post: operations["write_eer_fractionation_file_visits__visit_name___session_id__eer_fractionation_file_post"];
-  };
-  "/visits/{visit_name}/monitoring/{on}": {
+    post: operations['write_eer_fractionation_file_visits__visit_name___session_id__eer_fractionation_file_post']
+  }
+  '/visits/{visit_name}/monitoring/{on}': {
     /** Change Monitoring Status */
-    post: operations["change_monitoring_status_visits__visit_name__monitoring__on__post"];
-  };
-  "/sessions/{session_id}/upstream_visits": {
+    post: operations['change_monitoring_status_visits__visit_name__monitoring__on__post']
+  }
+  '/sessions/{session_id}/upstream_visits': {
     /** Find Upstream Visits */
-    get: operations["find_upstream_visits_sessions__session_id__upstream_visits_get"];
-  };
-  "/visits/{visit_name}/{session_id}/upstream_tiff_paths": {
+    get: operations['find_upstream_visits_sessions__session_id__upstream_visits_get']
+  }
+  '/visits/{visit_name}/{session_id}/upstream_tiff_paths': {
     /** Gather Upstream Tiffs */
-    get: operations["gather_upstream_tiffs_visits__visit_name___session_id__upstream_tiff_paths_get"];
-  };
-  "/visits/{visit_name}/{session_id}/upstream_tiff/{tiff_path}": {
+    get: operations['gather_upstream_tiffs_visits__visit_name___session_id__upstream_tiff_paths_get']
+  }
+  '/visits/{visit_name}/{session_id}/upstream_tiff/{tiff_path}': {
     /** Get Tiff */
-    get: operations["get_tiff_visits__visit_name___session_id__upstream_tiff__tiff_path__get"];
-  };
-  "/failed_client_post": {
+    get: operations['get_tiff_visits__visit_name___session_id__upstream_tiff__tiff_path__get']
+  }
+  '/failed_client_post': {
     /** Failed Client Post */
-    post: operations["failed_client_post_failed_client_post_post"];
-  };
-  "/instruments/{instrument_name}/visits/{visit}/session/{name}": {
+    post: operations['failed_client_post_failed_client_post_post']
+  }
+  '/instruments/{instrument_name}/visits/{visit}/session/{name}': {
     /** Create Session */
-    post: operations["create_session_instruments__instrument_name__visits__visit__session__name__post"];
-  };
-  "/sessions/{session_id}/current_gain_ref": {
+    post: operations['create_session_instruments__instrument_name__visits__visit__session__name__post']
+  }
+  '/sessions/{session_id}/current_gain_ref': {
     /** Update Current Gain Ref */
-    put: operations["update_current_gain_ref_sessions__session_id__current_gain_ref_put"];
-  };
-  "/version/": {
+    put: operations['update_current_gain_ref_sessions__session_id__current_gain_ref_put']
+  }
+  '/version/': {
     /** Get Version */
-    get: operations["get_version_version__get"];
-  };
-  "/bootstrap/": {
+    get: operations['get_version_version__get']
+  }
+  '/bootstrap/': {
     /**
      * Get Bootstrap Instructions
      * @description Return a website containing instructions for installing the Murfey client on a
      * machine with no internet access.
      */
-    get: operations["get_bootstrap_instructions_bootstrap__get"];
-  };
-  "/bootstrap/pip.whl": {
+    get: operations['get_bootstrap_instructions_bootstrap__get']
+  }
+  '/bootstrap/pip.whl': {
     /**
      * Get Pip Wheel
      * @description Return a static version of pip. This does not need to be the newest or best,
@@ -291,9 +290,9 @@ export interface paths {
      * This is only used during bootstrapping by the client to identify and then
      * download the actually newest appropriate version of pip.
      */
-    get: operations["get_pip_wheel_bootstrap_pip_whl_get"];
-  };
-  "/bootstrap/murfey.whl": {
+    get: operations['get_pip_wheel_bootstrap_pip_whl_get']
+  }
+  '/bootstrap/murfey.whl': {
     /**
      * Get Murfey Wheel
      * @description Return a wheel file containing the latest release version of Murfey. We should
@@ -301,25 +300,25 @@ export interface paths {
      * murfey.bootstrap is compatible with all relevant versions of Python.
      * This also ignores yanked releases, which again should be fine.
      */
-    get: operations["get_murfey_wheel_bootstrap_murfey_whl_get"];
-  };
-  "/cygwin/setup-x86_64.exe": {
+    get: operations['get_murfey_wheel_bootstrap_murfey_whl_get']
+  }
+  '/cygwin/setup-x86_64.exe': {
     /**
      * Get Cygwin Setup
      * @description Obtain and pass through a Cygwin installer from an official source.
      * This is used during client bootstrapping and can download and install the
      * Cygwin distribution that then remains on the client machines.
      */
-    get: operations["get_cygwin_setup_cygwin_setup_x86_64_exe_get"];
-  };
-  "/cygwin/{request_path}": {
+    get: operations['get_cygwin_setup_cygwin_setup_x86_64_exe_get']
+  }
+  '/cygwin/{request_path}': {
     /**
      * Parse Cygwin Request
      * @description Forward a Cygwin setup request to an official mirror.
      */
-    get: operations["parse_cygwin_request_cygwin__request_path__get"];
-  };
-  "/msys2/config/pacman.d.zip": {
+    get: operations['parse_cygwin_request_cygwin__request_path__get']
+  }
+  '/msys2/config/pacman.d.zip': {
     /**
      * Get Pacman Mirrors
      * @description Dynamically generates a zip file containing mirrorlist files that have been set
@@ -329,49 +328,49 @@ export interface paths {
      * files present in the %MSYS64%\etc\pacman.d folder. The default path to this
      * folder is C:\msys64\etc\pacman.d.
      */
-    get: operations["get_pacman_mirrors_msys2_config_pacman_d_zip_get"];
-  };
-  "/msys2/repo/distrib/{setup_file}": {
+    get: operations['get_pacman_mirrors_msys2_config_pacman_d_zip_get']
+  }
+  '/msys2/repo/distrib/{setup_file}': {
     /**
      * Get Msys2 Setup
      * @description Obtain and pass through an MSYS2 installer from an official source.
      * This is used during client bootstrapping, and can download and install the
      * MSYS2 distribution that then remains on the client machines.
      */
-    get: operations["get_msys2_setup_msys2_repo_distrib__setup_file__get"];
-  };
-  "/msys2/repo/": {
+    get: operations['get_msys2_setup_msys2_repo_distrib__setup_file__get']
+  }
+  '/msys2/repo/': {
     /**
      * Get Msys2 Main Index
      * @description Returns a simple index displaying valid MSYS2 systems and the latest setup file
      * from the main MSYS2 repository.
      */
-    get: operations["get_msys2_main_index_msys2_repo__get"];
-  };
-  "/msys2/repo/{system}/": {
+    get: operations['get_msys2_main_index_msys2_repo__get']
+  }
+  '/msys2/repo/{system}/': {
     /**
      * Get Msys2 Environment Index
      * @description Returns a list of all MSYS2 environments for a given system from the main MSYS2
      * repository.
      */
-    get: operations["get_msys2_environment_index_msys2_repo__system___get"];
-  };
-  "/msys2/repo/{system}/{environment}/": {
+    get: operations['get_msys2_environment_index_msys2_repo__system___get']
+  }
+  '/msys2/repo/{system}/{environment}/': {
     /**
      * Get Msys2 Package Index
      * @description Obtain a list of all available MSYS2 packages for a given environment from the main
      * MSYS2 repo.
      */
-    get: operations["get_msys2_package_index_msys2_repo__system___environment___get"];
-  };
-  "/msys2/repo/{system}/{environment}/{package}": {
+    get: operations['get_msys2_package_index_msys2_repo__system___environment___get']
+  }
+  '/msys2/repo/{system}/{environment}/{package}': {
     /**
      * Get Msys2 Package File
      * @description Obtain and pass through a specific download for an MSYS2 package.
      */
-    get: operations["get_msys2_package_file_msys2_repo__system___environment___package__get"];
-  };
-  "/rust/cargo/config.toml": {
+    get: operations['get_msys2_package_file_msys2_repo__system___environment___package__get']
+  }
+  '/rust/cargo/config.toml': {
     /**
      * Get Cargo Config
      * @description Returns a properly configured Cargo config that sets it to look ONLY at the
@@ -380,16 +379,16 @@ export interface paths {
      * The default path for this config on Linux devices is ~/.cargo/config.toml,
      * and its default path on Windows is %USERPROFILE%\.cargo\config.toml.
      */
-    get: operations["get_cargo_config_rust_cargo_config_toml_get"];
-  };
-  "/rust/index/": {
+    get: operations['get_cargo_config_rust_cargo_config_toml_get']
+  }
+  '/rust/index/': {
     /**
      * Get Index Page
      * @description Returns a mirror of the https://index.crates.io landing page.
      */
-    get: operations["get_index_page_rust_index__get"];
-  };
-  "/rust/index/config.json": {
+    get: operations['get_index_page_rust_index__get']
+  }
+  '/rust/index/config.json': {
     /**
      * Get Index Config
      * @description Download a config.json file used by Cargo to navigate sparse index registries
@@ -399,9 +398,9 @@ export interface paths {
      * the 'api' key points to an API version of that same registry. Both will be
      * used by Cargo when searching for and downloading packages.
      */
-    get: operations["get_index_config_rust_index_config_json_get"];
-  };
-  "/rust/index/{c1}/{c2}/{package}": {
+    get: operations['get_index_config_rust_index_config_json_get']
+  }
+  '/rust/index/{c1}/{c2}/{package}': {
     /**
      * Get Index Package Metadata
      * @description Download the metadata for a given package from the crates.io sparse index.
@@ -412,58 +411,58 @@ export interface paths {
      * characters of the package name (a-z, A-Z, 0-9, -, _). For 3-letter packages,
      * c1 = 3, and c2 is the first character of the package.
      */
-    get: operations["get_index_package_metadata_rust_index__c1___c2___package__get"];
-  };
-  "/rust/index/{n}/{package}": {
+    get: operations['get_index_package_metadata_rust_index__c1___c2___package__get']
+  }
+  '/rust/index/{n}/{package}': {
     /**
      * Get Index Package Metadata For Short Package Names
      * @description The Rust sparse index' naming scheme for packages with 1-2 characters is
      * different from the standard path convention. They are stored under
      * /1/{package} or /2/{package}.
      */
-    get: operations["get_index_package_metadata_for_short_package_names_rust_index__n___package__get"];
-  };
-  "/rust/crates/{package}/{version}/download": {
+    get: operations['get_index_package_metadata_for_short_package_names_rust_index__n___package__get']
+  }
+  '/rust/crates/{package}/{version}/download': {
     /**
      * Get Rust Package Download
      * @description Obtain and pass through a crate download request for a Rust package via the
      * sparse index registry.
      */
-    get: operations["get_rust_package_download_rust_crates__package___version__download_get"];
-  };
-  "/rust/api/v1/crates": {
+    get: operations['get_rust_package_download_rust_crates__package___version__download_get']
+  }
+  '/rust/api/v1/crates': {
     /**
      * Get Rust Api Package Index
      * @description Displays the Rust API package index, which returns names of available packages
      * in a JSON object based on the search query given.
      */
-    get: operations["get_rust_api_package_index_rust_api_v1_crates_get"];
-  };
-  "/rust/api/v1/crates/{package}": {
+    get: operations['get_rust_api_package_index_rust_api_v1_crates_get']
+  }
+  '/rust/api/v1/crates/{package}': {
     /**
      * Get Rust Api Package Info
      * @description Displays general information for a given Rust package, as a JSON object.
      * Contains both version information and download information, in addition
      * to other types of metadata.
      */
-    get: operations["get_rust_api_package_info_rust_api_v1_crates__package__get"];
-  };
-  "/rust/api/v1/crates/{package}/versions": {
+    get: operations['get_rust_api_package_info_rust_api_v1_crates__package__get']
+  }
+  '/rust/api/v1/crates/{package}/versions': {
     /**
      * Get Rust Api Package Versions
      * @description Displays all available versions for a particular Rust package, along with download
      * links for said versions, as a JSON object.
      */
-    get: operations["get_rust_api_package_versions_rust_api_v1_crates__package__versions_get"];
-  };
-  "/rust/api/v1/crates/{package}/{version}/download": {
+    get: operations['get_rust_api_package_versions_rust_api_v1_crates__package__versions_get']
+  }
+  '/rust/api/v1/crates/{package}/{version}/download': {
     /**
      * Get Rust Api Package Download
      * @description Obtain and pass through a crate download request for a specific Rust package.
      */
-    get: operations["get_rust_api_package_download_rust_api_v1_crates__package___version__download_get"];
-  };
-  "/rust/crates/{package}/{crate}": {
+    get: operations['get_rust_api_package_download_rust_api_v1_crates__package___version__download_get']
+  }
+  '/rust/crates/{package}/{crate}': {
     /**
      * Get Rust Package Crate
      * @description Obtain and pass through a download for a specific Rust crate. The Rust API
@@ -477,805 +476,805 @@ export interface paths {
      * A request for any other part of the URL path will be denied.
      * (e.g. https://static.crates.io/crates/anyhow will fail)
      */
-    get: operations["get_rust_package_crate_rust_crates__package___crate__get"];
-  };
-  "/pypi/": {
+    get: operations['get_rust_package_crate_rust_crates__package___crate__get']
+  }
+  '/pypi/': {
     /**
      * Get Pypi Index
      * @description Obtain list of all PyPI packages via the simple API (PEP 503).
      */
-    get: operations["get_pypi_index_pypi__get"];
-  };
-  "/pypi/{package}/": {
+    get: operations['get_pypi_index_pypi__get']
+  }
+  '/pypi/{package}/': {
     /**
      * Get Pypi Package Downloads List
      * @description Obtain list of all package downloads from PyPI via the simple API (PEP 503), and
      * rewrite all download URLs to point to this server, under the current directory.
      */
-    get: operations["get_pypi_package_downloads_list_pypi__package___get"];
-  };
-  "/pypi/{package}/{filename}": {
+    get: operations['get_pypi_package_downloads_list_pypi__package___get']
+  }
+  '/pypi/{package}/{filename}': {
     /**
      * Get Pypi File
      * @description Obtain and pass through a specific download for a PyPI package.
      */
-    get: operations["get_pypi_file_pypi__package___filename__get"];
-  };
-  "/plugins/instruments/{instrument_name}/{package}": {
+    get: operations['get_pypi_file_pypi__package___filename__get']
+  }
+  '/plugins/instruments/{instrument_name}/{package}': {
     /** Get Plugin Wheel */
-    get: operations["get_plugin_wheel_plugins_instruments__instrument_name___package__get"];
-  };
-  "/sessions/{session_id}/clem/lif_files": {
+    get: operations['get_plugin_wheel_plugins_instruments__instrument_name___package__get']
+  }
+  '/sessions/{session_id}/clem/lif_files': {
     /** Register Lif File */
-    post: operations["register_lif_file_sessions__session_id__clem_lif_files_post"];
-  };
-  "/sessions/{session_id}/clem/tiff_files": {
+    post: operations['register_lif_file_sessions__session_id__clem_lif_files_post']
+  }
+  '/sessions/{session_id}/clem/tiff_files': {
     /** Register Tiff File */
-    post: operations["register_tiff_file_sessions__session_id__clem_tiff_files_post"];
-  };
-  "/sessions/{session_id}/clem/metadata_files": {
+    post: operations['register_tiff_file_sessions__session_id__clem_tiff_files_post']
+  }
+  '/sessions/{session_id}/clem/metadata_files': {
     /** Register Clem Metadata */
-    post: operations["register_clem_metadata_sessions__session_id__clem_metadata_files_post"];
-  };
-  "/sessions/{session_id}/clem/image_series": {
+    post: operations['register_clem_metadata_sessions__session_id__clem_metadata_files_post']
+  }
+  '/sessions/{session_id}/clem/image_series': {
     /** Register Image Series */
-    post: operations["register_image_series_sessions__session_id__clem_image_series_post"];
-  };
-  "/sessions/{session_id}/clem/image_stacks": {
+    post: operations['register_image_series_sessions__session_id__clem_image_series_post']
+  }
+  '/sessions/{session_id}/clem/image_stacks': {
     /** Register Image Stack */
-    post: operations["register_image_stack_sessions__session_id__clem_image_stacks_post"];
-  };
-  "/sessions/{session_id}/clem/preprocessing/process_raw_lifs": {
+    post: operations['register_image_stack_sessions__session_id__clem_image_stacks_post']
+  }
+  '/sessions/{session_id}/clem/preprocessing/process_raw_lifs': {
     /** Process Raw Lifs */
-    post: operations["process_raw_lifs_sessions__session_id__clem_preprocessing_process_raw_lifs_post"];
-  };
-  "/sessions/{session_id}/clem/preprocessing/process_raw_tiffs": {
+    post: operations['process_raw_lifs_sessions__session_id__clem_preprocessing_process_raw_lifs_post']
+  }
+  '/sessions/{session_id}/clem/preprocessing/process_raw_tiffs': {
     /** Process Raw Tiffs */
-    post: operations["process_raw_tiffs_sessions__session_id__clem_preprocessing_process_raw_tiffs_post"];
-  };
-  "/sessions/{session_id}/clem/processing/align_and_merge_stacks": {
+    post: operations['process_raw_tiffs_sessions__session_id__clem_preprocessing_process_raw_tiffs_post']
+  }
+  '/sessions/{session_id}/clem/processing/align_and_merge_stacks': {
     /** Align And Merge Stacks */
-    post: operations["align_and_merge_stacks_sessions__session_id__clem_processing_align_and_merge_stacks_post"];
-  };
-  "/sessions/{session_id}/cryolo_model": {
+    post: operations['align_and_merge_stacks_sessions__session_id__clem_processing_align_and_merge_stacks_post']
+  }
+  '/sessions/{session_id}/cryolo_model': {
     /** Get Cryolo Model Path */
-    get: operations["get_cryolo_model_path_sessions__session_id__cryolo_model_get"];
-  };
-  "auth/token": {
+    get: operations['get_cryolo_model_path_sessions__session_id__cryolo_model_get']
+  }
+  'auth/token': {
     /** Generate Token */
-    post: operations["generate_token_token_post"];
-  };
-  "auth/sessions/{session_id}/token": {
+    post: operations['generate_token_token_post']
+  }
+  'auth/sessions/{session_id}/token': {
     /** Mint Session Token */
-    get: operations["mint_session_token_sessions__session_id__token_get"];
-  };
-  "auth/validate_token": {
+    get: operations['mint_session_token_sessions__session_id__token_get']
+  }
+  'auth/validate_token': {
     /** Simple Token Validation */
-    get: operations["simple_token_validation_validate_token_get"];
-  };
-  "/display/instruments/{instrument_name}/image/": {
+    get: operations['simple_token_validation_validate_token_get']
+  }
+  '/display/instruments/{instrument_name}/image/': {
     /** Get Mic Image */
-    get: operations["get_mic_image_display_instruments__instrument_name__image__get"];
-  };
-  "/display/sessions/{session_id}/data_collection_groups/{dcgid}/grid_squares/{grid_square_name}/image": {
+    get: operations['get_mic_image_display_instruments__instrument_name__image__get']
+  }
+  '/display/sessions/{session_id}/data_collection_groups/{dcgid}/grid_squares/{grid_square_name}/image': {
     /** Get Grid Square Img */
-    get: operations["get_grid_square_img_display_sessions__session_id__data_collection_groups__dcgid__grid_squares__grid_square_name__image_get"];
-  };
-  "/display/sessions/{session_id}/data_collection_groups/{dcgid}/grid_squares/{grid_square_name}/foil_holes/{foil_hole_name}/image": {
+    get: operations['get_grid_square_img_display_sessions__session_id__data_collection_groups__dcgid__grid_squares__grid_square_name__image_get']
+  }
+  '/display/sessions/{session_id}/data_collection_groups/{dcgid}/grid_squares/{grid_square_name}/foil_holes/{foil_hole_name}/image': {
     /** Get Foil Hole Img */
-    get: operations["get_foil_hole_img_display_sessions__session_id__data_collection_groups__dcgid__grid_squares__grid_square_name__foil_holes__foil_hole_name__image_get"];
-  };
-  "/instruments/{instrument_name}/sessions/{session_id}/activate_instrument_server": {
+    get: operations['get_foil_hole_img_display_sessions__session_id__data_collection_groups__dcgid__grid_squares__grid_square_name__foil_holes__foil_hole_name__image_get']
+  }
+  '/instruments/{instrument_name}/sessions/{session_id}/activate_instrument_server': {
     /** Activate Instrument Server For Session */
-    post: operations["activate_instrument_server_for_session_instruments__instrument_name__sessions__session_id__activate_instrument_server_post"];
-  };
-  "/instruments/{instrument_name}/sessions/{session_id}/active": {
+    post: operations['activate_instrument_server_for_session_instruments__instrument_name__sessions__session_id__activate_instrument_server_post']
+  }
+  '/instruments/{instrument_name}/sessions/{session_id}/active': {
     /** Check If Session Is Active */
-    get: operations["check_if_session_is_active_instruments__instrument_name__sessions__session_id__active_get"];
-  };
-  "/sessions/{session_id}/multigrid_watcher": {
+    get: operations['check_if_session_is_active_instruments__instrument_name__sessions__session_id__active_get']
+  }
+  '/sessions/{session_id}/multigrid_watcher': {
     /** Setup Multigrid Watcher */
-    post: operations["setup_multigrid_watcher_sessions__session_id__multigrid_watcher_post"];
-  };
-  "/sessions/{session_id}/start_multigrid_watcher": {
+    post: operations['setup_multigrid_watcher_sessions__session_id__multigrid_watcher_post']
+  }
+  '/sessions/{session_id}/start_multigrid_watcher': {
     /** Start Multigrid Watcher */
-    post: operations["start_multigrid_watcher_sessions__session_id__start_multigrid_watcher_post"];
-  };
-  "/sessions/{session_id}/provided_processing_parameters": {
+    post: operations['start_multigrid_watcher_sessions__session_id__start_multigrid_watcher_post']
+  }
+  '/sessions/{session_id}/provided_processing_parameters': {
     /** Pass Proc Params To Instrument Server */
-    post: operations["pass_proc_params_to_instrument_server_sessions__session_id__provided_processing_parameters_post"];
-  };
-  "/instruments/{instrument_name}/instrument_server": {
+    post: operations['pass_proc_params_to_instrument_server_sessions__session_id__provided_processing_parameters_post']
+  }
+  '/instruments/{instrument_name}/instrument_server': {
     /** Check Instrument Server */
-    get: operations["check_instrument_server_instruments__instrument_name__instrument_server_get"];
-  };
-  "/instruments/{instrument_name}/sessions/{session_id}/possible_gain_references": {
+    get: operations['check_instrument_server_instruments__instrument_name__instrument_server_get']
+  }
+  '/instruments/{instrument_name}/sessions/{session_id}/possible_gain_references': {
     /** Get Possible Gain References */
-    get: operations["get_possible_gain_references_instruments__instrument_name__sessions__session_id__possible_gain_references_get"];
-  };
-  "/sessions/{session_id}/upload_gain_reference": {
+    get: operations['get_possible_gain_references_instruments__instrument_name__sessions__session_id__possible_gain_references_get']
+  }
+  '/sessions/{session_id}/upload_gain_reference': {
     /** Request Gain Reference Upload */
-    post: operations["request_gain_reference_upload_sessions__session_id__upload_gain_reference_post"];
-  };
-  "/visits/{visit_name}/{session_id}/upstream_tiff_data_request": {
+    post: operations['request_gain_reference_upload_sessions__session_id__upload_gain_reference_post']
+  }
+  '/visits/{visit_name}/{session_id}/upstream_tiff_data_request': {
     /** Request Upstream Tiff Data Download */
-    post: operations["request_upstream_tiff_data_download_visits__visit_name___session_id__upstream_tiff_data_request_post"];
-  };
-  "/sessions/{session_id}/stop_rsyncer": {
+    post: operations['request_upstream_tiff_data_download_visits__visit_name___session_id__upstream_tiff_data_request_post']
+  }
+  '/sessions/{session_id}/stop_rsyncer': {
     /** Stop Rsyncer */
-    post: operations["stop_rsyncer_sessions__session_id__stop_rsyncer_post"];
-  };
-  "/sessions/{session_id}/finalise_rsyncer": {
+    post: operations['stop_rsyncer_sessions__session_id__stop_rsyncer_post']
+  }
+  '/sessions/{session_id}/finalise_rsyncer': {
     /** Finalise Rsyncer */
-    post: operations["finalise_rsyncer_sessions__session_id__finalise_rsyncer_post"];
-  };
-  "/sessions/{session_id}/finalise_session": {
+    post: operations['finalise_rsyncer_sessions__session_id__finalise_rsyncer_post']
+  }
+  '/sessions/{session_id}/finalise_session': {
     /** Finalise Session */
-    post: operations["finalise_session_sessions__session_id__finalise_session_post"];
-  };
-  "/sessions/{session_id}/remove_rsyncer": {
+    post: operations['finalise_session_sessions__session_id__finalise_session_post']
+  }
+  '/sessions/{session_id}/remove_rsyncer': {
     /** Remove Rsyncer */
-    post: operations["remove_rsyncer_sessions__session_id__remove_rsyncer_post"];
-  };
-  "/sessions/{session_id}/restart_rsyncer": {
+    post: operations['remove_rsyncer_sessions__session_id__remove_rsyncer_post']
+  }
+  '/sessions/{session_id}/restart_rsyncer': {
     /** Restart Rsyncer */
-    post: operations["restart_rsyncer_sessions__session_id__restart_rsyncer_post"];
-  };
-  "/instruments/{instrument_name}/sessions/{session_id}/rsyncer_info": {
+    post: operations['restart_rsyncer_sessions__session_id__restart_rsyncer_post']
+  }
+  '/instruments/{instrument_name}/sessions/{session_id}/rsyncer_info': {
     /** Get Rsyncer Info */
-    get: operations["get_rsyncer_info_instruments__instrument_name__sessions__session_id__rsyncer_info_get"];
-  };
-  "/instruments": {
+    get: operations['get_rsyncer_info_instruments__instrument_name__sessions__session_id__rsyncer_info_get']
+  }
+  '/instruments': {
     /** Get Instrument Info */
-    get: operations["get_instrument_info_instruments_get"];
-  };
-  "/instrument/{instrument_name}/image": {
+    get: operations['get_instrument_info_instruments_get']
+  }
+  '/instrument/{instrument_name}/image': {
     /** Get Instrument Image */
-    get: operations["get_instrument_image_instrument__instrument_name__image_get"];
-  };
-  "/sessions/{session_id}/session_processing_parameters": {
+    get: operations['get_instrument_image_instrument__instrument_name__image_get']
+  }
+  '/sessions/{session_id}/session_processing_parameters': {
     /** Get Session Processing Parameters */
-    get: operations["get_session_processing_parameters_sessions__session_id__session_processing_parameters_get"];
+    get: operations['get_session_processing_parameters_sessions__session_id__session_processing_parameters_get']
     /** Set Session Processing Parameters */
-    post: operations["set_session_processing_parameters_sessions__session_id__session_processing_parameters_post"];
-  };
-  "/ws/test/{client_id}": {
+    post: operations['set_session_processing_parameters_sessions__session_id__session_processing_parameters_post']
+  }
+  '/ws/test/{client_id}': {
     /** Close Ws Connection */
-    delete: operations["close_ws_connection_ws_test__client_id__delete"];
-  };
-  "/ws/connect/{client_id}": {
+    delete: operations['close_ws_connection_ws_test__client_id__delete']
+  }
+  '/ws/connect/{client_id}': {
     /** Close Unrecorded Ws Connection */
-    delete: operations["close_unrecorded_ws_connection_ws_connect__client_id__delete"];
-  };
-  "/instruments/{instrument_name}/visits/{visit_name}/{session_id}/smartem_atlas/": {
+    delete: operations['close_unrecorded_ws_connection_ws_connect__client_id__delete']
+  }
+  '/instruments/{instrument_name}/visits/{visit_name}/{session_id}/smartem_atlas/': {
     /** Request Smartem Atlas Analysis */
-    post: operations["request_smartem_atlas_analysis_instruments__instrument_name__visits__visit_name___session_id__smartem_atlas__post"];
-  };
-  "/instruments/{instrument_name}/k3_ssd": {
+    post: operations['request_smartem_atlas_analysis_instruments__instrument_name__visits__visit_name___session_id__smartem_atlas__post']
+  }
+  '/instruments/{instrument_name}/k3_ssd': {
     /** Update K3 Ssd Statuses */
-    post: operations["update_k3_ssd_statuses_instruments__instrument_name__k3_ssd_post"];
-  };
+    post: operations['update_k3_ssd_statuses_instruments__instrument_name__k3_ssd_post']
+  }
 }
 
-export type webhooks = Record<string, never>;
+export type webhooks = Record<string, never>
 
 export interface components {
   schemas: {
     /** AlignAndMergeParams */
     AlignAndMergeParams: {
       /** Series Name */
-      series_name: string;
+      series_name: string
       /** Images */
-      images: string[];
+      images: string[]
       /**
        * Metadata
        * Format: path
        */
-      metadata: string;
+      metadata: string
       /** Crop To N Frames */
-      crop_to_n_frames?: number;
+      crop_to_n_frames?: number
       /**
        * Align Self
        * @default
        * @enum {string}
        */
-      align_self?: "enabled" | "";
+      align_self?: 'enabled' | ''
       /**
        * Flatten
        * @default
        * @enum {string}
        */
-      flatten?: "mean" | "min" | "max" | "";
+      flatten?: 'mean' | 'min' | 'max' | ''
       /**
        * Align Across
        * @default
        * @enum {string}
        */
-      align_across?: "enabled" | "";
-    };
+      align_across?: 'enabled' | ''
+    }
     /** Body_generate_token_token_post */
     Body_generate_token_token_post: {
       /** Grant Type */
-      grant_type?: string;
+      grant_type?: string
       /** Username */
-      username: string;
+      username: string
       /** Password */
-      password: string;
+      password: string
       /**
        * Scope
        * @default
        */
-      scope?: string;
+      scope?: string
       /** Client Id */
-      client_id?: string;
+      client_id?: string
       /** Client Secret */
-      client_secret?: string;
-    };
+      client_secret?: string
+    }
     /** Body_register_clem_metadata_sessions__session_id__clem_metadata_files_post */
     Body_register_clem_metadata_sessions__session_id__clem_metadata_files_post: {
       /**
        * Associated Tiffs
        * @default []
        */
-      associated_tiffs?: string[];
+      associated_tiffs?: string[]
       /**
        * Associated Stacks
        * @default []
        */
-      associated_stacks?: string[];
-    };
+      associated_stacks?: string[]
+    }
     /** Body_register_image_series_sessions__session_id__clem_image_series_post */
     Body_register_image_series_sessions__session_id__clem_image_series_post: {
       /**
        * Parent Tiffs
        * @default []
        */
-      parent_tiffs?: string[];
+      parent_tiffs?: string[]
       /**
        * Child Stacks
        * @default []
        */
-      child_stacks?: string[];
-    };
+      child_stacks?: string[]
+    }
     /** Body_register_lif_file_sessions__session_id__clem_lif_files_post */
     Body_register_lif_file_sessions__session_id__clem_lif_files_post: {
       /**
        * Child Metadata
        * @default []
        */
-      child_metadata?: string[];
+      child_metadata?: string[]
       /**
        * Child Series
        * @default []
        */
-      child_series?: string[];
+      child_series?: string[]
       /**
        * Child Stacks
        * @default []
        */
-      child_stacks?: string[];
-    };
+      child_stacks?: string[]
+    }
     /** ClientEnvironment */
     ClientEnvironment: {
       /** Client Id */
-      client_id?: number;
+      client_id?: number
       /**
        * Visit
        * @default
        */
-      visit?: string;
+      visit?: string
       /** Session Id */
-      session_id?: number;
+      session_id?: number
       /** Connected */
-      connected: boolean;
-    };
+      connected: boolean
+    }
     /** ClientInfo */
     ClientInfo: {
       /** Id */
-      id: number;
-    };
+      id: number
+    }
     /** CurrentGainRef */
     CurrentGainRef: {
       /** Path */
-      path: string;
-    };
+      path: string
+    }
     /** DCGroupParameters */
     DCGroupParameters: {
       /** Experiment Type */
-      experiment_type: string;
+      experiment_type: string
       /** Experiment Type Id */
-      experiment_type_id: number;
+      experiment_type_id: number
       /** Tag */
-      tag: string;
+      tag: string
       /**
        * Atlas
        * @default
        */
-      atlas?: string;
+      atlas?: string
       /** Sample */
-      sample?: number;
+      sample?: number
       /**
        * Atlas Pixel Size
        * @default 0
        */
-      atlas_pixel_size?: number;
-    };
+      atlas_pixel_size?: number
+    }
     /** DCParameters */
     DCParameters: {
       /** Voltage */
-      voltage: number;
+      voltage: number
       /** Pixel Size On Image */
-      pixel_size_on_image: string;
+      pixel_size_on_image: string
       /** Experiment Type */
-      experiment_type: string;
+      experiment_type: string
       /** Image Size X */
-      image_size_x: number;
+      image_size_x: number
       /** Image Size Y */
-      image_size_y: number;
+      image_size_y: number
       /** File Extension */
-      file_extension: string;
+      file_extension: string
       /** Acquisition Software */
-      acquisition_software: string;
+      acquisition_software: string
       /** Image Directory */
-      image_directory: string;
+      image_directory: string
       /** Tag */
-      tag: string;
+      tag: string
       /** Source */
-      source: string;
+      source: string
       /** Magnification */
-      magnification: number;
+      magnification: number
       /** Total Exposed Dose */
-      total_exposed_dose?: number;
+      total_exposed_dose?: number
       /** C2Aperture */
-      c2aperture?: number;
+      c2aperture?: number
       /** Exposure Time */
-      exposure_time?: number;
+      exposure_time?: number
       /** Slit Width */
-      slit_width?: number;
+      slit_width?: number
       /**
        * Phase Plate
        * @default false
        */
-      phase_plate?: boolean;
+      phase_plate?: boolean
       /**
        * Data Collection Tag
        * @default
        */
-      data_collection_tag?: string;
-    };
+      data_collection_tag?: string
+    }
     /** DataCollection */
     DataCollection: {
       /** Id */
-      id: number;
+      id: number
       /** Tag */
-      tag: string;
+      tag: string
       /** Dcg Id */
-      dcg_id: number;
-    };
+      dcg_id: number
+    }
     /** DataCollectionGroup */
     DataCollectionGroup: {
       /** Id */
-      id: number;
+      id: number
       /** Session Id */
-      session_id: number;
+      session_id: number
       /** Tag */
-      tag: string;
+      tag: string
       /** Atlas Id */
-      atlas_id?: number;
+      atlas_id?: number
       /** Atlas Pixel Size */
-      atlas_pixel_size?: number;
+      atlas_pixel_size?: number
       /**
        * Atlas
        * @default
        */
-      atlas?: string;
+      atlas?: string
       /** Sample */
-      sample?: number;
-    };
+      sample?: number
+    }
     /** EditableSessionProcessingParameters */
     EditableSessionProcessingParameters: {
       /**
        * Gain Ref
        * @default
        */
-      gain_ref?: string;
+      gain_ref?: string
       /** Dose Per Frame */
-      dose_per_frame?: number;
+      dose_per_frame?: number
       /**
        * Eer Fractionation File
        * @default
        */
-      eer_fractionation_file?: string;
+      eer_fractionation_file?: string
       /**
        * Symmetry
        * @default
        */
-      symmetry?: string;
-    };
+      symmetry?: string
+    }
     /** File */
     File: {
       /** Name */
-      name: string;
+      name: string
       /** Description */
-      description: string;
+      description: string
       /** Size */
-      size: number;
+      size: number
       /**
        * Timestamp
        * Format: date-time
        */
-      timestamp: string;
+      timestamp: string
       /** Full Path */
-      full_path: string;
-    };
+      full_path: string
+    }
     /** FoilHole */
     FoilHole: {
       /** Id */
-      id?: number;
+      id?: number
       /** Grid Square Id */
-      grid_square_id: number;
+      grid_square_id: number
       /** Session Id */
-      session_id: number;
+      session_id: number
       /** Name */
-      name: number;
+      name: number
       /** X Location */
-      x_location?: number;
+      x_location?: number
       /** Y Location */
-      y_location?: number;
+      y_location?: number
       /** X Stage Position */
-      x_stage_position?: number;
+      x_stage_position?: number
       /** Y Stage Position */
-      y_stage_position?: number;
+      y_stage_position?: number
       /** Readout Area X */
-      readout_area_x?: number;
+      readout_area_x?: number
       /** Readout Area Y */
-      readout_area_y?: number;
+      readout_area_y?: number
       /** Thumbnail Size X */
-      thumbnail_size_x?: number;
+      thumbnail_size_x?: number
       /** Thumbnail Size Y */
-      thumbnail_size_y?: number;
+      thumbnail_size_y?: number
       /** Pixel Size */
-      pixel_size?: number;
+      pixel_size?: number
       /**
        * Image
        * @default
        */
-      image?: string;
-    };
+      image?: string
+    }
     /** FoilHoleParameters */
     FoilHoleParameters: {
       /** Tag */
-      tag: string;
+      tag: string
       /** Name */
-      name: number;
+      name: number
       /** X Location */
-      x_location?: number;
+      x_location?: number
       /** Y Location */
-      y_location?: number;
+      y_location?: number
       /** X Stage Position */
-      x_stage_position?: number;
+      x_stage_position?: number
       /** Y Stage Position */
-      y_stage_position?: number;
+      y_stage_position?: number
       /** Readout Area X */
-      readout_area_x?: number;
+      readout_area_x?: number
       /** Readout Area Y */
-      readout_area_y?: number;
+      readout_area_y?: number
       /** Thumbnail Size X */
-      thumbnail_size_x?: number;
+      thumbnail_size_x?: number
       /** Thumbnail Size Y */
-      thumbnail_size_y?: number;
+      thumbnail_size_y?: number
       /** Pixel Size */
-      pixel_size?: number;
+      pixel_size?: number
       /**
        * Image
        * @default
        */
-      image?: string;
+      image?: string
       /** Diameter */
-      diameter?: number;
-    };
+      diameter?: number
+    }
     /** FractionationParameters */
     FractionationParameters: {
       /** Fractionation */
-      fractionation: number;
+      fractionation: number
       /** Dose Per Frame */
-      dose_per_frame: number;
+      dose_per_frame: number
       /**
        * Num Frames
        * @default 0
        */
-      num_frames?: number;
+      num_frames?: number
       /** Eer Path */
-      eer_path?: string;
+      eer_path?: string
       /**
        * Fractionation File Name
        * @default eer_fractionation.txt
        */
-      fractionation_file_name?: string;
-    };
+      fractionation_file_name?: string
+    }
     /** GainReference */
     GainReference: {
       /**
        * Gain Ref
        * Format: path
        */
-      gain_ref: string;
+      gain_ref: string
       /**
        * Rescale
        * @default true
        */
-      rescale?: boolean;
+      rescale?: boolean
       /**
        * Eer
        * @default false
        */
-      eer?: boolean;
+      eer?: boolean
       /**
        * Tag
        * @default
        */
-      tag?: string;
-    };
+      tag?: string
+    }
     /** GainReferenceRequest */
     GainReferenceRequest: {
       /**
        * Gain Path
        * Format: path
        */
-      gain_path: string;
-    };
+      gain_path: string
+    }
     /** GridSquare */
     GridSquare: {
       /** Id */
-      id?: number;
+      id?: number
       /** Session Id */
-      session_id: number;
+      session_id: number
       /** Name */
-      name: number;
+      name: number
       /** Tag */
-      tag: string;
+      tag: string
       /** X Location */
-      x_location?: number;
+      x_location?: number
       /** Y Location */
-      y_location?: number;
+      y_location?: number
       /** X Stage Position */
-      x_stage_position?: number;
+      x_stage_position?: number
       /** Y Stage Position */
-      y_stage_position?: number;
+      y_stage_position?: number
       /** Readout Area X */
-      readout_area_x?: number;
+      readout_area_x?: number
       /** Readout Area Y */
-      readout_area_y?: number;
+      readout_area_y?: number
       /** Thumbnail Size X */
-      thumbnail_size_x?: number;
+      thumbnail_size_x?: number
       /** Thumbnail Size Y */
-      thumbnail_size_y?: number;
+      thumbnail_size_y?: number
       /** Pixel Size */
-      pixel_size?: number;
+      pixel_size?: number
       /**
        * Image
        * @default
        */
-      image?: string;
-    };
+      image?: string
+    }
     /** GridSquareParameters */
     GridSquareParameters: {
       /** Tag */
-      tag: string;
+      tag: string
       /** X Location */
-      x_location?: number;
+      x_location?: number
       /** Y Location */
-      y_location?: number;
+      y_location?: number
       /** X Stage Position */
-      x_stage_position?: number;
+      x_stage_position?: number
       /** Y Stage Position */
-      y_stage_position?: number;
+      y_stage_position?: number
       /** Readout Area X */
-      readout_area_x?: number;
+      readout_area_x?: number
       /** Readout Area Y */
-      readout_area_y?: number;
+      readout_area_y?: number
       /** Thumbnail Size X */
-      thumbnail_size_x?: number;
+      thumbnail_size_x?: number
       /** Thumbnail Size Y */
-      thumbnail_size_y?: number;
+      thumbnail_size_y?: number
       /** Height */
-      height?: number;
+      height?: number
       /** Width */
-      width?: number;
+      width?: number
       /** Pixel Size */
-      pixel_size?: number;
+      pixel_size?: number
       /**
        * Image
        * @default
        */
-      image?: string;
+      image?: string
       /** Angle */
-      angle?: number;
-    };
+      angle?: number
+    }
     /** HTTPValidationError */
     HTTPValidationError: {
       /** Detail */
-      detail?: components["schemas"]["ValidationError"][];
-    };
+      detail?: components['schemas']['ValidationError'][]
+    }
     /** InstrumentInfo */
     InstrumentInfo: {
       /** Instrument Name */
-      instrument_name: string;
+      instrument_name: string
       /** Display Name */
-      display_name: string;
+      display_name: string
       /** Instrument Url */
-      instrument_url: string;
-    };
+      instrument_url: string
+    }
     /** MachineConfig */
     MachineConfig: {
       /** Acquisition Software */
-      acquisition_software: string[];
+      acquisition_software: string[]
       /** Calibrations */
       calibrations: {
         [key: string]: {
-          [key: string]: Record<string, never> | number;
-        };
-      };
+          [key: string]: Record<string, never> | number
+        }
+      }
       /** Data Directories */
-      data_directories: string[];
+      data_directories: string[]
       /**
        * Rsync Basepath
        * Format: path
        */
-      rsync_basepath: string;
+      rsync_basepath: string
       /**
        * Default Model
        * Format: path
        */
-      default_model: string;
+      default_model: string
       /**
        * Display Name
        * @default
        */
-      display_name?: string;
+      display_name?: string
       /**
        * Instrument Name
        * @default
        */
-      instrument_name?: string;
+      instrument_name?: string
       /**
        * Image Path
        * Format: path
        */
-      image_path?: string;
+      image_path?: string
       /**
        * Software Versions
        * @default {}
        */
       software_versions?: {
-        [key: string]: string;
-      };
+        [key: string]: string
+      }
       /**
        * External Executables
        * @default {}
        */
       external_executables?: {
-        [key: string]: string;
-      };
+        [key: string]: string
+      }
       /**
        * External Executables Eer
        * @default {}
        */
       external_executables_eer?: {
-        [key: string]: string;
-      };
+        [key: string]: string
+      }
       /**
        * External Environment
        * @default {}
        */
       external_environment?: {
-        [key: string]: string;
-      };
+        [key: string]: string
+      }
       /**
        * Rsync Module
        * @default
        */
-      rsync_module?: string;
+      rsync_module?: string
       /**
        * Create Directories
        * @default [
        *   "atlas"
        * ]
        */
-      create_directories?: string[];
+      create_directories?: string[]
       /**
        * Analyse Created Directories
        * @default []
        */
-      analyse_created_directories?: string[];
+      analyse_created_directories?: string[]
       /**
        * Gain Reference Directory
        * Format: path
        */
-      gain_reference_directory?: string;
+      gain_reference_directory?: string
       /**
        * Eer Fractionation File Template
        * @default
        */
-      eer_fractionation_file_template?: string;
+      eer_fractionation_file_template?: string
       /**
        * Processed Directory Name
        * @default processed
        */
-      processed_directory_name?: string;
+      processed_directory_name?: string
       /**
        * Gain Directory Name
        * @default processing
        */
-      gain_directory_name?: string;
+      gain_directory_name?: string
       /**
        * Node Creator Queue
        * @default node_creator
        */
-      node_creator_queue?: string;
+      node_creator_queue?: string
       /**
        * Superres
        * @default false
        */
-      superres?: boolean;
+      superres?: boolean
       /**
        * Camera
        * @default FALCON
        */
-      camera?: string;
+      camera?: string
       /**
        * Data Required Substrings
        * @default {}
        */
       data_required_substrings?: {
         [key: string]: {
-          [key: string]: string[];
-        };
-      };
+          [key: string]: string[]
+        }
+      }
       /**
        * Allow Removal
        * @default false
        */
-      allow_removal?: boolean;
+      allow_removal?: boolean
       /**
        * Data Transfer Enabled
        * @default true
        */
-      data_transfer_enabled?: boolean;
+      data_transfer_enabled?: boolean
       /**
        * Processing Enabled
        * @default true
        */
-      processing_enabled?: boolean;
+      processing_enabled?: boolean
       /**
        * Machine Override
        * @default
        */
-      machine_override?: string;
+      machine_override?: string
       /**
        * Processed Extra Directory
        * @default
        */
-      processed_extra_directory?: string;
+      processed_extra_directory?: string
       /**
        * Plugin Packages
        * @default {}
        */
       plugin_packages?: {
-        [key: string]: string;
-      };
+        [key: string]: string
+      }
       /**
        * Software Settings Output Directories
        * @default {}
        */
       software_settings_output_directories?: {
-        [key: string]: string[];
-      };
+        [key: string]: string[]
+      }
       /**
        * Process By Default
        * @default true
        */
-      process_by_default?: boolean;
+      process_by_default?: boolean
       /**
        * Recipes
        * @default {
@@ -1289,2377 +1288,2376 @@ export interface components {
        * }
        */
       recipes?: {
-        [key: string]: string;
-      };
+        [key: string]: string
+      }
       /**
        * Upstream Data Directories
        * @default []
        */
-      upstream_data_directories?: string[];
+      upstream_data_directories?: string[]
       /**
        * Upstream Data Download Directory
        * Format: path
        */
-      upstream_data_download_directory?: string;
+      upstream_data_download_directory?: string
       /**
        * Upstream Data Tiff Locations
        * @default [
        *   "processed"
        * ]
        */
-      upstream_data_tiff_locations?: string[];
+      upstream_data_tiff_locations?: string[]
       /**
        * Model Search Directory
        * @default processing
        */
-      model_search_directory?: string;
+      model_search_directory?: string
       /**
        * Initial Model Search Directory
        * @default processing/initial_model
        */
-      initial_model_search_directory?: string;
+      initial_model_search_directory?: string
       /**
        * Failure Queue
        * @default
        */
-      failure_queue?: string;
+      failure_queue?: string
       /**
        * Instrument Server Url
        * @default http://localhost:8001
        */
-      instrument_server_url?: string;
+      instrument_server_url?: string
       /**
        * Frontend Url
        * @default http://localhost:3000
        */
-      frontend_url?: string;
+      frontend_url?: string
       /**
        * Murfey Url
        * @default http://localhost:8000
        */
-      murfey_url?: string;
+      murfey_url?: string
       /**
        * Rsync Url
        * @default
        */
-      rsync_url?: string;
+      rsync_url?: string
       /**
        * Security Configuration Path
        * Format: path
        */
-      security_configuration_path?: string;
+      security_configuration_path?: string
       /**
        * Auth Url
        * @default
        */
-      auth_url?: string;
+      auth_url?: string
       /**
        * Notifications Queue
        * @default pato_notification
        */
-      notifications_queue?: string;
-    };
+      notifications_queue?: string
+    }
     /** MagnificationLookup */
     MagnificationLookup: {
       /** Magnification */
-      magnification: number;
+      magnification: number
       /** Pixel Size */
-      pixel_size: number;
-    };
+      pixel_size: number
+    }
     /** MultigridWatcherSetup */
     MultigridWatcherSetup: {
       /**
        * Source
        * Format: path
        */
-      source: string;
+      source: string
       /**
        * Skip Existing Processing
        * @default false
        */
-      skip_existing_processing?: boolean;
+      skip_existing_processing?: boolean
       /**
        * Destination Overrides
        * @default {}
        */
       destination_overrides?: {
-        [key: string]: string;
-      };
+        [key: string]: string
+      }
       /**
        * Rsync Restarts
        * @default []
        */
-      rsync_restarts?: string[];
-    };
+      rsync_restarts?: string[]
+    }
     /** PostInfo */
     PostInfo: {
       /** Url */
-      url: string;
+      url: string
       /** Data */
-      data: Record<string, never>;
-    };
+      data: Record<string, never>
+    }
     /** PreprocessingParametersTomo */
     PreprocessingParametersTomo: {
       /** Dose Per Frame */
-      dose_per_frame?: number;
+      dose_per_frame?: number
       /** Frame Count */
-      frame_count: number;
+      frame_count: number
       /** Tilt Axis */
-      tilt_axis: number;
+      tilt_axis: number
       /** Gain Ref */
-      gain_ref?: string;
+      gain_ref?: string
       /** Experiment Type */
-      experiment_type: string;
+      experiment_type: string
       /** Voltage */
-      voltage: number;
+      voltage: number
       /** Image Size X */
-      image_size_x: number;
+      image_size_x: number
       /** Image Size Y */
-      image_size_y: number;
+      image_size_y: number
       /** Pixel Size On Image */
-      pixel_size_on_image: string;
+      pixel_size_on_image: string
       /** Motion Corr Binning */
-      motion_corr_binning: number;
+      motion_corr_binning: number
       /** Manual Tilt Offset */
-      manual_tilt_offset: number;
+      manual_tilt_offset: number
       /** File Extension */
-      file_extension: string;
+      file_extension: string
       /** Tag */
-      tag: string;
+      tag: string
       /** Tilt Series Tag */
-      tilt_series_tag: string;
+      tilt_series_tag: string
       /** Eer Fractionation File */
-      eer_fractionation_file?: string;
+      eer_fractionation_file?: string
       /** Eer Fractionation */
-      eer_fractionation: number;
-    };
+      eer_fractionation: number
+    }
     /** ProcessingDetails */
     ProcessingDetails: {
-      data_collection_group: components["schemas"]["DataCollectionGroup"];
+      data_collection_group: components['schemas']['DataCollectionGroup']
       /** Data Collections */
-      data_collections: components["schemas"]["DataCollection"][];
+      data_collections: components['schemas']['DataCollection'][]
       /** Processing Jobs */
-      processing_jobs: components["schemas"]["ProcessingJob"][];
-      relion_params: components["schemas"]["SPARelionParameters"];
-      feedback_params: components["schemas"]["SPAFeedbackParameters"];
-    };
+      processing_jobs: components['schemas']['ProcessingJob'][]
+      relion_params: components['schemas']['SPARelionParameters']
+      feedback_params: components['schemas']['SPAFeedbackParameters']
+    }
     /** ProcessingJob */
     ProcessingJob: {
       /** Id */
-      id: number;
+      id: number
       /** Recipe */
-      recipe: string;
+      recipe: string
       /** Dc Id */
-      dc_id: number;
-    };
+      dc_id: number
+    }
     /** ProcessingJobParameters */
     ProcessingJobParameters: {
       /** Tag */
-      tag: string;
+      tag: string
       /** Source */
-      source: string;
+      source: string
       /** Recipe */
-      recipe: string;
+      recipe: string
       /**
        * Parameters
        * @default {}
        */
-      parameters?: Record<string, never>;
+      parameters?: Record<string, never>
       /**
        * Experiment Type
        * @default spa
        */
-      experiment_type?: string;
-    };
+      experiment_type?: string
+    }
     /** ProcessingParametersSPA */
     ProcessingParametersSPA: {
       /** Tag */
-      tag: string;
+      tag: string
       /** Dose Per Frame */
-      dose_per_frame: number;
+      dose_per_frame: number
       /** Gain Ref */
-      gain_ref?: string;
+      gain_ref?: string
       /** Experiment Type */
-      experiment_type: string;
+      experiment_type: string
       /** Voltage */
-      voltage: number;
+      voltage: number
       /** Image Size X */
-      image_size_x: number;
+      image_size_x: number
       /** Image Size Y */
-      image_size_y: number;
+      image_size_y: number
       /** Pixel Size On Image */
-      pixel_size_on_image: string;
+      pixel_size_on_image: string
       /** Motion Corr Binning */
-      motion_corr_binning: number;
+      motion_corr_binning: number
       /** File Extension */
-      file_extension: string;
+      file_extension: string
       /** Acquisition Software */
-      acquisition_software: string;
+      acquisition_software: string
       /** Use Cryolo */
-      use_cryolo: boolean;
+      use_cryolo: boolean
       /** Symmetry */
-      symmetry: string;
+      symmetry: string
       /** Mask Diameter */
-      mask_diameter?: number;
+      mask_diameter?: number
       /** Boxsize */
-      boxsize?: number;
+      boxsize?: number
       /** Downscale */
-      downscale: boolean;
+      downscale: boolean
       /** Small Boxsize */
-      small_boxsize?: number;
+      small_boxsize?: number
       /**
        * Eer Fractionation File
        * @default
        */
-      eer_fractionation_file?: string;
+      eer_fractionation_file?: string
       /** Particle Diameter */
-      particle_diameter?: number;
+      particle_diameter?: number
       /** Magnification */
-      magnification?: number;
+      magnification?: number
       /** Total Exposed Dose */
-      total_exposed_dose?: number;
+      total_exposed_dose?: number
       /** C2Aperture */
-      c2aperture?: number;
+      c2aperture?: number
       /** Exposure Time */
-      exposure_time?: number;
+      exposure_time?: number
       /** Slit Width */
-      slit_width?: number;
+      slit_width?: number
       /**
        * Phase Plate
        * @default false
        */
-      phase_plate?: boolean;
-    };
+      phase_plate?: boolean
+    }
     /** ProcessingParametersTomo */
     ProcessingParametersTomo: {
       /** Manual Tilt Offset */
-      manual_tilt_offset: number;
+      manual_tilt_offset: number
       /** Tag */
-      tag: string;
+      tag: string
       /** Tilt Series Tag */
-      tilt_series_tag: string;
-    };
+      tilt_series_tag: string
+    }
     /** ProvidedProcessingParameters */
     ProvidedProcessingParameters: {
       /** Dose Per Frame */
-      dose_per_frame: number;
+      dose_per_frame: number
       /**
        * Extract Downscale
        * @default true
        */
-      extract_downscale?: boolean;
+      extract_downscale?: boolean
       /** Particle Diameter */
-      particle_diameter?: number;
+      particle_diameter?: number
       /**
        * Symmetry
        * @default C1
        */
-      symmetry?: string;
+      symmetry?: string
       /**
        * Eer Fractionation
        * @default 20
        */
-      eer_fractionation?: number;
-    };
+      eer_fractionation?: number
+    }
     /** RSyncerInfo */
     RSyncerInfo: {
       /** Source */
-      source: string;
+      source: string
       /** Num Files Transferred */
-      num_files_transferred: number;
+      num_files_transferred: number
       /** Num Files In Queue */
-      num_files_in_queue: number;
+      num_files_in_queue: number
       /** Num Files To Analyse */
-      num_files_to_analyse: number;
+      num_files_to_analyse: number
       /** Alive */
-      alive: boolean;
+      alive: boolean
       /** Stopping */
-      stopping: boolean;
+      stopping: boolean
       /** Analyser Alive */
-      analyser_alive: boolean;
+      analyser_alive: boolean
       /** Analyser Stopping */
-      analyser_stopping: boolean;
+      analyser_stopping: boolean
       /** Destination */
-      destination: string;
+      destination: string
       /** Tag */
-      tag: string;
+      tag: string
       /** Files Transferred */
-      files_transferred: number;
+      files_transferred: number
       /** Files Counted */
-      files_counted: number;
+      files_counted: number
       /** Transferring */
-      transferring: boolean;
+      transferring: boolean
       /** Session Id */
-      session_id: number;
-      num_files_skipped: number;
-    };
+      session_id: number
+      num_files_skipped: number
+    }
     /** RegistrationMessage */
     RegistrationMessage: {
       /** Registration */
-      registration: string;
+      registration: string
       /** Params */
-      params?: Record<string, never>;
-    };
+      params?: Record<string, never>
+    }
     /** RsyncInstance */
     RsyncInstance: {
       /** Source */
-      source: string;
+      source: string
       /**
        * Destination
        * @default
        */
-      destination?: string;
+      destination?: string
       /** Session Id */
-      session_id: number;
+      session_id: number
       /**
        * Tag
        * @default
        */
-      tag?: string;
+      tag?: string
       /**
        * Files Transferred
        * @default 0
        */
-      files_transferred?: number;
+      files_transferred?: number
       /**
        * Files Counted
        * @default 0
        */
-      files_counted?: number;
+      files_counted?: number
       /**
        * Transferring
        * @default false
        */
-      transferring?: boolean;
-    };
+      transferring?: boolean
+    }
     /** RsyncerInfo */
     RsyncerInfo: {
       /** Source */
-      source: string;
+      source: string
       /** Destination */
-      destination: string;
+      destination: string
       /** Session Id */
-      session_id: number;
+      session_id: number
       /**
        * Transferring
        * @default true
        */
-      transferring?: boolean;
+      transferring?: boolean
       /**
        * Increment Count
        * @default 1
        */
-      increment_count?: number;
+      increment_count?: number
       /**
        * Bytes
        * @default 0
        */
-      bytes?: number;
+      bytes?: number
       /**
        * Increment Data Count
        * @default 0
        */
-      increment_data_count?: number;
+      increment_data_count?: number
       /**
        * Data Bytes
        * @default 0
        */
-      data_bytes?: number;
+      data_bytes?: number
       /**
        * Tag
        * @default
        */
-      tag?: string;
-    };
+      tag?: string
+    }
     /** SPAFeedbackParameters */
     SPAFeedbackParameters: {
       /** Pj Id */
-      pj_id: number;
+      pj_id: number
       /**
        * Estimate Particle Diameter
        * @default true
        */
-      estimate_particle_diameter?: boolean;
+      estimate_particle_diameter?: boolean
       /**
        * Hold Class2D
        * @default false
        */
-      hold_class2d?: boolean;
+      hold_class2d?: boolean
       /**
        * Rerun Class2D
        * @default false
        */
-      rerun_class2d?: boolean;
+      rerun_class2d?: boolean
       /**
        * Hold Class3D
        * @default false
        */
-      hold_class3d?: boolean;
+      hold_class3d?: boolean
       /**
        * Hold Refine
        * @default false
        */
-      hold_refine?: boolean;
+      hold_refine?: boolean
       /** Class Selection Score */
-      class_selection_score: number;
+      class_selection_score: number
       /** Star Combination Job */
-      star_combination_job: number;
+      star_combination_job: number
       /** Initial Model */
-      initial_model: string;
+      initial_model: string
       /** Next Job */
-      next_job: number;
+      next_job: number
       /** Picker Murfey Id */
-      picker_murfey_id?: number;
+      picker_murfey_id?: number
       /** Picker Ispyb Id */
-      picker_ispyb_id?: number;
-    };
+      picker_ispyb_id?: number
+    }
     /** SPAProcessFile */
     SPAProcessFile: {
       /** Tag */
-      tag: string;
+      tag: string
       /** Path */
-      path: string;
+      path: string
       /** Description */
-      description: string;
+      description: string
       /** Processing Job */
-      processing_job?: number;
+      processing_job?: number
       /** Data Collection Id */
-      data_collection_id?: number;
+      data_collection_id?: number
       /** Image Number */
-      image_number: number;
+      image_number: number
       /** Autoproc Program Id */
-      autoproc_program_id?: number;
+      autoproc_program_id?: number
       /** Foil Hole Id */
-      foil_hole_id?: number;
+      foil_hole_id?: number
       /** Pixel Size */
-      pixel_size?: number;
+      pixel_size?: number
       /** Dose Per Frame */
-      dose_per_frame?: number;
+      dose_per_frame?: number
       /**
        * Mc Binning
        * @default 1
        */
-      mc_binning?: number;
+      mc_binning?: number
       /** Gain Ref */
-      gain_ref?: string;
+      gain_ref?: string
       /**
        * Extract Downscale
        * @default true
        */
-      extract_downscale?: boolean;
+      extract_downscale?: boolean
       /** Eer Fractionation File */
-      eer_fractionation_file?: string;
+      eer_fractionation_file?: string
       /**
        * Source
        * @default
        */
-      source?: string;
-    };
+      source?: string
+    }
     /** SPARelionParameters */
     SPARelionParameters: {
       /** Pj Id */
-      pj_id: number;
+      pj_id: number
       /** Angpix */
-      angpix: number;
+      angpix: number
       /** Dose Per Frame */
-      dose_per_frame: number;
+      dose_per_frame: number
       /** Gain Ref */
-      gain_ref?: string;
+      gain_ref?: string
       /** Voltage */
-      voltage: number;
+      voltage: number
       /** Motion Corr Binning */
-      motion_corr_binning: number;
+      motion_corr_binning: number
       /**
        * Eer Fractionation File
        * @default
        */
-      eer_fractionation_file?: string;
+      eer_fractionation_file?: string
       /** Symmetry */
-      symmetry: string;
+      symmetry: string
       /** Particle Diameter */
-      particle_diameter?: number;
+      particle_diameter?: number
       /** Downscale */
-      downscale: boolean;
+      downscale: boolean
       /**
        * Do Icebreaker Jobs
        * @default true
        */
-      do_icebreaker_jobs?: boolean;
+      do_icebreaker_jobs?: boolean
       /**
        * Boxsize
        * @default 256
        */
-      boxsize?: number;
+      boxsize?: number
       /**
        * Small Boxsize
        * @default 64
        */
-      small_boxsize?: number;
+      small_boxsize?: number
       /**
        * Mask Diameter
        * @default 190
        */
-      mask_diameter?: number;
-    };
+      mask_diameter?: number
+    }
     /** SSDData */
     SSDData: {
       /** Name */
-      name: string;
+      name: string
       /** Health */
-      health: number;
-    };
+      health: number
+    }
     /** Session */
     Session: {
       /** Id */
-      id: number;
+      id: number
       /** Name */
-      name: string;
+      name: string
       /**
        * Visit
        * @default
        */
-      visit?: string;
+      visit?: string
       /**
        * Started
        * @default false
        */
-      started?: boolean;
+      started?: boolean
       /**
        * Current Gain Ref
        * @default
        */
-      current_gain_ref?: string;
+      current_gain_ref?: string
       /**
        * Instrument Name
        * @default
        */
-      instrument_name?: string;
+      instrument_name?: string
       /**
        * Process
        * @default
        */
-      process?: boolean;
-      visit_end_time: string;
-    };
+      process?: boolean
+      visit_end_time: string
+    }
     /** SessionClients */
     SessionClients: {
-      session: components["schemas"]["Session"];
+      session: components['schemas']['Session']
       /** Clients */
-      clients: components["schemas"]["ClientEnvironment"][];
-    };
+      clients: components['schemas']['ClientEnvironment'][]
+    }
     /** SessionInfo */
     SessionInfo: {
       /** Session Id */
-      session_id?: number;
+      session_id?: number
       /**
        * Session Name
        * @default
        */
-      session_name?: string;
+      session_name?: string
       /**
        * Rescale
        * @default true
        */
-      rescale?: boolean;
-    };
+      rescale?: boolean
+    }
     /** SmartEMAtlasRequest */
     SmartEMAtlasRequest: {
       /**
        * Atlas Path
        * Format: path
        */
-      atlas_path: string;
+      atlas_path: string
       /**
        * Output Dir
        * Format: path
        */
-      output_dir: string;
+      output_dir: string
       /** Tag */
-      tag: string;
+      tag: string
       /**
        * Num Preds
        * @default 15
        */
-      num_preds?: number;
+      num_preds?: number
       /**
        * Cpus
        * @default 4
        */
-      cpus?: number;
-    };
+      cpus?: number
+    }
     /** Source */
     Source: {
       /** Rsync Source */
-      rsync_source: string;
-    };
+      rsync_source: string
+    }
     /** SuggestedPathParameters */
     SuggestedPathParameters: {
       /**
        * Base Path
        * Format: path
        */
-      base_path: string;
+      base_path: string
       /**
        * Touch
        * @default false
        */
-      touch?: boolean;
+      touch?: boolean
       /**
        * Extra Directory
        * @default
        */
-      extra_directory?: string;
-    };
+      extra_directory?: string
+    }
     /** TIFFSeriesInfo */
     TIFFSeriesInfo: {
       /** Series Name */
-      series_name: string;
+      series_name: string
       /** Tiff Files */
-      tiff_files: string[];
+      tiff_files: string[]
       /**
        * Series Metadata
        * Format: path
        */
-      series_metadata: string;
-    };
+      series_metadata: string
+    }
     /** Tag */
     Tag: {
       /** Tag */
-      tag: string;
-    };
+      tag: string
+    }
     /** TiltInfo */
     TiltInfo: {
       /** Tilt Series Tag */
-      tilt_series_tag: string;
+      tilt_series_tag: string
       /** Movie Path */
-      movie_path: string;
+      movie_path: string
       /** Source */
-      source: string;
-    };
+      source: string
+    }
     /** TiltSeriesGroupInfo */
     TiltSeriesGroupInfo: {
       /** Tags */
-      tags: string[];
+      tags: string[]
       /** Source */
-      source: string;
+      source: string
       /** Tilt Series Lengths */
-      tilt_series_lengths: number[];
-    };
+      tilt_series_lengths: number[]
+    }
     /** TiltSeriesInfo */
     TiltSeriesInfo: {
       /** Session Id */
-      session_id: number;
+      session_id: number
       /** Tag */
-      tag: string;
+      tag: string
       /** Source */
-      source: string;
-    };
+      source: string
+    }
     /** Token */
     Token: {
       /** Access Token */
-      access_token: string;
+      access_token: string
       /** Token Type */
-      token_type: string;
-    };
+      token_type: string
+    }
     /** TomoProcessFile */
     TomoProcessFile: {
       /** Path */
-      path: string;
+      path: string
       /** Description */
-      description: string;
+      description: string
       /** Tag */
-      tag: string;
+      tag: string
       /** Image Number */
-      image_number: number;
+      image_number: number
       /** Pixel Size */
-      pixel_size: number;
+      pixel_size: number
       /** Dose Per Frame */
-      dose_per_frame?: number;
+      dose_per_frame?: number
       /** Frame Count */
-      frame_count: number;
+      frame_count: number
       /** Tilt Axis */
-      tilt_axis?: number;
+      tilt_axis?: number
       /** Mc Uuid */
-      mc_uuid?: number;
+      mc_uuid?: number
       /**
        * Voltage
        * @default 300
        */
-      voltage?: number;
+      voltage?: number
       /**
        * Mc Binning
        * @default 1
        */
-      mc_binning?: number;
+      mc_binning?: number
       /** Gain Ref */
-      gain_ref?: string;
+      gain_ref?: string
       /**
        * Extract Downscale
        * @default 1
        */
-      extract_downscale?: number;
+      extract_downscale?: number
       /** Eer Fractionation File */
-      eer_fractionation_file?: string;
+      eer_fractionation_file?: string
       /** Group Tag */
-      group_tag?: string;
-    };
+      group_tag?: string
+    }
     /** ValidationError */
     ValidationError: {
       /** Location */
-      loc: (string | number)[];
+      loc: (string | number)[]
       /** Message */
-      msg: string;
+      msg: string
       /** Error Type */
-      type: string;
-    };
+      type: string
+    }
     /** Visit */
     Visit: {
       /**
        * Start
        * Format: date-time
        */
-      start: string;
+      start: string
       /**
        * End
        * Format: date-time
        */
-      end: string;
+      end: string
       /** Session Id */
-      session_id: number;
+      session_id: number
       /** Name */
-      name: string;
+      name: string
       /** Beamline */
-      beamline: string;
+      beamline: string
       /** Proposal Title */
-      proposal_title: string;
-    };
+      proposal_title: string
+    }
     /** RsyncerSource */
     murfey__server__api__instrument__RsyncerSource: {
       /** Source */
-      source: string;
-    };
+      source: string
+    }
     /** RsyncerSource */
     murfey__util__models__RsyncerSource: {
       /** Source */
-      source: string;
-    };
-  };
-  responses: never;
-  parameters: never;
-  requestBodies: never;
-  headers: never;
-  pathItems: never;
+      source: string
+    }
+  }
+  responses: never
+  parameters: never
+  requestBodies: never
+  headers: never
+  pathItems: never
 }
 
-export type $defs = Record<string, never>;
+export type $defs = Record<string, never>
 
-export type external = Record<string, never>;
+export type external = Record<string, never>
 
 export interface operations {
-
   /** Root */
   root__get: {
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "text/html": string;
-        };
-      };
-    };
-  };
+          'text/html': string
+        }
+      }
+    }
+  }
   /** Machine Info */
   machine_info_machine_get: {
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["MachineConfig"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['MachineConfig']
+        }
+      }
+    }
+  }
   /** Machine Info By Name */
   machine_info_by_name_instruments__instrument_name__machine_get: {
     parameters: {
       path: {
-        instrument_name: string;
-      };
-    };
+        instrument_name: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["MachineConfig"];
-        };
-      };
+          'application/json': components['schemas']['MachineConfig']
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Mic Image */
   get_mic_image_microscope_image__get: {
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
-    };
-  };
+          'application/json': unknown
+        }
+      }
+    }
+  }
   /** Get Mag Table */
   get_mag_table_mag_table__get: {
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["MagnificationLookup"][];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['MagnificationLookup'][]
+        }
+      }
+    }
+  }
   /** Add To Mag Table */
   add_to_mag_table_mag_table__post: {
     requestBody: {
       content: {
-        "application/json": components["schemas"]["MagnificationLookup"][];
-      };
-    };
+        'application/json': components['schemas']['MagnificationLookup'][]
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Remove Mag Table Row */
   remove_mag_table_row_mag_table__mag__delete: {
     parameters: {
       path: {
-        mag: number;
-      };
-    };
+        mag: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Instrument Display Name */
   get_instrument_display_name_instruments__instrument_name__instrument_name_get: {
     parameters: {
       path: {
-        instrument_name: string;
-      };
-    };
+        instrument_name: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": string;
-        };
-      };
+          'application/json': string
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** All Visit Info */
   all_visit_info_instruments__instrument_name__visits__get: {
     parameters: {
       path: {
-        instrument_name: string;
-      };
-    };
+        instrument_name: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Visit Info */
   visit_info_visits__visit_name__get: {
     parameters: {
       path: {
-        visit_name: string;
-      };
-    };
+        visit_name: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Register Client To Visit */
   register_client_to_visit_visits__visit_name__post: {
     parameters: {
       path: {
-        visit_name: string;
-      };
-    };
+        visit_name: string
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["ClientInfo"];
-      };
-    };
+        'application/json': components['schemas']['ClientInfo']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Count Number Of Movies */
   count_number_of_movies_num_movies_get: {
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": {
-            [key: string]: number;
-          };
-        };
-      };
-    };
-  };
+          'application/json': {
+            [key: string]: number
+          }
+        }
+      }
+    }
+  }
   /** Register Rsyncer */
   register_rsyncer_sessions__session_id__rsyncer_post: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["RsyncerInfo"];
-      };
-    };
+        'application/json': components['schemas']['RsyncerInfo']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Delete Rsyncer */
   delete_rsyncer_sessions__session_id__rsyncer__source__delete: {
     parameters: {
       path: {
-        session_id: number;
-        source: string;
-      };
-    };
+        session_id: number
+        source: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Register Stopped Rsyncer */
   register_stopped_rsyncer_sessions__session_id__rsyncer_stopped_post: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["murfey__util__models__RsyncerSource"];
-      };
-    };
+        'application/json': components['schemas']['murfey__util__models__RsyncerSource']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Register Restarted Rsyncer */
   register_restarted_rsyncer_sessions__session_id__rsyncer_started_post: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["murfey__util__models__RsyncerSource"];
-      };
-    };
+        'application/json': components['schemas']['murfey__util__models__RsyncerSource']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Rsyncers For Client */
   get_rsyncers_for_client_clients__client_id__rsyncers_get: {
     parameters: {
       path: {
-        client_id: number;
-      };
-    };
+        client_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Session */
   get_session_session__session_id__get: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["SessionClients"];
-        };
-      };
+          'application/json': components['schemas']['SessionClients']
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Increment Rsync File Count */
   increment_rsync_file_count_visits__visit_name__increment_rsync_file_count_post: {
     parameters: {
       path: {
-        visit_name: string;
-      };
-    };
+        visit_name: string
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["RsyncerInfo"];
-      };
-    };
+        'application/json': components['schemas']['RsyncerInfo']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Increment Rsync Transferred Files */
   increment_rsync_transferred_files_visits__visit_name__increment_rsync_transferred_files_post: {
     parameters: {
       path: {
-        visit_name: string;
-      };
-    };
+        visit_name: string
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["RsyncerInfo"];
-      };
-    };
+        'application/json': components['schemas']['RsyncerInfo']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Increment Rsync Transferred Files Prometheus */
   increment_rsync_transferred_files_prometheus_visits__visit_name__increment_rsync_transferred_files_prometheus_post: {
     parameters: {
       path: {
-        visit_name: string;
-      };
-    };
+        visit_name: string
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["RsyncerInfo"];
-      };
-    };
+        'application/json': components['schemas']['RsyncerInfo']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Spa Proc Param Details */
   get_spa_proc_param_details_sessions__session_id__spa_processing_parameters_get: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["ProcessingDetails"][];
-        };
-      };
+          'application/json': components['schemas']['ProcessingDetails'][]
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Register Spa Proc Params */
   register_spa_proc_params_sessions__session_id__spa_processing_parameters_post: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["ProcessingParametersSPA"];
-      };
-    };
+        'application/json': components['schemas']['ProcessingParametersSPA']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Register Tomo Preproc Params */
   register_tomo_preproc_params_sessions__session_id__tomography_preprocessing_parameters_post: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["PreprocessingParametersTomo"];
-      };
-    };
+        'application/json': components['schemas']['PreprocessingParametersTomo']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Register Tomo Proc Params */
   register_tomo_proc_params_clients__client_id__tomography_processing_parameters_post: {
     parameters: {
       path: {
-        client_id: number;
-      };
-    };
+        client_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["ProcessingParametersTomo"];
-      };
-    };
+        'application/json': components['schemas']['ProcessingParametersTomo']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Spa Proc Params */
   get_spa_proc_params_clients__client_id__spa_processing_parameters_get: {
     parameters: {
       path: {
-        client_id: number;
-      };
-    };
+        client_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": Record<string, never>[];
-        };
-      };
+          'application/json': Record<string, never>[]
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Grid Squares */
   get_grid_squares_sessions__session_id__grid_squares_get: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Grid Squares From Dcg */
   get_grid_squares_from_dcg_sessions__session_id__data_collection_groups__dcgid__grid_squares_get: {
     parameters: {
       path: {
-        session_id: number;
-        dcgid: number;
-      };
-    };
+        session_id: number
+        dcgid: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["GridSquare"][];
-        };
-      };
+          'application/json': components['schemas']['GridSquare'][]
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Number Of Movies From Grid Square */
   get_number_of_movies_from_grid_square_sessions__session_id__data_collection_groups__dcgid__grid_squares__gsid__num_movies_get: {
     parameters: {
       path: {
-        session_id: number;
-        dcgid: number;
-        gsid: number;
-      };
-    };
+        session_id: number
+        dcgid: number
+        gsid: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": number;
-        };
-      };
+          'application/json': number
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Foil Holes From Grid Square */
   get_foil_holes_from_grid_square_sessions__session_id__data_collection_groups__dcgid__grid_squares__gsid__foil_holes_get: {
     parameters: {
       path: {
-        session_id: number;
-        dcgid: number;
-        gsid: number;
-      };
-    };
+        session_id: number
+        dcgid: number
+        gsid: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["FoilHole"][];
-        };
-      };
+          'application/json': components['schemas']['FoilHole'][]
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Number Of Movies From Foil Hole */
   get_number_of_movies_from_foil_hole_sessions__session_id__data_collection_groups__dcgid__grid_squares__gsid__foil_holes__fhid__num_movies_get: {
     parameters: {
       path: {
-        session_id: number;
-        dcgid: number;
-        gsid: number;
-        fhid: number;
-      };
-    };
+        session_id: number
+        dcgid: number
+        gsid: number
+        fhid: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": number;
-        };
-      };
+          'application/json': number
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Register Grid Square */
   register_grid_square_sessions__session_id__grid_square__gsid__post: {
     parameters: {
       path: {
-        session_id: number;
-        gsid: number;
-      };
-    };
+        session_id: number
+        gsid: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["GridSquareParameters"];
-      };
-    };
+        'application/json': components['schemas']['GridSquareParameters']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Foil Hole */
   get_foil_hole_sessions__session_id__foil_hole__fh_name__get: {
     parameters: {
       path: {
-        fh_name: number;
-        session_id: number;
-      };
-    };
+        fh_name: number
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": {
-            [key: string]: number;
-          };
-        };
-      };
+          'application/json': {
+            [key: string]: number
+          }
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Register Foil Hole */
   register_foil_hole_sessions__session_id__grid_square__gs_name__foil_hole_post: {
     parameters: {
       path: {
-        gs_name: number;
-        session_id: number;
-      };
-    };
+        gs_name: number
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["FoilHoleParameters"];
-      };
-    };
+        'application/json': components['schemas']['FoilHoleParameters']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Register Tilt Series */
   register_tilt_series_visits__visit_name__tilt_series_post: {
     parameters: {
       path: {
-        visit_name: string;
-      };
-    };
+        visit_name: string
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["TiltSeriesInfo"];
-      };
-    };
+        'application/json': components['schemas']['TiltSeriesInfo']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Register Completed Tilt Series */
   register_completed_tilt_series_visits__visit_name___client_id__completed_tilt_series_post: {
     parameters: {
       path: {
-        visit_name: string;
-        client_id: number;
-      };
-    };
+        visit_name: string
+        client_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["TiltSeriesGroupInfo"];
-      };
-    };
+        'application/json': components['schemas']['TiltSeriesGroupInfo']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Tilts */
   get_tilts_clients__client_id__tilt_series__tilt_series_tag__tilts_get: {
     parameters: {
       path: {
-        client_id: number;
-        tilt_series_tag: string;
-      };
-    };
+        client_id: number
+        tilt_series_tag: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Register Tilt */
   register_tilt_visits__visit_name___client_id__tilt_post: {
     parameters: {
       path: {
-        visit_name: string;
-        client_id: number;
-      };
-    };
+        visit_name: string
+        client_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["TiltInfo"];
-      };
-    };
+        'application/json': components['schemas']['TiltInfo']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Current Visits */
   get_current_visits_instruments__instrument_name__visits_raw_get: {
     parameters: {
       path: {
-        instrument_name: string;
-      };
-    };
+        instrument_name: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["Visit"][];
-        };
-      };
+          'application/json': components['schemas']['Visit'][]
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Send Murfey Message */
   send_murfey_message_feedback_post: {
     requestBody: {
       content: {
-        "application/json": components["schemas"]["RegistrationMessage"];
-      };
-    };
+        'application/json': components['schemas']['RegistrationMessage']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Flush Spa Processing */
   flush_spa_processing_visits__visit_name___session_id__flush_spa_processing_post: {
     parameters: {
       path: {
-        visit_name: string;
-        session_id: number;
-      };
-    };
+        visit_name: string
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["Tag"];
-      };
-    };
+        'application/json': components['schemas']['Tag']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Request Spa Preprocessing */
   request_spa_preprocessing_visits__visit_name___session_id__spa_preprocess_post: {
     parameters: {
       path: {
-        visit_name: string;
-        session_id: number;
-      };
-    };
+        visit_name: string
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["SPAProcessFile"];
-      };
-    };
+        'application/json': components['schemas']['SPAProcessFile']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Flush Tomography Processing */
   flush_tomography_processing_visits__visit_name___client_id__flush_tomography_processing_post: {
     parameters: {
       path: {
-        visit_name: string;
-        client_id: number;
-      };
-    };
+        visit_name: string
+        client_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["Source"];
-      };
-    };
+        'application/json': components['schemas']['Source']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Request Tomography Preprocessing */
   request_tomography_preprocessing_visits__visit_name___client_id__tomography_preprocess_post: {
     parameters: {
       path: {
-        visit_name: string;
-        client_id: number;
-      };
-    };
+        visit_name: string
+        client_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["TomoProcessFile"];
-      };
-    };
+        'application/json': components['schemas']['TomoProcessFile']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Version */
   get_version_version_get: {
     parameters: {
       query?: {
-        client_version?: string;
-      };
-    };
+        client_version?: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Suggest Path */
   suggest_path_visits__visit_name___session_id__suggested_path_post: {
     parameters: {
       path: {
-        visit_name: string;
-        session_id: number;
-      };
-    };
+        visit_name: string
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["SuggestedPathParameters"];
-      };
-    };
+        'application/json': components['schemas']['SuggestedPathParameters']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Dc Groups */
   get_dc_groups_sessions__session_id__data_collection_groups_get: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": {
-            [key: string]: components["schemas"]["DataCollectionGroup"];
-          };
-        };
-      };
+          'application/json': {
+            [key: string]: components['schemas']['DataCollectionGroup']
+          }
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Data Collections */
   get_data_collections_sessions__session_id__data_collection_groups__dcgid__data_collections_get: {
     parameters: {
       path: {
-        dcgid: number;
-        session_id: number;
-      };
-    };
+        dcgid: number
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["DataCollection"][];
-        };
-      };
+          'application/json': components['schemas']['DataCollection'][]
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Register Dc Group */
   register_dc_group_visits__visit_name___session_id__register_data_collection_group_post: {
     parameters: {
       path: {
-        visit_name: string;
-        session_id: number;
-      };
-    };
+        visit_name: string
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["DCGroupParameters"];
-      };
-    };
+        'application/json': components['schemas']['DCGroupParameters']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Start Dc */
   start_dc_visits__visit_name___session_id__start_data_collection_post: {
     parameters: {
       path: {
-        visit_name: string;
-        session_id: number;
-      };
-    };
+        visit_name: string
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["DCParameters"];
-      };
-    };
+        'application/json': components['schemas']['DCParameters']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["DCParameters"];
-        };
-      };
+          'application/json': components['schemas']['DCParameters']
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Register Proc */
   register_proc_visits__visit_name___session_id__register_processing_job_post: {
     parameters: {
       path: {
-        visit_name: unknown;
-        session_id: number;
-      };
-    };
+        visit_name: unknown
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["ProcessingJobParameters"];
-      };
-    };
+        'application/json': components['schemas']['ProcessingJobParameters']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Process Gain */
   process_gain_sessions__session_id__process_gain_post: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["GainReference"];
-      };
-    };
+        'application/json': components['schemas']['GainReference']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** New Client Id */
   new_client_id_new_client_id__get: {
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
-    };
-  };
+          'application/json': unknown
+        }
+      }
+    }
+  }
   /** Get Clients */
   get_clients_clients_get: {
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
-    };
-  };
+          'application/json': unknown
+        }
+      }
+    }
+  }
   /** Get Sessions */
   get_sessions_sessions_get: {
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
-    };
-  };
+          'application/json': unknown
+        }
+      }
+    }
+  }
   /** Get Sessions By Instrument Name */
   get_sessions_by_instrument_name_instruments__instrument_name__sessions_get: {
     parameters: {
       path: {
-        instrument_name: string;
-      };
-    };
+        instrument_name: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["Session"][];
-        };
-      };
+          'application/json': components['schemas']['Session'][]
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Link Client To Session */
   link_client_to_session_instruments__instrument_name__clients__client_id__session_post: {
     parameters: {
       path: {
-        instrument_name: string;
-        client_id: number;
-      };
-    };
+        instrument_name: string
+        client_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["SessionInfo"];
-      };
-    };
+        'application/json': components['schemas']['SessionInfo']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Remove Session */
   remove_session_clients__client_id__session_delete: {
     parameters: {
       path: {
-        client_id: number;
-      };
-    };
+        client_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Rsyncers For Session */
   get_rsyncers_for_session_sessions__session_id__rsyncers_get: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["RsyncInstance"][];
-        };
-      };
+          'application/json': components['schemas']['RsyncInstance'][]
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Remove Session By Id */
   remove_session_by_id_sessions__session_id__delete: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Write Eer Fractionation File */
   write_eer_fractionation_file_visits__visit_name___session_id__eer_fractionation_file_post: {
     parameters: {
       path: {
-        visit_name: string;
-        session_id: number;
-      };
-    };
+        visit_name: string
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["FractionationParameters"];
-      };
-    };
+        'application/json': components['schemas']['FractionationParameters']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": Record<string, never>;
-        };
-      };
+          'application/json': Record<string, never>
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Change Monitoring Status */
   change_monitoring_status_visits__visit_name__monitoring__on__post: {
     parameters: {
       path: {
-        visit_name: string;
-        on: number;
-      };
-    };
+        visit_name: string
+        on: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Find Upstream Visits */
   find_upstream_visits_sessions__session_id__upstream_visits_get: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Gather Upstream Tiffs */
   gather_upstream_tiffs_visits__visit_name___session_id__upstream_tiff_paths_get: {
     parameters: {
       path: {
-        visit_name: string;
-        session_id: number;
-      };
-    };
+        visit_name: string
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Tiff */
   get_tiff_visits__visit_name___session_id__upstream_tiff__tiff_path__get: {
     parameters: {
       path: {
-        visit_name: string;
-        session_id: number;
-        tiff_path: string;
-      };
-    };
+        visit_name: string
+        session_id: number
+        tiff_path: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Failed Client Post */
   failed_client_post_failed_client_post_post: {
     requestBody: {
       content: {
-        "application/json": components["schemas"]["PostInfo"];
-      };
-    };
+        'application/json': components['schemas']['PostInfo']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Create Session */
   create_session_instruments__instrument_name__visits__visit__session__name__post: {
     parameters: {
       path: {
-        instrument_name: string;
-        visit: string;
-        name: string;
-      };
-    };
+        instrument_name: string
+        visit: string
+        name: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": number;
-        };
-      };
+          'application/json': number
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Update Current Gain Ref */
   update_current_gain_ref_sessions__session_id__current_gain_ref_put: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["CurrentGainRef"];
-      };
-    };
+        'application/json': components['schemas']['CurrentGainRef']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Version */
   get_version_version__get: {
     parameters: {
       query?: {
-        client_version?: string;
-      };
-    };
+        client_version?: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /**
    * Get Bootstrap Instructions
    * @description Return a website containing instructions for installing the Murfey client on a
@@ -3670,11 +3668,11 @@ export interface operations {
       /** @description Successful Response */
       200: {
         content: {
-          "text/html": string;
-        };
-      };
-    };
-  };
+          'text/html': string
+        }
+      }
+    }
+  }
   /**
    * Get Pip Wheel
    * @description Return a static version of pip. This does not need to be the newest or best,
@@ -3686,10 +3684,10 @@ export interface operations {
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
-    };
-  };
+        content: never
+      }
+    }
+  }
   /**
    * Get Murfey Wheel
    * @description Return a wheel file containing the latest release version of Murfey. We should
@@ -3701,10 +3699,10 @@ export interface operations {
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
-    };
-  };
+        content: never
+      }
+    }
+  }
   /**
    * Get Cygwin Setup
    * @description Obtain and pass through a Cygwin installer from an official source.
@@ -3715,10 +3713,10 @@ export interface operations {
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
-    };
-  };
+        content: never
+      }
+    }
+  }
   /**
    * Parse Cygwin Request
    * @description Forward a Cygwin setup request to an official mirror.
@@ -3726,22 +3724,22 @@ export interface operations {
   parse_cygwin_request_cygwin__request_path__get: {
     parameters: {
       path: {
-        request_path: string;
-      };
-    };
+        request_path: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
+        content: never
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /**
    * Get Pacman Mirrors
    * @description Dynamically generates a zip file containing mirrorlist files that have been set
@@ -3755,10 +3753,10 @@ export interface operations {
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
-    };
-  };
+        content: never
+      }
+    }
+  }
   /**
    * Get Msys2 Setup
    * @description Obtain and pass through an MSYS2 installer from an official source.
@@ -3768,22 +3766,22 @@ export interface operations {
   get_msys2_setup_msys2_repo_distrib__setup_file__get: {
     parameters: {
       path: {
-        setup_file: string;
-      };
-    };
+        setup_file: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
+        content: never
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /**
    * Get Msys2 Main Index
    * @description Returns a simple index displaying valid MSYS2 systems and the latest setup file
@@ -3793,10 +3791,10 @@ export interface operations {
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
-    };
-  };
+        content: never
+      }
+    }
+  }
   /**
    * Get Msys2 Environment Index
    * @description Returns a list of all MSYS2 environments for a given system from the main MSYS2
@@ -3805,22 +3803,22 @@ export interface operations {
   get_msys2_environment_index_msys2_repo__system___get: {
     parameters: {
       path: {
-        system: string;
-      };
-    };
+        system: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
+        content: never
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /**
    * Get Msys2 Package Index
    * @description Obtain a list of all available MSYS2 packages for a given environment from the main
@@ -3829,23 +3827,23 @@ export interface operations {
   get_msys2_package_index_msys2_repo__system___environment___get: {
     parameters: {
       path: {
-        system: string;
-        environment: string;
-      };
-    };
+        system: string
+        environment: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
+        content: never
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /**
    * Get Msys2 Package File
    * @description Obtain and pass through a specific download for an MSYS2 package.
@@ -3853,24 +3851,24 @@ export interface operations {
   get_msys2_package_file_msys2_repo__system___environment___package__get: {
     parameters: {
       path: {
-        system: string;
-        environment: string;
-        package: string;
-      };
-    };
+        system: string
+        environment: string
+        package: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
+        content: never
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /**
    * Get Cargo Config
    * @description Returns a properly configured Cargo config that sets it to look ONLY at the
@@ -3883,10 +3881,10 @@ export interface operations {
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
-    };
-  };
+        content: never
+      }
+    }
+  }
   /**
    * Get Index Page
    * @description Returns a mirror of the https://index.crates.io landing page.
@@ -3895,10 +3893,10 @@ export interface operations {
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
-    };
-  };
+        content: never
+      }
+    }
+  }
   /**
    * Get Index Config
    * @description Download a config.json file used by Cargo to navigate sparse index registries
@@ -3912,10 +3910,10 @@ export interface operations {
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
-    };
-  };
+        content: never
+      }
+    }
+  }
   /**
    * Get Index Package Metadata
    * @description Download the metadata for a given package from the crates.io sparse index.
@@ -3929,24 +3927,24 @@ export interface operations {
   get_index_package_metadata_rust_index__c1___c2___package__get: {
     parameters: {
       path: {
-        c1: string;
-        c2: string;
-        package: string;
-      };
-    };
+        c1: string
+        c2: string
+        package: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
+        content: never
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /**
    * Get Index Package Metadata For Short Package Names
    * @description The Rust sparse index' naming scheme for packages with 1-2 characters is
@@ -3956,23 +3954,23 @@ export interface operations {
   get_index_package_metadata_for_short_package_names_rust_index__n___package__get: {
     parameters: {
       path: {
-        n: string;
-        package: string;
-      };
-    };
+        n: string
+        package: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
+        content: never
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /**
    * Get Rust Package Download
    * @description Obtain and pass through a crate download request for a Rust package via the
@@ -3981,23 +3979,23 @@ export interface operations {
   get_rust_package_download_rust_crates__package___version__download_get: {
     parameters: {
       path: {
-        package: string;
-        version: string;
-      };
-    };
+        package: string
+        version: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
+        content: never
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /**
    * Get Rust Api Package Index
    * @description Displays the Rust API package index, which returns names of available packages
@@ -4006,26 +4004,26 @@ export interface operations {
   get_rust_api_package_index_rust_api_v1_crates_get: {
     parameters: {
       query?: {
-        q?: string;
-        per_page?: number;
-        seek?: string;
-      };
-    };
+        q?: string
+        per_page?: number
+        seek?: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /**
    * Get Rust Api Package Info
    * @description Displays general information for a given Rust package, as a JSON object.
@@ -4035,24 +4033,24 @@ export interface operations {
   get_rust_api_package_info_rust_api_v1_crates__package__get: {
     parameters: {
       path: {
-        package: string;
-      };
-    };
+        package: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /**
    * Get Rust Api Package Versions
    * @description Displays all available versions for a particular Rust package, along with download
@@ -4061,24 +4059,24 @@ export interface operations {
   get_rust_api_package_versions_rust_api_v1_crates__package__versions_get: {
     parameters: {
       path: {
-        package: string;
-      };
-    };
+        package: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /**
    * Get Rust Api Package Download
    * @description Obtain and pass through a crate download request for a specific Rust package.
@@ -4086,23 +4084,23 @@ export interface operations {
   get_rust_api_package_download_rust_api_v1_crates__package___version__download_get: {
     parameters: {
       path: {
-        package: string;
-        version: string;
-      };
-    };
+        package: string
+        version: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
+        content: never
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /**
    * Get Rust Package Crate
    * @description Obtain and pass through a download for a specific Rust crate. The Rust API
@@ -4119,23 +4117,23 @@ export interface operations {
   get_rust_package_crate_rust_crates__package___crate__get: {
     parameters: {
       path: {
-        package: string;
-        crate: string;
-      };
-    };
+        package: string
+        crate: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
+        content: never
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /**
    * Get Pypi Index
    * @description Obtain list of all PyPI packages via the simple API (PEP 503).
@@ -4144,10 +4142,10 @@ export interface operations {
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
-    };
-  };
+        content: never
+      }
+    }
+  }
   /**
    * Get Pypi Package Downloads List
    * @description Obtain list of all package downloads from PyPI via the simple API (PEP 503), and
@@ -4156,22 +4154,22 @@ export interface operations {
   get_pypi_package_downloads_list_pypi__package___get: {
     parameters: {
       path: {
-        package: string;
-      };
-    };
+        package: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
+        content: never
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /**
    * Get Pypi File
    * @description Obtain and pass through a specific download for a PyPI package.
@@ -4179,978 +4177,978 @@ export interface operations {
   get_pypi_file_pypi__package___filename__get: {
     parameters: {
       path: {
-        package: string;
-        filename: string;
-      };
-    };
+        package: string
+        filename: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
+        content: never
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Plugin Wheel */
   get_plugin_wheel_plugins_instruments__instrument_name___package__get: {
     parameters: {
       path: {
-        instrument_name: string;
-        package: string;
-      };
-    };
+        instrument_name: string
+        package: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
-        content: never;
-      };
+        content: never
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Register Lif File */
   register_lif_file_sessions__session_id__clem_lif_files_post: {
     parameters: {
       query: {
-        lif_file: string;
-        master_metadata?: string;
-      };
+        lif_file: string
+        master_metadata?: string
+      }
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     requestBody?: {
       content: {
-        "application/json": components["schemas"]["Body_register_lif_file_sessions__session_id__clem_lif_files_post"];
-      };
-    };
+        'application/json': components['schemas']['Body_register_lif_file_sessions__session_id__clem_lif_files_post']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Register Tiff File */
   register_tiff_file_sessions__session_id__clem_tiff_files_post: {
     parameters: {
       query: {
-        tiff_file: string;
-        associated_metadata?: string;
-        associated_series?: string;
-        associated_stack?: string;
-      };
+        tiff_file: string
+        associated_metadata?: string
+        associated_series?: string
+        associated_stack?: string
+      }
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Register Clem Metadata */
   register_clem_metadata_sessions__session_id__clem_metadata_files_post: {
     parameters: {
       query: {
-        metadata_file: string;
-        parent_lif?: string;
-        associated_series?: string;
-      };
+        metadata_file: string
+        parent_lif?: string
+        associated_series?: string
+      }
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     requestBody?: {
       content: {
-        "application/json": components["schemas"]["Body_register_clem_metadata_sessions__session_id__clem_metadata_files_post"];
-      };
-    };
+        'application/json': components['schemas']['Body_register_clem_metadata_sessions__session_id__clem_metadata_files_post']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Register Image Series */
   register_image_series_sessions__session_id__clem_image_series_post: {
     parameters: {
       query: {
-        series_name: string;
-        parent_lif?: string;
-        associated_metadata?: string;
-      };
+        series_name: string
+        parent_lif?: string
+        associated_metadata?: string
+      }
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     requestBody?: {
       content: {
-        "application/json": components["schemas"]["Body_register_image_series_sessions__session_id__clem_image_series_post"];
-      };
-    };
+        'application/json': components['schemas']['Body_register_image_series_sessions__session_id__clem_image_series_post']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Register Image Stack */
   register_image_stack_sessions__session_id__clem_image_stacks_post: {
     parameters: {
       query: {
-        image_stack: string;
-        channel?: string;
-        parent_lif?: string;
-        associated_metadata?: string;
-        parent_series?: string;
-      };
+        image_stack: string
+        channel?: string
+        parent_lif?: string
+        associated_metadata?: string
+        parent_series?: string
+      }
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     requestBody?: {
       content: {
-        "application/json": string[];
-      };
-    };
+        'application/json': string[]
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Process Raw Lifs */
   process_raw_lifs_sessions__session_id__clem_preprocessing_process_raw_lifs_post: {
     parameters: {
       query: {
-        lif_file: string;
-      };
+        lif_file: string
+      }
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Process Raw Tiffs */
   process_raw_tiffs_sessions__session_id__clem_preprocessing_process_raw_tiffs_post: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["TIFFSeriesInfo"];
-      };
-    };
+        'application/json': components['schemas']['TIFFSeriesInfo']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Align And Merge Stacks */
   align_and_merge_stacks_sessions__session_id__clem_processing_align_and_merge_stacks_post: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["AlignAndMergeParams"];
-      };
-    };
+        'application/json': components['schemas']['AlignAndMergeParams']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Cryolo Model Path */
   get_cryolo_model_path_sessions__session_id__cryolo_model_get: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Generate Token */
   generate_token_token_post: {
     requestBody: {
       content: {
-        "application/x-www-form-urlencoded": components["schemas"]["Body_generate_token_token_post"];
-      };
-    };
+        'application/x-www-form-urlencoded': components['schemas']['Body_generate_token_token_post']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["Token"];
-        };
-      };
+          'application/json': components['schemas']['Token']
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Mint Session Token */
   mint_session_token_sessions__session_id__token_get: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Simple Token Validation */
   simple_token_validation_validate_token_get: {
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
-    };
-  };
+          'application/json': unknown
+        }
+      }
+    }
+  }
   /** Get Mic Image */
   get_mic_image_display_instruments__instrument_name__image__get: {
     parameters: {
       path: {
-        instrument_name: string;
-      };
-    };
+        instrument_name: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Grid Square Img */
   get_grid_square_img_display_sessions__session_id__data_collection_groups__dcgid__grid_squares__grid_square_name__image_get: {
     parameters: {
       path: {
-        session_id: number;
-        dcgid: number;
-        grid_square_name: number;
-      };
-    };
+        session_id: number
+        dcgid: number
+        grid_square_name: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Foil Hole Img */
   get_foil_hole_img_display_sessions__session_id__data_collection_groups__dcgid__grid_squares__grid_square_name__foil_holes__foil_hole_name__image_get: {
     parameters: {
       path: {
-        session_id: number;
-        dcgid: number;
-        grid_square_name: number;
-        foil_hole_name: number;
-      };
-    };
+        session_id: number
+        dcgid: number
+        grid_square_name: number
+        foil_hole_name: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Activate Instrument Server For Session */
   activate_instrument_server_for_session_instruments__instrument_name__sessions__session_id__activate_instrument_server_post: {
     parameters: {
       path: {
-        instrument_name: string;
-        session_id: number;
-      };
-    };
+        instrument_name: string
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Check If Session Is Active */
   check_if_session_is_active_instruments__instrument_name__sessions__session_id__active_get: {
     parameters: {
       path: {
-        instrument_name: string;
-        session_id: number;
-      };
-    };
+        instrument_name: string
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Setup Multigrid Watcher */
   setup_multigrid_watcher_sessions__session_id__multigrid_watcher_post: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["MultigridWatcherSetup"];
-      };
-    };
+        'application/json': components['schemas']['MultigridWatcherSetup']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Start Multigrid Watcher */
   start_multigrid_watcher_sessions__session_id__start_multigrid_watcher_post: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Pass Proc Params To Instrument Server */
   pass_proc_params_to_instrument_server_sessions__session_id__provided_processing_parameters_post: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["ProvidedProcessingParameters"];
-      };
-    };
+        'application/json': components['schemas']['ProvidedProcessingParameters']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Check Instrument Server */
   check_instrument_server_instruments__instrument_name__instrument_server_get: {
     parameters: {
       path: {
-        instrument_name: string;
-      };
-    };
+        instrument_name: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Possible Gain References */
   get_possible_gain_references_instruments__instrument_name__sessions__session_id__possible_gain_references_get: {
     parameters: {
       path: {
-        instrument_name: string;
-        session_id: number;
-      };
-    };
+        instrument_name: string
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["File"][];
-        };
-      };
+          'application/json': components['schemas']['File'][]
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Request Gain Reference Upload */
   request_gain_reference_upload_sessions__session_id__upload_gain_reference_post: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["GainReferenceRequest"];
-      };
-    };
+        'application/json': components['schemas']['GainReferenceRequest']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Request Upstream Tiff Data Download */
   request_upstream_tiff_data_download_visits__visit_name___session_id__upstream_tiff_data_request_post: {
     parameters: {
       path: {
-        visit_name: string;
-        session_id: number;
-      };
-    };
+        visit_name: string
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Stop Rsyncer */
   stop_rsyncer_sessions__session_id__stop_rsyncer_post: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["murfey__server__api__instrument__RsyncerSource"];
-      };
-    };
+        'application/json': components['schemas']['murfey__server__api__instrument__RsyncerSource']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Finalise Rsyncer */
   finalise_rsyncer_sessions__session_id__finalise_rsyncer_post: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["murfey__server__api__instrument__RsyncerSource"];
-      };
-    };
+        'application/json': components['schemas']['murfey__server__api__instrument__RsyncerSource']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Finalise Session */
   finalise_session_sessions__session_id__finalise_session_post: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Remove Rsyncer */
   remove_rsyncer_sessions__session_id__remove_rsyncer_post: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["murfey__server__api__instrument__RsyncerSource"];
-      };
-    };
+        'application/json': components['schemas']['murfey__server__api__instrument__RsyncerSource']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Restart Rsyncer */
   restart_rsyncer_sessions__session_id__restart_rsyncer_post: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["murfey__server__api__instrument__RsyncerSource"];
-      };
-    };
+        'application/json': components['schemas']['murfey__server__api__instrument__RsyncerSource']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Rsyncer Info */
   get_rsyncer_info_instruments__instrument_name__sessions__session_id__rsyncer_info_get: {
     parameters: {
       path: {
-        instrument_name: string;
-        session_id: number;
-      };
-    };
+        instrument_name: string
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["RSyncerInfo"][];
-        };
-      };
+          'application/json': components['schemas']['RSyncerInfo'][]
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Instrument Info */
   get_instrument_info_instruments_get: {
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["InstrumentInfo"][];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['InstrumentInfo'][]
+        }
+      }
+    }
+  }
   /** Get Instrument Image */
   get_instrument_image_instrument__instrument_name__image_get: {
     parameters: {
       path: {
-        instrument_name: string;
-      };
-    };
+        instrument_name: string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Get Session Processing Parameters */
   get_session_processing_parameters_sessions__session_id__session_processing_parameters_get: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["EditableSessionProcessingParameters"];
-        };
-      };
+          'application/json': components['schemas']['EditableSessionProcessingParameters']
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Set Session Processing Parameters */
   set_session_processing_parameters_sessions__session_id__session_processing_parameters_post: {
     parameters: {
       path: {
-        session_id: number;
-      };
-    };
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["EditableSessionProcessingParameters"];
-      };
-    };
+        'application/json': components['schemas']['EditableSessionProcessingParameters']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": components["schemas"]["EditableSessionProcessingParameters"];
-        };
-      };
+          'application/json': components['schemas']['EditableSessionProcessingParameters']
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Close Ws Connection */
   close_ws_connection_ws_test__client_id__delete: {
     parameters: {
       path: {
-        client_id: number;
-      };
-    };
+        client_id: number
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Close Unrecorded Ws Connection */
   close_unrecorded_ws_connection_ws_connect__client_id__delete: {
     parameters: {
       path: {
-        client_id: number | string;
-      };
-    };
+        client_id: number | string
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Request Smartem Atlas Analysis */
   request_smartem_atlas_analysis_instruments__instrument_name__visits__visit_name___session_id__smartem_atlas__post: {
     parameters: {
       path: {
-        instrument_name: string;
-        visit_name: string;
-        session_id: number;
-      };
-    };
+        instrument_name: string
+        visit_name: string
+        session_id: number
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["SmartEMAtlasRequest"];
-      };
-    };
+        'application/json': components['schemas']['SmartEMAtlasRequest']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   /** Update K3 Ssd Statuses */
   update_k3_ssd_statuses_instruments__instrument_name__k3_ssd_post: {
     parameters: {
       path: {
-        instrument_name: string;
-      };
-    };
+        instrument_name: string
+      }
+    }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["SSDData"];
-      };
-    };
+        'application/json': components['schemas']['SSDData']
+      }
+    }
     responses: {
       /** @description Successful Response */
       200: {
         content: {
-          "application/json": unknown;
-        };
-      };
+          'application/json': unknown
+        }
+      }
       /** @description Validation Error */
       422: {
         content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
 }

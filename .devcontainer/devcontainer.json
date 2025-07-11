@@ -25,9 +25,7 @@
     "-e=DOCKER_HOST=${localEnv:DOCKER_HOST}"
   ],
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  "forwardPorts": [
-    8080
-  ],
+  "forwardPorts": [8080],
   "mounts": [
     // "source=${localEnv:HOME}/.inputrc,target=/root/.inputrc,type=bind",
     "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind"

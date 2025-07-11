@@ -1,5 +1,5 @@
-import { ThemeConfig, extendTheme } from "@chakra-ui/react";
-import { colours } from "styles/colours";
+import { ThemeConfig, extendTheme } from '@chakra-ui/react'
+import { colours } from 'styles/colours'
 import {
   Accordion,
   Button,
@@ -14,12 +14,12 @@ import {
   Textarea,
   NumberInput,
   Select,
-} from "./components";
+} from './components'
 
 const config: ThemeConfig = {
-  initialColorMode: "light",
+  initialColorMode: 'light',
   useSystemColorMode: false,
-};
+}
 
 export const theme = extendTheme({
   semanticTokens: { colors: colours },
@@ -39,11 +39,11 @@ export const theme = extendTheme({
     Select,
   },
   breakpoints: {
-    sm: "30em",
-    md: "48em",
-    lg: "62em",
-    xl: "80em",
-    "2xl": "150em",
+    sm: '30em',
+    md: '48em',
+    lg: '62em',
+    xl: '80em',
+    '2xl': '150em',
   },
   config,
-});
+})
