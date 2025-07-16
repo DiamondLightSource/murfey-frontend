@@ -80,6 +80,7 @@ import useWebSocket from 'react-use-websocket'
 import React, { useEffect } from 'react'
 import { FaCalendar } from 'react-icons/fa'
 import { convertUKNaiveToUTC, convertUTCToUKNaive } from 'utils/generic'
+import { client } from 'utils/api/client'
 
 type RSyncerInfo = components['schemas']['RSyncerInfo']
 type Session = components['schemas']['Session']
@@ -274,6 +275,45 @@ const getUrl = (endpoint: string) => {
 }
 
 const Session = () => {
+  // ----------------------------------------------------------------------------------
+  // Routing and loader context
+  const { sessid } = useParams()
+  const rsyncerLoaderData = useLoaderData() as RSyncerInfo[] | null
+  const navigate = useNavigate()
+
+  // ----------------------------------------------------------------------------------
+  // State hooks
+  // Session information
+  const [session, setSession] = React.useState<Session>()
+  const [sessionActive, setSessionActive] = React.useState(false)
+  const [skipExistingProcessing, setSkipExistingProcessing] =
+    React.useState(false)
+
+  // File transfer source information
+  const [selectedDirectory, setSelectedDirectory] = React.useState('')
+
+  // Visit end time information
+  const [visitEndTime, setVisitEndTime] = React.useState<Date | null>(null)
+  const [proposedVisitEndTime, setProposedVisitEndTime] =
+    React.useState<Date | null>(null)
+  const [triggerVisitEndTimeUpdate, setTriggerVisitEndTimeUpdate] =
+    React.useState<Boolean>(false)
+
+  // Machine config and instrument information
+  const [machineConfig, setMachineConfig] = React.useState<MachineConfig>()
+  const [instrumentName, setInstrumentName] = React.useState('')
+
+  // Websocket UUID information
+  const [UUID, setUUID] = React.useState('')
+
+  // Rsyncer information
+  const [rsyncers, setRsyncers] = React.useState<RSyncerInfo[]>(
+    rsyncerLoaderData ?? []
+  )
+  const [rsyncersPaused, setRsyncersPaused] = React.useState(false)
+
+  // ----------------------------------------------------------------------------------
+  // UI utility hooks
   const { isOpen, onOpen, onClose } = useDisclosure()
   const {
     isOpen: isOpenReconnect,
@@ -285,27 +325,16 @@ const Session = () => {
     onOpen: onOpenCalendar,
     onClose: onCloseCalendar,
   } = useDisclosure()
-  const { sessid } = useParams()
-  const navigate = useNavigate()
-  const [sessionActive, setSessionActive] = React.useState(false)
-  const [session, setSession] = React.useState<Session>()
-  const [skipExistingProcessing, setSkipExistingProcessing] =
-    React.useState(false)
-  const [selectedDirectory, setSelectedDirectory] = React.useState('')
-  const [visitEndTime, setVisitEndTime] = React.useState<Date | null>(null)
-  const [proposedVisitEndTime, setProposedVisitEndTime] =
-    React.useState<Date | null>(null)
-  const [triggerVisitEndTimeUpdate, setTriggerVisitEndTimeUpdate] =
-    React.useState<Boolean>(false)
+
+  // ----------------------------------------------------------------------------------
+  // Functions
+  // Load the Murfey server URL from the environment variable
   const baseUrl =
     sessionStorage.getItem('murfeyServerURL') ??
     process.env.REACT_APP_API_ENDPOINT
 
-  // Set URL for websocket connection
+  // Set up websocket connection to Murfey server
   const url = baseUrl ? baseUrl.replace('http', 'ws') : 'ws://localhost:8000'
-
-  // Set up UUID for websocket connection
-  const [UUID, setUUID] = React.useState('')
 
   // Use existing UUID if present; otherwise, generate a new UUID
   useEffect(() => {
@@ -359,58 +388,107 @@ const Session = () => {
   )
 
   // Get machine config and set up related settings
-  const [machineConfig, setMachineConfig] = React.useState<MachineConfig>()
   const handleMachineConfig = (mcfg: MachineConfig) => {
     setMachineConfig(mcfg)
     setSelectedDirectory(mcfg['data_directories'][0])
   }
-
-  const recipesDefined = machineConfig
-    ? machineConfig.recipes
-      ? Object.keys(machineConfig.recipes).length !== 0
-      : false
-    : false
-
   useEffect(() => {
     getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))
   }, [])
 
-  useEffect(() => {
-    getSessionProcessingParameterData(sessid).then((params) => {
-      if (
-        params === null &&
-        recipesDefined &&
-        session !== undefined &&
-        session.process
-      ) {
-        navigate(`/new_session/parameters/${sessid}`)
-      }
-    })
-  }, [sessid])
+  // Helper function to check whether a multigrid controller has been set up
+  const checkMultigridControllerStatus = async (sessid: string) => {
+    try {
+      const response = await client.get(
+        `/instrument_server/sessions/${sessid}/multigrid_controller/status`
+      )
+      console.log(`Multigrid controller status:`, response.data)
+      return !!response.data.exists
+    } catch (err) {
+      console.error(err)
+      return
+    }
+  }
 
-  // Session helper function to update the page with data from backend
+  // Redirect user to earlier stages of the setup depending on what is missing
+  useEffect(() => {
+    // Exit early if required states are undefined
+    if (
+      session === undefined ||
+      sessid === undefined ||
+      !sessionActive ||
+      machineConfig === undefined
+    )
+      return
+
+    const runRedirectChecks = async () => {
+      // Check if the multigrid controller for the session exists
+      const multigridControllerStatus =
+        await checkMultigridControllerStatus(sessid)
+      if (!multigridControllerStatus) {
+        console.log(`THe multigrid controller for this session is not set up`)
+
+        // Check if this instrument has a gain reference directory configured
+        if (
+          !!machineConfig?.gain_reference_directory &&
+          machineConfig.gain_reference_directory.trim() !== ''
+        ) {
+          console.log(`This instrument needs a gain reference file`)
+          // Check if a gain reference file has been uploaded
+          console.log(`Current gain reference:`, session.current_gain_ref)
+          console.log(
+            `(!session.current_gain_ref) evaluates to:`,
+            !session.current_gain_ref
+          )
+          if (!session.current_gain_ref) {
+            // Redirect to the gain reference page
+            console.log(`Gain reference file not found`)
+            navigate(
+              `/sessions/${sessid}/gain_ref_transfer?sessid=${sessid}&setup=true`
+            )
+            return
+          }
+        }
+        // Redirect to set up multigrid controller
+        navigate(`/new_session/setup/${sessid}`)
+        return
+      }
+
+      // Check if this instrument has processing recipes configured
+      if (
+        machineConfig?.recipes &&
+        Object.keys(machineConfig.recipes).length > 0
+      ) {
+        console.log(`This instrument has defined processing recipes`)
+        // Check if processing parameters have been provided
+        getSessionProcessingParameterData(sessid).then((params) => {
+          if (params === null && session.process) {
+            console.log(`Processing parameters have not been provided`)
+            // Redirect to the processing parameters page
+            navigate(`/new_session/parameters/${sessid}`)
+            return
+          }
+        })
+      }
+    }
+    runRedirectChecks() // Call the async function inside the useEffect()
+  }, [sessid, session, sessionActive, machineConfig])
+
+  // Load Session page upon initialisation
   const loadSession = async () => {
     const sess = await getSessionData(sessid)
     if (sess) {
       setSession(sess.session)
     }
   }
-
-  // Load Session page upon initialisation
   useEffect(() => {
     loadSession()
   }, [sessid])
 
-  // Set up RSyncer handling
-  const rsyncerLoaderData = useLoaderData() as RSyncerInfo[] | null
-  const [rsyncers, setRsyncers] = React.useState<RSyncerInfo[]>(
-    rsyncerLoaderData ?? []
-  )
-  const [rsyncersPaused, setRsyncersPaused] = React.useState(false)
-
   // Poll Rsyncer every few seconds
   useEffect(() => {
-    if (!sessid) return // Don't run it until a Session has been successfully created
+    // Don't run it if a session is inactive or its session ID is not set
+    if (!sessid || !sessionActive) return
 
     const fetchData = async () => {
       try {
@@ -425,7 +503,7 @@ const Session = () => {
     // Set it to run every 5s
     const interval = setInterval(fetchData, 5000)
     return () => clearInterval(interval)
-  }, [sessid])
+  }, [sessid, sessionActive])
 
   // Other Rsync-related functions
   const handleRemoveRsyncer = async (sessionId: number, source: string) => {
@@ -475,7 +553,6 @@ const Session = () => {
   }
 
   // Get and set the instrument name
-  const [instrumentName, setInstrumentName] = React.useState('')
   const resolveName = async () => {
     const name: string = await getInstrumentName()
     setInstrumentName(name)
