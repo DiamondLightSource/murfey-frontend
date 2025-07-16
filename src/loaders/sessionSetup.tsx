@@ -27,7 +27,6 @@ export const checkMultigridControllerStatus = async (sessionId: string) => {
     const response = await client.get(
       `/instrument_server/sessions/${sessionId}/multigrid_controller/status`
     )
-    console.log(`Multigrid controller status:`, response.data)
     return !!response.data.exists
   } catch (err) {
     console.error(err)

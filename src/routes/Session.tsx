@@ -205,23 +205,14 @@ export const Session = () => {
       const multigridControllerStatus =
         await checkMultigridControllerStatus(sessid)
       if (!multigridControllerStatus) {
-        console.log(`THe multigrid controller for this session is not set up`)
-
         // Check if this instrument has a gain reference directory configured
         if (
           !!machineConfig?.gain_reference_directory &&
           machineConfig.gain_reference_directory.trim() !== ''
         ) {
-          console.log(`This instrument needs a gain reference file`)
           // Check if a gain reference file has been uploaded
-          console.log(`Current gain reference:`, session.current_gain_ref)
-          console.log(
-            `(!session.current_gain_ref) evaluates to:`,
-            !session.current_gain_ref
-          )
           if (!session.current_gain_ref) {
             // Redirect to the gain reference page
-            console.log(`Gain reference file not found`)
             navigate(
               `/sessions/${sessid}/gain_ref_transfer?sessid=${sessid}&setup=true`
             )
@@ -238,11 +229,9 @@ export const Session = () => {
         machineConfig?.recipes &&
         Object.keys(machineConfig.recipes).length > 0
       ) {
-        console.log(`This instrument has defined processing recipes`)
         // Check if processing parameters have been provided
         getSessionProcessingParameterData(sessid).then((params) => {
           if (params === null && session.process) {
-            console.log(`Processing parameters have not been provided`)
             // Redirect to the processing parameters page
             navigate(`/new_session/parameters/${sessid}`)
             return
