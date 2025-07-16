@@ -19,7 +19,7 @@ import {
 import { MdLink } from 'react-icons/md'
 import { Link as LinkRouter, useLoaderData, useParams } from 'react-router-dom'
 import { components } from 'schema/main'
-import { linkSessionToClient } from 'loaders/session_clients'
+import { linkSessionToClient } from 'loaders/sessionClients'
 import { useSearchParams } from 'react-router-dom'
 import React from 'react'
 

@@ -56,7 +56,7 @@ import {
 } from 'react-icons/md'
 import { components } from 'schema/main'
 import { getInstrumentName } from 'loaders/general'
-import { updateVisitEndTime, getSessionData } from 'loaders/session_clients'
+import { updateVisitEndTime, getSessionData } from 'loaders/sessionClients'
 import { getMachineConfigData } from 'loaders/machineConfig'
 import {
   getRsyncerData,

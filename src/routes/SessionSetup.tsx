@@ -14,7 +14,7 @@ import { SetupStepper } from 'components/setupStepper'
 import { components } from 'schema/main'
 import { getProcessingParameterData } from 'loaders/processingParameters'
 import { startMultigridWatcher } from 'loaders/multigridSetup'
-import { getSessionData, updateSession } from 'loaders/session_clients'
+import { getSessionData, updateSession } from 'loaders/sessionClients'
 import { registerProcessingParameters } from 'loaders/sessionSetup'
 
 import React, { useEffect } from 'react'
