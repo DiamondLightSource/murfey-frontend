@@ -57,6 +57,7 @@ import {
 import { components } from 'schema/main'
 import { getInstrumentName } from 'loaders/general'
 import { updateVisitEndTime, getSessionData } from 'loaders/sessionClients'
+import { checkMultigridControllerStatus } from 'loaders/sessionSetup'
 import { getMachineConfigData } from 'loaders/machineConfig'
 import {
   getRsyncerData,
@@ -80,7 +81,6 @@ import useWebSocket from 'react-use-websocket'
 import React, { useEffect } from 'react'
 import { FaCalendar } from 'react-icons/fa'
 import { convertUKNaiveToUTC, convertUTCToUKNaive } from 'utils/generic'
-import { client } from 'utils/api/client'
 
 type RSyncerInfo = components['schemas']['RSyncerInfo']
 type Session = components['schemas']['Session']
@@ -395,20 +395,6 @@ export const Session = () => {
   useEffect(() => {
     getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))
   }, [])
-
-  // Helper function to check whether a multigrid controller has been set up
-  const checkMultigridControllerStatus = async (sessid: string) => {
-    try {
-      const response = await client.get(
-        `/instrument_server/sessions/${sessid}/multigrid_controller/status`
-      )
-      console.log(`Multigrid controller status:`, response.data)
-      return !!response.data.exists
-    } catch (err) {
-      console.error(err)
-      return
-    }
-  }
 
   // Redirect user to earlier stages of the setup depending on what is missing
   useEffect(() => {
