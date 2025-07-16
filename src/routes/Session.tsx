@@ -274,7 +274,7 @@ const getUrl = (endpoint: string) => {
   )
 }
 
-const Session = () => {
+export const Session = () => {
   // ----------------------------------------------------------------------------------
   // Routing and loader context
   const { sessid } = useParams()
@@ -889,5 +889,3 @@ const Session = () => {
     </div>
   )
 }
-
-export { Session }
