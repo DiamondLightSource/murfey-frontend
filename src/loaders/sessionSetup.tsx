@@ -27,9 +27,10 @@ export const checkMultigridControllerStatus = async (sessionId: string) => {
     const response = await client.get(
       `/instrument_server/sessions/${sessionId}/multigrid_controller/status`
     )
-    return !!response.data.exists
+    // Return the response as-is; no need to turn it into a Boolean at this stage
+    return response.data.exists
   } catch (err) {
     console.error(err)
-    return
+    return false
   }
 }
