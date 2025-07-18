@@ -15,25 +15,23 @@ import {
   Link,
   Circle,
 } from '@chakra-ui/react'
-
+import { Table } from '@diamondlightsource/ui-components'
+import { SetupStepper } from 'components/setupStepper'
+import { getMachineConfigData } from 'loaders/machineConfig'
+import {
+  prepareGainReference,
+  transferGainReference,
+  updateCurrentGainReference,
+} from 'loaders/possibleGainRefs'
+import React from 'react'
 import {
   Link as LinkRouter,
   useNavigate,
   useLoaderData,
   useSearchParams,
 } from 'react-router-dom'
-import { components } from 'schema/main'
-import { Table } from '@diamondlightsource/ui-components'
-import { SetupStepper } from 'components/setupStepper'
-import {
-  prepareGainReference,
-  transferGainReference,
-  updateCurrentGainReference,
-} from 'loaders/possibleGainRefs'
-import { getMachineConfigData } from 'loaders/machineConfig'
 import { CircleLoader } from 'react-spinners'
-
-import React from 'react'
+import { components } from 'schema/main'
 
 type File = components['schemas']['File']
 

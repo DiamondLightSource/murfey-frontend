@@ -1,6 +1,6 @@
 import { QueryClient } from '@tanstack/react-query'
-import { client } from 'utils/api/client'
 import { Params } from 'react-router-dom'
+import { client } from 'utils/api/client'
 import { convertUTCToUKNaive, convertUKNaiveToUTC } from 'utils/generic'
 
 export const includePage = (endpoint: string, limit: number, page: number) =>

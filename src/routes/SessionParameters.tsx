@@ -13,14 +13,12 @@ import {
   ModalCloseButton,
   VStack,
 } from '@chakra-ui/react'
-
 import { useDisclosure } from '@chakra-ui/react'
-import { Link as LinkRouter, useLoaderData, useParams } from 'react-router-dom'
-import { components } from 'schema/main'
 import { Table } from '@diamondlightsource/ui-components'
 import { updateSessionProcessingParameters } from 'loaders/processingParameters'
-
 import React from 'react'
+import { Link as LinkRouter, useLoaderData, useParams } from 'react-router-dom'
+import { components } from 'schema/main'
 
 type EditableSessionParameters =
   components['schemas']['EditableSessionProcessingParameters']

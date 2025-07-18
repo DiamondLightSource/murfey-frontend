@@ -1,6 +1,6 @@
 import { QueryClient } from '@tanstack/react-query'
-import { client } from 'utils/api/client'
 import { Params } from 'react-router-dom'
+import { client } from 'utils/api/client'
 
 const getDataCollectionGroups = async (sessid: string = '0') => {
   console.log('data collection groups gather')

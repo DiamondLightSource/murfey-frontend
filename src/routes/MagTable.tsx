@@ -1,3 +1,4 @@
+import { CheckIcon, EditIcon } from '@chakra-ui/icons'
 import {
   Button,
   Box,
@@ -26,15 +27,11 @@ import {
   FormControl,
   useDisclosure,
 } from '@chakra-ui/react'
-
-import { CheckIcon, EditIcon } from '@chakra-ui/icons'
-
+import { addMagTableRow, removeMagTableRow } from 'loaders/magTable'
+import React from 'react'
+import { MdAdd, MdHorizontalRule } from 'react-icons/md'
 import { Link as LinkRouter, useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
-import { MdAdd, MdHorizontalRule } from 'react-icons/md'
-import { addMagTableRow, removeMagTableRow } from 'loaders/magTable'
-
-import React from 'react'
 
 type MagTableRow = components['schemas']['MagnificationLookup']
 

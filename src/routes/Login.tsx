@@ -9,12 +9,10 @@ import {
   Heading,
   HStack,
 } from '@chakra-ui/react'
-import { Link as LinkRouter, useNavigate, Navigate } from 'react-router-dom'
-import { TbMicroscope, TbSnowflake } from 'react-icons/tb'
-
 import { getJWT, handshake } from 'loaders/jwt'
-
 import React from 'react'
+import { TbMicroscope, TbSnowflake } from 'react-icons/tb'
+import { Link as LinkRouter, useNavigate, Navigate } from 'react-router-dom'
 
 const Login = () => {
   const [username, setUsername] = React.useState('')

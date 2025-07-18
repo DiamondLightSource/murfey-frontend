@@ -1,3 +1,4 @@
+import { ArrowForwardIcon } from '@chakra-ui/icons'
 import {
   Box,
   FormControl,
@@ -12,17 +13,15 @@ import {
   Switch,
   VStack,
 } from '@chakra-ui/react'
-import { ArrowForwardIcon } from '@chakra-ui/icons'
-
-import { Link as LinkRouter, useLoaderData, useParams } from 'react-router-dom'
-import { components } from 'schema/main'
+import { SetupStepper } from 'components/setupStepper'
 import {
   setupMultigridWatcher,
   startMultigridWatcher,
 } from 'loaders/multigridSetup'
 import { getSessionData } from 'loaders/sessionClients'
-import { SetupStepper } from 'components/setupStepper'
 import React, { useEffect } from 'react'
+import { Link as LinkRouter, useLoaderData, useParams } from 'react-router-dom'
+import { components } from 'schema/main'
 
 type MachineConfig = components['schemas']['MachineConfig']
 type MultigridWatcherSpec = components['schemas']['MultigridWatcherSetup']

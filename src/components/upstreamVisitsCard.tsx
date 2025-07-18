@@ -1,9 +1,7 @@
 import { Card, CardBody, Button, CardHeader } from '@chakra-ui/react'
-
 import { getUpstreamVisits, upstreamDataDownloadRequest } from 'loaders/general'
-import { MdFileDownload } from 'react-icons/md'
-
 import React, { useEffect } from 'react'
+import { MdFileDownload } from 'react-icons/md'
 
 interface SessionId {
   sessid: number

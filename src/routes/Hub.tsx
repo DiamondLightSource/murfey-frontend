@@ -10,10 +10,9 @@ import {
   Box,
   SimpleGrid,
 } from '@chakra-ui/react'
-
+import React, { useEffect } from 'react'
 import { TbMicroscope, TbSnowflake } from 'react-icons/tb'
 import { useLoaderData, useNavigate } from 'react-router-dom'
-import React, { useEffect } from 'react'
 
 const getUrl = (endpoint: string) => {
   return process.env.REACT_APP_HUB_ENDPOINT + endpoint

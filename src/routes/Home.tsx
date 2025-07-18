@@ -21,25 +21,23 @@ import {
   VStack,
   useDisclosure,
 } from '@chakra-ui/react'
-
-import { v4 as uuid4 } from 'uuid'
+import { InstrumentCard } from 'components/instrumentCard'
+import { sessionTokenCheck } from 'loaders/jwt'
+import { finaliseSession } from 'loaders/rsyncers'
+import { deleteSessionData } from 'loaders/sessionClients'
+import React, { useEffect } from 'react'
+import { GiMagicBroom } from 'react-icons/gi'
+import { MdDelete } from 'react-icons/md'
 import {
   Link as LinkRouter,
   useLoaderData,
   useSearchParams,
   useNavigate,
 } from 'react-router-dom'
-import { components } from 'schema/main'
-import { MdDelete } from 'react-icons/md'
-import { GiMagicBroom } from 'react-icons/gi'
-import { deleteSessionData } from 'loaders/sessionClients'
-import { finaliseSession } from 'loaders/rsyncers'
-import { sessionTokenCheck } from 'loaders/jwt'
-import { InstrumentCard } from 'components/instrumentCard'
 import { PuffLoader } from 'react-spinners'
 import useWebSocket from 'react-use-websocket'
-
-import React, { useEffect } from 'react'
+import { components } from 'schema/main'
+import { v4 as uuid4 } from 'uuid'
 
 type Session = components['schemas']['Session']
 const SessionRow = (session: Session) => {
