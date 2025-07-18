@@ -1,19 +1,6 @@
-import { Box, Button, Heading, HStack, VStack, Link } from '@chakra-ui/react'
+import { Box, Heading, VStack } from '@chakra-ui/react'
 import { Table } from '@diamondlightsource/ui-components'
-import { SetupStepper } from 'components/setupStepper'
-import { getMachineConfigData } from 'loaders/machineConfig'
-import {
-  prepareGainReference,
-  transferGainReference,
-  updateCurrentGainReference,
-} from 'loaders/possibleGainRefs'
-import { useState } from 'react'
-import {
-  useNavigate,
-  useLoaderData,
-  useParams,
-  Link as LinkRouter,
-} from 'react-router-dom'
+import { useNavigate, useLoaderData, useParams } from 'react-router-dom'
 import { components } from 'schema/main'
 
 type DataCollectionGroup = components['schemas']['DataCollectionGroup']
