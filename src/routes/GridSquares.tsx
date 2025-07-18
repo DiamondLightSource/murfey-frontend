@@ -1,20 +1,11 @@
-import {
-  Box,
-  Heading,
-  HStack,
-  VStack,
-  CardBody,
-  Card,
-  CardHeader,
-  Image,
-} from '@chakra-ui/react'
+import { Box, Heading, VStack } from '@chakra-ui/react'
 import { GridSquareCard } from 'components/gridSquareCard'
-import { useNavigate, useLoaderData, useParams } from 'react-router-dom'
+import { useLoaderData, useParams } from 'react-router-dom'
 import { components } from 'schema/main'
 
 type GridSquare = components['schemas']['GridSquare']
 
-const GridSquares = () => {
+export const GridSquares = () => {
   console.log('gather grid squares')
   const gridSquares = useLoaderData() as GridSquare[]
   console.log(
@@ -24,13 +15,6 @@ const GridSquares = () => {
     gridSquares.length
   )
   const { sessid, dcgid } = useParams()
-
-  const getUrl = (endpoint: string) => {
-    return (
-      (sessionStorage.getItem('murfeyServerURL') ??
-        process.env.REACT_APP_API_ENDPOINT) + endpoint
-    )
-  }
 
   const res = (
     <div className="rootContainer">
@@ -70,5 +54,3 @@ const GridSquares = () => {
   )
   return res
 }
-
-export { GridSquares }
