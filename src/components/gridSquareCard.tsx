@@ -13,7 +13,7 @@ import {
   SliderThumb,
 } from '@chakra-ui/react'
 import { getFoilHoles, getNumMovies } from 'loaders/gridSquares'
-import { useState, useEffect } from 'react'
+import { useCallback, useState, useEffect } from 'react'
 import { components } from 'schema/main'
 
 type GridSquare = components['schemas']['GridSquare']
@@ -38,34 +38,37 @@ const GridSquareCard = (
   const [foilHoleNames, setFoilHoleNames] = useState<number[]>([])
   const [foilHoleImages, setFoilHoleImages] = useState<(string | null)[]>([])
   const [sliderValue, setSliderValue] = useState(10)
-  const foilHoleSetup = (foilHoles: FoilHole[]) => {
-    let xpositions: number[] = []
-    let ypositions = []
-    let names: number[] = []
-    let images: (string | null)[] = []
-    for (let i = 0; i < foilHoles.length; i++) {
-      const unscaledx = foilHoles[i].x_location
-      const x =
-        gs.thumbnail_size_x && gs.readout_area_x && unscaledx
-          ? unscaledx * (gs.thumbnail_size_x / gs.readout_area_x)
-          : unscaledx
-      const unscaledy = foilHoles[i].y_location
-      const y =
-        gs.thumbnail_size_y && gs.readout_area_y && unscaledy
-          ? unscaledy * (gs.thumbnail_size_y / gs.readout_area_y)
-          : unscaledy
-      if (x) xpositions.push(Math.floor(x))
-      if (y) ypositions.push(Math.floor(y))
-      if (x) names.push(foilHoles[i].name)
-      const image = foilHoles[i].image
-      if (x) image ? images.push(image) : images.push(null)
-    }
-    setFoilHoleXPositions(xpositions)
-    setFoilHoleYPositions(ypositions)
-    setFoilHoleNames(names)
-    setFoilHoleImages(images)
-    setNumFoilHoles(foilHoles.length)
-  }
+  const foilHoleSetup = useCallback(
+    (foilHoles: FoilHole[]) => {
+      let xpositions: number[] = []
+      let ypositions = []
+      let names: number[] = []
+      let images: (string | null)[] = []
+      for (let i = 0; i < foilHoles.length; i++) {
+        const unscaledx = foilHoles[i].x_location
+        const x =
+          gs.thumbnail_size_x && gs.readout_area_x && unscaledx
+            ? unscaledx * (gs.thumbnail_size_x / gs.readout_area_x)
+            : unscaledx
+        const unscaledy = foilHoles[i].y_location
+        const y =
+          gs.thumbnail_size_y && gs.readout_area_y && unscaledy
+            ? unscaledy * (gs.thumbnail_size_y / gs.readout_area_y)
+            : unscaledy
+        if (x) xpositions.push(Math.floor(x))
+        if (y) ypositions.push(Math.floor(y))
+        if (x) names.push(foilHoles[i].name)
+        const image = foilHoles[i].image
+        if (x) image ? images.push(image) : images.push(null)
+      }
+      setFoilHoleXPositions(xpositions)
+      setFoilHoleYPositions(ypositions)
+      setFoilHoleNames(names)
+      setFoilHoleImages(images)
+      setNumFoilHoles(foilHoles.length)
+    },
+    [gs]
+  )
   useEffect(() => {
     getFoilHoles(sessid ?? '0', dcgid ?? '0', gs.name).then((fhs) =>
       foilHoleSetup(fhs)
@@ -73,7 +76,7 @@ const GridSquareCard = (
     getNumMovies(sessid ?? '0', dcgid ?? '0', gs.name).then((nm) =>
       setNumMovies(nm)
     )
-  }, [])
+  }, [sessid, dcgid, gs, foilHoleSetup])
 
   const zip = (a: number[], b: number[]) => a.map((k, i) => [k, b[i]])
 
