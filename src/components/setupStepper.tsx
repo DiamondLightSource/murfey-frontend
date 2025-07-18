@@ -11,20 +11,12 @@ import {
   Stepper,
   useSteps,
 } from '@chakra-ui/react'
-import React from 'react'
-
-const getUrl = (endpoint: string) => {
-  return (
-    (sessionStorage.getItem('murfeyServerURL') ??
-      process.env.REACT_APP_API_ENDPOINT) + endpoint
-  )
-}
 
 interface StepperStartConditions {
   activeStepIndex: number
 }
 
-const SetupStepper = ({ activeStepIndex }: StepperStartConditions) => {
+export const SetupStepper = ({ activeStepIndex }: StepperStartConditions) => {
   const steps = [
     { title: 'Visit', description: 'Select visit' },
     { title: 'Gain reference', description: 'Transfer and transform' },
@@ -60,5 +52,3 @@ const SetupStepper = ({ activeStepIndex }: StepperStartConditions) => {
     </Stepper>
   )
 }
-
-export { SetupStepper }
