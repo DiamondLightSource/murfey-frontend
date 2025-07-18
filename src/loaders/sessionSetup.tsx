@@ -20,3 +20,17 @@ export const registerProcessingParameters = async (
 
   return response.data
 }
+
+// Helper function to check whether a multigrid controller has been set up
+export const checkMultigridControllerStatus = async (sessionId: string) => {
+  try {
+    const response = await client.get(
+      `/instrument_server/sessions/${sessionId}/multigrid_controller/status`
+    )
+    // Return the response as-is; no need to turn it into a Boolean at this stage
+    return response.data.exists
+  } catch (err) {
+    console.error(err)
+    return false
+  }
+}

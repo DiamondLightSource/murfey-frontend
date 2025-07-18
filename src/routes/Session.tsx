@@ -1,10 +1,6 @@
 import {
-  Badge,
   Box,
   Button,
-  Card,
-  CardBody,
-  CardHeader,
   FormControl,
   FormLabel,
   Flex,
@@ -13,10 +9,6 @@ import {
   HStack,
   IconButton,
   Link,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -26,14 +18,8 @@ import {
   ModalCloseButton,
   Select,
   Spacer,
-  Spinner,
   Stack,
-  StackDivider,
-  Stat,
-  StatLabel,
-  StatNumber,
   Switch,
-  Text,
   VStack,
   useToast,
 } from '@chakra-ui/react'
@@ -48,24 +34,18 @@ import {
   useParams,
   useNavigate,
 } from 'react-router-dom'
-import {
-  MdDensityMedium,
-  MdFileUpload,
-  MdOutlineGridOn,
-  MdPause,
-} from 'react-icons/md'
+import { MdFileUpload, MdOutlineGridOn, MdPause } from 'react-icons/md'
 import { components } from 'schema/main'
 import { getInstrumentName } from 'loaders/general'
-import { updateVisitEndTime, getSessionData } from 'loaders/session_clients'
+import { updateVisitEndTime, getSessionData } from 'loaders/sessionClients'
+import { checkMultigridControllerStatus } from 'loaders/sessionSetup'
 import { getMachineConfigData } from 'loaders/machineConfig'
 import {
   getRsyncerData,
   pauseRsyncer,
-  restartRsyncer,
   removeRsyncer,
   finaliseRsyncer,
   finaliseSession,
-  flushSkippedRsyncer,
 } from 'loaders/rsyncers'
 import { getSessionProcessingParameterData } from 'loaders/processingParameters'
 import { sessionTokenCheck, sessionHandshake } from 'loaders/jwt'
@@ -74,6 +54,7 @@ import {
   setupMultigridWatcher,
 } from 'loaders/multigridSetup'
 import { InstrumentCard } from 'components/instrumentCard'
+import { RsyncCard } from 'components/rsyncCard'
 import { UpstreamVisitCard } from 'components/upstreamVisitsCard'
 import useWebSocket from 'react-use-websocket'
 
@@ -86,194 +67,46 @@ type Session = components['schemas']['Session']
 type MachineConfig = components['schemas']['MachineConfig']
 type MultigridWatcherSpec = components['schemas']['MultigridWatcherSetup']
 
-const RsyncCard = ({
-  rsyncer,
-  onRemove,
-  onFinalise,
-}: {
-  rsyncer: RSyncerInfo
-  onRemove: (id: number, source: string) => void
-  onFinalise: (id: number, source: string) => void
-}) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const [action, setAction] = React.useState('finalise')
+export const Session = () => {
+  // ----------------------------------------------------------------------------------
+  // Routing and loader context
+  const { sessid } = useParams()
+  const rsyncerLoaderData = useLoaderData() as RSyncerInfo[] | null
+  const navigate = useNavigate()
 
-  const finalise = () => {
-    setAction('finalise')
-    onOpen()
-  }
+  // ----------------------------------------------------------------------------------
+  // State hooks
+  // Session information
+  const [session, setSession] = React.useState<Session>()
+  const [sessionActive, setSessionActive] = React.useState(false)
+  const [skipExistingProcessing, setSkipExistingProcessing] =
+    React.useState(false)
 
-  const remove = () => {
-    setAction('remove')
-    onOpen()
-  }
+  // File transfer source information
+  const [selectedDirectory, setSelectedDirectory] = React.useState('')
 
-  const handleRsyncerAction = async () => {
-    if (action === 'finalise') {
-      await finaliseRsyncer(rsyncer.session_id, rsyncer.source)
-      // Run the function passed in from 'Session'
-      onFinalise(rsyncer.session_id, rsyncer.source)
-    } else if (action === 'remove') {
-      await removeRsyncer(rsyncer.session_id, rsyncer.source)
-      // Run the function passed in from 'Session'
-      onRemove(rsyncer.session_id, rsyncer.source)
-    }
-    onClose()
-  }
+  // Visit end time information
+  const [visitEndTime, setVisitEndTime] = React.useState<Date | null>(null)
+  const [proposedVisitEndTime, setProposedVisitEndTime] =
+    React.useState<Date | null>(null)
+  const [triggerVisitEndTimeUpdate, setTriggerVisitEndTimeUpdate] =
+    React.useState<Boolean>(false)
 
-  return (
-    <Card
-      width="100%"
-      bg={rsyncer.alive ? 'murfey.400' : '#DF928E'}
-      borderColor="murfey.300"
-    >
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>
-            Confirm RSyncer {action}: {rsyncer.source}
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>Are you sure you want to continue?</ModalBody>
+  // Machine config and instrument information
+  const [machineConfig, setMachineConfig] = React.useState<MachineConfig>()
+  const [instrumentName, setInstrumentName] = React.useState('')
 
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button variant="ghost" onClick={() => handleRsyncerAction()}>
-              Confirm
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      <CardHeader>
-        <Flex>
-          {' '}
-          <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
-            {' '}
-            <HStack spacing="3em">
-              <Text>RSync Instance</Text>
-              {rsyncer.transferring && <Spinner color="murfey.700" />}
-              <Badge
-                colorScheme={
-                  rsyncer.tag === 'fractions'
-                    ? 'green'
-                    : rsyncer.tag === 'metadata'
-                      ? 'purple'
-                      : rsyncer.tag === 'atlas'
-                        ? 'yellow'
-                        : 'red'
-                }
-              >
-                {rsyncer.tag}
-              </Badge>
-            </HStack>
-          </Flex>
-          <Menu>
-            <MenuButton
-              as={IconButton}
-              aria-label="Rsync control options"
-              icon={<MdDensityMedium />}
-            />
-            <MenuList>
-              {rsyncer.alive ? (
-                <>
-                  <MenuItem
-                    onClick={() =>
-                      pauseRsyncer(rsyncer.session_id, rsyncer.source)
-                    }
-                    isDisabled={rsyncer.stopping}
-                  >
-                    Pause
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() =>
-                      flushSkippedRsyncer(rsyncer.session_id, rsyncer.source)
-                    }
-                    isDisabled={rsyncer.stopping}
-                  >
-                    Flush skipped files
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => remove()}
-                    isDisabled={rsyncer.stopping}
-                  >
-                    Stop rsync (cannot be resumed)
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => {
-                      finalise()
-                    }}
-                    isDisabled={rsyncer.stopping}
-                  >
-                    Remove all source files and stop
-                  </MenuItem>
-                </>
-              ) : (
-                <>
-                  <MenuItem
-                    onClick={() =>
-                      restartRsyncer(rsyncer.session_id, rsyncer.source)
-                    }
-                  >
-                    Start
-                  </MenuItem>
-                  <MenuItem onClick={() => remove()}>Remove</MenuItem>
-                </>
-              )}
-            </MenuList>
-          </Menu>
-        </Flex>
-      </CardHeader>
-      <CardBody>
-        <Stack divider={<StackDivider />} spacing="4">
-          <Box>
-            <Heading size="xs" textTransform="uppercase">
-              Source
-            </Heading>
-            <Text pt="2" fontSize="sm">
-              {rsyncer.source}
-            </Text>
-          </Box>
-          <Box>
-            <Heading size="xs" textTransform="uppercase">
-              Destination
-            </Heading>
-            <Text pt="2" fontSize="sm">
-              {rsyncer.destination ?? ''}
-            </Text>
-          </Box>
-          <Box>
-            <Stat>
-              <StatLabel>Transfer progress</StatLabel>
-              <StatNumber>
-                {rsyncer.num_files_transferred} transferred
-              </StatNumber>
-              <StatNumber>{rsyncer.num_files_in_queue} queued</StatNumber>
-              <StatNumber>{rsyncer.num_files_skipped} skipped</StatNumber>
-              {rsyncer.analyser_alive ? (
-                <StatNumber>
-                  {rsyncer.num_files_to_analyse} to analyse
-                </StatNumber>
-              ) : (
-                <></>
-              )}
-            </Stat>
-          </Box>
-        </Stack>
-      </CardBody>
-    </Card>
+  // Websocket UUID information
+  const [UUID, setUUID] = React.useState('')
+
+  // Rsyncer information
+  const [rsyncers, setRsyncers] = React.useState<RSyncerInfo[]>(
+    rsyncerLoaderData ?? []
   )
-}
+  const [rsyncersPaused, setRsyncersPaused] = React.useState(false)
 
-const getUrl = (endpoint: string) => {
-  return (
-    (sessionStorage.getItem('murfeyServerURL') ??
-      process.env.REACT_APP_API_ENDPOINT) + endpoint
-  )
-}
-
-const Session = () => {
+  // ----------------------------------------------------------------------------------
+  // UI utility hooks
   const { isOpen, onOpen, onClose } = useDisclosure()
   const {
     isOpen: isOpenReconnect,
@@ -285,27 +118,16 @@ const Session = () => {
     onOpen: onOpenCalendar,
     onClose: onCloseCalendar,
   } = useDisclosure()
-  const { sessid } = useParams()
-  const navigate = useNavigate()
-  const [sessionActive, setSessionActive] = React.useState(false)
-  const [session, setSession] = React.useState<Session>()
-  const [skipExistingProcessing, setSkipExistingProcessing] =
-    React.useState(false)
-  const [selectedDirectory, setSelectedDirectory] = React.useState('')
-  const [visitEndTime, setVisitEndTime] = React.useState<Date | null>(null)
-  const [proposedVisitEndTime, setProposedVisitEndTime] =
-    React.useState<Date | null>(null)
-  const [triggerVisitEndTimeUpdate, setTriggerVisitEndTimeUpdate] =
-    React.useState<Boolean>(false)
+
+  // ----------------------------------------------------------------------------------
+  // Functions
+  // Load the Murfey server URL from the environment variable
   const baseUrl =
     sessionStorage.getItem('murfeyServerURL') ??
     process.env.REACT_APP_API_ENDPOINT
 
-  // Set URL for websocket connection
+  // Set up websocket connection to Murfey server
   const url = baseUrl ? baseUrl.replace('http', 'ws') : 'ws://localhost:8000'
-
-  // Set up UUID for websocket connection
-  const [UUID, setUUID] = React.useState('')
 
   // Use existing UUID if present; otherwise, generate a new UUID
   useEffect(() => {
@@ -359,58 +181,82 @@ const Session = () => {
   )
 
   // Get machine config and set up related settings
-  const [machineConfig, setMachineConfig] = React.useState<MachineConfig>()
   const handleMachineConfig = (mcfg: MachineConfig) => {
     setMachineConfig(mcfg)
     setSelectedDirectory(mcfg['data_directories'][0])
   }
-
-  const recipesDefined = machineConfig
-    ? machineConfig.recipes
-      ? Object.keys(machineConfig.recipes).length !== 0
-      : false
-    : false
-
   useEffect(() => {
     getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))
   }, [])
 
+  // Redirect user to earlier stages of the setup depending on what is missing
   useEffect(() => {
-    getSessionProcessingParameterData(sessid).then((params) => {
-      if (
-        params === null &&
-        recipesDefined &&
-        session !== undefined &&
-        session.process
-      ) {
-        navigate(`/new_session/parameters/${sessid}`)
-      }
-    })
-  }, [sessid])
+    // Exit early if required states are undefined
+    if (
+      session === undefined ||
+      sessid === undefined ||
+      !sessionActive ||
+      machineConfig === undefined
+    )
+      return
 
-  // Session helper function to update the page with data from backend
+    const runRedirectChecks = async () => {
+      // Check if the multigrid controller for the session exists
+      const multigridControllerStatus =
+        await checkMultigridControllerStatus(sessid)
+      if (!multigridControllerStatus) {
+        // Check if this instrument has a gain reference directory configured
+        if (
+          !!machineConfig?.gain_reference_directory &&
+          machineConfig.gain_reference_directory.trim() !== ''
+        ) {
+          // Check if a gain reference file has been uploaded
+          if (!session.current_gain_ref) {
+            // Redirect to the gain reference page
+            navigate(
+              `/sessions/${sessid}/gain_ref_transfer?sessid=${sessid}&setup=true`
+            )
+            return
+          }
+        }
+        // Redirect to set up multigrid controller
+        navigate(`/new_session/setup/${sessid}`)
+        return
+      }
+
+      // Check if this instrument has processing recipes configured
+      if (
+        machineConfig?.recipes &&
+        Object.keys(machineConfig.recipes).length > 0
+      ) {
+        // Check if processing parameters have been provided
+        getSessionProcessingParameterData(sessid).then((params) => {
+          if (params === null && session.process) {
+            // Redirect to the processing parameters page
+            navigate(`/new_session/parameters/${sessid}`)
+            return
+          }
+        })
+      }
+    }
+    runRedirectChecks() // Call the async function inside the useEffect()
+  }, [sessid, session, sessionActive, machineConfig])
+
+  // Load Session page upon initialisation
   const loadSession = async () => {
     const sess = await getSessionData(sessid)
     if (sess) {
       setSession(sess.session)
     }
   }
-
-  // Load Session page upon initialisation
   useEffect(() => {
     loadSession()
   }, [sessid])
 
-  // Set up RSyncer handling
-  const rsyncerLoaderData = useLoaderData() as RSyncerInfo[] | null
-  const [rsyncers, setRsyncers] = React.useState<RSyncerInfo[]>(
-    rsyncerLoaderData ?? []
-  )
-  const [rsyncersPaused, setRsyncersPaused] = React.useState(false)
-
   // Poll Rsyncer every few seconds
   useEffect(() => {
-    if (!sessid) return // Don't run it until a Session has been successfully created
+    // Don't run it if a session is inactive or its session ID is not set
+    if (!sessid || !sessionActive) return
 
     const fetchData = async () => {
       try {
@@ -425,7 +271,7 @@ const Session = () => {
     // Set it to run every 5s
     const interval = setInterval(fetchData, 5000)
     return () => clearInterval(interval)
-  }, [sessid])
+  }, [sessid, sessionActive])
 
   // Other Rsync-related functions
   const handleRemoveRsyncer = async (sessionId: number, source: string) => {
@@ -475,7 +321,6 @@ const Session = () => {
   }
 
   // Get and set the instrument name
-  const [instrumentName, setInstrumentName] = React.useState('')
   const resolveName = async () => {
     const name: string = await getInstrumentName()
     setInstrumentName(name)
@@ -812,5 +657,3 @@ const Session = () => {
     </div>
   )
 }
-
-export { Session }

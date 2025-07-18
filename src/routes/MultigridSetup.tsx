@@ -20,7 +20,7 @@ import {
   setupMultigridWatcher,
   startMultigridWatcher,
 } from 'loaders/multigridSetup'
-import { getSessionData } from 'loaders/session_clients'
+import { getSessionData } from 'loaders/sessionClients'
 import { SetupStepper } from 'components/setupStepper'
 import React, { useEffect } from 'react'
 
