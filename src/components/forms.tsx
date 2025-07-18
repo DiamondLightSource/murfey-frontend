@@ -1,7 +1,5 @@
 import {
   Button,
-  Divider,
-  Text,
   FormControl,
   FormLabel,
   Input,
@@ -10,16 +8,12 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  RadioGroup,
-  Radio,
   HStack,
   VStack,
   Select,
   Switch,
-  Link,
 } from '@chakra-ui/react'
 import React, { ReactElement } from 'react'
-import { Link as LinkRouter } from 'react-router-dom'
 
 const formDataSPA: { [key: string]: any } = {
   type: 'SPA',
@@ -39,9 +33,6 @@ const formDataTomo: { [key: string]: any } = {
 const SpaForm = (submissionCallback: (arg0: any) => void) => {
   const validateInt = (char: string) => {
     return /\d/.test(char)
-  }
-  const validateFloat = (char: string) => {
-    return /^\d*\.?\d*$/.test(char)
   }
   const [symmetryType, setSymmetryType] = React.useState('C')
   const [particleDetection, setParticleDetection] = React.useState(true)
@@ -155,9 +146,9 @@ const TomoForm = (submissionCallback: (arg0: any) => void) => {
   ) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
-    formDataSPA.dose_per_frame = formData.get('dose')
-    formDataSPA.eer_fractionation = formData.get('eer-grouping')
-    callback(formDataSPA)
+    formDataTomo.dose_per_frame = formData.get('dose')
+    formDataTomo.eer_fractionation = formData.get('eer-grouping')
+    callback(formDataTomo)
   }
   return (
     <form onSubmit={(e) => setFormElement(e, submissionCallback)}>
