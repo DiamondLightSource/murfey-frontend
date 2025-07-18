@@ -46,7 +46,7 @@ const MultigridSetup = () => {
 
   useEffect(() => {
     getSessionData(sessid).then((sess) => setSession(sess.session))
-  }, [])
+  }, [sessid])
   const activeStep = session != null ? (session.started ? 3 : 2) : 2
 
   const handleDirectorySelection = (e: React.ChangeEvent<HTMLSelectElement>) =>
