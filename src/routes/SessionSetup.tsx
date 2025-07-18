@@ -12,29 +12,22 @@ import { getForm } from 'components/forms'
 import { SetupStepper } from 'components/setupStepper'
 import { startMultigridWatcher } from 'loaders/multigridSetup'
 import { getProcessingParameterData } from 'loaders/processingParameters'
-import { getSessionData, updateSession } from 'loaders/sessionClients'
+import { updateSession } from 'loaders/sessionClients'
 import { registerProcessingParameters } from 'loaders/sessionSetup'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Link as LinkRouter, useParams, useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
 
 type SessionClients = components['schemas']['SessionClients']
 type ProvidedProcessingParameters =
   components['schemas']['ProvidedProcessingParameters']
-type Session = components['schemas']['Session']
 
-const SessionSetup = () => {
-  const session = useLoaderData() as SessionClients | null
+export const SessionSetup = () => {
+  const sessionClients = useLoaderData() as SessionClients | null
   const [expType, setExpType] = React.useState('spa')
   const [procParams, setProcParams] = React.useState()
   const { sessid } = useParams()
   const [paramsSet, setParamsSet] = React.useState(false)
-
-  const [_session, setSession] = React.useState<Session>()
-
-  useEffect(() => {
-    getSessionData(sessid).then((sess) => setSession(sess.session))
-  }, [])
 
   const handleSelection = (formData: any) => {
     if (typeof sessid !== 'undefined') {
@@ -55,14 +48,14 @@ const SessionSetup = () => {
     }
   }
 
-  if (session)
-    getProcessingParameterData(session.session.id.toString()).then((params) =>
-      setProcParams(params)
+  if (sessionClients)
+    getProcessingParameterData(sessionClients.session.id.toString()).then(
+      (params) => setProcParams(params)
     )
-  const activeStep = session
+  const activeStep = sessionClients
     ? procParams
       ? 4
-      : session.session.visit
+      : sessionClients.session.visit
         ? 3
         : 0
     : 3
@@ -163,5 +156,3 @@ const SessionSetup = () => {
     </div>
   )
 }
-
-export { SessionSetup }
