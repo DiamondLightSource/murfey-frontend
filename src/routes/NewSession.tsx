@@ -20,18 +20,17 @@ import {
   Tooltip,
   Text,
 } from '@chakra-ui/react'
-
 import { useDisclosure } from '@chakra-ui/react'
+import { Table } from '@diamondlightsource/ui-components'
+import { SetupStepper } from 'components/setupStepper'
+import { sessionTokenCheck, sessionHandshake } from 'loaders/jwt'
+import { getMachineConfigData } from 'loaders/machineConfig'
+import { createSession, getSessionDataForVisit } from 'loaders/sessionClients'
+import React, { useEffect } from 'react'
+import { FaCalendar } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
 import { Link as LinkRouter, useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
-import { SetupStepper } from 'components/setupStepper'
-import { Table } from '@diamondlightsource/ui-components'
-import { createSession, getSessionDataForVisit } from 'loaders/sessionClients'
-import { sessionTokenCheck, sessionHandshake } from 'loaders/jwt'
-import { useNavigate } from 'react-router-dom'
-import React, { useEffect } from 'react'
-import { getMachineConfigData } from 'loaders/machineConfig'
-import { FaCalendar } from 'react-icons/fa'
 import {
   convertUTCToUKNaive,
   convertUKNaiveToUTC,

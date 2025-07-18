@@ -1,6 +1,5 @@
 import { Box, RadioGroup, Radio, Stack } from '@chakra-ui/react'
 import { getForm } from 'components/forms'
-
 import React from 'react'
 
 const UserParameters = () => {

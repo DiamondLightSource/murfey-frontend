@@ -1,7 +1,7 @@
 import { QueryClient } from '@tanstack/react-query'
+import { Params } from 'react-router-dom'
 import { components } from 'schema/main'
 import { client } from 'utils/api/client'
-import { Params } from 'react-router-dom'
 import { parseDate } from 'utils/generic'
 
 export const getMachineConfigData = async () => {

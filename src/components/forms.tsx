@@ -18,9 +18,8 @@ import {
   Switch,
   Link,
 } from '@chakra-ui/react'
-import { Link as LinkRouter } from 'react-router-dom'
-
 import React, { ReactElement } from 'react'
+import { Link as LinkRouter } from 'react-router-dom'
 
 const formDataSPA: { [key: string]: any } = {
   type: 'SPA',

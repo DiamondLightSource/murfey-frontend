@@ -1,6 +1,6 @@
 import { QueryClient } from '@tanstack/react-query'
-import { client } from 'utils/api/client'
 import { components } from 'schema/main'
+import { client } from 'utils/api/client'
 
 type ProvidedProcessingParameters =
   components['schemas']['ProvidedProcessingParameters']

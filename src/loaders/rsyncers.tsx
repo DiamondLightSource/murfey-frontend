@@ -1,6 +1,6 @@
 import { QueryClient } from '@tanstack/react-query'
-import { client } from 'utils/api/client'
 import { Params } from 'react-router-dom'
+import { client } from 'utils/api/client'
 
 export const getRsyncerData = async (sessionId: string) => {
   const response = await client.get(

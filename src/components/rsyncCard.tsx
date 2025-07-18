@@ -28,11 +28,7 @@ import {
   StatNumber,
   Text,
 } from '@chakra-ui/react'
-
 import { useDisclosure } from '@chakra-ui/react'
-
-import { MdDensityMedium } from 'react-icons/md'
-import { components } from 'schema/main'
 import {
   pauseRsyncer,
   restartRsyncer,
@@ -40,8 +36,9 @@ import {
   finaliseRsyncer,
   flushSkippedRsyncer,
 } from 'loaders/rsyncers'
-
 import React from 'react'
+import { MdDensityMedium } from 'react-icons/md'
+import { components } from 'schema/main'
 
 type RSyncerInfo = components['schemas']['RSyncerInfo']
 

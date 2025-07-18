@@ -15,13 +15,12 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react'
-
+import { linkSessionToClient } from 'loaders/sessionClients'
+import React from 'react'
 import { MdLink } from 'react-icons/md'
 import { Link as LinkRouter, useLoaderData, useParams } from 'react-router-dom'
-import { components } from 'schema/main'
-import { linkSessionToClient } from 'loaders/sessionClients'
 import { useSearchParams } from 'react-router-dom'
-import React from 'react'
+import { components } from 'schema/main'
 
 type Client = components['schemas']['ClientEnvironment']
 

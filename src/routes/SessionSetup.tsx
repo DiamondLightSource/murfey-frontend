@@ -9,15 +9,14 @@ import {
   Heading,
 } from '@chakra-ui/react'
 import { getForm } from 'components/forms'
-import { Link as LinkRouter, useParams, useLoaderData } from 'react-router-dom'
 import { SetupStepper } from 'components/setupStepper'
-import { components } from 'schema/main'
-import { getProcessingParameterData } from 'loaders/processingParameters'
 import { startMultigridWatcher } from 'loaders/multigridSetup'
+import { getProcessingParameterData } from 'loaders/processingParameters'
 import { getSessionData, updateSession } from 'loaders/sessionClients'
 import { registerProcessingParameters } from 'loaders/sessionSetup'
-
 import React, { useEffect } from 'react'
+import { Link as LinkRouter, useParams, useLoaderData } from 'react-router-dom'
+import { components } from 'schema/main'
 
 type SessionClients = components['schemas']['SessionClients']
 type ProvidedProcessingParameters =

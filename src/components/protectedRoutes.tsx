@@ -1,6 +1,6 @@
-import { Navigate, Outlet } from 'react-router-dom'
 import { Box } from '@chakra-ui/react'
 import { Navbar } from 'components/navbar'
+import { Navigate, Outlet } from 'react-router-dom'
 
 const ProtectedRoutes = () => {
   // Read environment variable and demand user login if authenticating with 'password'

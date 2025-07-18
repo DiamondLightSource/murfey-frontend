@@ -12,13 +12,11 @@ import {
   Switch,
   Text,
 } from '@chakra-ui/react'
-
+import { Table } from '@diamondlightsource/ui-components'
+import React from 'react'
+import { MdEditNote } from 'react-icons/md'
 import { useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
-import { Table } from '@diamondlightsource/ui-components'
-import { MdEditNote } from 'react-icons/md'
-
-import React from 'react'
 
 type ProcessingDetails = components['schemas']['ProcessingDetails']
 

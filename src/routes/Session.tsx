@@ -1,3 +1,5 @@
+import { ViewIcon } from '@chakra-ui/icons'
+import { useDisclosure } from '@chakra-ui/react'
 import {
   Box,
   Button,
@@ -23,23 +25,17 @@ import {
   VStack,
   useToast,
 } from '@chakra-ui/react'
-
-import { useDisclosure } from '@chakra-ui/react'
-import { ViewIcon } from '@chakra-ui/icons'
-
-import { v4 as uuid4 } from 'uuid'
-import {
-  Link as LinkRouter,
-  useLoaderData,
-  useParams,
-  useNavigate,
-} from 'react-router-dom'
-import { MdFileUpload, MdOutlineGridOn, MdPause } from 'react-icons/md'
-import { components } from 'schema/main'
+import { InstrumentCard } from 'components/instrumentCard'
+import { RsyncCard } from 'components/rsyncCard'
+import { UpstreamVisitCard } from 'components/upstreamVisitsCard'
 import { getInstrumentName } from 'loaders/general'
-import { updateVisitEndTime, getSessionData } from 'loaders/sessionClients'
-import { checkMultigridControllerStatus } from 'loaders/sessionSetup'
+import { sessionTokenCheck, sessionHandshake } from 'loaders/jwt'
 import { getMachineConfigData } from 'loaders/machineConfig'
+import {
+  startMultigridWatcher,
+  setupMultigridWatcher,
+} from 'loaders/multigridSetup'
+import { getSessionProcessingParameterData } from 'loaders/processingParameters'
 import {
   getRsyncerData,
   pauseRsyncer,
@@ -47,20 +43,21 @@ import {
   finaliseRsyncer,
   finaliseSession,
 } from 'loaders/rsyncers'
-import { getSessionProcessingParameterData } from 'loaders/processingParameters'
-import { sessionTokenCheck, sessionHandshake } from 'loaders/jwt'
-import {
-  startMultigridWatcher,
-  setupMultigridWatcher,
-} from 'loaders/multigridSetup'
-import { InstrumentCard } from 'components/instrumentCard'
-import { RsyncCard } from 'components/rsyncCard'
-import { UpstreamVisitCard } from 'components/upstreamVisitsCard'
-import useWebSocket from 'react-use-websocket'
-
+import { updateVisitEndTime, getSessionData } from 'loaders/sessionClients'
+import { checkMultigridControllerStatus } from 'loaders/sessionSetup'
 import React, { useEffect } from 'react'
 import { FaCalendar } from 'react-icons/fa'
+import { MdFileUpload, MdOutlineGridOn, MdPause } from 'react-icons/md'
+import {
+  Link as LinkRouter,
+  useLoaderData,
+  useParams,
+  useNavigate,
+} from 'react-router-dom'
+import useWebSocket from 'react-use-websocket'
+import { components } from 'schema/main'
 import { convertUKNaiveToUTC, convertUTCToUKNaive } from 'utils/generic'
+import { v4 as uuid4 } from 'uuid'
 
 type RSyncerInfo = components['schemas']['RSyncerInfo']
 type Session = components['schemas']['Session']

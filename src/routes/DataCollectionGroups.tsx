@@ -1,5 +1,13 @@
 import { Box, Button, Heading, HStack, VStack, Link } from '@chakra-ui/react'
-
+import { Table } from '@diamondlightsource/ui-components'
+import { SetupStepper } from 'components/setupStepper'
+import { getMachineConfigData } from 'loaders/machineConfig'
+import {
+  prepareGainReference,
+  transferGainReference,
+  updateCurrentGainReference,
+} from 'loaders/possibleGainRefs'
+import { useState } from 'react'
 import {
   useNavigate,
   useLoaderData,
@@ -7,16 +15,6 @@ import {
   Link as LinkRouter,
 } from 'react-router-dom'
 import { components } from 'schema/main'
-import { Table } from '@diamondlightsource/ui-components'
-import { SetupStepper } from 'components/setupStepper'
-import {
-  prepareGainReference,
-  transferGainReference,
-  updateCurrentGainReference,
-} from 'loaders/possibleGainRefs'
-import { getMachineConfigData } from 'loaders/machineConfig'
-
-import { useState } from 'react'
 
 type DataCollectionGroup = components['schemas']['DataCollectionGroup']
 

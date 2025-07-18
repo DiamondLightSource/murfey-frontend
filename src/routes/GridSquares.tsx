@@ -8,10 +8,9 @@ import {
   CardHeader,
   Image,
 } from '@chakra-ui/react'
-
+import { GridSquareCard } from 'components/gridSquareCard'
 import { useNavigate, useLoaderData, useParams } from 'react-router-dom'
 import { components } from 'schema/main'
-import { GridSquareCard } from 'components/gridSquareCard'
 
 type GridSquare = components['schemas']['GridSquare']
 

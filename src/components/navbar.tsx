@@ -10,6 +10,8 @@ import {
   BoxProps,
   Icon,
 } from '@chakra-ui/react'
+import { getInstrumentConnectionStatus } from 'loaders/general'
+import React from 'react'
 import {
   MdMenu,
   MdClose,
@@ -17,9 +19,7 @@ import {
   MdOutlineSignalWifiBad,
 } from 'react-icons/md'
 import { TbMicroscope, TbSnowflake, TbHomeCog } from 'react-icons/tb'
-import { getInstrumentConnectionStatus } from 'loaders/general'
 import { Link as LinkRouter } from 'react-router-dom'
-import React from 'react'
 
 export interface LinkDescriptor {
   label: string

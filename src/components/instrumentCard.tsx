@@ -1,9 +1,7 @@
 import { Card, CardBody, CardHeader, Image, Link, Text } from '@chakra-ui/react'
-
-import { Link as LinkRouter } from 'react-router-dom'
 import { getInstrumentName } from 'loaders/general'
-
 import React, { useEffect } from 'react'
+import { Link as LinkRouter } from 'react-router-dom'
 
 const getUrl = (endpoint: string) => {
   return (

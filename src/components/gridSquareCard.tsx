@@ -12,11 +12,9 @@ import {
   SliderFilledTrack,
   SliderThumb,
 } from '@chakra-ui/react'
-
-import { components } from 'schema/main'
 import { getFoilHoles, getNumMovies } from 'loaders/gridSquares'
-
 import { useState, useEffect } from 'react'
+import { components } from 'schema/main'
 
 type GridSquare = components['schemas']['GridSquare']
 type FoilHole = components['schemas']['FoilHole']

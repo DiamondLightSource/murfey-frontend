@@ -11,7 +11,6 @@ import {
   Stepper,
   useSteps,
 } from '@chakra-ui/react'
-
 import React from 'react'
 
 const getUrl = (endpoint: string) => {

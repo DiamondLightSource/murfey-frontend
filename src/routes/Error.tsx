@@ -1,7 +1,7 @@
 import { Heading, Link, VStack, Box, Text, Code } from '@chakra-ui/react'
+import { Navbar } from '@diamondlightsource/ui-components'
 import { useEffect, useState } from 'react'
 import { useRouteError } from 'react-router-dom'
-import { Navbar } from '@diamondlightsource/ui-components'
 
 interface ErrorType {
   status: number

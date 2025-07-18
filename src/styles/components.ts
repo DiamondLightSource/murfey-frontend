@@ -1,16 +1,16 @@
 import {
-  defineStyleConfig,
-  defineStyle,
-  createMultiStyleConfigHelpers,
-  UseToastOptions,
-} from '@chakra-ui/react'
-import {
   cardAnatomy,
   tabsAnatomy,
   inputAnatomy,
   numberInputAnatomy,
   selectAnatomy,
 } from '@chakra-ui/anatomy'
+import {
+  defineStyleConfig,
+  defineStyle,
+  createMultiStyleConfigHelpers,
+  UseToastOptions,
+} from '@chakra-ui/react'
 
 const baseToast: UseToastOptions = {
   id: 'main-toast',
