@@ -36,7 +36,42 @@
       "react-app",
       "react-app/jest",
       "plugin:prettier/recommended"
-    ]
+    ],
+    "plugins": [
+      "import"
+    ],
+    "rules": {
+      "import/order": [
+        "warn",
+        {
+          "groups": [
+            "builtin",
+            "external",
+            "internal",
+            [
+              "parent",
+              "sibling",
+              "index"
+            ],
+            "type"
+          ],
+          "pathGroups": [
+            {
+              "pattern": "@/**",
+              "group": "internal"
+            }
+          ],
+          "pathGroupsExcludedImportTypes": [
+            "builtin"
+          ],
+          "alphabetize": {
+            "order": "asc",
+            "caseInsensitive": true
+          },
+          "newlines-between": "always"
+        }
+      ]
+    }
   },
   "browserslist": {
     "production": [
@@ -72,6 +107,7 @@
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.5",
     "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier": "^5.5.0",
     "husky": "^8.0.0",
     "husky-init": "^8.0.0",
