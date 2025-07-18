@@ -52,7 +52,7 @@ export const GainRefTransfer = () => {
         parseInt(sessid),
         data['full_path']
       )
-      if (true) {
+      if (transferStatus.success) {
         const preparedGainReference = await prepareGainReference(
           parseInt(sessid),
           data['full_path'],
