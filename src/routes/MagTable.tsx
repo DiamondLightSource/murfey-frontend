@@ -1,4 +1,3 @@
-import { CheckIcon, EditIcon } from '@chakra-ui/icons'
 import {
   Button,
   Box,
@@ -20,7 +19,6 @@ import {
   Modal,
   ModalOverlay,
   ModalHeader,
-  ModalFooter,
   ModalContent,
   ModalBody,
   ModalCloseButton,
@@ -30,15 +28,14 @@ import {
 import { addMagTableRow, removeMagTableRow } from 'loaders/magTable'
 import React from 'react'
 import { MdAdd, MdHorizontalRule } from 'react-icons/md'
-import { Link as LinkRouter, useLoaderData } from 'react-router-dom'
+import { useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
 
 type MagTableRow = components['schemas']['MagnificationLookup']
 
-const MagTable = () => {
+export const MagTable = () => {
   const magTable = useLoaderData() as MagTableRow[] | null
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [numNewRows, setNumNewRows] = React.useState(0)
 
   const handleRemoveRow = (mag: number) => {
     removeMagTableRow(mag)
@@ -161,5 +158,3 @@ const MagTable = () => {
     </div>
   )
 }
-
-export { MagTable }
