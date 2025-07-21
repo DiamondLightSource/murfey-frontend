@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   GridItem,
   Heading,
@@ -22,6 +23,7 @@ import {
 import { sessionTokenCheck } from 'loaders/jwt'
 import { finaliseSession } from 'loaders/rsyncers'
 import { deleteSessionData } from 'loaders/sessionClients'
+import { checkMultigridControllerStatus } from 'loaders/sessionSetup'
 import React, { useEffect } from 'react'
 import { GiMagicBroom } from 'react-icons/gi'
 import { MdDelete } from 'react-icons/md'
@@ -31,6 +33,9 @@ import { components } from 'schema/main'
 
 type Session = components['schemas']['Session']
 export const SessionRow = (session: Session) => {
+  const [sessionActive, setSessionActive] = React.useState(false)
+  const [sessionFinalising, setSessionFinalising] = React.useState(false)
+
   const {
     isOpen: isOpenDelete,
     onOpen: onOpenDelete,
@@ -43,15 +48,24 @@ export const SessionRow = (session: Session) => {
   } = useDisclosure()
 
   const cleanupSession = async (sessid: number) => {
-    await finaliseSession(sessid)
+    const response = await finaliseSession(sessid)
+    if (response.success) {
+      setSessionFinalising(true)
+    }
     onCloseCleanup()
   }
 
-  const [sessionActive, setSessionActive] = React.useState(false)
-
   useEffect(() => {
     sessionTokenCheck(session.id).then((active) => setSessionActive(active))
+    checkMultigridControllerStatus(session.id.toString()).then((status) =>
+      setSessionFinalising(status.finalising)
+    )
   }, [session])
+
+  useEffect(() => {
+    console.log(`sessionActive:`, sessionActive)
+    console.log(`sessionFinalising:`, sessionFinalising)
+  }, [sessionActive, sessionFinalising])
 
   return (
     <VStack w="100%" spacing={0}>
@@ -142,9 +156,25 @@ export const SessionRow = (session: Session) => {
                         {session.name}: {session.id}
                       </StatLabel>
                       {sessionActive ? (
-                        <PuffLoader size={25} color="red" />
+                        <PuffLoader
+                          size={25}
+                          color={sessionFinalising ? 'red' : 'green'}
+                        />
                       ) : (
-                        <></>
+                        // Replace PuffLoader with inactive grey circle
+                        // when session is disconnected
+                        <Box
+                          boxSize="25px"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                        >
+                          <Box
+                            boxSize="12px"
+                            bg="gray.800"
+                            borderRadius="full"
+                          />
+                        </Box>
                       )}
                     </HStack>
                   </Stat>
@@ -155,7 +185,7 @@ export const SessionRow = (session: Session) => {
                   aria-label="Delete session"
                   icon={<MdDelete />}
                   onClick={onOpenDelete}
-                  isDisabled={sessionActive}
+                  isDisabled={sessionActive || sessionFinalising}
                 />
               </Tooltip>
               <Tooltip label="Clean up visit files">
@@ -163,7 +193,7 @@ export const SessionRow = (session: Session) => {
                   aria-label="Clean up session"
                   icon={<GiMagicBroom />}
                   onClick={onOpenCleanup}
-                  isDisabled={!sessionActive}
+                  isDisabled={!sessionActive || sessionFinalising}
                 />
               </Tooltip>
             </HStack>
