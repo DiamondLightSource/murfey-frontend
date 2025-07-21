@@ -199,7 +199,7 @@ export const Session = () => {
       // Check if the multigrid controller for the session exists
       const multigridControllerStatus =
         await checkMultigridControllerStatus(sessid)
-      if (!multigridControllerStatus) {
+      if (!multigridControllerStatus.exists) {
         // Check if this instrument has a gain reference directory configured
         if (
           !!machineConfig?.gain_reference_directory &&
