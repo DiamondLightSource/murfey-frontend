@@ -107,7 +107,7 @@ client.get = async (
     }),
     null,
     'GET',
-    (errToast = errToast)
+    errToast
   )
 }
 
@@ -123,7 +123,7 @@ client.hub_get = async (
     }),
     null,
     'GET',
-    (errToast = errToast),
+    errToast,
     getPrefix(process.env.REACT_APP_HUB_ENDPOINT)
   )
 }

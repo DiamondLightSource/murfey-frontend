@@ -15,7 +15,6 @@ import {
 import { rsyncerLoader } from 'loaders/rsyncers'
 import { sessionsLoader, sessionLoader } from 'loaders/sessionClients'
 import { visitLoader } from 'loaders/visits'
-import React, { Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import { DataCollectionGroups } from 'routes/DataCollectionGroups'
@@ -29,9 +28,7 @@ import { MagTable } from 'routes/MagTable'
 import { MultigridSetup } from 'routes/MultigridSetup'
 import { NewSession } from 'routes/NewSession'
 import { ProcessingParameters } from 'routes/ProcessingParameters'
-import { Root } from 'routes/Root'
 import { Session } from 'routes/Session'
-import { SessionLinker } from 'routes/SessionLinker'
 import { SessionParameters } from 'routes/SessionParameters'
 import { SessionSetup } from 'routes/SessionSetup'
 import { theme } from 'styles/theme'
@@ -71,12 +68,6 @@ const router = createBrowserRouter([
         loader: sessionsLoader(queryClient),
       },
       {
-        path: '/sessions/:sessid',
-        element: <Session />,
-        errorElement: <Error />,
-        loader: ({ params }) => rsyncerLoader(queryClient)(params),
-      },
-      {
         path: '/instruments/:instrumentName/new_session',
         element: <NewSession />,
         errorElement: <Error />,
@@ -89,22 +80,22 @@ const router = createBrowserRouter([
         loader: machineConfigLoader(queryClient),
       },
       {
-        path: '/sessions/:sessid/gain_ref_transfer',
-        element: <GainRefTransfer />,
-        errorElement: <Error />,
-        loader: ({ params }) => gainRefLoader(queryClient)(params),
-      },
-      {
         path: '/new_session/parameters/:sessid',
         element: <SessionSetup />,
         errorElement: <Error />,
         loader: ({ params }) => sessionLoader(queryClient)(params),
       },
       {
-        path: '/sessions/:sessid/session_parameters/extra_parameters',
-        element: <ProcessingParameters />,
+        path: '/sessions/:sessid',
+        element: <Session />,
         errorElement: <Error />,
-        loader: ({ params }) => processingParametersLoader(queryClient)(params),
+        loader: ({ params }) => rsyncerLoader(queryClient)(params),
+      },
+      {
+        path: '/sessions/:sessid/gain_ref_transfer',
+        element: <GainRefTransfer />,
+        errorElement: <Error />,
+        loader: ({ params }) => gainRefLoader(queryClient)(params),
       },
       {
         path: '/sessions/:sessid/session_parameters',
@@ -113,10 +104,10 @@ const router = createBrowserRouter([
         loader: ({ params }) => sessionParametersLoader(queryClient)(params),
       },
       {
-        path: '/mag_table',
-        element: <MagTable />,
+        path: '/sessions/:sessid/session_parameters/extra_parameters',
+        element: <ProcessingParameters />,
         errorElement: <Error />,
-        loader: magTableLoader(queryClient),
+        loader: ({ params }) => processingParametersLoader(queryClient)(params),
       },
       {
         path: '/sessions/:sessid/data_collection_groups',
@@ -129,6 +120,12 @@ const router = createBrowserRouter([
         element: <GridSquares />,
         errorElement: <Error />,
         loader: ({ params }) => gridSquaresLoader(queryClient)(params),
+      },
+      {
+        path: '/mag_table',
+        element: <MagTable />,
+        errorElement: <Error />,
+        loader: magTableLoader(queryClient),
       },
     ],
   },

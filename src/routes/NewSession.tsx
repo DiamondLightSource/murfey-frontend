@@ -26,7 +26,7 @@ import { SetupStepper } from 'components/setupStepper'
 import { sessionTokenCheck, sessionHandshake } from 'loaders/jwt'
 import { getMachineConfigData } from 'loaders/machineConfig'
 import { createSession, getSessionDataForVisit } from 'loaders/sessionClients'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { FaCalendar } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { Link as LinkRouter, useLoaderData } from 'react-router-dom'
@@ -75,9 +75,6 @@ const NewSession = () => {
     null
   )
 
-  const [acqusitionSoftware, setAcquistionSoftware] = React.useState<string[]>(
-    []
-  )
   const navigate = useNavigate()
 
   // Upon initialisation, zero out seconds field
@@ -97,12 +94,11 @@ const NewSession = () => {
 
   const handleMachineConfig = (mcfg: MachineConfig) => {
     setGainRefDir(mcfg.gain_reference_directory)
-    setAcquistionSoftware(mcfg.acquisition_software)
   }
 
   const instrumentName = sessionStorage.getItem('instrumentName')
 
-  const alreadyActiveSessions = async () => {
+  const alreadyActiveSessions = useCallback(async () => {
     const sessionsToCheck: Session[] = await getSessionDataForVisit(
       selectedVisit,
       instrumentName ?? ''
@@ -112,7 +108,7 @@ const NewSession = () => {
         return (await sessionTokenCheck(session.id)) ? session : null
       })
     )
-  }
+  }, [selectedVisit, instrumentName])
 
   useEffect(() => {
     getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))
@@ -121,7 +117,7 @@ const NewSession = () => {
     alreadyActiveSessions().then((sessions) =>
       setActiveSessionsForVisit(sessions)
     )
-  }, [selectedVisit])
+  }, [selectedVisit, alreadyActiveSessions])
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setSessionReference(event.target.value)

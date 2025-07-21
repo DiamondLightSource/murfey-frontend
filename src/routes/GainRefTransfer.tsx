@@ -13,7 +13,6 @@ import {
   ModalHeader,
   Tooltip,
   Link,
-  Circle,
 } from '@chakra-ui/react'
 import { Table } from '@diamondlightsource/ui-components'
 import { SetupStepper } from 'components/setupStepper'
@@ -35,9 +34,9 @@ import { components } from 'schema/main'
 
 type File = components['schemas']['File']
 
-const GainRefTransfer = () => {
+export const GainRefTransfer = () => {
   const possibleGainRefs = useLoaderData() as File[] | null
-  let [searchParams, setSearchParams] = useSearchParams()
+  let [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const [processing, setProcessing] = React.useState(false)
   const [tag, setTag] = React.useState('')
@@ -53,7 +52,7 @@ const GainRefTransfer = () => {
         parseInt(sessid),
         data['full_path']
       )
-      if (true) {
+      if (transferStatus.success) {
         const preparedGainReference = await prepareGainReference(
           parseInt(sessid),
           data['full_path'],
@@ -167,5 +166,3 @@ const GainRefTransfer = () => {
     </div>
   )
 }
-
-export { GainRefTransfer }

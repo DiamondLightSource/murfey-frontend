@@ -28,7 +28,6 @@ import {
 import { InstrumentCard } from 'components/instrumentCard'
 import { RsyncCard } from 'components/rsyncCard'
 import { UpstreamVisitCard } from 'components/upstreamVisitsCard'
-import { getInstrumentName } from 'loaders/general'
 import { sessionTokenCheck, sessionHandshake } from 'loaders/jwt'
 import { getMachineConfigData } from 'loaders/machineConfig'
 import {
@@ -45,7 +44,7 @@ import {
 } from 'loaders/rsyncers'
 import { updateVisitEndTime, getSessionData } from 'loaders/sessionClients'
 import { checkMultigridControllerStatus } from 'loaders/sessionSetup'
-import React, { useEffect } from 'react'
+import React, { useEffect, useCallback } from 'react'
 import { FaCalendar } from 'react-icons/fa'
 import { MdFileUpload, MdOutlineGridOn, MdPause } from 'react-icons/md'
 import {
@@ -60,7 +59,7 @@ import { convertUKNaiveToUTC, convertUTCToUKNaive } from 'utils/generic'
 import { v4 as uuid4 } from 'uuid'
 
 type RSyncerInfo = components['schemas']['RSyncerInfo']
-type Session = components['schemas']['Session']
+type SessionSchema = components['schemas']['Session']
 type MachineConfig = components['schemas']['MachineConfig']
 type MultigridWatcherSpec = components['schemas']['MultigridWatcherSetup']
 
@@ -74,7 +73,7 @@ export const Session = () => {
   // ----------------------------------------------------------------------------------
   // State hooks
   // Session information
-  const [session, setSession] = React.useState<Session>()
+  const [session, setSession] = React.useState<SessionSchema>()
   const [sessionActive, setSessionActive] = React.useState(false)
   const [skipExistingProcessing, setSkipExistingProcessing] =
     React.useState(false)
@@ -91,7 +90,6 @@ export const Session = () => {
 
   // Machine config and instrument information
   const [machineConfig, setMachineConfig] = React.useState<MachineConfig>()
-  const [instrumentName, setInstrumentName] = React.useState('')
 
   // Websocket UUID information
   const [UUID, setUUID] = React.useState('')
@@ -237,18 +235,18 @@ export const Session = () => {
       }
     }
     runRedirectChecks() // Call the async function inside the useEffect()
-  }, [sessid, session, sessionActive, machineConfig])
+  }, [sessid, session, sessionActive, machineConfig, navigate])
 
   // Load Session page upon initialisation
-  const loadSession = async () => {
+  const loadSession = useCallback(async () => {
     const sess = await getSessionData(sessid)
     if (sess) {
       setSession(sess.session)
     }
-  }
+  }, [sessid])
   useEffect(() => {
     loadSession()
-  }, [sessid])
+  }, [sessid, loadSession])
 
   // Poll Rsyncer every few seconds
   useEffect(() => {
@@ -299,42 +297,33 @@ export const Session = () => {
   }
 
   const pauseAll = async () => {
-    rsyncers?.map((r) => {
+    rsyncers?.forEach((r) => {
       pauseRsyncer(r.session_id, r.source)
     })
     setRsyncersPaused(true)
   }
 
-  const checkRsyncStatus = async () => {
+  const checkRsyncStatus = useCallback(async () => {
     setRsyncersPaused(rsyncers ? !rsyncers.every(getTransferring) : true)
-  }
+  }, [rsyncers])
 
   useEffect(() => {
     checkRsyncStatus()
-  }, [])
+  }, [checkRsyncStatus])
 
   const getTransferring = (r: RSyncerInfo) => {
     return r.transferring
   }
 
-  // Get and set the instrument name
-  const resolveName = async () => {
-    const name: string = await getInstrumentName()
-    setInstrumentName(name)
-  }
-  useEffect(() => {
-    resolveName()
-  }, [])
-
-  const checkSessionActivationState = async () => {
+  const checkSessionActivationState = useCallback(async () => {
     if (sessid !== undefined) {
       const activationState = await sessionTokenCheck(parseInt(sessid))
       setSessionActive(activationState)
     }
-  }
+  }, [sessid])
   useEffect(() => {
     checkSessionActivationState()
-  }, [])
+  }, [checkSessionActivationState])
 
   // Set the default visit end time (in UTC) if none was provided
   const defaultVisitEndTime = session?.visit_end_time
@@ -380,7 +369,13 @@ export const Session = () => {
       setTriggerVisitEndTimeUpdate(false)
     }
     registerEndTimeUpdate()
-  }, [visitEndTime, triggerVisitEndTimeUpdate])
+  }, [
+    sessid,
+    visitEndTime,
+    triggerVisitEndTimeUpdate,
+    loadSession,
+    onCloseCalendar,
+  ])
 
   const handleDirectorySelection = (e: React.ChangeEvent<HTMLSelectElement>) =>
     setSelectedDirectory(e.target.value)

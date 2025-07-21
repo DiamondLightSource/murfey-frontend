@@ -2,17 +2,16 @@ import {
   Button,
   Input,
   VStack,
-  Link,
   FormControl,
   Card,
   CardBody,
   Heading,
   HStack,
 } from '@chakra-ui/react'
-import { getJWT, handshake } from 'loaders/jwt'
+import { getJWT } from 'loaders/jwt'
 import React from 'react'
 import { TbMicroscope, TbSnowflake } from 'react-icons/tb'
-import { Link as LinkRouter, useNavigate, Navigate } from 'react-router-dom'
+import { useNavigate, Navigate } from 'react-router-dom'
 
 const Login = () => {
   const [username, setUsername] = React.useState('')
