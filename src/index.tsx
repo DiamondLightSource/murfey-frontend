@@ -13,7 +13,7 @@ import {
   sessionParametersLoader,
 } from 'loaders/processingParameters'
 import { rsyncerLoader } from 'loaders/rsyncers'
-import { sessionsLoader, sessionLoader } from 'loaders/sessionClients'
+import { allSessionsLoader, sessionLoader } from 'loaders/sessionClients'
 import { visitLoader } from 'loaders/visits'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
@@ -65,7 +65,7 @@ const router = createBrowserRouter([
         path: '/home',
         element: <Home />,
         errorElement: <Error />,
-        loader: sessionsLoader(queryClient),
+        loader: allSessionsLoader(queryClient),
       },
       {
         path: '/instruments/:instrumentName/new_session',
