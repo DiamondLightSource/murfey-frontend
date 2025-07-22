@@ -60,7 +60,7 @@ export const Navbar = ({
     }
     resolveConnectionStatus() // Fetch data once to start with
 
-    // Set it to run every 4s
+    // Set it to run every 10s
     const interval = setInterval(resolveConnectionStatus, 10000)
     return () => clearInterval(interval)
   }, [])
@@ -133,16 +133,17 @@ export const Navbar = ({
                 ? 'Connected to instrument server'
                 : 'No instrument server connection'
             }
-            placement="bottom"
           >
-            <Icon
-              as={
-                instrumentConnectionStatus
-                  ? MdSignalWifi4Bar
-                  : MdOutlineSignalWifiBad
-              }
-              color={instrumentConnectionStatus ? 'white' : 'red'}
-            />
+            <span tabIndex={0}>
+              <Icon
+                as={
+                  instrumentConnectionStatus
+                    ? MdSignalWifi4Bar
+                    : MdOutlineSignalWifiBad
+                }
+                color={instrumentConnectionStatus ? 'white' : 'red'}
+              />
+            </span>
           </Tooltip>
         </HStack>
       </Flex>
