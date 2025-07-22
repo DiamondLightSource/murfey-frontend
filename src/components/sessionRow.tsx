@@ -20,6 +20,7 @@ import {
   VStack,
   useDisclosure,
 } from '@chakra-ui/react'
+import { useQueryClient } from '@tanstack/react-query'
 import { sessionTokenCheck } from 'loaders/jwt'
 import { finaliseSession } from 'loaders/rsyncers'
 import { deleteSessionData } from 'loaders/sessionClients'
@@ -34,11 +35,20 @@ import { components } from 'schema/main'
 type Session = components['schemas']['Session']
 type SessionRowProps = {
   session: Session
+  instrumentName: string | null
 }
-export const SessionRow = ({ session }: SessionRowProps) => {
+export const SessionRow = ({
+  session,
+  instrumentName = null,
+}: SessionRowProps) => {
+  // Set up query client
+  const queryClient = useQueryClient()
+
+  // Set up React states
   const [sessionActive, setSessionActive] = React.useState(false)
   const [sessionFinalising, setSessionFinalising] = React.useState(false)
 
+  // Set up utility hooks
   const {
     isOpen: isOpenDelete,
     onOpen: onOpenDelete,
@@ -90,7 +100,10 @@ export const SessionRow = ({ session }: SessionRowProps) => {
                       variant="ghost"
                       onClick={() => {
                         deleteSessionData(session.id).then(() =>
-                          window.location.reload()
+                          // Refetch session information for this instrument
+                          queryClient.refetchQueries({
+                            queryKey: ['homepageSessions', instrumentName],
+                          })
                         )
                       }}
                     >

@@ -75,7 +75,10 @@ export const Home = () => {
                   sessions.current.map((current) => {
                     return (
                       <VStack w="100%" spacing={5}>
-                        <SessionRow session={current} />
+                        <SessionRow
+                          session={current}
+                          instrumentName={instrumentName}
+                        />
                       </VStack>
                     )
                   })
