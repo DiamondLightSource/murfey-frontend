@@ -62,11 +62,6 @@ export const SessionRow = (session: Session) => {
     )
   }, [session])
 
-  useEffect(() => {
-    console.log(`sessionActive:`, sessionActive)
-    console.log(`sessionFinalising:`, sessionFinalising)
-  }, [sessionActive, sessionFinalising])
-
   return (
     <VStack w="100%" spacing={0}>
       <Stack w="100%" spacing={5} py="0.8em">
