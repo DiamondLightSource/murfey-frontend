@@ -32,7 +32,10 @@ import { PuffLoader } from 'react-spinners'
 import { components } from 'schema/main'
 
 type Session = components['schemas']['Session']
-export const SessionRow = (session: Session) => {
+type SessionRowProps = {
+  session: Session
+}
+export const SessionRow = ({ session }: SessionRowProps) => {
   const [sessionActive, setSessionActive] = React.useState(false)
   const [sessionFinalising, setSessionFinalising] = React.useState(false)
 
