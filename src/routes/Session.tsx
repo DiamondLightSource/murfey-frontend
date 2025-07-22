@@ -23,7 +23,6 @@ import {
   Stack,
   Switch,
   VStack,
-  useToast,
 } from '@chakra-ui/react'
 import { InstrumentCard } from 'components/instrumentCard'
 import { RsyncCard } from 'components/rsyncCard'
@@ -53,10 +52,8 @@ import {
   useParams,
   useNavigate,
 } from 'react-router-dom'
-import useWebSocket from 'react-use-websocket'
 import { components } from 'schema/main'
 import { convertUKNaiveToUTC, convertUTCToUKNaive } from 'utils/generic'
-import { v4 as uuid4 } from 'uuid'
 
 type RSyncerInfo = components['schemas']['RSyncerInfo']
 type SessionSchema = components['schemas']['Session']
@@ -91,9 +88,6 @@ export const Session = () => {
   // Machine config and instrument information
   const [machineConfig, setMachineConfig] = React.useState<MachineConfig>()
 
-  // Websocket UUID information
-  const [UUID, setUUID] = React.useState('')
-
   // Rsyncer information
   const [rsyncers, setRsyncers] = React.useState<RSyncerInfo[]>(
     rsyncerLoaderData ?? []
@@ -116,64 +110,6 @@ export const Session = () => {
 
   // ----------------------------------------------------------------------------------
   // Functions
-  // Load the Murfey server URL from the environment variable
-  const baseUrl =
-    sessionStorage.getItem('murfeyServerURL') ??
-    process.env.REACT_APP_API_ENDPOINT
-
-  // Set up websocket connection to Murfey server
-  const url = baseUrl ? baseUrl.replace('http', 'ws') : 'ws://localhost:8000'
-
-  // Use existing UUID if present; otherwise, generate a new UUID
-  useEffect(() => {
-    if (!UUID) {
-      setUUID(uuid4())
-    }
-  }, [UUID])
-
-  // Websocket helper function to parse incoming messages
-  const toast = useToast()
-  const parseWebsocketMessage = (message: any) => {
-    let parsedMessage: any = {}
-    try {
-      parsedMessage = JSON.parse(message)
-    } catch (err) {
-      return
-    }
-    if (parsedMessage.message === 'refresh') {
-      window.location.reload()
-    }
-    if (
-      parsedMessage.message === 'update' &&
-      typeof sessid !== 'undefined' &&
-      parsedMessage.session_id === parseInt(sessid)
-    ) {
-      return toast({
-        title: 'Update',
-        description: parsedMessage.payload,
-        isClosable: true,
-        duration: parsedMessage.duration ?? null,
-        status: parsedMessage.status ?? 'info',
-      })
-    }
-  }
-
-  // Establish websocket connection to the backend
-  useWebSocket(
-    // 'null' is passed to 'useWebSocket()' if UUID is not yet set to
-    // prevent malformed connections
-    UUID ? url + `ws/connect/${UUID}` : null,
-    UUID
-      ? {
-          onOpen: () => {
-            console.log('WebSocket connection established.')
-          },
-          onMessage: (event) => {
-            parseWebsocketMessage(event.data)
-          },
-        }
-      : undefined
-  )
 
   // Get machine config and set up related settings
   const handleMachineConfig = (mcfg: MachineConfig) => {

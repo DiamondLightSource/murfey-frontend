@@ -9,11 +9,8 @@ import {
 } from '@chakra-ui/react'
 import { InstrumentCard } from 'components/instrumentCard'
 import { SessionRow } from 'components/sessionRow'
-import React, { useEffect } from 'react'
 import { Link as LinkRouter, useLoaderData } from 'react-router-dom'
-import useWebSocket from 'react-use-websocket'
 import { components } from 'schema/main'
-import { v4 as uuid4 } from 'uuid'
 
 type Session = components['schemas']['Session']
 export const Home = () => {
@@ -21,52 +18,6 @@ export const Home = () => {
   const sessions = useLoaderData() as {
     current: Session[]
   } | null
-
-  // React states
-  const [UUID, setUUID] = React.useState('')
-
-  // Helper parameters and functions
-  const baseUrl =
-    sessionStorage.getItem('murfeyServerURL') ??
-    process.env.REACT_APP_API_ENDPOINT
-  const url = baseUrl ? baseUrl.replace('http', 'ws') : 'ws://localhost:8000'
-
-  // Helper function to parse websocket messages
-  const parseWebsocketMessage = (message: any) => {
-    let parsedMessage: any = {}
-    try {
-      parsedMessage = JSON.parse(message)
-    } catch (err) {
-      return
-    }
-    if (parsedMessage.message === 'refresh') {
-      window.location.reload()
-    }
-  }
-
-  // Use existing UUID if present; otherwise, generate a new UUID
-  useEffect(() => {
-    if (!UUID) {
-      setUUID(uuid4())
-    }
-  }, [UUID])
-
-  // Establish websocket connection to the backend
-  useWebSocket(
-    // 'null' is passed to 'useWebSocket()' if UUID is not yet set to
-    // prevent malformed connections
-    UUID ? url + `ws/connect/${UUID}` : null,
-    UUID
-      ? {
-          onOpen: () => {
-            console.log('WebSocket connection established.')
-          },
-          onMessage: (event) => {
-            parseWebsocketMessage(event.data)
-          },
-        }
-      : undefined
-  )
 
   return (
     <div className="rootContainer">
