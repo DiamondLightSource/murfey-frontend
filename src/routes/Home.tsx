@@ -7,15 +7,30 @@ import {
   Link,
   VStack,
 } from '@chakra-ui/react'
+import { useQuery } from '@tanstack/react-query'
 import { InstrumentCard } from 'components/instrumentCard'
 import { SessionRow } from 'components/sessionRow'
-import { Link as LinkRouter, useLoaderData } from 'react-router-dom'
+import { getAllSessionsData } from 'loaders/sessionClients'
+import { Link as LinkRouter } from 'react-router-dom'
 import { components } from 'schema/main'
 
 type Session = components['schemas']['Session']
 export const Home = () => {
-  // Set up loaders
-  const sessions = useLoaderData() as {
+  const instrumentName = sessionStorage.getItem('instrumentName')
+  const queryKey = ['homepageSessions', instrumentName]
+  const queryFn = () => getAllSessionsData(instrumentName ? instrumentName : '')
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey,
+    queryFn,
+    enabled: !!instrumentName,
+    staleTime: 0, // Always refetch on mount unless preloaded
+  })
+
+  if (isLoading) return <p>Loading sessions...</p>
+  if (isError || !data) return <p>Failed to load sessions.</p>
+
+  const sessions = data as {
     current: Session[]
   } | null
 
@@ -44,7 +59,7 @@ export const Home = () => {
                 w={{ base: '100%', md: '19.6%' }}
                 _hover={{ textDecor: 'none' }}
                 as={LinkRouter}
-                to={`../instruments/${sessionStorage.getItem('instrumentName')}/new_session`}
+                to={`../instruments/${instrumentName}/new_session`}
               >
                 <Button variant="onBlue">New session</Button>
               </Link>
@@ -60,7 +75,7 @@ export const Home = () => {
                   sessions.current.map((current) => {
                     return (
                       <VStack w="100%" spacing={5}>
-                        {SessionRow(current)}
+                        <SessionRow session={current} />
                       </VStack>
                     )
                   })

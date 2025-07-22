@@ -6,10 +6,10 @@ import { convertUTCToUKNaive, convertUKNaiveToUTC } from 'utils/generic'
 export const includePage = (endpoint: string, limit: number, page: number) =>
   `${endpoint}${endpoint.includes('?') ? '&' : '?'}page=${page - 1}&limit=${limit}`
 
-const getAllSessionsData = async () => {
-  if (!sessionStorage.getItem('instrumentName')) return null
+export const getAllSessionsData = async (instrumentName: string) => {
+  if (!instrumentName) return null
   const response = await client.get(
-    `session_info/instruments/${sessionStorage.getItem('instrumentName')}/sessions`
+    `session_info/instruments/${instrumentName}/sessions`
   )
   if (response.status !== 200) return null
   return {
@@ -114,16 +114,10 @@ export const allSessionsLoader = (queryClient: QueryClient) => async () => {
   // Skip loading logic if no instrument name was found
   if (!instrumentName) return null
 
+  // Construct the query key and query function
   const queryKey = ['homepageSessions', instrumentName]
-  const queryFn = async () => {
-    if (!instrumentName) return null
-    const data = await getAllSessionsData()
-    if (!data) return null
-    return data
-  }
-
-  await queryClient.invalidateQueries({ queryKey })
-  return await queryClient.fetchQuery({ queryKey, queryFn })
+  const queryFn = () => getAllSessionsData(instrumentName)
+  return queryClient.ensureQueryData({ queryKey, queryFn })
 }
 
 export const sessionLoader =
