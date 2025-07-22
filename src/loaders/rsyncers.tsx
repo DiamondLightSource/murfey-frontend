@@ -105,16 +105,15 @@ export const flushSkippedRsyncer = async (
   return response.data
 }
 
-const queryBuilder = (sessionId: string = '0') => {
-  return {
-    queryKey: ['sessid', sessionId],
-    queryFn: () => getRsyncerData(sessionId),
-    staleTime: 60000,
-  }
-}
-
 export const rsyncerLoader =
   (queryClient: QueryClient) => async (params: Params) => {
+    const queryBuilder = (sessionId: string = '0') => {
+      return {
+        queryKey: ['sessid', sessionId],
+        queryFn: () => getRsyncerData(sessionId),
+        staleTime: 60000,
+      }
+    }
     const singleQuery = queryBuilder(params.sessid)
     return (
       (await queryClient.getQueryData(singleQuery.queryKey)) ??
