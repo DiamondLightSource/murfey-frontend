@@ -2,7 +2,6 @@ import {
   Box,
   Flex,
   HStack,
-  Link,
   IconButton,
   useDisclosure,
   Image,
@@ -19,7 +18,7 @@ import {
   MdOutlineSignalWifiBad,
 } from 'react-icons/md'
 import { TbMicroscope, TbSnowflake, TbHomeCog } from 'react-icons/tb'
-import { Link as LinkRouter } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 export interface LinkDescriptor {
   label: string
@@ -43,9 +42,10 @@ export const Navbar = ({
   logo,
   ...props
 }: NavbarProps) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
   const [instrumentConnectionStatus, setInsrumentConnectionStatus] =
     React.useState(false)
+  const navigate = useNavigate()
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   // Check connectivity every few seconds
   React.useEffect(() => {
@@ -95,35 +95,38 @@ export const Navbar = ({
               />
             </Box>
           ) : null}
-          <Link as={LinkRouter} to="/hub">
-            <Tooltip label="Back to the Hub">
-              <IconButton
-                size={'sm'}
-                icon={
-                  <>
-                    <TbHomeCog />
-                  </>
-                }
-                aria-label={'Back to the Hub'}
-                _hover={{ background: 'transparent', color: 'murfey.500' }}
-              />
-            </Tooltip>
-          </Link>
-          <Link as={LinkRouter} to="/home">
-            <Tooltip label="Back to the microscope">
-              <IconButton
-                size={'sm'}
-                icon={
-                  <>
-                    <TbSnowflake />
-                    <TbMicroscope />
-                  </>
-                }
-                aria-label={'Back to the microscope'}
-                _hover={{ background: 'transparent', color: 'murfey.500' }}
-              />
-            </Tooltip>
-          </Link>
+          <Tooltip label="Back to the Hub">
+            <IconButton
+              onClick={() => {
+                navigate(`/hub`)
+              }}
+              size={'sm'}
+              icon={
+                <>
+                  <TbHomeCog />
+                </>
+              }
+              aria-label={'Back to the Hub'}
+              _hover={{ background: 'transparent', color: 'murfey.500' }}
+            />
+          </Tooltip>
+          {/* Add the instrument name as a URL query parameter to trigger a reload */}
+          <Tooltip label="Back to the microscope">
+            <IconButton
+              onClick={() => {
+                navigate(`/home`)
+              }}
+              size={'sm'}
+              icon={
+                <>
+                  <TbSnowflake />
+                  <TbMicroscope />
+                </>
+              }
+              aria-label="Back to the microscope"
+              _hover={{ background: 'transparent', color: 'murfey.500' }}
+            />
+          </Tooltip>
           <Tooltip
             label={
               instrumentConnectionStatus
