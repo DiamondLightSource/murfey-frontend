@@ -10,37 +10,28 @@ import {
 import { InstrumentCard } from 'components/instrumentCard'
 import { SessionRow } from 'components/sessionRow'
 import React, { useEffect } from 'react'
-import {
-  Link as LinkRouter,
-  useLoaderData,
-  useSearchParams,
-  useNavigate,
-} from 'react-router-dom'
+import { Link as LinkRouter, useLoaderData } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
 import { components } from 'schema/main'
 import { v4 as uuid4 } from 'uuid'
 
 type Session = components['schemas']['Session']
 export const Home = () => {
-  // Get session data from the loader
+  // Set up loaders
   const sessions = useLoaderData() as {
     current: Session[]
   } | null
 
-  // Clean the URL after loading the page
-  const [searchParams] = useSearchParams()
-  const navigate = useNavigate()
-  useEffect(() => {
-    if (searchParams.has('instrumentName')) {
-      navigate('/home', { replace: true })
-    }
-  }, [searchParams, navigate])
-
+  // React states
   const [UUID, setUUID] = React.useState('')
+
+  // Helper parameters and functions
   const baseUrl =
     sessionStorage.getItem('murfeyServerURL') ??
     process.env.REACT_APP_API_ENDPOINT
   const url = baseUrl ? baseUrl.replace('http', 'ws') : 'ws://localhost:8000'
+
+  // Helper function to parse websocket messages
   const parseWebsocketMessage = (message: any) => {
     let parsedMessage: any = {}
     try {
@@ -59,6 +50,7 @@ export const Home = () => {
       setUUID(uuid4())
     }
   }, [UUID])
+
   // Establish websocket connection to the backend
   useWebSocket(
     // 'null' is passed to 'useWebSocket()' if UUID is not yet set to
