@@ -117,6 +117,9 @@ export const allSessionsLoader = (queryClient: QueryClient) => async () => {
   // Construct the query key and query function
   const queryKey = ['homepageSessions', instrumentName]
   const queryFn = () => getAllSessionsData(instrumentName)
+
+  // Enssure data is always fresh
+  await queryClient.invalidateQueries({ queryKey })
   return queryClient.ensureQueryData({ queryKey, queryFn })
 }
 
