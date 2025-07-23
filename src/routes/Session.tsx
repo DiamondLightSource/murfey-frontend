@@ -331,6 +331,8 @@ export const Session = () => {
         parseInt(sessid)
       )
       await startMultigridWatcher(parseInt(sessid))
+      await checkSessionActivationState()
+      onCloseReconnect()
     }
   }
 
