@@ -4,6 +4,7 @@ import {
   GridItem,
   Heading,
   HStack,
+  Icon,
   IconButton,
   Link,
   Modal,
@@ -28,8 +29,8 @@ import { checkMultigridControllerStatus } from 'loaders/sessionSetup'
 import React, { useEffect } from 'react'
 import { GiMagicBroom } from 'react-icons/gi'
 import { MdDelete } from 'react-icons/md'
+import { MdSync, MdSyncProblem } from 'react-icons/md'
 import { Link as LinkRouter } from 'react-router-dom'
-import { PuffLoader } from 'react-spinners'
 import { components } from 'schema/main'
 
 type Session = components['schemas']['Session']
@@ -166,27 +167,65 @@ export const SessionRow = ({
                       >
                         {session.name}: {session.id}
                       </StatLabel>
-                      {sessionActive ? (
-                        <PuffLoader
-                          size={25}
-                          color={sessionFinalising ? 'red' : 'green'}
-                        />
-                      ) : (
-                        // Replace PuffLoader with inactive grey circle
-                        // when session is disconnected
-                        <Box
-                          boxSize="25px"
-                          display="flex"
-                          alignItems="center"
-                          justifyContent="center"
-                        >
-                          <Box
-                            boxSize="12px"
-                            bg="gray.800"
-                            borderRadius="full"
+                      <Box
+                        boxSize="25px"
+                        position="relative"
+                        overflow="visible"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        {sessionActive ? (
+                          // Show a pulsing spinning sync icon when running
+                          <Icon
+                            as={MdSync}
+                            boxSize={4}
+                            color="black"
+                            position="absolute"
+                            top="50%"
+                            left="50%"
+                            transform="translate(-50%, -50%)"
+                            sx={{
+                              animation:
+                                'spin 2s linear infinite, glow 2s ease-in-out infinite',
+                              // 'spin 2s linear infinite',
+                              filter: `drop-shadow(0 0 0px ${sessionFinalising ? 'red' : 'green'})`,
+                              '@keyframes spin': {
+                                from: {
+                                  transform:
+                                    'translate(-50%, -50%) rotate(360deg)',
+                                },
+                                to: {
+                                  transform:
+                                    'translate(-50%, -50%) rotate(0deg)',
+                                },
+                              },
+                              '@keyframes glow': {
+                                '0%': {
+                                  filter: `drop-shadow(0 0 2px ${sessionFinalising ? 'red' : 'green'})`,
+                                },
+                                '50%': {
+                                  filter: `drop-shadow(0 0 0px ${sessionFinalising ? 'red' : 'green'})`,
+                                },
+                                '100%': {
+                                  filter: `drop-shadow(0 0 2px ${sessionFinalising ? 'red' : 'green'})`,
+                                },
+                              },
+                            }}
                           />
-                        </Box>
-                      )}
+                        ) : (
+                          // Show a sync error icon when disconnected
+                          <Icon
+                            as={MdSyncProblem}
+                            boxSize={4}
+                            color="black"
+                            position="absolute"
+                            top="50%"
+                            left="50%"
+                            transform="translate(-50%, -50%)"
+                          />
+                        )}
+                      </Box>
                     </HStack>
                   </Stat>
                 </Link>
