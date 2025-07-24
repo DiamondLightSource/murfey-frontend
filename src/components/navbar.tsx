@@ -9,6 +9,7 @@ import {
   BoxProps,
   Icon,
 } from '@chakra-ui/react'
+import { useQueryClient } from '@tanstack/react-query'
 import { getInstrumentConnectionStatus } from 'loaders/general'
 import React from 'react'
 import {
@@ -46,13 +47,20 @@ export const Navbar = ({
     React.useState(false)
   const navigate = useNavigate()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const queryClient = useQueryClient()
+  const instrumentName = sessionStorage.getItem('instrumentName')
 
   // Check connectivity every few seconds
   React.useEffect(() => {
     const resolveConnectionStatus = async () => {
       try {
         const status: boolean = await getInstrumentConnectionStatus()
-        setInsrumentConnectionStatus(status)
+        if (status !== instrumentConnectionStatus) {
+          setInsrumentConnectionStatus(status)
+          queryClient.refetchQueries({
+            queryKey: ['instrumentServerConnection', instrumentName],
+          })
+        }
       } catch (err) {
         console.error('Error checking connection status:', err)
         setInsrumentConnectionStatus(false)
@@ -63,7 +71,7 @@ export const Navbar = ({
     // Set it to run every 10s
     const interval = setInterval(resolveConnectionStatus, 10000)
     return () => clearInterval(interval)
-  }, [])
+  }, [instrumentName, instrumentConnectionStatus, queryClient])
 
   return (
     <Box position="sticky" top="0" zIndex={1} w="100%" {...props}>
