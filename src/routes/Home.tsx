@@ -11,7 +11,7 @@ import { useQuery } from '@tanstack/react-query'
 import { InstrumentCard } from 'components/instrumentCard'
 import { SessionRow } from 'components/sessionRow'
 import { getAllSessionsData } from 'loaders/sessionClients'
-import { Link as LinkRouter } from 'react-router-dom'
+import { Link as LinkRouter, useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
 
 type Session = components['schemas']['Session']
@@ -20,9 +20,11 @@ export const Home = () => {
   const queryKey = ['homepageSessions', instrumentName]
   const queryFn = () => getAllSessionsData(instrumentName ? instrumentName : '')
 
+  const preloadedData = useLoaderData()
   const { data, isLoading, isError } = useQuery({
     queryKey,
     queryFn,
+    initialData: preloadedData,
     enabled: !!instrumentName,
     staleTime: 0, // Always refetch on mount unless preloaded
   })
