@@ -24,9 +24,11 @@ import {
   Switch,
   VStack,
 } from '@chakra-ui/react'
+import { useQuery } from '@tanstack/react-query'
 import { InstrumentCard } from 'components/instrumentCard'
 import { RsyncCard } from 'components/rsyncCard'
 import { UpstreamVisitCard } from 'components/upstreamVisitsCard'
+import { getInstrumentConnectionStatus } from 'loaders/general'
 import { sessionTokenCheck, sessionHandshake } from 'loaders/jwt'
 import { getMachineConfigData } from 'loaders/machineConfig'
 import {
@@ -34,13 +36,7 @@ import {
   setupMultigridWatcher,
 } from 'loaders/multigridSetup'
 import { getSessionProcessingParameterData } from 'loaders/processingParameters'
-import {
-  getRsyncerData,
-  pauseRsyncer,
-  removeRsyncer,
-  finaliseRsyncer,
-  finaliseSession,
-} from 'loaders/rsyncers'
+import { getRsyncerData, pauseRsyncer, finaliseSession } from 'loaders/rsyncers'
 import { updateVisitEndTime, getSessionData } from 'loaders/sessionClients'
 import { checkMultigridControllerStatus } from 'loaders/sessionSetup'
 import React, { useEffect, useCallback } from 'react'
@@ -63,12 +59,16 @@ type MultigridWatcherSpec = components['schemas']['MultigridWatcherSetup']
 export const Session = () => {
   // ----------------------------------------------------------------------------------
   // Routing and loader context
-  const { sessid } = useParams()
-  const rsyncerLoaderData = useLoaderData() as RSyncerInfo[] | null
+  const { sessid } = useParams() as { sessid: string }
+  const instrumentName = sessionStorage.getItem('instrumentName')
   const navigate = useNavigate()
 
   // ----------------------------------------------------------------------------------
   // State hooks
+  // Instrument server connection
+  const [instrumentServerConnected, setInstrumentServerConnected] =
+    React.useState<boolean>(false)
+
   // Session information
   const [session, setSession] = React.useState<SessionSchema>()
   const [sessionActive, setSessionActive] = React.useState(false)
@@ -89,10 +89,44 @@ export const Session = () => {
   const [machineConfig, setMachineConfig] = React.useState<MachineConfig>()
 
   // Rsyncer information
-  const [rsyncers, setRsyncers] = React.useState<RSyncerInfo[]>(
-    rsyncerLoaderData ?? []
-  )
+  const [rsyncers, setRsyncers] = React.useState<RSyncerInfo[]>([])
   const [rsyncersPaused, setRsyncersPaused] = React.useState(false)
+
+  // ----------------------------------------------------------------------------------
+  // Load Rsyncer data via a polling query
+  const preloadedRsyncerData = useLoaderData() as RSyncerInfo[] | null
+  const {
+    data: rsyncerData,
+    isLoading,
+    isError,
+  } = useQuery<RSyncerInfo[] | null>({
+    queryKey: ['rsyncers', sessid],
+    queryFn: () => getRsyncerData(sessid),
+    enabled: !!sessid,
+    initialData: preloadedRsyncerData,
+    staleTime: 0,
+    refetchInterval: sessionActive ? 5000 : false,
+  })
+  useEffect(() => {
+    if (!rsyncerData) return
+    setRsyncers(rsyncerData)
+  }, [rsyncerData])
+
+  // Set up a query to probe the instrument server connection status
+  const { data: instrmentServerConnectionStatus } = useQuery<boolean>({
+    queryKey: ['instrumentServerConnection', instrumentName],
+    queryFn: () => getInstrumentConnectionStatus(),
+    enabled: !!sessid,
+    initialData: sessionActive,
+    staleTime: 0,
+  })
+  useEffect(() => {
+    console.log(
+      `Instrument server is connected:`,
+      instrmentServerConnectionStatus
+    )
+    setInstrumentServerConnected(instrmentServerConnectionStatus)
+  }, [instrmentServerConnectionStatus])
 
   // ----------------------------------------------------------------------------------
   // UI utility hooks
@@ -184,49 +218,7 @@ export const Session = () => {
     loadSession()
   }, [sessid, loadSession])
 
-  // Poll Rsyncer every few seconds
-  useEffect(() => {
-    // Don't run it if a session is inactive or its session ID is not set
-    if (!sessid || !sessionActive) return
-
-    const fetchData = async () => {
-      try {
-        const data = await getRsyncerData(sessid)
-        setRsyncers(data)
-      } catch (err) {
-        console.error('Error polling rsyncers:', err)
-      }
-    }
-    fetchData() // Fetch data once
-
-    // Set it to run every 5s
-    const interval = setInterval(fetchData, 5000)
-    return () => clearInterval(interval)
-  }, [sessid, sessionActive])
-
   // Other Rsync-related functions
-  const handleRemoveRsyncer = async (sessionId: number, source: string) => {
-    // Safely update the displayed Rsync cards after a 'remove' call is made
-    try {
-      await removeRsyncer(sessionId, source)
-      const updatedData = await getRsyncerData(String(sessionId))
-      setRsyncers(updatedData)
-    } catch (err) {
-      console.error('Failed to remove rsyncer:', err)
-    }
-  }
-
-  const handleFinaliseRsyncer = async (sessionId: number, source: string) => {
-    // Safely update the displayed Rsync cards after a 'finalise' call is made
-    try {
-      await finaliseRsyncer(sessionId, source)
-      const updatedData = await getRsyncerData(String(sessionId))
-      setRsyncers(updatedData)
-    } catch (err) {
-      console.error('Failed to finalise rsyncer:', err)
-    }
-  }
-
   const finaliseAll = async () => {
     if (sessid) await finaliseSession(parseInt(sessid))
     onClose()
@@ -251,15 +243,18 @@ export const Session = () => {
     return r.transferring
   }
 
+  // Update the state of the session when a change in
+  // instrument server connection status occurs
   const checkSessionActivationState = useCallback(async () => {
     if (sessid !== undefined) {
       const activationState = await sessionTokenCheck(parseInt(sessid))
       setSessionActive(activationState)
+      console.log(`Session is active:`, activationState)
     }
   }, [sessid])
   useEffect(() => {
     checkSessionActivationState()
-  }, [checkSessionActivationState])
+  }, [checkSessionActivationState, instrumentServerConnected])
 
   // Set the default visit end time (in UTC) if none was provided
   const defaultVisitEndTime = session?.visit_end_time
@@ -336,6 +331,8 @@ export const Session = () => {
     }
   }
 
+  if (isLoading) return <p>Loading RSyncer data...</p>
+  if (isError) return <p>Error loading RSyncer data</p>
   return (
     <div className="rootContainer">
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -540,9 +537,6 @@ export const Session = () => {
                     <RsyncCard
                       key={`${r.session_id}-${r.source}`} // Used by 'map' for ID-ing elements
                       rsyncer={r}
-                      // Pass the handler functions through to the RsyncCard object
-                      onRemove={handleRemoveRsyncer}
-                      onFinalise={handleFinaliseRsyncer}
                     />
                   )
                 )
