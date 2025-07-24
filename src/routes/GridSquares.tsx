@@ -6,10 +6,10 @@ import { components } from 'schema/main'
 type GridSquare = components['schemas']['GridSquare']
 
 export const GridSquares = () => {
-  console.log('gather grid squares')
+  console.log('Getting grid squares')
   const gridSquares = useLoaderData() as GridSquare[]
   console.log(
-    'grid squares',
+    'Grid squares:',
     gridSquares,
     typeof gridSquares,
     gridSquares.length
