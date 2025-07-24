@@ -68,21 +68,19 @@ export const updateCurrentGainReference = async (
   return response.data
 }
 
-const query = (sessid: string) => {
-  return {
-    queryKey: ['gainRefs'],
-    queryFn: () => getGainRefData(sessid),
-    staleTime: 60000,
-  }
-}
-
 export const gainRefLoader =
-  (queryClient: QueryClient) => async (params: Params) => {
-    if (params.sessid) {
-      const singleQuery = query(params.sessid)
-      return (
-        (await queryClient.getQueryData(singleQuery.queryKey)) ??
-        (await queryClient.fetchQuery(singleQuery))
-      )
+  (queryClient: QueryClient) =>
+  async ({ params }: { params: Params }) => {
+    const sessionId = params.sessid
+    if (!sessionId) return null
+
+    const queryKey = ['gainRefs', sessionId]
+    const queryFn = () => getGainRefData(sessionId)
+
+    const singleQuery = {
+      queryKey: queryKey,
+      queryFn: queryFn,
+      staleTime: 60000,
     }
+    return queryClient.ensureQueryData(singleQuery)
   }

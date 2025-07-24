@@ -110,33 +110,32 @@ export const deleteSessionData = async (sessid: number) => {
 export const allSessionsLoader = (queryClient: QueryClient) => async () => {
   // Load the instrument name from sessionStorage
   const instrumentName = sessionStorage.getItem('instrumentName')
-
-  // Skip loading logic if no instrument name was found
   if (!instrumentName) return null
 
   // Construct the query key and query function
   const queryKey = ['homepageSessions', instrumentName]
   const queryFn = () => getAllSessionsData(instrumentName)
+  const singleQuery = {
+    queryKey: queryKey,
+    queryFn: queryFn,
+    staleTime: 60000,
+  }
 
-  // Enssure data is always fresh
-  await queryClient.invalidateQueries({ queryKey })
-  return queryClient.ensureQueryData({ queryKey, queryFn })
+  return queryClient.ensureQueryData(singleQuery)
 }
 
 export const sessionLoader =
-  (queryClient: QueryClient) => async (params: Params) => {
-    const sessid = params.sessid
-    if (!sessid) return null
-
-    const queryBuilder = (sessid: string = '0') => {
-      return {
-        queryKey: ['sessionId', sessid],
-        queryFn: () => getSessionData(sessid),
-      }
+  (queryClient: QueryClient) =>
+  async ({ params }: { params: Params }) => {
+    const sessionId = params.sessid
+    if (!sessionId) return null
+    const queryKey = ['sessionInfo', sessionId]
+    const queryFn = () => getSessionData(sessionId)
+    const singleQuery = {
+      queryKey: queryKey,
+      queryFn: queryFn,
+      staleTime: 60000,
     }
-    const singleQuery = queryBuilder(params.sessid)
-    const queryKey = singleQuery.queryKey
 
-    await queryClient.invalidateQueries({ queryKey })
-    return await queryClient.fetchQuery(singleQuery)
+    return queryClient.ensureQueryData(singleQuery)
   }

@@ -16,7 +16,7 @@ export const getSessionProcessingParameterData = async (
   return response.data
 }
 
-const getProcessingParameterData = async (sessid: string = '0') => {
+export const getProcessingParameterData = async (sessid: string = '0') => {
   const response = await client.get(
     `session_info/spa/sessions/${sessid}/spa_processing_parameters`
   )
@@ -47,38 +47,34 @@ export const updateSessionProcessingParameters = async (
   return response.data
 }
 
-const queryBuilder = (sessid: string = '0') => {
-  return {
-    queryKey: ['sessionId', sessid],
-    queryFn: () => getProcessingParameterData(sessid),
-    staleTime: 60000,
-  }
-}
-
-const querySessionParamsBuilder = (sessid: string = '0') => {
-  return {
-    queryKey: ['sessionId', sessid],
-    queryFn: () => getSessionProcessingParameterData(sessid),
-    staleTime: 60000,
-  }
-}
-
 export const processingParametersLoader =
-  (queryClient: QueryClient) => async (params: Params) => {
-    const singleQuery = queryBuilder(params.sessid)
-    return (
-      (await queryClient.getQueryData(singleQuery.queryKey)) ??
-      (await queryClient.fetchQuery(singleQuery))
-    )
+  (queryClient: QueryClient) =>
+  async ({ params }: { params: Params }) => {
+    const sessionId = params.sessid
+    if (!sessionId) return null
+
+    const queryKey = ['extraProcessingParameters', sessionId]
+    const queryFn = () => getProcessingParameterData(sessionId)
+    const singleQuery = {
+      queryKey: queryKey,
+      queryFn: queryFn,
+      staleTime: 60000,
+    }
+    return queryClient.ensureQueryData(singleQuery)
   }
 
 export const sessionParametersLoader =
-  (queryClient: QueryClient) => async (params: Params) => {
-    const singleQuery = querySessionParamsBuilder(params.sessid)
-    return (
-      (await queryClient.getQueryData(singleQuery.queryKey)) ??
-      (await queryClient.fetchQuery(singleQuery))
-    )
-  }
+  (queryClient: QueryClient) =>
+  async ({ params }: { params: Params }) => {
+    const sessionId = params.sessid
+    if (!sessionId) return null
 
-export { getProcessingParameterData }
+    const queryKey = ['processingParameters', sessionId]
+    const queryFn = () => getSessionProcessingParameterData(sessionId)
+    const singleQuery = {
+      queryKey: queryKey,
+      queryFn: queryFn,
+      staleTime: 60000,
+    }
+    return queryClient.ensureQueryData(singleQuery)
+  }
