@@ -30,12 +30,17 @@ export const WebSocketHandler = () => {
       if (parsedMessage.target === 'rsyncer') {
         let sessionID: string | null = parsedMessage.session_id
         if (!sessionID) return null
-        queryClient.refetchQueries({ queryKey: ['sessid', sessionID] })
+        console.log(
+          `Received message to update rsyncer data for session`,
+          sessionID
+        )
+        queryClient.refetchQueries({ queryKey: ['rsyncers', sessionID] })
       }
       // Update instrument name queries when a change to sessions is detected
       if (parsedMessage.target === 'sessions') {
         let instrumentName: string | null = parsedMessage.instrument_name
         if (!instrumentName) return null
+        console.log(`Received message to re-fetch data for`, instrumentName)
         queryClient.refetchQueries({
           queryKey: ['homepageSessions', instrumentName],
         })
