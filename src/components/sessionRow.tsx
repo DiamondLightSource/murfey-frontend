@@ -21,7 +21,8 @@ import {
   VStack,
   useDisclosure,
 } from '@chakra-ui/react'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { getInstrumentConnectionStatus } from 'loaders/general'
 import { sessionTokenCheck } from 'loaders/jwt'
 import { finaliseSession } from 'loaders/rsyncers'
 import { deleteSessionData } from 'loaders/sessionClients'
@@ -48,6 +49,8 @@ export const SessionRow = ({
   // Set up React states
   const [sessionActive, setSessionActive] = React.useState(false)
   const [sessionFinalising, setSessionFinalising] = React.useState(false)
+  const [instrumentServerConnected, setInstrumentServerConnected] =
+    React.useState(false)
 
   // Set up utility hooks
   const {
@@ -66,15 +69,35 @@ export const SessionRow = ({
     if (response.success) {
       setSessionFinalising(true)
     }
+    console.log(`Session ${sessid} marked for cleanup`)
     onCloseCleanup()
   }
 
+  // Query for probing instrument connection status
+  const { data: instrmentServerConnectionStatus } = useQuery<boolean>({
+    queryKey: ['instrumentServerConnection', instrumentName],
+    queryFn: () => getInstrumentConnectionStatus(),
+    enabled: !!instrumentName,
+    initialData: sessionActive,
+    staleTime: 0,
+  })
+  useEffect(() => {
+    console.log(
+      `Instrument server is connected:`,
+      instrmentServerConnectionStatus
+    )
+    setInstrumentServerConnected(instrmentServerConnectionStatus)
+  }, [instrmentServerConnectionStatus])
+
+  // Run checks on the state of the session if there is
+  // a change in instrument server connection status
   useEffect(() => {
     sessionTokenCheck(session.id).then((active) => setSessionActive(active))
-    checkMultigridControllerStatus(session.id.toString()).then((status) =>
+    checkMultigridControllerStatus(session.id.toString()).then((status) => {
       setSessionFinalising(status.finalising)
-    )
-  }, [session])
+      console.log(`Session ${session.id} finalising:`, status.finalising)
+    })
+  }, [session, instrumentServerConnected])
 
   return (
     <VStack w="100%" spacing={0}>
@@ -186,9 +209,7 @@ export const SessionRow = ({
                             left="50%"
                             transform="translate(-50%, -50%)"
                             sx={{
-                              animation:
-                                'spin 2s linear infinite, glow 2s ease-in-out infinite',
-                              // 'spin 2s linear infinite',
+                              animation: `spin 2s linear infinite, glow-${session.id} 2s ease-in-out infinite`,
                               filter: `drop-shadow(0 0 0px ${sessionFinalising ? 'red' : 'green'})`,
                               '@keyframes spin': {
                                 from: {
@@ -200,7 +221,7 @@ export const SessionRow = ({
                                     'translate(-50%, -50%) rotate(0deg)',
                                 },
                               },
-                              '@keyframes glow': {
+                              [`@keyframes glow-${session.id}`]: {
                                 '0%': {
                                   filter: `drop-shadow(0 0 2px ${sessionFinalising ? 'red' : 'green'})`,
                                 },
