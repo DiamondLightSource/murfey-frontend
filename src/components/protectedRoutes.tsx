@@ -1,12 +1,14 @@
 import { Box } from '@chakra-ui/react'
 import { Navbar } from 'components/navbar'
+import { WebSocketHandler } from 'components/webSocketHandler'
 import { Navigate, Outlet } from 'react-router-dom'
 
-const ProtectedRoutes = () => {
+export const ProtectedRoutes = () => {
   // Read environment variable and demand user login if authenticating with 'password'
   const sessionToken = sessionStorage.getItem('token')
   const standard = (
     <div className="rootContainer">
+      <WebSocketHandler />
       <Box>
         <Navbar logo="/images/diamondgs.png" />
       </Box>
@@ -23,5 +25,3 @@ const ProtectedRoutes = () => {
     <Navigate to="/login" replace />
   )
 }
-
-export { ProtectedRoutes }

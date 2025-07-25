@@ -59,9 +59,7 @@ const Login = () => {
                     let instrumentName =
                       sessionStorage.getItem('instrumentName')
                     if (instrumentName) {
-                      navigate(
-                        `/home?instrumentName=${encodeURIComponent(instrumentName)}`
-                      )
+                      navigate(`/home`)
                     } else {
                       console.error('Could not find instument information')
                     }

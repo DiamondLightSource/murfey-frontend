@@ -13,7 +13,7 @@ import {
   sessionParametersLoader,
 } from 'loaders/processingParameters'
 import { rsyncerLoader } from 'loaders/rsyncers'
-import { sessionsLoader, sessionLoader } from 'loaders/sessionClients'
+import { allSessionsLoader, sessionLoader } from 'loaders/sessionClients'
 import { visitLoader } from 'loaders/visits'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
@@ -65,13 +65,13 @@ const router = createBrowserRouter([
         path: '/home',
         element: <Home />,
         errorElement: <Error />,
-        loader: sessionsLoader(queryClient),
+        loader: allSessionsLoader(queryClient),
       },
       {
         path: '/instruments/:instrumentName/new_session',
         element: <NewSession />,
         errorElement: <Error />,
-        loader: ({ params }) => visitLoader(queryClient)(params),
+        loader: visitLoader(queryClient),
       },
       {
         path: '/new_session/setup/:sessid',
@@ -83,43 +83,43 @@ const router = createBrowserRouter([
         path: '/new_session/parameters/:sessid',
         element: <SessionSetup />,
         errorElement: <Error />,
-        loader: ({ params }) => sessionLoader(queryClient)(params),
+        loader: sessionLoader(queryClient),
       },
       {
         path: '/sessions/:sessid',
         element: <Session />,
         errorElement: <Error />,
-        loader: ({ params }) => rsyncerLoader(queryClient)(params),
+        loader: rsyncerLoader(queryClient),
       },
       {
         path: '/sessions/:sessid/gain_ref_transfer',
         element: <GainRefTransfer />,
         errorElement: <Error />,
-        loader: ({ params }) => gainRefLoader(queryClient)(params),
+        loader: gainRefLoader(queryClient),
       },
       {
         path: '/sessions/:sessid/session_parameters',
         element: <SessionParameters />,
         errorElement: <Error />,
-        loader: ({ params }) => sessionParametersLoader(queryClient)(params),
+        loader: sessionParametersLoader(queryClient),
       },
       {
         path: '/sessions/:sessid/session_parameters/extra_parameters',
         element: <ProcessingParameters />,
         errorElement: <Error />,
-        loader: ({ params }) => processingParametersLoader(queryClient)(params),
+        loader: processingParametersLoader(queryClient),
       },
       {
         path: '/sessions/:sessid/data_collection_groups',
         element: <DataCollectionGroups />,
         errorElement: <Error />,
-        loader: ({ params }) => dataCollectionGroupsLoader(queryClient)(params),
+        loader: dataCollectionGroupsLoader(queryClient),
       },
       {
         path: '/sessions/:sessid/data_collection_groups/:dcgid/grid_squares',
         element: <GridSquares />,
         errorElement: <Error />,
-        loader: ({ params }) => gridSquaresLoader(queryClient)(params),
+        loader: gridSquaresLoader(queryClient),
       },
       {
         path: '/mag_table',

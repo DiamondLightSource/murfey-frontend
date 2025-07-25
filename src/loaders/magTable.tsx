@@ -35,12 +35,14 @@ export const removeMagTableRow = async (magnification: number) => {
   return response.data
 }
 
-const query = {
-  queryKey: ['magTable'],
-  queryFn: getMagTableData,
-  staleTime: 60000,
-}
+export const magTableLoader = (queryClient: QueryClient) => async () => {
+  const queryKey = ['magTable']
+  const queryFn = () => getMagTableData()
+  const singleQuery = {
+    queryKey: queryKey,
+    queryFn: queryFn,
+    staleTime: 60000,
+  }
 
-export const magTableLoader = (queryClient: QueryClient) => async () =>
-  (await queryClient.getQueryData(query.queryKey)) ??
-  (await queryClient.fetchQuery(query))
+  return queryClient.ensureQueryData(singleQuery)
+}

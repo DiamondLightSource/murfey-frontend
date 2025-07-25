@@ -1,8 +1,10 @@
 import {
+  Box,
   Button,
   GridItem,
   Heading,
   HStack,
+  Icon,
   IconButton,
   Link,
   Modal,
@@ -19,18 +21,38 @@ import {
   VStack,
   useDisclosure,
 } from '@chakra-ui/react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { getInstrumentConnectionStatus } from 'loaders/general'
 import { sessionTokenCheck } from 'loaders/jwt'
 import { finaliseSession } from 'loaders/rsyncers'
 import { deleteSessionData } from 'loaders/sessionClients'
+import { checkMultigridControllerStatus } from 'loaders/sessionSetup'
 import React, { useEffect } from 'react'
 import { GiMagicBroom } from 'react-icons/gi'
 import { MdDelete } from 'react-icons/md'
+import { MdSync, MdSyncProblem } from 'react-icons/md'
 import { Link as LinkRouter } from 'react-router-dom'
-import { PuffLoader } from 'react-spinners'
 import { components } from 'schema/main'
 
 type Session = components['schemas']['Session']
-export const SessionRow = (session: Session) => {
+type SessionRowProps = {
+  session: Session
+  instrumentName: string | null
+}
+export const SessionRow = ({
+  session,
+  instrumentName = null,
+}: SessionRowProps) => {
+  // Set up query client
+  const queryClient = useQueryClient()
+
+  // Set up React states
+  const [sessionActive, setSessionActive] = React.useState(false)
+  const [sessionFinalising, setSessionFinalising] = React.useState(false)
+  const [instrumentServerConnected, setInstrumentServerConnected] =
+    React.useState(false)
+
+  // Set up utility hooks
   const {
     isOpen: isOpenDelete,
     onOpen: onOpenDelete,
@@ -43,15 +65,39 @@ export const SessionRow = (session: Session) => {
   } = useDisclosure()
 
   const cleanupSession = async (sessid: number) => {
-    await finaliseSession(sessid)
+    const response = await finaliseSession(sessid)
+    if (response.success) {
+      setSessionFinalising(true)
+    }
+    console.log(`Session ${sessid} marked for cleanup`)
     onCloseCleanup()
   }
 
-  const [sessionActive, setSessionActive] = React.useState(false)
+  // Query for probing instrument connection status
+  const { data: instrmentServerConnectionStatus } = useQuery<boolean>({
+    queryKey: ['instrumentServerConnection', instrumentName],
+    queryFn: () => getInstrumentConnectionStatus(),
+    enabled: !!instrumentName,
+    initialData: sessionActive,
+    staleTime: 0,
+  })
+  useEffect(() => {
+    console.log(
+      `Instrument server is connected:`,
+      instrmentServerConnectionStatus
+    )
+    setInstrumentServerConnected(instrmentServerConnectionStatus)
+  }, [instrmentServerConnectionStatus])
 
+  // Run checks on the state of the session if there is
+  // a change in instrument server connection status
   useEffect(() => {
     sessionTokenCheck(session.id).then((active) => setSessionActive(active))
-  }, [session])
+    checkMultigridControllerStatus(session.id.toString()).then((status) => {
+      setSessionFinalising(status.finalising)
+      console.log(`Session ${session.id} finalising:`, status.finalising)
+    })
+  }, [session, instrumentServerConnected])
 
   return (
     <VStack w="100%" spacing={0}>
@@ -78,7 +124,10 @@ export const SessionRow = (session: Session) => {
                       variant="ghost"
                       onClick={() => {
                         deleteSessionData(session.id).then(() =>
-                          window.location.reload()
+                          // Refetch session information for this instrument
+                          queryClient.refetchQueries({
+                            queryKey: ['homepageSessions', instrumentName],
+                          })
                         )
                       }}
                     >
@@ -141,11 +190,63 @@ export const SessionRow = (session: Session) => {
                       >
                         {session.name}: {session.id}
                       </StatLabel>
-                      {sessionActive ? (
-                        <PuffLoader size={25} color="red" />
-                      ) : (
-                        <></>
-                      )}
+                      <Box
+                        boxSize="25px"
+                        position="relative"
+                        overflow="visible"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        {sessionActive ? (
+                          // Show a pulsing spinning sync icon when running
+                          <Icon
+                            as={MdSync}
+                            boxSize={4}
+                            color="black"
+                            position="absolute"
+                            top="50%"
+                            left="50%"
+                            transform="translate(-50%, -50%)"
+                            sx={{
+                              animation: `spin 2s linear infinite, glow-${session.id} 2s ease-in-out infinite`,
+                              filter: `drop-shadow(0 0 0px ${sessionFinalising ? 'red' : 'green'})`,
+                              '@keyframes spin': {
+                                from: {
+                                  transform:
+                                    'translate(-50%, -50%) rotate(360deg)',
+                                },
+                                to: {
+                                  transform:
+                                    'translate(-50%, -50%) rotate(0deg)',
+                                },
+                              },
+                              [`@keyframes glow-${session.id}`]: {
+                                '0%': {
+                                  filter: `drop-shadow(0 0 2px ${sessionFinalising ? 'red' : 'green'})`,
+                                },
+                                '50%': {
+                                  filter: `drop-shadow(0 0 0px ${sessionFinalising ? 'red' : 'green'})`,
+                                },
+                                '100%': {
+                                  filter: `drop-shadow(0 0 2px ${sessionFinalising ? 'red' : 'green'})`,
+                                },
+                              },
+                            }}
+                          />
+                        ) : (
+                          // Show a sync error icon when disconnected
+                          <Icon
+                            as={MdSyncProblem}
+                            boxSize={4}
+                            color="black"
+                            position="absolute"
+                            top="50%"
+                            left="50%"
+                            transform="translate(-50%, -50%)"
+                          />
+                        )}
+                      </Box>
                     </HStack>
                   </Stat>
                 </Link>
@@ -155,7 +256,7 @@ export const SessionRow = (session: Session) => {
                   aria-label="Delete session"
                   icon={<MdDelete />}
                   onClick={onOpenDelete}
-                  isDisabled={sessionActive}
+                  isDisabled={sessionActive || sessionFinalising}
                 />
               </Tooltip>
               <Tooltip label="Clean up visit files">
@@ -163,7 +264,7 @@ export const SessionRow = (session: Session) => {
                   aria-label="Clean up session"
                   icon={<GiMagicBroom />}
                   onClick={onOpenCleanup}
-                  isDisabled={!sessionActive}
+                  isDisabled={!sessionActive || sessionFinalising}
                 />
               </Tooltip>
             </HStack>

@@ -15,7 +15,11 @@ import {
 } from '@chakra-ui/react'
 import { useDisclosure } from '@chakra-ui/react'
 import { Table } from '@diamondlightsource/ui-components'
-import { updateSessionProcessingParameters } from 'loaders/processingParameters'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  updateSessionProcessingParameters,
+  getSessionProcessingParameterData,
+} from 'loaders/processingParameters'
 import React from 'react'
 import { Link as LinkRouter, useLoaderData, useParams } from 'react-router-dom'
 import { components } from 'schema/main'
@@ -40,10 +44,26 @@ const nameLabelMap: Map<string, string> = new Map([
   ['eer_fractionation_file', 'EER fractionation file (for motion correction)'],
 ])
 
-const SessionParameters = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+export const SessionParameters = () => {
+  // Load necessary data
   const { sessid } = useParams()
-  const sessionParams = useLoaderData() as EditableSessionParameters | null
+  const preloadedData = useLoaderData()
+  const queryKey = ['processingParameters', sessid]
+  const queryFn = () => getSessionProcessingParameterData(sessid)
+  const { data, isLoading, isError } = useQuery({
+    queryKey,
+    queryFn,
+    initialData: preloadedData,
+    staleTime: 0,
+  })
+  const sessionParams = data as EditableSessionParameters | null
+
+  const queryClient = useQueryClient()
+
+  // Set component hooks
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
+  // Construct parameters table to display
   let tableRows = [] as ProcessingRow[]
   type EditableParameter =
     | 'gain_ref'
@@ -73,8 +93,8 @@ const SessionParameters = () => {
       symmetry: paramKey === 'symmetry' ? paramValue : '',
     }
     await updateSessionProcessingParameters(sessid ?? '0', data)
+    queryClient.refetchQueries({ queryKey: ['processingParameters', sessid] })
     onClose()
-    window.location.reload()
   }
 
   const editParameterDialogue = async (
@@ -88,6 +108,8 @@ const SessionParameters = () => {
     onOpen()
   }
 
+  if (isLoading) return <p>Loading processing parameters for session...</p>
+  if (isError) return <p>Error loading processing parameters for session.</p>
   return (
     <div className="rootContainer">
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -154,5 +176,3 @@ const SessionParameters = () => {
     </div>
   )
 }
-
-export { SessionParameters }

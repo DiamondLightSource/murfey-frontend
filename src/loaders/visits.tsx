@@ -23,22 +23,19 @@ const getVisitData = async (instrumentName: string) => {
   return response.data
 }
 
-const query = (instrumentName: string) => {
-  return {
-    queryKey: ['visits', instrumentName],
-    queryFn: () => getVisitData(instrumentName),
-    staleTime: 60000,
-  }
-}
-
 export const visitLoader =
-  (queryClient: QueryClient) => async (params: Params) => {
-    if (params.instrumentName) {
-      const singleQuery = query(params.instrumentName)
-      return (
-        (await queryClient.getQueryData(singleQuery.queryKey)) ??
-        (await queryClient.fetchQuery(singleQuery))
-      )
+  (queryClient: QueryClient) =>
+  async ({ params }: { params: Params }) => {
+    const instrumentName = params.instrumentName
+    if (!instrumentName) return null
+
+    const queryKey = ['visits', instrumentName]
+    const queryFn = () => getVisitData(instrumentName)
+    const singleQuery = {
+      queryKey: queryKey,
+      queryFn: queryFn,
+      staleTime: 60000,
     }
-    return null
+
+    return queryClient.ensureQueryData(singleQuery)
   }

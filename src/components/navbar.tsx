@@ -2,7 +2,6 @@ import {
   Box,
   Flex,
   HStack,
-  Link,
   IconButton,
   useDisclosure,
   Image,
@@ -10,6 +9,7 @@ import {
   BoxProps,
   Icon,
 } from '@chakra-ui/react'
+import { useQueryClient } from '@tanstack/react-query'
 import { getInstrumentConnectionStatus } from 'loaders/general'
 import React from 'react'
 import {
@@ -19,7 +19,7 @@ import {
   MdOutlineSignalWifiBad,
 } from 'react-icons/md'
 import { TbMicroscope, TbSnowflake, TbHomeCog } from 'react-icons/tb'
-import { Link as LinkRouter } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 export interface LinkDescriptor {
   label: string
@@ -43,16 +43,24 @@ export const Navbar = ({
   logo,
   ...props
 }: NavbarProps) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
   const [instrumentConnectionStatus, setInsrumentConnectionStatus] =
     React.useState(false)
+  const navigate = useNavigate()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const queryClient = useQueryClient()
+  const instrumentName = sessionStorage.getItem('instrumentName')
 
   // Check connectivity every few seconds
   React.useEffect(() => {
     const resolveConnectionStatus = async () => {
       try {
         const status: boolean = await getInstrumentConnectionStatus()
-        setInsrumentConnectionStatus(status)
+        if (status !== instrumentConnectionStatus) {
+          setInsrumentConnectionStatus(status)
+          queryClient.refetchQueries({
+            queryKey: ['instrumentServerConnection', instrumentName],
+          })
+        }
       } catch (err) {
         console.error('Error checking connection status:', err)
         setInsrumentConnectionStatus(false)
@@ -60,10 +68,10 @@ export const Navbar = ({
     }
     resolveConnectionStatus() // Fetch data once to start with
 
-    // Set it to run every 4s
+    // Set it to run every 10s
     const interval = setInterval(resolveConnectionStatus, 10000)
     return () => clearInterval(interval)
-  }, [])
+  }, [instrumentName, instrumentConnectionStatus, queryClient])
 
   return (
     <Box position="sticky" top="0" zIndex={1} w="100%" {...props}>
@@ -95,51 +103,55 @@ export const Navbar = ({
               />
             </Box>
           ) : null}
-          <Link as={LinkRouter} to="/hub">
-            <Tooltip label="Back to the Hub">
-              <IconButton
-                size={'sm'}
-                icon={
-                  <>
-                    <TbHomeCog />
-                  </>
-                }
-                aria-label={'Back to the Hub'}
-                _hover={{ background: 'transparent', color: 'murfey.500' }}
-              />
-            </Tooltip>
-          </Link>
-          <Link as={LinkRouter} to="/home">
-            <Tooltip label="Back to the microscope">
-              <IconButton
-                size={'sm'}
-                icon={
-                  <>
-                    <TbSnowflake />
-                    <TbMicroscope />
-                  </>
-                }
-                aria-label={'Back to the microscope'}
-                _hover={{ background: 'transparent', color: 'murfey.500' }}
-              />
-            </Tooltip>
-          </Link>
+          <Tooltip label="Back to the Hub">
+            <IconButton
+              onClick={() => {
+                navigate(`/hub`)
+              }}
+              size={'sm'}
+              icon={
+                <>
+                  <TbHomeCog />
+                </>
+              }
+              aria-label={'Back to the Hub'}
+              _hover={{ background: 'transparent', color: 'murfey.500' }}
+            />
+          </Tooltip>
+          {/* Add the instrument name as a URL query parameter to trigger a reload */}
+          <Tooltip label="Back to the microscope">
+            <IconButton
+              onClick={() => {
+                navigate(`/home`)
+              }}
+              size={'sm'}
+              icon={
+                <>
+                  <TbSnowflake />
+                  <TbMicroscope />
+                </>
+              }
+              aria-label="Back to the microscope"
+              _hover={{ background: 'transparent', color: 'murfey.500' }}
+            />
+          </Tooltip>
           <Tooltip
             label={
               instrumentConnectionStatus
                 ? 'Connected to instrument server'
                 : 'No instrument server connection'
             }
-            placement="bottom"
           >
-            <Icon
-              as={
-                instrumentConnectionStatus
-                  ? MdSignalWifi4Bar
-                  : MdOutlineSignalWifiBad
-              }
-              color={instrumentConnectionStatus ? 'white' : 'red'}
-            />
+            <span tabIndex={0}>
+              <Icon
+                as={
+                  instrumentConnectionStatus
+                    ? MdSignalWifi4Bar
+                    : MdOutlineSignalWifiBad
+                }
+                color={instrumentConnectionStatus ? 'white' : 'red'}
+              />
+            </span>
           </Tooltip>
         </HStack>
       </Flex>

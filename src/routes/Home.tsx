@@ -7,74 +7,34 @@ import {
   Link,
   VStack,
 } from '@chakra-ui/react'
+import { useQuery } from '@tanstack/react-query'
 import { InstrumentCard } from 'components/instrumentCard'
 import { SessionRow } from 'components/sessionRow'
-import React, { useEffect } from 'react'
-import {
-  Link as LinkRouter,
-  useLoaderData,
-  useSearchParams,
-  useNavigate,
-} from 'react-router-dom'
-import useWebSocket from 'react-use-websocket'
+import { getAllSessionsData } from 'loaders/sessionClients'
+import { Link as LinkRouter, useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
-import { v4 as uuid4 } from 'uuid'
 
 type Session = components['schemas']['Session']
 export const Home = () => {
-  // Get session data from the loader
-  const sessions = useLoaderData() as {
+  const instrumentName = sessionStorage.getItem('instrumentName')
+  const queryKey = ['homepageSessions', instrumentName]
+  const queryFn = () => getAllSessionsData(instrumentName ? instrumentName : '')
+
+  const preloadedData = useLoaderData()
+  const { data, isLoading, isError } = useQuery({
+    queryKey,
+    queryFn,
+    initialData: preloadedData,
+    enabled: !!instrumentName,
+    staleTime: 0, // Always refetch on mount unless preloaded
+  })
+
+  if (isLoading) return <p>Loading sessions...</p>
+  if (isError || !data) return <p>Failed to load sessions.</p>
+
+  const sessions = data as {
     current: Session[]
   } | null
-
-  // Clean the URL after loading the page
-  const [searchParams] = useSearchParams()
-  const navigate = useNavigate()
-  useEffect(() => {
-    if (searchParams.has('instrumentName')) {
-      navigate('/home', { replace: true })
-    }
-  }, [searchParams, navigate])
-
-  const [UUID, setUUID] = React.useState('')
-  const baseUrl =
-    sessionStorage.getItem('murfeyServerURL') ??
-    process.env.REACT_APP_API_ENDPOINT
-  const url = baseUrl ? baseUrl.replace('http', 'ws') : 'ws://localhost:8000'
-  const parseWebsocketMessage = (message: any) => {
-    let parsedMessage: any = {}
-    try {
-      parsedMessage = JSON.parse(message)
-    } catch (err) {
-      return
-    }
-    if (parsedMessage.message === 'refresh') {
-      window.location.reload()
-    }
-  }
-
-  // Use existing UUID if present; otherwise, generate a new UUID
-  useEffect(() => {
-    if (!UUID) {
-      setUUID(uuid4())
-    }
-  }, [UUID])
-  // Establish websocket connection to the backend
-  useWebSocket(
-    // 'null' is passed to 'useWebSocket()' if UUID is not yet set to
-    // prevent malformed connections
-    UUID ? url + `ws/connect/${UUID}` : null,
-    UUID
-      ? {
-          onOpen: () => {
-            console.log('WebSocket connection established.')
-          },
-          onMessage: (event) => {
-            parseWebsocketMessage(event.data)
-          },
-        }
-      : undefined
-  )
 
   return (
     <div className="rootContainer">
@@ -101,7 +61,7 @@ export const Home = () => {
                 w={{ base: '100%', md: '19.6%' }}
                 _hover={{ textDecor: 'none' }}
                 as={LinkRouter}
-                to={`../instruments/${sessionStorage.getItem('instrumentName')}/new_session`}
+                to={`../instruments/${instrumentName}/new_session`}
               >
                 <Button variant="onBlue">New session</Button>
               </Link>
@@ -117,7 +77,10 @@ export const Home = () => {
                   sessions.current.map((current) => {
                     return (
                       <VStack w="100%" spacing={5}>
-                        {SessionRow(current)}
+                        <SessionRow
+                          session={current}
+                          instrumentName={instrumentName}
+                        />
                       </VStack>
                     )
                   })

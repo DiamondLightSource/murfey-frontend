@@ -10,7 +10,7 @@ import {
   Box,
   SimpleGrid,
 } from '@chakra-ui/react'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { TbMicroscope, TbSnowflake } from 'react-icons/tb'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 
@@ -41,9 +41,7 @@ export const Hub = () => {
 
     // Direct users to /login only if authenticating with 'password'
     if (process.env.REACT_APP_BACKEND_AUTH_TYPE === 'cookie') {
-      navigate(
-        `/home?instrumentName=${encodeURIComponent(iinfo.instrument_name)}`
-      )
+      navigate(`/home`)
     } else {
       navigate(`/login`, { replace: true })
     }

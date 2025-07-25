@@ -6,7 +6,7 @@ const getGridSquares = async (
   sessid: string = '0',
   dataCollectionGroupId: string = '0'
 ) => {
-  console.log('getting grid squares')
+  console.log('Getting grid squares')
   const response = await client.get(
     `session_info/spa/sessions/${sessid}/data_collection_groups/${dataCollectionGroupId}/grid_squares`
   )
@@ -68,7 +68,8 @@ const queryBuilder = (
 }
 
 export const gridSquaresLoader =
-  (queryClient: QueryClient) => async (params: Params) => {
+  (queryClient: QueryClient) =>
+  async ({ params }: { params: Params }) => {
     // const singleQuery = queryBuilder(params.sessid, params.dcgid);
     const singleQuery = queryBuilder(params.sessid)
     return (

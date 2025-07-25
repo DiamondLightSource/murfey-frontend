@@ -42,15 +42,7 @@ import { components } from 'schema/main'
 
 type RSyncerInfo = components['schemas']['RSyncerInfo']
 
-export const RsyncCard = ({
-  rsyncer,
-  onRemove,
-  onFinalise,
-}: {
-  rsyncer: RSyncerInfo
-  onRemove: (id: number, source: string) => void
-  onFinalise: (id: number, source: string) => void
-}) => {
+export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [action, setAction] = React.useState('finalise')
 
@@ -67,12 +59,8 @@ export const RsyncCard = ({
   const handleRsyncerAction = async () => {
     if (action === 'finalise') {
       await finaliseRsyncer(rsyncer.session_id, rsyncer.source)
-      // Run the function passed in from 'Session'
-      onFinalise(rsyncer.session_id, rsyncer.source)
     } else if (action === 'remove') {
       await removeRsyncer(rsyncer.session_id, rsyncer.source)
-      // Run the function passed in from 'Session'
-      onRemove(rsyncer.session_id, rsyncer.source)
     }
     onClose()
   }
