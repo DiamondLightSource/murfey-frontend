@@ -68,7 +68,7 @@ export interface paths {
     /** Get Rsyncers For Client */
     get: operations['get_rsyncers_for_client_clients__client_id__rsyncers_get']
   }
-  '/session/{session_id}': {
+  '/sessions/{session_id}': {
     /** Get Session */
     get: operations['get_session_session__session_id__get']
   }
@@ -262,7 +262,7 @@ export interface paths {
     /** Failed Client Post */
     post: operations['failed_client_post_failed_client_post_post']
   }
-  '/instruments/{instrument_name}/visits/{visit}/session/{name}': {
+  '/instruments/{instrument_name}/visits/{visit}/sessions/{name}': {
     /** Create Session */
     post: operations['create_session_instruments__instrument_name__visits__visit__session__name__post']
   }
