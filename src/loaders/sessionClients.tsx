@@ -30,7 +30,7 @@ export const getSessionDataForVisit = async (
 }
 
 export const getSessionData = async (sessid: string = '0') => {
-  const response = await client.get(`session_info/session/${sessid}`)
+  const response = await client.get(`session_info/sessions/${sessid}`)
 
   if (response.status !== 200) return null
   // Convert naive times into UTC, if set
@@ -45,20 +45,6 @@ export const getSessionData = async (sessid: string = '0') => {
   return response.data
 }
 
-export const linkSessionToClient = async (
-  client_id: number,
-  sessionName: string
-) => {
-  const response = await client.post(
-    `session_info/clients/${client_id}/session`,
-    {
-      session_name: sessionName,
-    }
-  )
-  if (response.status !== 200) return null
-  return response.data
-}
-
 export const createSession = async (
   visit: string,
   sessionName: string,
@@ -69,7 +55,7 @@ export const createSession = async (
     ? convertUTCToUKNaive(sessionEndTime.toISOString())
     : null
   const response = await client.post(
-    `session_info/instruments/${instrumentName}/visits/${visit}/session/${sessionName}`,
+    `session_info/instruments/${instrumentName}/visits/${visit}/sessions/${sessionName}`,
     { end_time: ukEndTime }
   )
   if (response.status !== 200) return null
