@@ -71,6 +71,8 @@ export interface paths {
   '/sessions/{session_id}': {
     /** Get Session */
     get: operations['get_session_session__session_id__get']
+    /** Remove Session By Id */
+    delete: operations['remove_session_by_id_sessions__session_id__delete']
   }
   '/visits/{visit_name}/increment_rsync_file_count': {
     /** Increment Rsync File Count */
@@ -233,10 +235,6 @@ export interface paths {
   '/sessions/{session_id}/rsyncers': {
     /** Get Rsyncers For Session */
     get: operations['get_rsyncers_for_session_sessions__session_id__rsyncers_get']
-  }
-  '/sessions/{session_id}': {
-    /** Remove Session By Id */
-    delete: operations['remove_session_by_id_sessions__session_id__delete']
   }
   '/visits/{visit_name}/{session_id}/eer_fractionation_file': {
     /** Write Eer Fractionation File */
