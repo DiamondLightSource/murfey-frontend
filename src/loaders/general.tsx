@@ -40,8 +40,9 @@ export const upstreamDataDownloadRequest = async (
   visitName: string,
   sessid: number
 ) => {
-  const response = await client.get(
-    `session_info/correlative/visits/${visitName}/${sessid}/upstream_tiff_data_request`
+  const response = await client.post(
+    `instrument_server/visits/${visitName}/sessions/${sessid}/upstream_tiff_data_request`,
+    {}
   )
 
   if (response.status !== 200) {

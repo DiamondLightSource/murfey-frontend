@@ -248,11 +248,11 @@ export interface paths {
     /** Find Upstream Visits */
     get: operations['find_upstream_visits_sessions__session_id__upstream_visits_get']
   }
-  '/visits/{visit_name}/{session_id}/upstream_tiff_paths': {
+  '/visits/{visit_name}/sessions/{session_id}/upstream_tiff_paths': {
     /** Gather Upstream Tiffs */
     get: operations['gather_upstream_tiffs_visits__visit_name___session_id__upstream_tiff_paths_get']
   }
-  '/visits/{visit_name}/{session_id}/upstream_tiff/{tiff_path}': {
+  '/visits/{visit_name}/sessions/{session_id}/upstream_tiff/{tiff_path}': {
     /** Get Tiff */
     get: operations['get_tiff_visits__visit_name___session_id__upstream_tiff__tiff_path__get']
   }
@@ -594,7 +594,7 @@ export interface paths {
     /** Request Gain Reference Upload */
     post: operations['request_gain_reference_upload_sessions__session_id__upload_gain_reference_post']
   }
-  '/visits/{visit_name}/{session_id}/upstream_tiff_data_request': {
+  '/visits/{visit_name}/sessions/{session_id}/upstream_tiff_data_request': {
     /** Request Upstream Tiff Data Download */
     post: operations['request_upstream_tiff_data_download_visits__visit_name___session_id__upstream_tiff_data_request_post']
   }
