@@ -133,7 +133,7 @@ const NewSession = () => {
     setSelectedVisit(data.name)
     setSessionReference(data.name)
     // Add an hour to the listed end time
-    const endTime = new Date(new Date(data.end).getTime() + 3600 * 1000)
+    const endTime = new Date(new Date(data.end).getTime() + 3600 * 1000 * 2)
     setEndTime(endTime)
   }
 
