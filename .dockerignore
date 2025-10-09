@@ -8,6 +8,8 @@
 !.dockerignore
 !.prettierrc
 !Dockerfile
+!index.html
 !package.json
 !tsconfig.json
+!vite.config.ts
 !yarn.lock
