@@ -15,9 +15,9 @@ export const parseDate = (dateString: string | undefined) => {
 }
 
 export const convertUKNaiveToUTC = (naiveIsoString: string): string => {
-  // One of our databases stores timestamps naively, so this function
-  // helps convert it correctly, taking into account GMT/BST, into
-  // the correct UTC time.
+  // One of our databases stores timestamps naively, so this function helps convert it
+  // correctly into the correct UTC time, taking into account GMT/BST.
+  // The time is returned in the ISO 8601 format 'YYYY-MM-DDTHH:mm:ssZ'.
 
   const timeZone = 'Europe/London'
 
@@ -53,25 +53,11 @@ export const convertUKNaiveToUTC = (naiveIsoString: string): string => {
   return utcDate.toISOString()
 }
 
-export const formatUTCISOToUKLocal = (utcIsoString: string) => {
-  // Formats the UTC time to its UK equivalent as a human-readable string
-  const date = new Date(utcIsoString)
-  return date.toLocaleString('en-GB', {
-    timeZone: 'Europe/London',
-    year: 'numeric',
-    month: 'short',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-    timeZoneName: 'short',
-  })
-}
-
 export const convertUTCToUKNaive = (utcIsoString: string): string => {
   // Converts the app's internal UTC timestamp into a naive string that shows the
-  // equivalent UK timestamp, allowing it to be invariant across timezones
+  // equivalent UK timestamp, allowing it to be invariant across timezones.
+  // The time is returned in the format 'YYYY-MM-DDTHH:mm:ss', with no time zone
+  // information
   const timeZone = 'Europe/London'
   const date = new Date(utcIsoString)
 
@@ -96,4 +82,20 @@ export const convertUTCToUKNaive = (utcIsoString: string): string => {
     [getPart('hour'), getPart('minute'), getPart('second')].join(':')
 
   return naiveUK
+}
+
+export const formatUTCISOToUKLocal = (utcIsoString: string) => {
+  // Formats the UTC time to its UK equivalent as a human-readable string
+  const date = new Date(utcIsoString)
+  return date.toLocaleString('en-GB', {
+    timeZone: 'Europe/London',
+    year: 'numeric',
+    month: 'short',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+    timeZoneName: 'short',
+  })
 }
