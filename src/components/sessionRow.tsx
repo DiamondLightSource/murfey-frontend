@@ -70,7 +70,6 @@ export const SessionRow = ({
       setSessionFinalising(true)
     }
     console.log(`Session ${sessid} marked for cleanup`)
-    onCloseCleanup()
   }
 
   // Query for probing instrument connection status
@@ -123,12 +122,13 @@ export const SessionRow = ({
                     <Button
                       variant="ghost"
                       onClick={() => {
-                        deleteSessionData(session.id).then(() =>
+                        deleteSessionData(session.id).then(() => {
                           // Refetch session information for this instrument
                           queryClient.refetchQueries({
                             queryKey: ['homepageSessions', instrumentName],
                           })
-                        )
+                        })
+                        onCloseDelete()
                       }}
                     >
                       Confirm
@@ -154,7 +154,12 @@ export const SessionRow = ({
                     <Button
                       variant="ghost"
                       onClick={() => {
-                        cleanupSession(session.id)
+                        cleanupSession(session.id).then(() => {
+                          queryClient.refetchQueries({
+                            queryKey: ['homepageSessions', instrumentName],
+                          })
+                        })
+                        onCloseCleanup()
                       }}
                     >
                       Confirm
