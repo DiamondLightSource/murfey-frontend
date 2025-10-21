@@ -61,10 +61,6 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
   const [symlinkPath, setSymlinkPath] = React.useState(destinationName)
   const [symlinkOverride, setSymlinkOverride] = React.useState(false)
 
-  const createSymlink = () => {
-    onOpenSymlink()
-  }
-
   const finalise = () => {
     setAction('finalise')
     onOpen()
