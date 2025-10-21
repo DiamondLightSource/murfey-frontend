@@ -42,6 +42,7 @@ const nameLabelMap: Map<string, string> = new Map([
   ['gain_ref', 'Gain Reference'],
   ['symmetry', 'Symmetry'],
   ['eer_fractionation_file', 'EER fractionation file (for motion correction)'],
+  ['run_class3d', 'Run 3D classification?'],
 ])
 
 export const SessionParameters = () => {
@@ -70,6 +71,7 @@ export const SessionParameters = () => {
     | 'dose_per_frame'
     | 'eer_fractionation_file'
     | 'symmetry'
+    | 'run_class3d'
     | ''
   const [paramName, setParamName] = React.useState('')
   const [paramValue, setParamValue] = React.useState('')
@@ -91,6 +93,7 @@ export const SessionParameters = () => {
       eerFractionationFile:
         paramKey === 'eer_fractionation_file' ? paramValue : '',
       symmetry: paramKey === 'symmetry' ? paramValue : '',
+      run_class3d: paramKey === 'run_class3d' ? paramValue : null,
     }
     await updateSessionProcessingParameters(sessid ?? '0', data)
     queryClient.refetchQueries({ queryKey: ['processingParameters', sessid] })

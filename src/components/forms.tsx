@@ -22,6 +22,7 @@ const formDataSPA: { [key: string]: any } = {
   particle_diameter: null,
   extract_downscale: true,
   eer_fractionation: 20,
+  run_class3d: true,
 }
 
 const formDataTomo: { [key: string]: any } = {
@@ -59,6 +60,7 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
       ? null
       : formData.get('particle-diameter')
     formDataSPA.eer_fractionation = formData.get('eer-grouping')
+    formDataSPA.run_class3d = formData.get('run-class3d')
     callback(formDataSPA)
   }
 
@@ -127,8 +129,12 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
             )}
             <VStack align="start" width="100%" display="flex">
               <HStack>
-                <FormLabel>Downscale in extraction</FormLabel>
-                <Switch defaultChecked colorScheme="murfey" name="downscale" />
+                <FormLabel>Run 3D classification</FormLabel>
+                <Switch
+                  defaultChecked
+                  colorScheme="murfey"
+                  name="run-class3d"
+                />
               </HStack>
             </VStack>
           </VStack>

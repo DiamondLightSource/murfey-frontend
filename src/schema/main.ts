@@ -888,6 +888,11 @@ export interface components {
        * @default
        */
       symmetry?: string
+      /**
+       * Run 3D classification?
+       * @default
+       */
+      run_class3d?: boolean
     }
     /** File */
     File: {
@@ -1557,6 +1562,11 @@ export interface components {
        * @default 20
        */
       eer_fractionation?: number
+      /**
+       * Run 3D classification?
+       * @default true
+       */
+      run_class3d?: boolean
     }
     /** RSyncerInfo */
     RSyncerInfo: {
