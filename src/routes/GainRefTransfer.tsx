@@ -22,7 +22,7 @@ import {
   transferGainReference,
   updateCurrentGainReference,
 } from 'loaders/possibleGainRefs'
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   Link as LinkRouter,
   useNavigate,
@@ -31,11 +31,19 @@ import {
 } from 'react-router-dom'
 import { CircleLoader } from 'react-spinners'
 import { components } from 'schema/main'
+import { convertUTCToUKNaive, formatUTCISOToUKLocal } from 'utils/generic'
 
 type File = components['schemas']['File']
 
 export const GainRefTransfer = () => {
   const possibleGainRefs = useLoaderData() as File[] | null
+  // Add new columns with the formatted timestamps
+  const possibleGainRefsFormatted = possibleGainRefs
+    ? possibleGainRefs.map((gainRefs) => ({
+        ...gainRefs, // Preserve original table
+        timestampFormatted: formatUTCISOToUKLocal(gainRefs.timestamp),
+      }))
+    : []
   let [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const [processing, setProcessing] = React.useState(false)
@@ -75,6 +83,16 @@ export const GainRefTransfer = () => {
     setFalconPreset(true)
     getMachineConfigData().then((cfg) => setFalcon(cfg.camera === 'FALCON'))
   }
+
+  // Construct a default tag based on the current datetime upon loading page
+  useEffect(() => {
+    const currentISOTime = new Date().toISOString()
+    const currentUKTime = convertUTCToUKNaive(currentISOTime)
+      .replaceAll(':', '')
+      .replaceAll('-', '')
+    console.log(`Current time is ${currentUKTime}`)
+    setTag(currentUKTime)
+  }, [])
 
   return (
     <div className="rootContainer">
@@ -127,7 +145,7 @@ export const GainRefTransfer = () => {
             <VStack>
               <Tooltip label="Tag appended to gain reference name">
                 <Input
-                  placeholder="Tag (optional)"
+                  placeholder={tag}
                   w="50%"
                   display={'flex'}
                   onChange={(e) => setTag(e.target.value)}
@@ -141,10 +159,10 @@ export const GainRefTransfer = () => {
               </Checkbox>
               <Table
                 width="80%"
-                data={possibleGainRefs}
+                data={possibleGainRefsFormatted}
                 headers={[
                   { key: 'name', label: 'Name' },
-                  { key: 'timestamp', label: 'Timestamp' },
+                  { key: 'timestampFormatted', label: 'Timestamp' },
                   { key: 'size', label: 'Size [MB]' },
                   { key: 'full_path', label: 'Full path' },
                 ]}
