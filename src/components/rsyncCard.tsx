@@ -46,7 +46,10 @@ import { components } from 'schema/main'
 type RSyncerInfo = components['schemas']['RSyncerInfo']
 
 export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
-  const destinationParent = rsyncer.destination.split('/').slice(-1).join('/')
+  const destinationParent = rsyncer.destination
+    .split('/')
+    .slice(0, -2)
+    .join('/')
   const destinationName = rsyncer.destination.split('/')[-1]
   const { isOpen, onOpen, onClose } = useDisclosure()
   const {
