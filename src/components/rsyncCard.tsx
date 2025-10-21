@@ -46,6 +46,8 @@ import { components } from 'schema/main'
 type RSyncerInfo = components['schemas']['RSyncerInfo']
 
 export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
+  const destinationParent = rsyncer.destination.split('/').slice(-1).join('/')
+  const destinationName = rsyncer.destination.split('/')[-1]
   const { isOpen, onOpen, onClose } = useDisclosure()
   const {
     isOpen: isOpenSymlink,
@@ -53,7 +55,7 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
     onClose: onCloseSymlink,
   } = useDisclosure()
   const [action, setAction] = React.useState('finalise')
-  const [symlinkPath, setSymlinkPath] = React.useState(rsyncer.destination)
+  const [symlinkPath, setSymlinkPath] = React.useState(destinationName)
   const [symlinkOverride, setSymlinkOverride] = React.useState(false)
 
   const createSymlink = () => {
@@ -83,7 +85,7 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
     requestSymlinkCreation(
       rsyncer.session_id,
       rsyncer.destination,
-      symlinkPath,
+      destinationParent + '/' + symlinkPath,
       symlinkOverride
     )
     onOpenSymlink()
