@@ -5,10 +5,12 @@ import {
   Card,
   CardBody,
   CardHeader,
+  Checkbox,
   Flex,
   Heading,
   HStack,
   IconButton,
+  Input,
   Menu,
   MenuButton,
   MenuItem,
@@ -30,6 +32,7 @@ import {
 } from '@chakra-ui/react'
 import { useDisclosure } from '@chakra-ui/react'
 import {
+  requestSymlinkCreation,
   pauseRsyncer,
   restartRsyncer,
   removeRsyncer,
@@ -44,7 +47,18 @@ type RSyncerInfo = components['schemas']['RSyncerInfo']
 
 export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const {
+    isOpen: isOpenSymlink,
+    onOpen: onOpenSymlink,
+    onClose: onCloseSymlink,
+  } = useDisclosure()
   const [action, setAction] = React.useState('finalise')
+  const [symlinkPath, setSymlinkPath] = React.useState('')
+  const [symlinkOverride, setSymlinkOverride] = React.useState(false)
+
+  const createSymlink = () => {
+    onOpenSymlink()
+  }
 
   const finalise = () => {
     setAction('finalise')
@@ -63,6 +77,16 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
       await removeRsyncer(rsyncer.session_id, rsyncer.source)
     }
     onClose()
+  }
+
+  const handleCreateSymlink = async () => {
+    requestSymlinkCreation(
+      rsyncer.session_id,
+      rsyncer.destination,
+      symlinkPath,
+      symlinkOverride
+    )
+    onOpenSymlink()
   }
 
   return (
@@ -85,6 +109,38 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
               Close
             </Button>
             <Button variant="ghost" onClick={() => handleRsyncerAction()}>
+              Confirm
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      <Modal isOpen={isOpenSymlink} onClose={onOpenSymlink}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Create Symlink to {rsyncer.destination}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            This will create a symlink to {rsyncer.destination} on the file
+            system
+            <Input
+              value={rsyncer.destination}
+              autoFocus
+              w="80%"
+              onChange={(v) => setSymlinkPath(v.target.value)}
+            />
+            <Checkbox
+              isChecked={symlinkOverride}
+              onChange={(e) => setSymlinkOverride(e.target.checked)}
+            >
+              Replace any existing symlink with this name?
+            </Checkbox>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
+              Close
+            </Button>
+            <Button variant="ghost" onClick={() => handleCreateSymlink()}>
               Confirm
             </Button>
           </ModalFooter>
@@ -122,6 +178,9 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
             <MenuList>
               {rsyncer.alive ? (
                 <>
+                  <MenuItem onClick={() => onOpenSymlink()}>
+                    Create symlink
+                  </MenuItem>
                   <MenuItem
                     onClick={() =>
                       pauseRsyncer(rsyncer.session_id, rsyncer.source)
