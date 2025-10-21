@@ -53,7 +53,7 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
     onClose: onCloseSymlink,
   } = useDisclosure()
   const [action, setAction] = React.useState('finalise')
-  const [symlinkPath, setSymlinkPath] = React.useState('')
+  const [symlinkPath, setSymlinkPath] = React.useState(rsyncer.destination)
   const [symlinkOverride, setSymlinkOverride] = React.useState(false)
 
   const createSymlink = () => {
@@ -123,7 +123,7 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
             This will create a symlink to {rsyncer.destination} on the file
             system
             <Input
-              value={rsyncer.destination}
+              value={symlinkPath}
               autoFocus
               w="80%"
               onChange={(v) => setSymlinkPath(v.target.value)}
