@@ -14,6 +14,28 @@ export const getRsyncerData = async (sessionId: string) => {
   return response.data
 }
 
+export const requestSymlinkCreation = async (
+  sessionId: number,
+  destination: string,
+  symlinkPath: string,
+  symlinkOverride: boolean
+) => {
+  const response = await client.post(
+    `file_io/frontend/sessions/${sessionId}/symlink`,
+    {
+      target: destination,
+      symlink: symlinkPath,
+      override: symlinkOverride,
+    }
+  )
+
+  if (response.status !== 200) {
+    return null
+  }
+
+  return response.data
+}
+
 export const pauseRsyncer = async (sessionId: number, source: string) => {
   const response = await client.post(
     `instrument_server/sessions/${sessionId}/stop_rsyncer`,
