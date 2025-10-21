@@ -114,7 +114,7 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Modal isOpen={isOpenSymlink} onClose={onOpenSymlink}>
+      <Modal isOpen={isOpenSymlink} onClose={onCloseSymlink}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Create Symlink to {rsyncer.destination}</ModalHeader>
@@ -137,7 +137,7 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
+            <Button colorScheme="blue" mr={3} onClick={onCloseSymlink}>
               Close
             </Button>
             <Button variant="ghost" onClick={() => handleCreateSymlink()}>
