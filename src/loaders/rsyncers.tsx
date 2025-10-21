@@ -20,11 +20,14 @@ export const requestSymlinkCreation = async (
   symlinkPath: string,
   symlinkOverride: boolean
 ) => {
-  const response = await client.post(`sessions/${sessionId}/symlink`, {
-    target: destination,
-    symlink: symlinkPath,
-    override: symlinkOverride,
-  })
+  const response = await client.post(
+    `file_io/frontend/sessions/${sessionId}/symlink`,
+    {
+      target: destination,
+      symlink: symlinkPath,
+      override: symlinkOverride,
+    }
+  )
 
   if (response.status !== 200) {
     return null
