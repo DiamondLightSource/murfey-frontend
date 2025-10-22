@@ -62,11 +62,11 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
       ? (formData.get('symmetry1') as string)
       : (((formData.get('symmetry1') as string) +
           formData.get('symmetry2')) as string)
-    formDataSPA.particle_diameter = formData.get('detect-particle-size')
+    formDataSPA.particle_diameter = particleDetection
       ? null
       : formData.get('particle-diameter')
     formDataSPA.eer_fractionation = formData.get('eer-grouping')
-    formDataSPA.run_class3d = formData.get('run-class3d')
+    formDataSPA.run_class3d = runClass3D
     callback(formDataSPA)
   }
 
