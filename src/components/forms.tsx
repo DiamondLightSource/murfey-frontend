@@ -37,11 +37,17 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
   }
   const [symmetryType, setSymmetryType] = React.useState('C')
   const [particleDetection, setParticleDetection] = React.useState(true)
+  const [runClass3D, setRunClass3D] = React.useState(true)
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSymmetryType(event.target.value)
   }
   const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setParticleDetection(!particleDetection)
+  }
+  const handleClass3DSwitchChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRunClass3D(!runClass3D)
   }
   const setFormElement = (
     event: React.FormEvent<HTMLFormElement>,
@@ -133,6 +139,7 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
                 <Switch
                   defaultChecked
                   colorScheme="murfey"
+                  onChange={handleClass3DSwitchChange}
                   name="run-class3d"
                 />
               </HStack>
