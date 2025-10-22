@@ -25,7 +25,9 @@ export const getInstrumentConnectionStatus = async () => {
   return response.data
 }
 
-export const getUpstreamVisits = async (sessid: number) => {
+export const getUpstreamVisits = async (
+  sessid: number
+): Promise<Record<string, Record<string, string>> | null> => {
   const response = await client.get(
     `session_info/correlative/sessions/${sessid}/upstream_visits`
   )
@@ -37,12 +39,17 @@ export const getUpstreamVisits = async (sessid: number) => {
 }
 
 export const upstreamDataDownloadRequest = async (
+  instrumentName: string,
+  sessid: number,
   visitName: string,
-  sessid: number
+  visitPath: string
 ) => {
   const response = await client.post(
-    `instrument_server/visits/${visitName}/sessions/${sessid}/upstream_tiff_data_request`,
-    {}
+    `instrument_server/visits/${visitName}/sessions/${sessid}/upstream_file_data_request`,
+    {
+      upstream_instrument: instrumentName,
+      upstream_visit_path: visitPath,
+    }
   )
 
   if (response.status !== 200) {
