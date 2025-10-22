@@ -27,7 +27,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { InstrumentCard } from 'components/instrumentCard'
 import { RsyncCard } from 'components/rsyncCard'
-import { UpstreamVisitCard } from 'components/upstreamVisitsCard'
+import { UpstreamVisitsCard } from 'components/upstreamVisitsCard'
 import { getInstrumentConnectionStatus } from 'loaders/general'
 import { sessionTokenCheck, sessionHandshake } from 'loaders/jwt'
 import { getMachineConfigData } from 'loaders/machineConfig'
@@ -573,7 +573,7 @@ export const Session = () => {
                 </Button>
               </Link>
               <InstrumentCard />
-              <UpstreamVisitCard sessid={parseInt(sessid ?? '0')} />
+              <UpstreamVisitsCard sessid={parseInt(sessid ?? '0')} />
             </Stack>
           </Flex>
         </Box>
