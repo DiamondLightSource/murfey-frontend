@@ -22,6 +22,7 @@ const formDataSPA: { [key: string]: any } = {
   particle_diameter: null,
   extract_downscale: true,
   eer_fractionation: 20,
+  run_class3d: true,
 }
 
 const formDataTomo: { [key: string]: any } = {
@@ -36,11 +37,17 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
   }
   const [symmetryType, setSymmetryType] = React.useState('C')
   const [particleDetection, setParticleDetection] = React.useState(true)
+  const [runClass3D, setRunClass3D] = React.useState(true)
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSymmetryType(event.target.value)
   }
   const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setParticleDetection(!particleDetection)
+  }
+  const handleClass3DSwitchChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRunClass3D(!runClass3D)
   }
   const setFormElement = (
     event: React.FormEvent<HTMLFormElement>,
@@ -55,10 +62,11 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
       ? (formData.get('symmetry1') as string)
       : (((formData.get('symmetry1') as string) +
           formData.get('symmetry2')) as string)
-    formDataSPA.particle_diameter = formData.get('detect-particle-size')
+    formDataSPA.particle_diameter = particleDetection
       ? null
       : formData.get('particle-diameter')
     formDataSPA.eer_fractionation = formData.get('eer-grouping')
+    formDataSPA.run_class3d = runClass3D
     callback(formDataSPA)
   }
 
@@ -127,8 +135,13 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
             )}
             <VStack align="start" width="100%" display="flex">
               <HStack>
-                <FormLabel>Downscale in extraction</FormLabel>
-                <Switch defaultChecked colorScheme="murfey" name="downscale" />
+                <FormLabel>Run 3D classification</FormLabel>
+                <Switch
+                  defaultChecked
+                  colorScheme="murfey"
+                  onChange={handleClass3DSwitchChange}
+                  name="run-class3d"
+                />
               </HStack>
             </VStack>
           </VStack>

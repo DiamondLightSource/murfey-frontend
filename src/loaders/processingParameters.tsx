@@ -39,6 +39,7 @@ export const updateSessionProcessingParameters = async (
       dose_per_frame: params['dosePerFrame'] ?? null,
       eer_fractionation_file: params['eerFractionationFile'] ?? '',
       symmetry: params['symmetry'] ?? '',
+      run_class3d: params['run_class3d'] ?? null,
     }
   )
   if (response.status !== 200) {
