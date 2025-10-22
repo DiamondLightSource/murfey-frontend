@@ -79,7 +79,7 @@ export const SessionParameters = () => {
   Object.entries(sessionParams ? sessionParams : {}).forEach(([key, value]) =>
     tableRows.push({
       parameterName: nameLabelMap.get(key) ?? key,
-      parameterValue: value,
+      parameterValue: value.toString(),
       parameterKey: key,
     } as ProcessingRow)
   )
@@ -169,7 +169,6 @@ export const SessionParameters = () => {
           data={table.processingRows}
           headers={[
             { key: 'parameterName', label: 'Parameter' },
-            { key: 'parameterKey', label: 'Parameter internal name' },
             { key: 'parameterValue', label: 'Value' },
           ]}
           label={'sessionParameterData'}
