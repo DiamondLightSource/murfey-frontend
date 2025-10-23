@@ -1,15 +1,7 @@
 import { QueryClient } from '@tanstack/react-query'
 import { client } from 'utils/api/client'
 
-const getInstrumentInfo = async () => {
-  const response = await client.hub_get(`instruments`)
-
-  if (response.status !== 200) {
-    return null
-  }
-
-  return response.data
-}
+import { getInstrumentInfo } from './general'
 
 const query = {
   queryKey: ['instrumentInfo'],
