@@ -1,15 +1,19 @@
 import { Card, CardBody, Button, CardHeader } from '@chakra-ui/react'
+import { useQuery } from '@tanstack/react-query'
 import { getUpstreamVisits, upstreamDataDownloadRequest } from 'loaders/general'
+import { getInstrumentInfo } from 'loaders/general'
 import React, { useCallback, useEffect } from 'react'
 import { MdFileDownload } from 'react-icons/md'
 
 const InstrumentUpstreamVisitsCard = ({
   sessid,
   instrumentName,
+  displayName,
   instrumentVisits,
 }: {
   sessid: number
   instrumentName: string
+  displayName: string
   instrumentVisits: Record<string, string>
 }) => {
   // Display upstream visits for a single instrument
@@ -18,7 +22,7 @@ const InstrumentUpstreamVisitsCard = ({
   return (
     <Card alignItems="left" cursor={'default'}>
       <CardHeader fontWeight="bold" cursor="default">
-        {instrumentName}
+        {displayName}
       </CardHeader>
       <CardBody cursor="default">
         {/* Map each visit to a button */}
@@ -64,7 +68,34 @@ export const UpstreamVisitsCard = ({ sessid }: { sessid: number }) => {
     resolveVisits()
   }, [sessid, resolveVisits])
 
-  return upstreamVisits ? (
+  // Set up queryClient to load names of all instruments
+  type InstrumentInfo = {
+    instrument_name: string
+    display_name: string
+    instrument_url: string
+  }
+  const { data: instrumentInfo } = useQuery<InstrumentInfo[]>({
+    queryKey: ['instrumentInfo'],
+    queryFn: getInstrumentInfo,
+    staleTime: 60000,
+  })
+
+  // Set up function to get the corresponding display name of the instrument
+  const getDisplayName = (instrumentName: string) => {
+    if (!instrumentInfo) return instrumentName
+    const result = instrumentInfo.find(
+      (item) => item.instrument_name === instrumentName
+    )
+    console.log(`Found match:`, result)
+    // Use instrument name if no results were found or if display name wasn't set
+    return result
+      ? result.display_name
+        ? result.display_name
+        : instrumentName
+      : instrumentName
+  }
+
+  return upstreamVisits && instrumentInfo ? (
     <Card alignItems="left" cursor={'default'}>
       <CardHeader fontWeight="bold" cursor="default">
         Upstream Visit Data Download
@@ -80,6 +111,7 @@ export const UpstreamVisitsCard = ({ sessid }: { sessid: number }) => {
               <InstrumentUpstreamVisitsCard
                 sessid={sessid}
                 instrumentName={instrumentName}
+                displayName={getDisplayName(instrumentName)}
                 instrumentVisits={instrumentVisits}
               />
             )
