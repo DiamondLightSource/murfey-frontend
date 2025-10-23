@@ -18,7 +18,6 @@ const InstrumentUpstreamVisitsCard = ({
 }) => {
   // Display upstream visits for a single instrument
   // Parameters to take: instrument name and upstream visits dict
-  console.log(instrumentVisits)
   return (
     <Card alignItems="left" cursor={'default'}>
       <CardHeader fontWeight="bold" cursor="default">
@@ -61,7 +60,6 @@ export const UpstreamVisitsCard = ({ sessid }: { sessid: number }) => {
     const visits = await getUpstreamVisits(sessid)
     if (!visits) return // Handle null or false-y cases
     setUpstreamVisits(visits)
-    console.log(visits)
   }, [sessid])
 
   useEffect(() => {
@@ -86,7 +84,6 @@ export const UpstreamVisitsCard = ({ sessid }: { sessid: number }) => {
     const result = instrumentInfo.find(
       (item) => item.instrument_name === instrumentName
     )
-    console.log(`Found match:`, result)
     // Use instrument name if no results were found or if display name wasn't set
     return result
       ? result.display_name
