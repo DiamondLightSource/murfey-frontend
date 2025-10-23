@@ -3,10 +3,6 @@ import { getUpstreamVisits, upstreamDataDownloadRequest } from 'loaders/general'
 import React, { useCallback, useEffect } from 'react'
 import { MdFileDownload } from 'react-icons/md'
 
-interface SessionId {
-  sessid: number
-}
-
 const InstrumentUpstreamVisitsCard = ({
   sessid,
   instrumentName,
@@ -20,15 +16,18 @@ const InstrumentUpstreamVisitsCard = ({
   // Parameters to take: instrument name and upstream visits dict
   console.log(instrumentVisits)
   return (
-    <Card>
-      <CardHeader>{instrumentName}</CardHeader>
-      {/* Map each visit to a button */}
-      {Object.entries(instrumentVisits).map(
-        ([visitName, visitPath]: [string, string]) => {
-          return (
-            <CardBody>
+    <Card alignItems="left" cursor={'default'}>
+      <CardHeader fontWeight="bold" cursor="default">
+        {instrumentName}
+      </CardHeader>
+      <CardBody cursor="default">
+        {/* Map each visit to a button */}
+        {Object.entries(instrumentVisits).map(
+          ([visitName, visitPath]: [string, string]) => {
+            return (
               <Button
                 rightIcon={<MdFileDownload />}
+                cursor="pointer"
                 onClick={() =>
                   upstreamDataDownloadRequest(
                     instrumentName,
@@ -40,15 +39,15 @@ const InstrumentUpstreamVisitsCard = ({
               >
                 {visitName}
               </Button>
-            </CardBody>
-          )
-        }
-      )}
+            )
+          }
+        )}
+      </CardBody>
     </Card>
   )
 }
 
-export const UpstreamVisitsCard = ({ sessid }: SessionId) => {
+export const UpstreamVisitsCard = ({ sessid }: { sessid: number }) => {
   const [upstreamVisits, setUpstreamVisits] = React.useState<
     Record<string, Record<string, string>>
   >({})
@@ -66,23 +65,27 @@ export const UpstreamVisitsCard = ({ sessid }: SessionId) => {
   }, [sessid, resolveVisits])
 
   return upstreamVisits ? (
-    <Card alignItems="center">
-      <CardHeader>Upstream Visit Data Download</CardHeader>
-      {/* Map each instrument to its own card */}
-      {Object.entries(upstreamVisits).map(
-        ([instrumentName, instrumentVisits]: [
-          string,
-          Record<string, string>,
-        ]) => {
-          return (
-            <InstrumentUpstreamVisitsCard
-              sessid={sessid}
-              instrumentName={instrumentName}
-              instrumentVisits={instrumentVisits}
-            />
-          )
-        }
-      )}
+    <Card alignItems="left" cursor={'default'}>
+      <CardHeader fontWeight="bold" cursor="default">
+        Upstream Visit Data Download
+      </CardHeader>
+      <CardBody cursor="default">
+        {/* Map each instrument to its own card */}
+        {Object.entries(upstreamVisits).map(
+          ([instrumentName, instrumentVisits]: [
+            string,
+            Record<string, string>,
+          ]) => {
+            return (
+              <InstrumentUpstreamVisitsCard
+                sessid={sessid}
+                instrumentName={instrumentName}
+                instrumentVisits={instrumentVisits}
+              />
+            )
+          }
+        )}
+      </CardBody>
     </Card>
   ) : (
     <></>
