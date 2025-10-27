@@ -1,5 +1,4 @@
 import { QueryClient } from '@tanstack/react-query'
-import { client } from 'utils/api/client'
 
 import { getInstrumentInfo } from './general'
 
