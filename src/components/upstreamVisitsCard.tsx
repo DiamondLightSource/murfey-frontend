@@ -25,25 +25,29 @@ const InstrumentUpstreamVisitsCard = ({
       </CardHeader>
       <CardBody cursor="default">
         {/* Map each visit to a button */}
-        {Object.entries(instrumentVisits).map(
-          ([visitName, visitPath]: [string, string]) => {
-            return (
-              <Button
-                rightIcon={<MdFileDownload />}
-                cursor="pointer"
-                onClick={() =>
-                  upstreamDataDownloadRequest(
-                    instrumentName,
-                    sessid,
-                    visitName,
-                    visitPath
-                  )
-                }
-              >
-                {visitName}
-              </Button>
-            )
-          }
+        {!!Object.keys(instrumentVisits).length ? (
+          Object.entries(instrumentVisits).map(
+            ([visitName, visitPath]: [string, string]) => {
+              return (
+                <Button
+                  rightIcon={<MdFileDownload />}
+                  cursor="pointer"
+                  onClick={() =>
+                    upstreamDataDownloadRequest(
+                      instrumentName,
+                      sessid,
+                      visitName,
+                      visitPath
+                    )
+                  }
+                >
+                  {visitName}
+                </Button>
+              )
+            }
+          )
+        ) : (
+          <>No related visits found</>
         )}
       </CardBody>
     </Card>
@@ -92,7 +96,7 @@ export const UpstreamVisitsCard = ({ sessid }: { sessid: number }) => {
       : instrumentName
   }
 
-  return upstreamVisits && instrumentInfo ? (
+  return !!Object.keys(upstreamVisits).length && !!instrumentInfo ? (
     <Card alignItems="left" cursor={'default'}>
       <CardHeader fontWeight="bold" cursor="default">
         Upstream Visit Data Download
