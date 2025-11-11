@@ -106,10 +106,10 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
           <ModalBody>Are you sure you want to continue?</ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
+            <Button variant="ghost" mr={3} onClick={onClose}>
               Close
             </Button>
-            <Button variant="ghost" onClick={() => handleRsyncerAction()}>
+            <Button variant="default" onClick={() => handleRsyncerAction()}>
               Confirm
             </Button>
           </ModalFooter>
@@ -138,10 +138,10 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onCloseSymlink}>
+            <Button variant="ghost" mr={3} onClick={onCloseSymlink}>
               Close
             </Button>
-            <Button variant="ghost" onClick={() => handleCreateSymlink()}>
+            <Button variant="default" onClick={() => handleCreateSymlink()}>
               Confirm
             </Button>
           </ModalFooter>

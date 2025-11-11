@@ -107,7 +107,9 @@ export const MagTable = () => {
                               />
                             </HStack>
                           </FormControl>
-                          <Button type="submit">Submit</Button>
+                          <Button variant="default" type="submit">
+                            Submit
+                          </Button>
                         </form>
                       </ModalBody>
                     </ModalContent>

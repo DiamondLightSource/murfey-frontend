@@ -139,7 +139,9 @@ export const SessionSetup = () => {
               as={LinkRouter}
               to={`../sessions/${sessid}`}
             >
-              <Button isDisabled={!paramsSet}>Next</Button>
+              <Button variant="default" isDisabled={!paramsSet}>
+                Next
+              </Button>
             </Link>
             <Link
               w={{ base: '100%', md: '19.6%' }}
@@ -148,7 +150,9 @@ export const SessionSetup = () => {
               as={LinkRouter}
               to={`../sessions/${sessid}`}
             >
-              <Button onClick={handleSkip}>Disable Processing</Button>
+              <Button variant="ghost" onClick={handleSkip}>
+                Disable Processing
+              </Button>
             </Link>
           </Box>
         </Stack>

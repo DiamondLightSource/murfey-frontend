@@ -50,6 +50,7 @@ const Login = () => {
               type="password"
             />
             <Button
+              variant="default"
               onClick={() => {
                 getJWT({ username: username, password: password })
                   .then((jwt) =>
