@@ -184,6 +184,7 @@ const NewSession = () => {
           </ModalBody>
           <ModalFooter>
             <Button
+              variant="default"
               isDisabled={selectedVisit === '' ? true : false}
               onClick={() => {
                 handleCreateSession(instrumentName)
@@ -214,7 +215,7 @@ const NewSession = () => {
                     as={LinkRouter}
                     to={`/sessions/${session.id}`}
                   >
-                    <Button>{session.id}</Button>
+                    <Button variant="default">{session.id}</Button>
                   </Link>
                 ) : (
                   <></>
@@ -224,6 +225,7 @@ const NewSession = () => {
           </ModalBody>
           <ModalFooter>
             <Button
+              variant="ghost"
               isDisabled={selectedVisit === '' ? true : false}
               onClick={() => {
                 startMurfeySession(instrumentName).then((sid: number) => {
@@ -265,7 +267,7 @@ const NewSession = () => {
           </ModalBody>
           <ModalFooter>
             <Button
-              colorScheme="blue"
+              variant="ghost"
               mr={3}
               onClick={() => {
                 onCloseCalendar()
@@ -275,7 +277,7 @@ const NewSession = () => {
               Cancel
             </Button>
             <Button
-              variant="ghost"
+              variant="default"
               onClick={() => {
                 if (proposedEndTime) {
                   setEndTime(proposedEndTime)
@@ -385,6 +387,7 @@ const NewSession = () => {
                 </CardBody>
               </Card>
               <Button
+                variant="default"
                 isDisabled={selectedVisit === '' ? true : false}
                 onClick={() => {
                   handleCreateSession(instrumentName)

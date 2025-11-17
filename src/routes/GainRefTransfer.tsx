@@ -175,7 +175,7 @@ export const GainRefTransfer = () => {
                 as={LinkRouter}
                 to={`../new_session/setup/${searchParams.get('sessid')}`}
               >
-                <Button variant="onBlue">Skip gain reference</Button>
+                <Button variant="ghost">Skip gain reference</Button>
               </Link>
             </VStack>
           </HStack>

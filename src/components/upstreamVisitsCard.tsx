@@ -30,6 +30,7 @@ const InstrumentUpstreamVisitsCard = ({
             ([visitName, visitPath]: [string, string]) => {
               return (
                 <Button
+                  variant="default"
                   rightIcon={<MdFileDownload />}
                   cursor="pointer"
                   onClick={() =>

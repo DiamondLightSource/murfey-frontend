@@ -116,11 +116,11 @@ export const SessionRow = ({
                     reversible
                   </ModalBody>
                   <ModalFooter>
-                    <Button colorScheme="blue" mr={3} onClick={onCloseDelete}>
+                    <Button variant="ghost" mr={3} onClick={onCloseDelete}>
                       Close
                     </Button>
                     <Button
-                      variant="ghost"
+                      variant="default"
                       onClick={() => {
                         deleteSessionData(session.id).then(() => {
                           // Refetch session information for this instrument
@@ -148,11 +148,11 @@ export const SessionRow = ({
                     reversible
                   </ModalBody>
                   <ModalFooter>
-                    <Button colorScheme="blue" mr={3} onClick={onCloseCleanup}>
+                    <Button variant="ghost" mr={3} onClick={onCloseCleanup}>
                       Close
                     </Button>
                     <Button
-                      variant="ghost"
+                      variant="default"
                       onClick={() => {
                         cleanupSession(session.id).then(() => {
                           queryClient.refetchQueries({

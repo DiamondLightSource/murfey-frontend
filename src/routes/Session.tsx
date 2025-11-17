@@ -345,10 +345,10 @@ export const Session = () => {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
+            <Button variant="ghost" mr={3} onClick={onClose}>
               Close
             </Button>
-            <Button variant="ghost" onClick={() => finaliseAll()}>
+            <Button variant="default" onClick={() => finaliseAll()}>
               Confirm
             </Button>
           </ModalFooter>
@@ -394,10 +394,10 @@ export const Session = () => {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onCloseReconnect}>
+            <Button variant="ghost" mr={3} onClick={onCloseReconnect}>
               Close
             </Button>
-            <Button variant="ghost" onClick={handleReconnect}>
+            <Button variant="default" onClick={handleReconnect}>
               Confirm
             </Button>
           </ModalFooter>
@@ -423,7 +423,7 @@ export const Session = () => {
           </ModalBody>
           <ModalFooter>
             <Button
-              colorScheme="blue"
+              variant="ghost"
               mr={3}
               onClick={() => {
                 onCloseCalendar()
@@ -433,7 +433,7 @@ export const Session = () => {
               Cancel
             </Button>
             <Button
-              variant="ghost"
+              variant="default"
               onClick={() => {
                 if (proposedVisitEndTime) {
                   setVisitEndTime(proposedVisitEndTime)
@@ -521,7 +521,7 @@ export const Session = () => {
                 <Spacer />
                 <ViewIcon color="white" />
                 <Switch colorScheme="murfey" id="monitor" />
-                {/* <Button aria-label="Subscribe to notifications" rightIcon={<MdEmail/>} variant="onBlue">
+                {/* <Button aria-label="Subscribe to notifications" rightIcon={<MdEmail/>} variant='onBlue'>
                             Subscribe
                         </Button> */}
               </HStack>
@@ -557,7 +557,11 @@ export const Session = () => {
                 as={LinkRouter}
                 to={`../sessions/${sessid}/data_collection_groups`}
               >
-                <Button rightIcon={<MdOutlineGridOn />} padding="20px">
+                <Button
+                  variant="default"
+                  rightIcon={<MdOutlineGridOn />}
+                  padding="20px"
+                >
                   Data Collections
                 </Button>
               </Link>
@@ -568,7 +572,11 @@ export const Session = () => {
                 as={LinkRouter}
                 to={`../sessions/${sessid}/gain_ref_transfer?sessid=${sessid}`}
               >
-                <Button rightIcon={<MdFileUpload />} padding="20px">
+                <Button
+                  variant="default"
+                  rightIcon={<MdFileUpload />}
+                  padding="20px"
+                >
                   Transfer Gain Reference
                 </Button>
               </Link>

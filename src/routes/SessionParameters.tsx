@@ -130,10 +130,10 @@ export const SessionParameters = () => {
             />
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
+            <Button variant="ghost" mr={3} onClick={onClose}>
               Close
             </Button>
-            <Button variant="ghost" onClick={() => handleParameterEdit()}>
+            <Button variant="default" onClick={() => handleParameterEdit()}>
               Confirm
             </Button>
           </ModalFooter>

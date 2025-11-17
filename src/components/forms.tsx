@@ -146,7 +146,9 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
             </VStack>
           </VStack>
         </FormControl>
-        <Button type="submit">Submit</Button>
+        <Button variant="default" type="submit">
+          Submit
+        </Button>
       </VStack>
     </form>
   )
@@ -180,7 +182,9 @@ const TomoForm = (submissionCallback: (arg0: any) => void) => {
             </VStack>
           </VStack>
         </FormControl>
-        <Button type="submit">Submit</Button>
+        <Button variant="default" type="submit">
+          Submit
+        </Button>
       </VStack>
     </form>
   )

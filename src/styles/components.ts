@@ -155,8 +155,8 @@ const Button = defineStyleConfig({
   },
   variants: {
     default: {
-      color: 'murfey.50',
       bg: 'murfey.600',
+      color: 'murfey.50',
       _hover: {
         bgImage: 'linear-gradient(rgb(0 0 0/30%) 0 0)',
         _disabled: {
