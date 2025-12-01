@@ -1,14 +1,13 @@
 import {
   Card,
   CardBody,
-  CardHeader,
+  Flex,
   Image,
   Text,
   HStack,
   Heading,
   VStack,
   Box,
-  SimpleGrid,
 } from '@chakra-ui/react'
 import { useEffect } from 'react'
 import { TbMicroscope, TbSnowflake } from 'react-icons/tb'
@@ -48,57 +47,76 @@ export const Hub = () => {
   }
 
   return (
-    <Box w="100%" overflow="hidden">
+    // Start with a Box spanning width and height of browser window
+    <Box
+      w="100vw"
+      h="100vh"
+      overflow="hidden"
+      display="flex"
+      flexDirection="column"
+    >
+      {/* Title Bar */}
       <VStack
-        justifyContent="start"
         alignItems="start"
+        justifyContent="center"
         display="flex"
         w="100%"
-        px="10vw"
-        py="1vh"
+        h={24}
+        px={{
+          base: 8,
+          md: 32,
+        }}
+        py={4}
         bg="murfey.700"
       >
-        <Heading size="xl" w="100%" color="murfey.50">
+        <Heading fontSize="3xl" w="100%" color="murfey.50">
           <HStack>
-            {' '}
-            <TbSnowflake /> <TbMicroscope />{' '}
+            <TbSnowflake />
+            <TbMicroscope />
           </HStack>
           Murfey Hub
         </Heading>
       </VStack>
-      <SimpleGrid
-        minChildWidth="250px"
-        spacing={10}
-        p={3}
-        justifyContent="start"
-        alignItems="start"
-        display="flex"
-        w="100%"
-      >
-        {instrumentInfo ? (
-          instrumentInfo.map((ini) => {
-            return (
-              <Card
-                w={{ base: '100%', md: '19.6%' }}
-                _hover={{ textDecor: 'none' }}
-                align="center"
-                onClick={() => navigateToInstrumentHome(ini)}
-              >
-                <CardHeader>
-                  <Image
-                    src={getUrl(`instrument/${ini.instrument_name}/image`)}
-                  />
-                </CardHeader>
-                <CardBody>
-                  <Text>{ini.display_name}</Text>
-                </CardBody>
-              </Card>
-            )
-          })
-        ) : (
-          <></>
-        )}
-      </SimpleGrid>
+      {/* Main body of Hub page showing the instruments */}
+      {/* Allow horizontal overflow of instrument Cards*/}
+      <Box w="100%" flex="1" overflowX="auto" overflowY="hidden">
+        <Flex direction="row" align="stretch" h="80%" p={4} gap={4} mr={4}>
+          {instrumentInfo ? (
+            instrumentInfo.map((ini) => {
+              return (
+                <Card
+                  minW="300px"
+                  maxW="600px"
+                  h="100%"
+                  cursor="pointer"
+                  onClick={() => navigateToInstrumentHome(ini)}
+                >
+                  <CardBody
+                    p={4}
+                    gap={4}
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="space-between"
+                    height="100%"
+                  >
+                    <Image
+                      src={getUrl(`instrument/${ini.instrument_name}/image`)}
+                      objectFit="contain"
+                      w="100%"
+                      h="100%"
+                    />
+                    <Text mt="auto" align="center">
+                      {ini.display_name}
+                    </Text>
+                  </CardBody>
+                </Card>
+              )
+            })
+          ) : (
+            <></>
+          )}
+        </Flex>
+      </Box>
     </Box>
   )
 }
