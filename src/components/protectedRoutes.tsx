@@ -9,11 +9,14 @@ export const ProtectedRoutes = () => {
   const standard = (
     <div className="rootContainer">
       <WebSocketHandler />
-      <Box>
+      {/* Page to display, which occupies full browser window */}
+      <Box w="100vw" h="100vh">
+        {/* Navigation bar attached to top of page */}
         <Navbar logo="/images/diamondgs.png" />
-      </Box>
-      <Box className="main">
-        <Outlet />
+        {/* Page to be displayed occupies the remaining space */}
+        <Box className="main" overflow="auto" flex="1">
+          <Outlet />
+        </Box>
       </Box>
     </div>
   )
