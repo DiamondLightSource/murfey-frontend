@@ -1,4 +1,4 @@
-import { Card, CardBody, CardHeader, Image, Link, Text } from '@chakra-ui/react'
+import { Card, CardBody, Image, Text } from '@chakra-ui/react'
 import { getInstrumentName } from 'loaders/general'
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
