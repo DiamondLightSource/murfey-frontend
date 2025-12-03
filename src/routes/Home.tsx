@@ -56,7 +56,6 @@ export const Home = () => {
         <Box
           bg="murfey.700"
           w="100%"
-          h={36}
           px={{
             base: 8,
             md: 16,
@@ -68,10 +67,15 @@ export const Home = () => {
           justifyContent="start"
           gap={2}
         >
-          <Heading color="murfey.50" fontSize="3xl" m={0} p={0}>
+          <Heading color="murfey.50" fontSize="3xl" lineHeight={1}>
             Murfey Sessions
           </Heading>
-          <Heading color="murfey.50" fontSize="md" fontWeight="200" m={0} p={0}>
+          <Heading
+            color="murfey.50"
+            fontSize="md"
+            fontWeight="200"
+            lineHeight={1}
+          >
             Microscope Data Transfer Control System
           </Heading>
           <Button
@@ -86,7 +90,6 @@ export const Home = () => {
           </Button>
         </Box>
         {/* Sessions page contents */}
-        {/* Allow scrolling upon overflow */}
         <Box
           p={4}
           display="flex"
@@ -99,8 +102,8 @@ export const Home = () => {
           <Box
             minW="300px"
             pl={{
-              base: 4,
-              md: 12,
+              base: 12,
+              md: 20,
             }}
             display="flex"
             flexDirection="column"
@@ -110,7 +113,13 @@ export const Home = () => {
             flex="1"
             overflow="auto"
           >
-            <Heading textAlign="left" w="100%" size="lg" mt={12}>
+            <Heading
+              textAlign="left"
+              w="100%"
+              fontSize="2xl"
+              mt={12}
+              lineHeight={1}
+            >
               Existing Sessions
             </Heading>
             <Divider borderColor="murfey.300" />
