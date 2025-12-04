@@ -1,4 +1,4 @@
-import { Card, CardBody, Button, CardHeader } from '@chakra-ui/react'
+import { Card, Box, Button, Heading } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
 import { getUpstreamVisits, upstreamDataDownloadRequest } from 'loaders/general'
 import { getInstrumentInfo } from 'loaders/general'
@@ -16,41 +16,67 @@ const InstrumentUpstreamVisitsCard = ({
   displayName: string
   instrumentVisits: Record<string, string>
 }) => {
-  // Display upstream visits for a single instrument
-  // Parameters to take: instrument name and upstream visits dict
   return (
-    <Card alignItems="left" cursor={'default'}>
-      <CardHeader fontWeight="bold" cursor="default">
-        {displayName}
-      </CardHeader>
-      <CardBody cursor="default">
+    // Display upstream visits for a single instrument
+    // Parameters to take: instrument name and upstream visits dict
+    <Card
+      w="100%"
+      p={4}
+      cursor="default"
+      _hover={{
+        cursor: 'default',
+        borderColor: 'murfey.400',
+      }}
+    >
+      <Box
+        flex="1"
+        display="flex"
+        flexDirection="column"
+        alignItems="start"
+        justifyContent="start"
+        gap={4}
+      >
+        <Heading fontSize="md" fontWeight="bold" lineHeight={1}>
+          {displayName}
+        </Heading>
         {/* Map each visit to a button */}
-        {!!Object.keys(instrumentVisits).length ? (
-          Object.entries(instrumentVisits).map(
-            ([visitName, visitPath]: [string, string]) => {
-              return (
-                <Button
-                  variant="default"
-                  rightIcon={<MdFileDownload />}
-                  cursor="pointer"
-                  onClick={() =>
-                    upstreamDataDownloadRequest(
-                      instrumentName,
-                      sessid,
-                      visitName,
-                      visitPath
-                    )
-                  }
-                >
-                  {visitName}
-                </Button>
-              )
-            }
-          )
-        ) : (
-          <>No related visits found</>
-        )}
-      </CardBody>
+        {/* Allow buttons to wrap horizontally*/}
+        <Box
+          flex="1"
+          display="flex"
+          flexDirection="row"
+          flexWrap="wrap"
+          alignItems="start"
+          justifyContent="start"
+          gap={4}
+        >
+          {!!Object.keys(instrumentVisits).length ? (
+            Object.entries(instrumentVisits).map(
+              ([visitName, visitPath]: [string, string]) => {
+                return (
+                  <Button
+                    variant="default"
+                    rightIcon={<MdFileDownload />}
+                    cursor="pointer"
+                    onClick={() =>
+                      upstreamDataDownloadRequest(
+                        instrumentName,
+                        sessid,
+                        visitName,
+                        visitPath
+                      )
+                    }
+                  >
+                    {visitName}
+                  </Button>
+                )
+              }
+            )
+          ) : (
+            <>No related visits found</>
+          )}
+        </Box>
+      </Box>
     </Card>
   )
 }
@@ -98,11 +124,26 @@ export const UpstreamVisitsCard = ({ sessid }: { sessid: number }) => {
   }
 
   return !!Object.keys(upstreamVisits).length && !!instrumentInfo ? (
-    <Card alignItems="left" cursor={'default'}>
-      <CardHeader fontWeight="bold" cursor="default">
-        Upstream Visit Data Download
-      </CardHeader>
-      <CardBody cursor="default">
+    <Card
+      w="100%"
+      p={4}
+      cursor="default"
+      _hover={{
+        cursor: 'default',
+        borderColor: 'murfey.400',
+      }}
+    >
+      <Box
+        flex="1"
+        display="flex"
+        flexDirection="column"
+        alignItems="start"
+        justifyContent="start"
+        gap={4}
+      >
+        <Heading fontSize="md" fontWeight="bold" lineHeight={1}>
+          Upstream Visit Data Download
+        </Heading>
         {/* Map each instrument to its own card */}
         {Object.entries(upstreamVisits).map(
           ([instrumentName, instrumentVisits]: [
@@ -119,7 +160,7 @@ export const UpstreamVisitsCard = ({ sessid }: { sessid: number }) => {
             )
           }
         )}
-      </CardBody>
+      </Box>
     </Card>
   ) : (
     <></>
