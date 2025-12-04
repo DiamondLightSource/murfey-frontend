@@ -1,16 +1,14 @@
-import { ViewIcon } from '@chakra-ui/icons'
 import { useDisclosure } from '@chakra-ui/react'
 import {
   Box,
   Button,
+  Divider,
   FormControl,
   FormLabel,
-  Flex,
   GridItem,
   Heading,
   HStack,
   IconButton,
-  Link,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -19,8 +17,6 @@ import {
   ModalBody,
   ModalCloseButton,
   Select,
-  Spacer,
-  Stack,
   Switch,
   VStack,
 } from '@chakra-ui/react'
@@ -42,12 +38,7 @@ import { checkMultigridControllerStatus } from 'loaders/sessionSetup'
 import React, { useEffect, useCallback } from 'react'
 import { FaCalendar } from 'react-icons/fa'
 import { MdFileUpload, MdOutlineGridOn, MdPause } from 'react-icons/md'
-import {
-  Link as LinkRouter,
-  useLoaderData,
-  useParams,
-  useNavigate,
-} from 'react-router-dom'
+import { useLoaderData, useParams, useNavigate } from 'react-router-dom'
 import { components } from 'schema/main'
 import { convertUKNaiveToUTC, convertUTCToUKNaive } from 'utils/generic'
 
@@ -109,7 +100,11 @@ export const Session = () => {
   })
   useEffect(() => {
     if (!rsyncerData) return
-    setRsyncers(rsyncerData)
+    // Sort RSyncers by destination folder before setting the state
+    const sortedRsyncers = rsyncerData.sort((a, b) =>
+      a.destination.localeCompare(b.destination)
+    )
+    setRsyncers(sortedRsyncers)
   }, [rsyncerData])
 
   // Set up a query to probe the instrument server connection status
@@ -335,6 +330,7 @@ export const Session = () => {
   if (isError) return <p>Error loading RSyncer data</p>
   return (
     <div className="rootContainer">
+      {/* Logic for pop-up components */}
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -446,144 +442,184 @@ export const Session = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Box w="100%" bg="murfey.50">
-        <Box w="100%" overflow="hidden">
-          <VStack className="homeRoot">
-            <VStack
-              bg="murfey.700"
-              justifyContent="start"
-              alignItems="start"
-              display="flex"
-              w="100%"
-              px="10vw"
-              py="1vh"
+      {/* Parent container for page contents */}
+      <Box
+        className="homeRoot"
+        overflow="auto"
+        display="flex"
+        flexDirection="column"
+        flex="1"
+        bg="murfey.50"
+      >
+        {/* Page title bar */}
+        <Box
+          bg="murfey.700"
+          w="100%"
+          px={{
+            base: 8,
+            md: 16,
+          }}
+          py={4}
+          display="flex"
+          flexDirection="column"
+          alignItems="start"
+          justifyContent="start"
+          gap={2}
+        >
+          <Heading color="murfey.50" fontSize="3xl" lineHeight={1}>
+            Session {sessid}: {session ? session.visit : null}
+            {/* Display visit end time if set for this session */}
+            {visitEndTime && (
+              <>
+                {' '}
+                [Transfer ends at{' '}
+                {visitEndTime.toLocaleString('en-GB', {
+                  weekday: 'short',
+                  year: 'numeric',
+                  month: 'short',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: false,
+                  timeZoneName: 'short',
+                })}
+                ]
+              </>
+            )}
+          </Heading>
+          <Box
+            display="flex"
+            flexDirection="row"
+            flexWrap="wrap"
+            alignItems="start"
+            justifyContent="start"
+            gap={2}
+          >
+            <Button variant="onBlue" onClick={() => onOpen()}>
+              Visit Complete
+            </Button>
+            <IconButton
+              aria-label="Pause all transfers"
+              as={MdPause}
+              variant="onBlue"
+              isDisabled={rsyncersPaused}
+              onClick={() => pauseAll()}
+            />
+            <Button
+              variant="onBlue"
+              onClick={() => {
+                navigate(`session_parameters`)
+              }}
             >
-              <Heading size="xl" color="murfey.50">
-                Session {sessid}: {session ? session.visit : null}
-                {/* Display visit end time if set for this session */}
-                {visitEndTime && (
-                  <>
-                    {' '}
-                    [Transfer ends at{' '}
-                    {visitEndTime.toLocaleString('en-GB', {
-                      weekday: 'short',
-                      year: 'numeric',
-                      month: 'short',
-                      day: '2-digit',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      hour12: false,
-                      timeZoneName: 'short',
-                    })}
-                    ]
-                  </>
-                )}
-              </Heading>
-              <HStack>
-                <HStack>
-                  <HStack>
-                    <Button variant="onBlue" onClick={() => onOpen()}>
-                      Visit Complete
-                    </Button>
-                    <IconButton
-                      aria-label="Pause all transfers"
-                      as={MdPause}
-                      variant="onBlue"
-                      isDisabled={rsyncersPaused}
-                      onClick={() => pauseAll()}
-                    />
-                    <Link
-                      w={{ base: '100%', md: '19.6%' }}
-                      _hover={{ textDecor: 'none' }}
-                      as={LinkRouter}
-                      to={`session_parameters`}
-                    >
-                      <Button variant="onBlue">Processing Parameters</Button>
-                    </Link>
-                  </HStack>
-                  {!sessionActive ? (
-                    <Button variant="onBlue" onClick={() => onOpenReconnect()}>
-                      Reconnect
-                    </Button>
-                  ) : (
-                    <></>
-                  )}
-                </HStack>
-                <HStack>
-                  <IconButton
-                    aria-label="calendar-to-change-end-time"
-                    variant="onBlue"
-                    onClick={() => onOpenCalendar()}
-                  >
-                    <FaCalendar />
-                  </IconButton>
-                </HStack>
-                <Spacer />
-                <ViewIcon color="white" />
-                <Switch colorScheme="murfey" id="monitor" />
-                {/* <Button aria-label="Subscribe to notifications" rightIcon={<MdEmail/>} variant='onBlue'>
-                            Subscribe
-                        </Button> */}
-              </HStack>
-            </VStack>
-          </VStack>
+              Processing Parameters
+            </Button>
+            {!sessionActive ? (
+              <Button variant="onBlue" onClick={() => onOpenReconnect()}>
+                Reconnect
+              </Button>
+            ) : (
+              <></>
+            )}
+            <IconButton
+              aria-label="calendar-to-change-end-time"
+              icon={<FaCalendar />}
+              variant="onBlue"
+              onClick={() => onOpenCalendar()}
+            />
+            {/* <Spacer /> */}
+            {/* <ViewIcon color="white" /> */}
+            {/* <Switch colorScheme="murfey" id="monitor" /> */}
+            {/* <Button aria-label="Subscribe to notifications" rightIcon={<MdEmail/>} variant='onBlue'>
+              Subscribe
+            </Button> */}
+          </Box>
         </Box>
-        <Box mt="1em" w="95%" justifyContent={'center'} alignItems={'center'}>
-          <Flex align="stretch">
-            <Stack w="100%" spacing={5} py="0.8em" px="1em">
-              {rsyncers && rsyncers.length > 0 ? (
-                rsyncers.map(
-                  (r): React.ReactElement => (
-                    <RsyncCard
-                      key={`${r.session_id}-${r.source}`} // Used by 'map' for ID-ing elements
-                      rsyncer={r}
-                    />
-                  )
+        {/* Page contents */}
+        <Box
+          p={4}
+          display="flex"
+          flexDirection="row"
+          flex="1"
+          gap={8}
+          overflow="auto"
+        >
+          {/* Left column displaying RSyncers for this session */}
+          <Box
+            minW="400px"
+            pl={{
+              base: 4,
+              md: 12,
+            }}
+            display="flex"
+            flexDirection="column"
+            alignItems="start"
+            justifyContent="start"
+            gap={4}
+            flex="1"
+            overflow="auto"
+          >
+            <Heading
+              textAlign="left"
+              w="100%"
+              fontSize="2xl"
+              mt={8}
+              lineHeight={1}
+            >
+              Transfer Status
+            </Heading>
+            <Divider borderColor="murfey.300" />
+            {rsyncers && rsyncers.length > 0 ? (
+              rsyncers.map(
+                (r): React.ReactElement => (
+                  <RsyncCard
+                    key={`${r.session_id}-${r.source}`} // Used by 'map' for ID-ing elements
+                    rsyncer={r}
+                  />
                 )
-              ) : (
-                <GridItem colSpan={5}>
-                  <Heading textAlign="center" py={4} variant="notFound">
-                    No RSyncers Found
-                  </Heading>
-                </GridItem>
-              )}
-            </Stack>
-            <Spacer />
-            <Stack spacing={5} py="0.8em" px="1em">
-              <Link
-                w={{ base: '100%', md: '19.6%' }}
-                key="data_collections"
-                _hover={{ textDecor: 'none' }}
-                as={LinkRouter}
-                to={`../sessions/${sessid}/data_collection_groups`}
-              >
-                <Button
-                  variant="default"
-                  rightIcon={<MdOutlineGridOn />}
-                  padding="20px"
-                >
-                  Data Collections
-                </Button>
-              </Link>
-              <Link
-                w={{ base: '100%', md: '19.6%' }}
-                key="gain_ref"
-                _hover={{ textDecor: 'none' }}
-                as={LinkRouter}
-                to={`../sessions/${sessid}/gain_ref_transfer?sessid=${sessid}`}
-              >
-                <Button
-                  variant="default"
-                  rightIcon={<MdFileUpload />}
-                  padding="20px"
-                >
-                  Transfer Gain Reference
-                </Button>
-              </Link>
-              <InstrumentCard />
-              <UpstreamVisitsCard sessid={parseInt(sessid ?? '0')} />
-            </Stack>
-          </Flex>
+              )
+            ) : (
+              <Heading w="100%" py={4} variant="notFound">
+                No RSyncers Found
+              </Heading>
+            )}
+          </Box>
+          {/* Right column showing instrument card and other buttons */}
+          <Box
+            minW="300px"
+            maxW="600px"
+            display="flex"
+            flexDirection="column"
+            alignItems="start"
+            justifyContent="start"
+            gap={4}
+            flex="1"
+            overflow="auto"
+          >
+            <InstrumentCard />
+            <Button
+              key="data_collections"
+              variant="default"
+              rightIcon={<MdOutlineGridOn />}
+              onClick={() => {
+                navigate(`../sessions/${sessid}/data_collection_groups`)
+              }}
+            >
+              Data Collections
+            </Button>
+            <Button
+              key="gain_ref"
+              variant="default"
+              rightIcon={<MdFileUpload />}
+              onClick={() => {
+                navigate(
+                  `../sessions/${sessid}/gain_ref_transfer?sessid=${sessid}`
+                )
+              }}
+            >
+              Transfer Gain Reference
+            </Button>
+            <UpstreamVisitsCard sessid={parseInt(sessid ?? '0')} />
+          </Box>
         </Box>
       </Box>
     </div>
