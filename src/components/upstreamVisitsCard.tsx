@@ -16,6 +16,21 @@ const InstrumentUpstreamVisitsCard = ({
   displayName: string
   instrumentVisits: Record<string, string>
 }) => {
+  // Sort visits in ascending order
+  const sortedVisits = Object.fromEntries(
+    Object.entries(instrumentVisits).sort(([keyA], [keyB]) => {
+      const [stringA, numberA] = keyA.split('-')
+      const [stringB, numberB] = keyB.split('-')
+
+      // Sort by visit name
+      const stringComparison = stringA.localeCompare(stringB)
+      if (stringComparison !== 0) return stringComparison
+
+      // Sort by visit number
+      return parseInt(numberA) - parseInt(numberB)
+    })
+  )
+
   return (
     // Display upstream visits for a single instrument
     // Parameters to take: instrument name and upstream visits dict
@@ -50,8 +65,8 @@ const InstrumentUpstreamVisitsCard = ({
           justifyContent="start"
           gap={4}
         >
-          {!!Object.keys(instrumentVisits).length ? (
-            Object.entries(instrumentVisits).map(
+          {!!Object.keys(sortedVisits).length ? (
+            Object.entries(sortedVisits).map(
               ([visitName, visitPath]: [string, string]) => {
                 return (
                   <Button
