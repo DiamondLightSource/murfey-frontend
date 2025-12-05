@@ -92,15 +92,22 @@ export const Home = () => {
         {/* Sessions page contents */}
         <Box
           p={4}
+          flex="1"
           display="flex"
           flexDirection="row"
-          flex="1"
-          gap={8}
+          alignItems="start"
+          justifyContent="space-evenly"
+          gap={{
+            base: 8,
+            md: 32,
+          }}
           overflow="auto"
         >
           {/* Left column showing known Murfey sessions */}
           <Box
-            minW="300px"
+            minW="400px"
+            maxW="600px"
+            flex="1"
             pl={{
               base: 12,
               md: 20,
@@ -110,7 +117,6 @@ export const Home = () => {
             alignItems="start"
             justifyContent="start"
             gap={4}
-            flex="1"
             overflow="auto"
           >
             <Heading

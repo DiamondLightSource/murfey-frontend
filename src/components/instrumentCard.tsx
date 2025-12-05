@@ -26,7 +26,6 @@ export const InstrumentCard = () => {
     <Card
       key="mag_table"
       w="100%"
-      p={4}
       cursor="default"
       _hover={{
         cursor: 'default',
@@ -37,6 +36,7 @@ export const InstrumentCard = () => {
       // }}
     >
       <Box
+        p={4}
         flex="1"
         display="flex"
         flexDirection="column"

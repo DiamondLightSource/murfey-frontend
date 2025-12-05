@@ -537,25 +537,31 @@ export const Session = () => {
         {/* Page contents */}
         <Box
           p={4}
+          flex="1"
           display="flex"
           flexDirection="row"
-          flex="1"
-          gap={8}
+          alignItems="start"
+          justifyContent="space-evenly"
+          gap={{
+            base: 8,
+            md: 32,
+          }}
           overflow="auto"
         >
           {/* Left column displaying RSyncers for this session */}
           <Box
             minW="400px"
+            maxW="600px"
+            flex="1"
             pl={{
-              base: 4,
-              md: 12,
+              base: 12,
+              md: 20,
             }}
             display="flex"
             flexDirection="column"
             alignItems="start"
             justifyContent="start"
             gap={4}
-            flex="1"
             overflow="auto"
           >
             <Heading
@@ -587,12 +593,12 @@ export const Session = () => {
           <Box
             minW="300px"
             maxW="600px"
+            flex="1"
             display="flex"
             flexDirection="column"
             alignItems="start"
             justifyContent="start"
             gap={4}
-            flex="1"
             overflow="auto"
           >
             <InstrumentCard />
