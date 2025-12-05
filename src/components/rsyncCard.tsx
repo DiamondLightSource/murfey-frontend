@@ -280,7 +280,7 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
           >
             Source
           </Heading>
-          <Text fontSize="sm" lineHeight={1}>
+          <Text fontSize="sm" lineHeight={1} overflowWrap="anywhere">
             {rsyncer.source}
           </Text>
           <Divider borderColor="murfey.300" />
@@ -293,7 +293,7 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
           >
             Destination
           </Heading>
-          <Text fontSize="sm" lineHeight={1}>
+          <Text fontSize="sm" lineHeight={1} overflowWrap="anywhere">
             {rsyncer.destination ?? ''}
           </Text>
           <Divider borderColor="murfey.300" />
