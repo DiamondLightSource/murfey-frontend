@@ -3,12 +3,9 @@ import {
   Box,
   Button,
   Card,
-  CardBody,
-  CardHeader,
   Checkbox,
-  Flex,
+  Divider,
   Heading,
-  HStack,
   IconButton,
   Input,
   Menu,
@@ -23,11 +20,6 @@ import {
   ModalBody,
   ModalCloseButton,
   Spinner,
-  Stack,
-  StackDivider,
-  Stat,
-  StatLabel,
-  StatNumber,
   Text,
 } from '@chakra-ui/react'
 import { useDisclosure } from '@chakra-ui/react'
@@ -95,7 +87,12 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
       width="100%"
       bg={rsyncer.alive ? 'murfey.400' : '#DF928E'}
       borderColor="murfey.300"
+      _hover={{
+        borderColor: 'murfey.500',
+      }}
+      p={4}
     >
+      {/* Pop-up components */}
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -147,29 +144,66 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <CardHeader>
-        <Flex>
-          {' '}
-          <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
-            {' '}
-            <HStack spacing="3em">
-              <Text>RSync Instance</Text>
-              {rsyncer.transferring && <Spinner color="murfey.700" />}
-              <Badge
-                colorScheme={
-                  rsyncer.tag === 'fractions'
-                    ? 'green'
-                    : rsyncer.tag === 'metadata'
-                      ? 'purple'
-                      : rsyncer.tag === 'atlas'
-                        ? 'yellow'
-                        : 'red'
-                }
-              >
-                {rsyncer.tag}
-              </Badge>
-            </HStack>
-          </Flex>
+      {/* Box containing card contents */}
+      <Box
+        flex="1"
+        display="flex"
+        flexDirection="column"
+        alignItems="start"
+        justifyContent="start"
+        gap={4}
+      >
+        {/* Title bar of RSync card */}
+        <Box
+          w="100%"
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="space-between"
+          gap={4}
+        >
+          <Box
+            display="flex"
+            flexDirection="row"
+            alignItems="center"
+            justifyContent="start"
+            gap={4}
+          >
+            <Heading fontSize="md" fontWeight="bold" lineHeight={1} mt={0.5}>
+              RSync Instance
+            </Heading>
+            <Badge
+              p={1}
+              lineHeight={1}
+              mt={0.5}
+              colorScheme={
+                rsyncer.tag === 'fractions'
+                  ? 'green'
+                  : rsyncer.tag === 'metadata'
+                    ? 'purple'
+                    : rsyncer.tag === 'atlas'
+                      ? 'yellow'
+                      : 'red'
+              }
+            >
+              {rsyncer.tag}
+            </Badge>
+            <Box
+              mx={1}
+              boxSize={8}
+              aspectRatio={1}
+              position="relative"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
+              {rsyncer.transferring && rsyncer.alive ? (
+                <Spinner boxSize="inherit" color="murfey.700" />
+              ) : (
+                <></>
+              )}
+            </Box>
+          </Box>
           <Menu>
             <MenuButton
               as={IconButton}
@@ -227,45 +261,69 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
               )}
             </MenuList>
           </Menu>
-        </Flex>
-      </CardHeader>
-      <CardBody>
-        <Stack divider={<StackDivider />} spacing="4">
-          <Box>
-            <Heading size="xs" textTransform="uppercase">
-              Source
-            </Heading>
-            <Text pt="2" fontSize="sm">
-              {rsyncer.source}
+        </Box>
+        {/* Contents of RSync card */}
+        <Box
+          flex="1"
+          display="flex"
+          flexDirection="column"
+          alignItems="start"
+          justifyContent="start"
+          gap={2}
+        >
+          {/* Source */}
+          <Heading
+            pt={2}
+            fontSize="sm"
+            textTransform="uppercase"
+            lineHeight={1}
+          >
+            Source
+          </Heading>
+          <Text fontSize="sm" lineHeight={1} overflowWrap="anywhere">
+            {rsyncer.source}
+          </Text>
+          <Divider borderColor="murfey.300" />
+          {/* Destination */}
+          <Heading
+            pt={2}
+            fontSize="sm"
+            textTransform="uppercase"
+            lineHeight={1}
+          >
+            Destination
+          </Heading>
+          <Text fontSize="sm" lineHeight={1} overflowWrap="anywhere">
+            {rsyncer.destination ?? ''}
+          </Text>
+          <Divider borderColor="murfey.300" />
+          {/* Transfer progress */}
+          <Heading
+            pt={2}
+            fontSize="sm"
+            textTransform="uppercase"
+            lineHeight={1}
+          >
+            Transfer progress
+          </Heading>
+          <Text fontSize="xl" fontWeight="bold" lineHeight={1}>
+            {rsyncer.num_files_transferred} transferred
+          </Text>
+          <Text fontSize="xl" fontWeight="bold" lineHeight={1}>
+            {rsyncer.num_files_in_queue} queued
+          </Text>
+          <Text fontSize="xl" fontWeight="bold" lineHeight={1}>
+            {rsyncer.num_files_skipped} skipped
+          </Text>
+          {rsyncer.analyser_alive ? (
+            <Text fontSize="xl" fontWeight="bold" lineHeight={1}>
+              {rsyncer.num_files_to_analyse} to analyse
             </Text>
-          </Box>
-          <Box>
-            <Heading size="xs" textTransform="uppercase">
-              Destination
-            </Heading>
-            <Text pt="2" fontSize="sm">
-              {rsyncer.destination ?? ''}
-            </Text>
-          </Box>
-          <Box>
-            <Stat>
-              <StatLabel>Transfer progress</StatLabel>
-              <StatNumber>
-                {rsyncer.num_files_transferred} transferred
-              </StatNumber>
-              <StatNumber>{rsyncer.num_files_in_queue} queued</StatNumber>
-              <StatNumber>{rsyncer.num_files_skipped} skipped</StatNumber>
-              {rsyncer.analyser_alive ? (
-                <StatNumber>
-                  {rsyncer.num_files_to_analyse} to analyse
-                </StatNumber>
-              ) : (
-                <></>
-              )}
-            </Stat>
-          </Box>
-        </Stack>
-      </CardBody>
+          ) : (
+            <></>
+          )}
+        </Box>
+      </Box>
     </Card>
   )
 }
