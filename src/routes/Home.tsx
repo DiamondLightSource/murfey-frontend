@@ -1,17 +1,10 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Heading,
-  HStack,
-  Link,
-  VStack,
-} from '@chakra-ui/react'
+import { Box, Button, Divider, Heading } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
 import { InstrumentCard } from 'components/instrumentCard'
 import { SessionRow } from 'components/sessionRow'
 import { getAllSessionsData } from 'loaders/sessionClients'
-import { Link as LinkRouter, useLoaderData } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { useNavigate, useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
 
 type Session = components['schemas']['Session']
@@ -29,72 +22,127 @@ export const Home = () => {
     staleTime: 0, // Always refetch on mount unless preloaded
   })
 
-  if (isLoading) return <p>Loading sessions...</p>
-  if (isError || !data) return <p>Failed to load sessions.</p>
+  const navigate = useNavigate()
 
+  // Load sessions for current instrument and sort them by session ID
   const sessions = data as {
     current: Session[]
   } | null
+  const [sortedSessions, setSortedSessions] = React.useState<Session[] | null>(
+    null
+  )
+  useEffect(() => {
+    // Skip if sessions is still null
+    if (!sessions) return
+    // Sort by session ID in descending order
+    setSortedSessions([...sessions.current].sort((a, b) => b.id - a.id))
+  }, [sessions])
+
+  if (isLoading) return <p>Loading sessions...</p>
+  if (isError || !data) return <p>Failed to load sessions.</p>
 
   return (
     <div className="rootContainer">
       <title>Murfey</title>
-      <Box w="100%" bg="murfey.50">
-        <Box w="100%" overflow="hidden">
-          <VStack className="homeRoot">
-            <VStack
-              bg="murfey.700"
-              justifyContent="start"
-              alignItems="start"
-              display="flex"
+      {/* Parent container for page contents */}
+      <Box
+        className="homeRoot"
+        overflow="auto"
+        display="flex"
+        flexDirection="column"
+        flex="1"
+      >
+        {/* Sessions title bar */}
+        <Box
+          bg="murfey.700"
+          w="100%"
+          px={{
+            base: 8,
+            md: 16,
+          }}
+          py={4}
+          display="flex"
+          flexDirection="column"
+          alignItems="start"
+          justifyContent="start"
+          gap={2}
+        >
+          <Heading color="murfey.50" fontSize="3xl" lineHeight={1}>
+            Murfey Sessions
+          </Heading>
+          <Heading
+            color="murfey.50"
+            fontSize="md"
+            fontWeight="200"
+            lineHeight={1}
+          >
+            Microscope Data Transfer Control System
+          </Heading>
+          <Button
+            variant="onBlue"
+            maxW="200px"
+            textAlign="center"
+            onClick={() => {
+              navigate(`../instruments/${instrumentName}/new_session`)
+            }}
+          >
+            New Session
+          </Button>
+        </Box>
+        {/* Sessions page contents */}
+        <Box
+          p={4}
+          display="flex"
+          flexDirection="row"
+          flex="1"
+          gap={8}
+          overflow="auto"
+        >
+          {/* Left column showing known Murfey sessions */}
+          <Box
+            minW="300px"
+            pl={{
+              base: 12,
+              md: 20,
+            }}
+            display="flex"
+            flexDirection="column"
+            alignItems="start"
+            justifyContent="start"
+            gap={4}
+            flex="1"
+            overflow="auto"
+          >
+            <Heading
+              textAlign="left"
               w="100%"
-              px="10vw"
-              py="1vh"
+              fontSize="2xl"
+              mt={12}
+              lineHeight={1}
             >
-              <Heading size="xl" color="murfey.50">
-                Murfey Sessions
+              Existing Sessions
+            </Heading>
+            <Divider borderColor="murfey.300" />
+            {/* Display sessions in descending order of session ID */}
+            {sortedSessions && sortedSessions.length > 0 ? (
+              sortedSessions.map((current) => {
+                return (
+                  <SessionRow
+                    session={current}
+                    instrumentName={instrumentName}
+                  />
+                )
+              })
+            ) : (
+              <Heading w="100%" py={4} variant="notFound">
+                No sessions found
               </Heading>
-              <Heading pt="2vh" color="murfey.50" fontWeight="200" size="md">
-                Microscope Data Transfer Control System
-              </Heading>
-              <Link
-                w={{ base: '100%', md: '19.6%' }}
-                _hover={{ textDecor: 'none' }}
-                as={LinkRouter}
-                to={`../instruments/${instrumentName}/new_session`}
-              >
-                <Button variant="onBlue">New session</Button>
-              </Link>
-            </VStack>
-
-            <HStack w="100%" display="flex" px="10vw">
-              <VStack mt="0 !important" w="100%" px="10vw" display="flex">
-                <Heading textAlign="left" w="100%" size="lg">
-                  {'Existing Sessions'}
-                </Heading>
-                <Divider borderColor="murfey.300" />
-                {sessions && sessions.current.length > 0 ? (
-                  sessions.current.map((current) => {
-                    return (
-                      <VStack w="100%" spacing={5}>
-                        <SessionRow
-                          session={current}
-                          instrumentName={instrumentName}
-                        />
-                      </VStack>
-                    )
-                  })
-                ) : (
-                  <VStack w="100%">
-                    <Heading w="100%" py={4} variant="notFound">
-                      No sessions found
-                    </Heading>
-                  </VStack>
-                )}
-              </VStack>
-              <InstrumentCard />
-            </HStack>
-          </VStack>
+            )}
+          </Box>
+          {/* Right column showing instrument card */}
+          <Box minW="300px" maxW="600px" flex="1" overflow="auto">
+            <InstrumentCard />
+          </Box>
         </Box>
       </Box>
     </div>

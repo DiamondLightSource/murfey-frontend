@@ -1,7 +1,7 @@
-import { Card, CardBody, CardHeader, Image, Link, Text } from '@chakra-ui/react'
+import { Card, CardBody, Image, Text } from '@chakra-ui/react'
 import { getInstrumentName } from 'loaders/general'
 import React, { useEffect } from 'react'
-import { Link as LinkRouter } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const getUrl = (endpoint: string) => {
   return (
@@ -10,8 +10,10 @@ const getUrl = (endpoint: string) => {
   )
 }
 
-const InstrumentCard = () => {
+export const InstrumentCard = () => {
   const [instrumentName, setInstrumentName] = React.useState('')
+
+  const navigate = useNavigate()
 
   const resolveName = async () => {
     const name: string = await getInstrumentName()
@@ -22,26 +24,34 @@ const InstrumentCard = () => {
   }, [])
 
   return (
-    <Link
+    <Card
       key="ag_table"
-      _hover={{ textDecor: 'none' }}
-      as={LinkRouter}
-      to={`../mag_table`}
+      align="center"
+      cursor="pointer"
+      onClick={() => {
+        navigate(`../mag_table`)
+      }}
     >
-      <Card align="center">
-        <CardHeader>
-          <Image
-            src={getUrl(
-              `display/instruments/${sessionStorage.getItem('instrumentName')}/image/`
-            )}
-          />
-        </CardHeader>
-        <CardBody>
-          <Text>{instrumentName}</Text>
-        </CardBody>
-      </Card>
-    </Link>
+      <CardBody
+        h="100%"
+        p={4}
+        display="flex"
+        flexDirection="column"
+        justifyContent="space-between"
+        gap={4}
+      >
+        <Image
+          src={getUrl(
+            `display/instruments/${sessionStorage.getItem('instrumentName')}/image/`
+          )}
+          objectFit="contain"
+          w="100%"
+          h="100%"
+        />
+        <Text mt="auto" align="center">
+          {instrumentName}
+        </Text>
+      </CardBody>
+    </Card>
   )
 }
-
-export { InstrumentCard }
