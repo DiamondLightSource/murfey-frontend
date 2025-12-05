@@ -554,8 +554,8 @@ export const Session = () => {
             maxW="600px"
             flex="1"
             pl={{
-              base: 12,
-              md: 20,
+              base: 8,
+              md: 16,
             }}
             display="flex"
             flexDirection="column"

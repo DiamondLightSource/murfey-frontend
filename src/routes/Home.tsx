@@ -105,12 +105,12 @@ export const Home = () => {
         >
           {/* Left column showing known Murfey sessions */}
           <Box
-            minW="400px"
+            minW="300px"
             maxW="600px"
             flex="1"
             pl={{
-              base: 12,
-              md: 20,
+              base: 8,
+              md: 16,
             }}
             display="flex"
             flexDirection="column"
@@ -123,7 +123,7 @@ export const Home = () => {
               textAlign="left"
               w="100%"
               fontSize="2xl"
-              mt={12}
+              mt={8}
               lineHeight={1}
             >
               Existing Sessions
