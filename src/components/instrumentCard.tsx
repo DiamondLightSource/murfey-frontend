@@ -1,7 +1,6 @@
-import { Card, CardBody, Image, Text } from '@chakra-ui/react'
+import { Box, Card, Image, Text } from '@chakra-ui/react'
 import { getInstrumentName } from 'loaders/general'
 import React, { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 const getUrl = (endpoint: string) => {
   return (
@@ -13,7 +12,7 @@ const getUrl = (endpoint: string) => {
 export const InstrumentCard = () => {
   const [instrumentName, setInstrumentName] = React.useState('')
 
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
 
   const resolveName = async () => {
     const name: string = await getInstrumentName()
@@ -25,18 +24,23 @@ export const InstrumentCard = () => {
 
   return (
     <Card
-      key="ag_table"
-      align="center"
-      cursor="pointer"
-      onClick={() => {
-        navigate(`../mag_table`)
+      key="mag_table"
+      w="100%"
+      cursor="default"
+      _hover={{
+        cursor: 'default',
+        borderColor: 'murfey.400',
       }}
+      // onClick={() => {
+      //   navigate(`../mag_table`)
+      // }}
     >
-      <CardBody
-        h="100%"
+      <Box
         p={4}
+        flex="1"
         display="flex"
         flexDirection="column"
+        alignItems="center"
         justifyContent="space-between"
         gap={4}
       >
@@ -51,7 +55,7 @@ export const InstrumentCard = () => {
         <Text mt="auto" align="center">
           {instrumentName}
         </Text>
-      </CardBody>
+      </Box>
     </Card>
   )
 }
