@@ -98,187 +98,179 @@ export const SessionRow = ({
 
   return (
     <>
-      {session ? (
-        <Box
-          display="flex"
-          flexDirection="row"
-          alignItems="center"
-          justifyContent="start"
-          gap={2}
-        >
-          {/* Pop-ups when clicking on component buttons */}
-          <Modal isOpen={isOpenDelete} onClose={onCloseDelete}>
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>
-                Confirm removing session {session.name} from list
-              </ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-                Are you sure you want to continue? This action is not reversible
-              </ModalBody>
-              <ModalFooter>
-                <Button variant="ghost" mr={3} onClick={onCloseDelete}>
-                  Close
-                </Button>
-                <Button
-                  variant="default"
-                  onClick={() => {
-                    deleteSessionData(session.id).then(() => {
-                      // Refetch session information for this instrument
-                      queryClient.refetchQueries({
-                        queryKey: ['homepageSessions', instrumentName],
-                      })
+      <Box
+        display="flex"
+        flexDirection="row"
+        alignItems="center"
+        justifyContent="start"
+        gap={2}
+      >
+        {/* Pop-ups when clicking on component buttons */}
+        <Modal isOpen={isOpenDelete} onClose={onCloseDelete}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>
+              Confirm removing session {session.name} from list
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              Are you sure you want to continue? This action is not reversible
+            </ModalBody>
+            <ModalFooter>
+              <Button variant="ghost" mr={3} onClick={onCloseDelete}>
+                Close
+              </Button>
+              <Button
+                variant="default"
+                onClick={() => {
+                  deleteSessionData(session.id).then(() => {
+                    // Refetch session information for this instrument
+                    queryClient.refetchQueries({
+                      queryKey: ['homepageSessions', instrumentName],
                     })
-                    onCloseDelete()
-                  }}
-                >
-                  Confirm
-                </Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
-          <Modal isOpen={isOpenCleanup} onClose={onCloseCleanup}>
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>
-                Confirm removing files for session {session.name}
-              </ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-                Are you sure you want to continue? This action is not reversible
-              </ModalBody>
-              <ModalFooter>
-                <Button variant="ghost" mr={3} onClick={onCloseCleanup}>
-                  Close
-                </Button>
-                <Button
-                  variant="default"
-                  onClick={() => {
-                    cleanupSession(session.id).then(() => {
-                      queryClient.refetchQueries({
-                        queryKey: ['homepageSessions', instrumentName],
-                      })
+                  })
+                  onCloseDelete()
+                }}
+              >
+                Confirm
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+        <Modal isOpen={isOpenCleanup} onClose={onCloseCleanup}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>
+              Confirm removing files for session {session.name}
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              Are you sure you want to continue? This action is not reversible
+            </ModalBody>
+            <ModalFooter>
+              <Button variant="ghost" mr={3} onClick={onCloseCleanup}>
+                Close
+              </Button>
+              <Button
+                variant="default"
+                onClick={() => {
+                  cleanupSession(session.id).then(() => {
+                    queryClient.refetchQueries({
+                      queryKey: ['homepageSessions', instrumentName],
                     })
-                    onCloseCleanup()
-                  }}
-                >
-                  Confirm
-                </Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
-          {/* Session card and buttons */}
-          <Tooltip label={session.name}>
-            {/* Card containing visit name, session ID, and sync status */}
-            <Card
-              key={session.id}
-              _hover={{
-                borderColor: 'murfey.500',
-              }}
-              cursor="pointer"
-              bg={'murfey.400'}
-              p={2}
-              border="1px solid grey"
-              borderRadius={5}
-              onClick={() => {
-                navigate(`../sessions/${session.id ?? 0}`)
-              }}
+                  })
+                  onCloseCleanup()
+                }}
+              >
+                Confirm
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+        {/* Session card and buttons */}
+        <Tooltip label={session.name}>
+          {/* Card containing visit name, session ID, and sync status */}
+          <Card
+            key={session.id}
+            _hover={{
+              borderColor: 'murfey.500',
+            }}
+            cursor="pointer"
+            bg={'murfey.400'}
+            p={2}
+            border="1px solid grey"
+            borderRadius={5}
+            onClick={() => {
+              navigate(`../sessions/${session.id ?? 0}`)
+            }}
+          >
+            <Box
+              display="flex"
+              flexDirection="row"
+              alignItems="center"
+              justifyContent="center"
+              gap={2}
             >
+              {/* Visit name and ID */}
+              <Text mt={0.5} fontSize="sm" lineHeight={1}>
+                {session.name}: {session.id}
+              </Text>
+              {/* Sync status */}
               <Box
+                position="relative"
+                boxSize={6}
+                aspectRatio={1}
                 display="flex"
-                flexDirection="row"
                 alignItems="center"
                 justifyContent="center"
-                gap={2}
               >
-                {/* Visit name and ID */}
-                <Text mt={0.5} fontSize="sm" lineHeight={1}>
-                  {session.name}: {session.id}
-                </Text>
-                {/* Sync status */}
-                <Box
-                  position="relative"
-                  boxSize={6}
-                  aspectRatio={1}
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                  {sessionActive ? (
-                    // Show a pulsing spinning sync icon when running
-                    <Icon
-                      as={MdSync}
-                      boxSize="inherit"
-                      color="black"
-                      position="absolute"
-                      top="50%"
-                      left="50%"
-                      transform="translate(-50%, -50%)"
-                      sx={{
-                        animation: `spin 2s linear infinite, glow-${session.id} 2s ease-in-out infinite`,
-                        filter: `drop-shadow(0 0 0px ${sessionFinalising ? 'red' : 'green'})`,
-                        '@keyframes spin': {
-                          from: {
-                            transform: 'translate(-50%, -50%) rotate(360deg)',
-                          },
-                          to: {
-                            transform: 'translate(-50%, -50%) rotate(0deg)',
-                          },
+                {sessionActive ? (
+                  // Show a pulsing spinning sync icon when running
+                  <Icon
+                    as={MdSync}
+                    boxSize="inherit"
+                    color="black"
+                    position="absolute"
+                    top="50%"
+                    left="50%"
+                    transform="translate(-50%, -50%)"
+                    sx={{
+                      animation: `spin 2s linear infinite, glow-${session.id} 2s ease-in-out infinite`,
+                      filter: `drop-shadow(0 0 0px ${sessionFinalising ? 'red' : 'green'})`,
+                      '@keyframes spin': {
+                        from: {
+                          transform: 'translate(-50%, -50%) rotate(360deg)',
                         },
-                        [`@keyframes glow-${session.id}`]: {
-                          '0%': {
-                            filter: `drop-shadow(0 0 2px ${sessionFinalising ? 'red' : 'green'})`,
-                          },
-                          '50%': {
-                            filter: `drop-shadow(0 0 0px ${sessionFinalising ? 'red' : 'green'})`,
-                          },
-                          '100%': {
-                            filter: `drop-shadow(0 0 2px ${sessionFinalising ? 'red' : 'green'})`,
-                          },
+                        to: {
+                          transform: 'translate(-50%, -50%) rotate(0deg)',
                         },
-                      }}
-                    />
-                  ) : (
-                    // Show a sync error icon when disconnected
-                    <Icon
-                      as={MdSyncProblem}
-                      boxSize="inherit"
-                      color="black"
-                      position="absolute"
-                      top="50%"
-                      left="50%"
-                      transform="translate(-50%, -50%)"
-                    />
-                  )}
-                </Box>
+                      },
+                      [`@keyframes glow-${session.id}`]: {
+                        '0%': {
+                          filter: `drop-shadow(0 0 2px ${sessionFinalising ? 'red' : 'green'})`,
+                        },
+                        '50%': {
+                          filter: `drop-shadow(0 0 0px ${sessionFinalising ? 'red' : 'green'})`,
+                        },
+                        '100%': {
+                          filter: `drop-shadow(0 0 2px ${sessionFinalising ? 'red' : 'green'})`,
+                        },
+                      },
+                    }}
+                  />
+                ) : (
+                  // Show a sync error icon when disconnected
+                  <Icon
+                    as={MdSyncProblem}
+                    boxSize="inherit"
+                    color="black"
+                    position="absolute"
+                    top="50%"
+                    left="50%"
+                    transform="translate(-50%, -50%)"
+                  />
+                )}
               </Box>
-            </Card>
-          </Tooltip>
-          <Tooltip label="Remove from list">
-            <IconButton
-              aria-label="Delete session"
-              icon={<MdDelete />}
-              onClick={onOpenDelete}
-              isDisabled={sessionActive || sessionFinalising}
-            />
-          </Tooltip>
-          <Tooltip label="Clean up visit files">
-            <IconButton
-              aria-label="Clean up session"
-              icon={<GiMagicBroom />}
-              onClick={onOpenCleanup}
-              isDisabled={!sessionActive || sessionFinalising}
-            />
-          </Tooltip>
-        </Box>
-      ) : (
-        <Box>
-          <Heading textAlign="center" py={4} variant="notFound">
-            None Found
-          </Heading>
-        </Box>
-      )}
+            </Box>
+          </Card>
+        </Tooltip>
+        <Tooltip label="Remove from list">
+          <IconButton
+            aria-label="Delete session"
+            icon={<MdDelete />}
+            onClick={onOpenDelete}
+            isDisabled={sessionActive || sessionFinalising}
+          />
+        </Tooltip>
+        <Tooltip label="Clean up visit files">
+          <IconButton
+            aria-label="Clean up session"
+            icon={<GiMagicBroom />}
+            onClick={onOpenCleanup}
+            isDisabled={!sessionActive || sessionFinalising}
+          />
+        </Tooltip>
+      </Box>
     </>
   )
 }
