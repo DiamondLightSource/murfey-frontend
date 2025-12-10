@@ -43,33 +43,37 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
     .slice(0, -2)
     .join('/')
   const destinationName = rsyncer.destination.split('/')[-1]
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const {
+    isOpen: isOpenRsyncerAction,
+    onOpen: onOpenRsyncerAction,
+    onClose: onCloseRsyncerAction,
+  } = useDisclosure()
   const {
     isOpen: isOpenSymlink,
     onOpen: onOpenSymlink,
     onClose: onCloseSymlink,
   } = useDisclosure()
-  const [action, setAction] = React.useState('finalise')
+  const [rsyncerAction, setRsyncerAction] = React.useState('finalise')
   const [symlinkPath, setSymlinkPath] = React.useState(destinationName)
   const [symlinkOverride, setSymlinkOverride] = React.useState(false)
 
   const finalise = () => {
-    setAction('finalise')
-    onOpen()
+    setRsyncerAction('finalise')
+    onOpenRsyncerAction()
   }
 
   const remove = () => {
-    setAction('remove')
-    onOpen()
+    setRsyncerAction('remove')
+    onOpenRsyncerAction()
   }
 
   const handleRsyncerAction = async () => {
-    if (action === 'finalise') {
+    if (rsyncerAction === 'finalise') {
       await finaliseRsyncer(rsyncer.session_id, rsyncer.source)
-    } else if (action === 'remove') {
+    } else if (rsyncerAction === 'remove') {
       await removeRsyncer(rsyncer.session_id, rsyncer.source)
     }
-    onClose()
+    onCloseRsyncerAction()
   }
 
   const handleCreateSymlink = async () => {
@@ -93,17 +97,17 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
       p={4}
     >
       {/* Pop-up components */}
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpenRsyncerAction} onClose={onCloseRsyncerAction}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            Confirm RSyncer {action}: {rsyncer.source}
+            Confirm RSyncer {rsyncerAction}: {rsyncer.source}
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>Are you sure you want to continue?</ModalBody>
 
           <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose}>
+            <Button variant="ghost" mr={3} onClick={onCloseRsyncerAction}>
               Close
             </Button>
             <Button variant="default" onClick={() => handleRsyncerAction()}>
