@@ -77,13 +77,13 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
   }
 
   const handleCreateSymlink = async () => {
-    requestSymlinkCreation(
+    await requestSymlinkCreation(
       rsyncer.session_id,
       rsyncer.destination,
       destinationParent + '/' + symlinkPath,
       symlinkOverride
     )
-    onOpenSymlink()
+    onCloseSymlink()
   }
 
   return (
