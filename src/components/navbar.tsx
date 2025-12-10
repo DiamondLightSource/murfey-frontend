@@ -132,7 +132,6 @@ export const Navbar = ({
               color={instrumentConnectionStatus ? 'white' : 'red'}
               mt={2}
               ml={1}
-              size="sm"
             />
           </span>
         </Tooltip>
