@@ -7,7 +7,7 @@ import {
   BoxProps,
   Icon,
 } from '@chakra-ui/react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { getInstrumentConnectionStatus } from 'loaders/general'
 import React, { useEffect } from 'react'
 import { MdSignalWifi4Bar, MdOutlineSignalWifiBad } from 'react-icons/md'
@@ -39,7 +39,6 @@ export const Navbar = ({
   const [instrumentServerConnected, setInstrumentServerConnected] =
     React.useState(false)
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
   const instrumentName = sessionStorage.getItem('instrumentName')
 
   // Set up a query to poll the instrument server connection status
