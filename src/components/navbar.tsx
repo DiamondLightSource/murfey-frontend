@@ -7,9 +7,9 @@ import {
   BoxProps,
   Icon,
 } from '@chakra-ui/react'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { getInstrumentConnectionStatus } from 'loaders/general'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { MdSignalWifi4Bar, MdOutlineSignalWifiBad } from 'react-icons/md'
 import { TbMicroscope, TbSnowflake, TbHomeCog } from 'react-icons/tb'
 import { useNavigate } from 'react-router-dom'
@@ -36,34 +36,25 @@ export const Navbar = ({
   logo,
   ...props
 }: NavbarProps) => {
-  const [instrumentConnectionStatus, setInsrumentConnectionStatus] =
+  const [instrumentServerConnected, setInstrumentServerConnected] =
     React.useState(false)
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const instrumentName = sessionStorage.getItem('instrumentName')
 
-  // Check connectivity every few seconds
-  React.useEffect(() => {
-    const resolveConnectionStatus = async () => {
-      try {
-        const status: boolean = await getInstrumentConnectionStatus()
-        if (status !== instrumentConnectionStatus) {
-          setInsrumentConnectionStatus(status)
-          queryClient.refetchQueries({
-            queryKey: ['instrumentServerConnection', instrumentName],
-          })
-        }
-      } catch (err) {
-        console.error('Error checking connection status:', err)
-        setInsrumentConnectionStatus(false)
-      }
-    }
-    resolveConnectionStatus() // Fetch data once to start with
-
-    // Set it to run every 10s
-    const interval = setInterval(resolveConnectionStatus, 10000)
-    return () => clearInterval(interval)
-  }, [instrumentName, instrumentConnectionStatus, queryClient])
+  // Set up a query to poll the instrument server connection status
+  const { data: instrumentServerConnectionResponse } = useQuery<boolean>({
+    queryKey: ['instrumentServerConnection', instrumentName],
+    queryFn: () => getInstrumentConnectionStatus(),
+    enabled: !!instrumentName,
+    initialData: instrumentServerConnected,
+    staleTime: 0,
+    refetchInterval: instrumentServerConnected ? 5000 : 10000,
+  })
+  useEffect(() => {
+    setInstrumentServerConnected(!!instrumentServerConnectionResponse)
+    console.log(`Instrument server connected:`, instrumentServerConnected)
+  }, [instrumentServerConnectionResponse])
 
   return (
     <Box position="sticky" top="0" zIndex={1} w="100%" h={12} {...props}>
@@ -117,7 +108,7 @@ export const Navbar = ({
         </Tooltip>
         <Tooltip
           label={
-            instrumentConnectionStatus
+            instrumentServerConnected
               ? 'Connected to instrument server'
               : 'No instrument server connection'
           }
@@ -125,11 +116,11 @@ export const Navbar = ({
           <span tabIndex={0}>
             <Icon
               as={
-                instrumentConnectionStatus
+                instrumentServerConnected
                   ? MdSignalWifi4Bar
                   : MdOutlineSignalWifiBad
               }
-              color={instrumentConnectionStatus ? 'white' : 'red'}
+              color={instrumentServerConnected ? 'white' : 'red'}
               mt={2}
               ml={1}
             />
