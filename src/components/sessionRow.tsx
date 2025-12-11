@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   Card,
-  Heading,
   Icon,
   IconButton,
   Modal,
@@ -16,13 +15,11 @@ import {
   Tooltip,
   useDisclosure,
 } from '@chakra-ui/react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { getInstrumentConnectionStatus } from 'loaders/general'
-import { sessionTokenCheck } from 'loaders/jwt'
+import { keyframes } from '@emotion/react'
+import { useQueryClient } from '@tanstack/react-query'
 import { finaliseSession } from 'loaders/rsyncers'
 import { deleteSessionData } from 'loaders/sessionClients'
-import { checkMultigridControllerStatus } from 'loaders/sessionSetup'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { GiMagicBroom } from 'react-icons/gi'
 import { MdDelete } from 'react-icons/md'
 import { MdSync, MdSyncProblem } from 'react-icons/md'
@@ -33,10 +30,15 @@ type Session = components['schemas']['Session']
 type SessionRowProps = {
   session: Session
   instrumentName: string | null
+  isActive: boolean
+  isFinalising: boolean
 }
+
 export const SessionRow = ({
   session,
   instrumentName = null,
+  isActive = false,
+  isFinalising = false,
 }: SessionRowProps) => {
   // Set up query client
   const queryClient = useQueryClient()
@@ -45,10 +47,7 @@ export const SessionRow = ({
   const navigate = useNavigate()
 
   // Set up React states
-  const [sessionActive, setSessionActive] = React.useState(false)
-  const [sessionFinalising, setSessionFinalising] = React.useState(false)
-  const [instrumentServerConnected, setInstrumentServerConnected] =
-    React.useState(false)
+  const [sessionFinalising, setSessionFinalising] = React.useState(isFinalising)
 
   // Set up utility hooks
   const {
@@ -70,31 +69,16 @@ export const SessionRow = ({
     console.log(`Session ${sessid} marked for cleanup`)
   }
 
-  // Query for probing instrument connection status
-  const { data: instrmentServerConnectionStatus } = useQuery<boolean>({
-    queryKey: ['instrumentServerConnection', instrumentName],
-    queryFn: () => getInstrumentConnectionStatus(),
-    enabled: !!instrumentName,
-    initialData: sessionActive,
-    staleTime: 0,
-  })
-  useEffect(() => {
-    console.log(
-      `Instrument server is connected:`,
-      instrmentServerConnectionStatus
-    )
-    setInstrumentServerConnected(instrmentServerConnectionStatus)
-  }, [instrmentServerConnectionStatus])
-
-  // Run checks on the state of the session if there is
-  // a change in instrument server connection status
-  useEffect(() => {
-    sessionTokenCheck(session.id).then((active) => setSessionActive(active))
-    checkMultigridControllerStatus(session.id.toString()).then((status) => {
-      setSessionFinalising(status.finalising)
-      console.log(`Session ${session.id} finalising:`, status.finalising)
-    })
-  }, [session, instrumentServerConnected])
+  // Set up animations for the sync icon
+  const spin = keyframes`
+    from { transform: translate(-50%, -50%) rotate(360deg); }
+    to { transform: translate(-50%, -50%) rotate(0deg); }
+  `
+  const pulseGlow = keyframes`
+    0% { filter: drop-shadow(0 0 2px ${isFinalising ? 'red' : 'green'}) }
+    50% { filter: drop-shadow(0 0 0px ${isFinalising ? 'red' : 'green'}) }
+    100% { filter: drop-shadow(0 0 2px ${isFinalising ? 'red' : 'green'}) }
+  `
 
   return (
     <>
@@ -124,7 +108,7 @@ export const SessionRow = ({
                 variant="default"
                 onClick={() => {
                   deleteSessionData(session.id).then(() => {
-                    // Refetch session information for this instrument
+                    // Refetch session information after requesting deletion
                     queryClient.refetchQueries({
                       queryKey: ['homepageSessions', instrumentName],
                     })
@@ -155,6 +139,7 @@ export const SessionRow = ({
                 variant="default"
                 onClick={() => {
                   cleanupSession(session.id).then(() => {
+                    // Refetch session information after requesting cleanup
                     queryClient.refetchQueries({
                       queryKey: ['homepageSessions', instrumentName],
                     })
@@ -204,7 +189,7 @@ export const SessionRow = ({
                 alignItems="center"
                 justifyContent="center"
               >
-                {sessionActive ? (
+                {isActive ? (
                   // Show a pulsing spinning sync icon when running
                   <Icon
                     as={MdSync}
@@ -215,27 +200,7 @@ export const SessionRow = ({
                     left="50%"
                     transform="translate(-50%, -50%)"
                     sx={{
-                      animation: `spin 2s linear infinite, glow-${session.id} 2s ease-in-out infinite`,
-                      filter: `drop-shadow(0 0 0px ${sessionFinalising ? 'red' : 'green'})`,
-                      '@keyframes spin': {
-                        from: {
-                          transform: 'translate(-50%, -50%) rotate(360deg)',
-                        },
-                        to: {
-                          transform: 'translate(-50%, -50%) rotate(0deg)',
-                        },
-                      },
-                      [`@keyframes glow-${session.id}`]: {
-                        '0%': {
-                          filter: `drop-shadow(0 0 2px ${sessionFinalising ? 'red' : 'green'})`,
-                        },
-                        '50%': {
-                          filter: `drop-shadow(0 0 0px ${sessionFinalising ? 'red' : 'green'})`,
-                        },
-                        '100%': {
-                          filter: `drop-shadow(0 0 2px ${sessionFinalising ? 'red' : 'green'})`,
-                        },
-                      },
+                      animation: `${spin} 2s linear infinite, ${pulseGlow} 2s ease-in-out infinite`,
                     }}
                   />
                 ) : (
@@ -259,7 +224,7 @@ export const SessionRow = ({
             aria-label="Delete session"
             icon={<MdDelete />}
             onClick={onOpenDelete}
-            isDisabled={sessionActive || sessionFinalising}
+            isDisabled={isActive || sessionFinalising}
           />
         </Tooltip>
         <Tooltip label="Clean up visit files">
@@ -267,7 +232,7 @@ export const SessionRow = ({
             aria-label="Clean up session"
             icon={<GiMagicBroom />}
             onClick={onOpenCleanup}
-            isDisabled={!sessionActive || sessionFinalising}
+            isDisabled={!isActive || sessionFinalising}
           />
         </Tooltip>
       </Box>
