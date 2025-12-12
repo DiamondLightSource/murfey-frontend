@@ -52,7 +52,10 @@ export const Navbar = ({
   })
   useEffect(() => {
     setInstrumentServerConnected(!!instrumentServerConnectionResponse)
-    console.log(`Instrument server connected:`, instrumentServerConnected)
+    console.log(
+      `Instrument server connected:`,
+      !!instrumentServerConnectionResponse
+    )
   }, [instrumentServerConnectionResponse])
 
   return (
