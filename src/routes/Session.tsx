@@ -468,25 +468,24 @@ export const Session = () => {
         >
           <Heading color="murfey.50" fontSize="3xl" lineHeight={1}>
             Session {sessid}: {session ? session.visit : null}
-            {/* Display visit end time if set for this session */}
-            {visitEndTime && (
-              <>
-                {' '}
-                [Transfer ends at{' '}
-                {visitEndTime.toLocaleString('en-GB', {
-                  weekday: 'short',
-                  year: 'numeric',
-                  month: 'short',
-                  day: '2-digit',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  hour12: false,
-                  timeZoneName: 'short',
-                })}
-                ]
-              </>
-            )}
           </Heading>
+          {/* Display visit end time if set for this session */}
+          {visitEndTime && (
+            <Heading color="murfey.50" fontSize="2xl" lineHeight={1}>
+              [Transfer ends at{' '}
+              {visitEndTime.toLocaleString('en-GB', {
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+                timeZoneName: 'short',
+              })}
+              ]
+            </Heading>
+          )}
           <Box
             display="flex"
             flexDirection="row"
@@ -513,6 +512,12 @@ export const Session = () => {
             >
               Processing Parameters
             </Button>
+            <IconButton
+              aria-label="calendar-to-change-end-time"
+              icon={<FaCalendar />}
+              variant="onBlue"
+              onClick={() => onOpenCalendar()}
+            />
             {!sessionActive ? (
               <Button variant="onBlue" onClick={() => onOpenReconnect()}>
                 Reconnect
@@ -520,12 +525,6 @@ export const Session = () => {
             ) : (
               <></>
             )}
-            <IconButton
-              aria-label="calendar-to-change-end-time"
-              icon={<FaCalendar />}
-              variant="onBlue"
-              onClick={() => onOpenCalendar()}
-            />
             {/* <Spacer /> */}
             {/* <ViewIcon color="white" /> */}
             {/* <Switch colorScheme="murfey" id="monitor" /> */}
