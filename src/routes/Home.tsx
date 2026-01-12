@@ -321,7 +321,7 @@ export const Home = () => {
             )}
           </Box>
           {/* Right column showing instrument card */}
-          <Box minW="300px" maxW="600px" flex="1" overflow="auto">
+          <Box minW="400px" maxW="600px" flex="1" overflow="auto">
             <InstrumentCard />
           </Box>
         </Box>

@@ -31,30 +31,34 @@ export const InstrumentCard = () => {
         cursor: 'default',
         borderColor: 'murfey.400',
       }}
+      // Mag table is disabled until backend is fixed
       // onClick={() => {
       //   navigate(`../mag_table`)
       // }}
     >
       <Box
         p={4}
-        flex="1"
         display="flex"
         flexDirection="column"
         alignItems="center"
-        justifyContent="space-between"
         gap={4}
       >
-        <Image
-          src={getUrl(
-            `display/instruments/${sessionStorage.getItem('instrumentName')}/image/`
-          )}
-          objectFit="contain"
+        <Box
           w="100%"
-          h="100%"
-        />
-        <Text mt="auto" align="center">
-          {instrumentName}
-        </Text>
+          display="flex"
+          alignItems={'center'}
+          justifyContent={'center'}
+        >
+          <Image
+            src={getUrl(
+              `display/instruments/${sessionStorage.getItem('instrumentName')}/image/`
+            )}
+            objectFit="contain"
+            maxW="100%"
+            maxH="600px"
+          />
+        </Box>
+        <Text align="center">{instrumentName}</Text>
       </Box>
     </Card>
   )
