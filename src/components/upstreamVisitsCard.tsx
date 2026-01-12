@@ -57,12 +57,10 @@ const InstrumentUpstreamVisitsCard = ({
         {/* Map each visit to a button */}
         {/* Allow buttons to wrap horizontally*/}
         <Box
-          flex="1"
-          display="flex"
-          flexDirection="row"
-          flexWrap="wrap"
-          alignItems="start"
-          justifyContent="start"
+          w="100%"
+          display="grid"
+          gridTemplateColumns="repeat(auto-fit, 16ch)"
+          justifyContent="center"
           gap={4}
         >
           {!!Object.keys(sortedVisits).length ? (
@@ -70,6 +68,7 @@ const InstrumentUpstreamVisitsCard = ({
               ([visitName, visitPath]: [string, string]) => {
                 return (
                   <Button
+                    maxW="16ch"
                     variant="default"
                     rightIcon={<MdFileDownload />}
                     cursor="pointer"
@@ -81,6 +80,7 @@ const InstrumentUpstreamVisitsCard = ({
                         visitPath
                       )
                     }
+                    fontSize="md"
                   >
                     {visitName}
                   </Button>
@@ -157,7 +157,7 @@ export const UpstreamVisitsCard = ({ sessid }: { sessid: number }) => {
         gap={4}
       >
         <Heading fontSize="md" fontWeight="bold" lineHeight={1}>
-          Upstream Visit Data Download
+          Download Upstream Visit Data
         </Heading>
         {/* Map each instrument to its own card */}
         {Object.entries(upstreamVisits).map(
