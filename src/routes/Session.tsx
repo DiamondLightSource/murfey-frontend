@@ -1,4 +1,4 @@
-import { useDisclosure } from '@chakra-ui/react'
+import { useBreakpointValue, useDisclosure } from '@chakra-ui/react'
 import {
   Box,
   Button,
@@ -8,7 +8,7 @@ import {
   GridItem,
   Heading,
   HStack,
-  IconButton,
+  Icon,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -18,6 +18,7 @@ import {
   ModalCloseButton,
   Select,
   Switch,
+  Tooltip,
   VStack,
 } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
@@ -36,8 +37,15 @@ import { getRsyncerData, pauseRsyncer, finaliseSession } from 'loaders/rsyncers'
 import { updateVisitEndTime, getSessionData } from 'loaders/sessionClients'
 import { checkMultigridControllerStatus } from 'loaders/sessionSetup'
 import React, { useEffect, useCallback } from 'react'
-import { FaCalendar } from 'react-icons/fa'
-import { MdFileUpload, MdOutlineGridOn, MdPause } from 'react-icons/md'
+import { GiMagicBroom } from 'react-icons/gi'
+import {
+  MdCalendarToday,
+  MdFileUpload,
+  MdOutlineGridOn,
+  MdOutlineTune,
+  MdPause,
+  MdSync,
+} from 'react-icons/md'
 import { useLoaderData, useParams, useNavigate } from 'react-router-dom'
 import { components } from 'schema/main'
 import { convertUKNaiveToUTC, convertUTCToUKNaive } from 'utils/generic'
@@ -78,10 +86,17 @@ export const Session = () => {
 
   // Machine config and instrument information
   const [machineConfig, setMachineConfig] = React.useState<MachineConfig>()
+  const [hasGainReference, setHasGainReference] = React.useState<boolean>(false)
+  const [hasProcessingParams, setHasProcessingParams] =
+    React.useState<boolean>(false)
 
   // Rsyncer information
   const [rsyncers, setRsyncers] = React.useState<RSyncerInfo[]>([])
   const [rsyncersPaused, setRsyncersPaused] = React.useState(false)
+
+  // Button rendering conditions
+  const displayButtonText =
+    useBreakpointValue({ base: false, md: true }) ?? false
 
   // ----------------------------------------------------------------------------------
   // Load Rsyncer data via a polling query
@@ -125,7 +140,11 @@ export const Session = () => {
 
   // ----------------------------------------------------------------------------------
   // UI utility hooks
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const {
+    isOpen: isOpenVisitComplete,
+    onOpen: onOpenVisitComplete,
+    onClose: onCloseVisitComplete,
+  } = useDisclosure()
   const {
     isOpen: isOpenReconnect,
     onOpen: onOpenReconnect,
@@ -141,24 +160,27 @@ export const Session = () => {
   // Functions
 
   // Get machine config and set up related settings
-  const handleMachineConfig = (mcfg: MachineConfig) => {
-    setMachineConfig(mcfg)
-    setSelectedDirectory(mcfg['data_directories'][0])
+  const handleMachineConfig = (config: MachineConfig) => {
+    setMachineConfig(config)
+    setSelectedDirectory(config['data_directories'][0])
+    setHasGainReference(
+      !!(
+        !!config.gain_reference_directory &&
+        config.gain_reference_directory.trim() !== ''
+      )
+    )
+    setHasProcessingParams(
+      !!(config.recipes && Object.keys(config.recipes).length > 0)
+    )
   }
   useEffect(() => {
-    getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))
+    getMachineConfigData().then((config) => handleMachineConfig(config))
   }, [])
 
   // Redirect user to earlier stages of the setup depending on what is missing
   useEffect(() => {
     // Exit early if required states are undefined
-    if (
-      session === undefined ||
-      sessid === undefined ||
-      !sessionActive ||
-      machineConfig === undefined
-    )
-      return
+    if (session === undefined || sessid === undefined || !sessionActive) return
 
     const runRedirectChecks = async () => {
       // Check if the multigrid controller for the session exists
@@ -166,12 +188,9 @@ export const Session = () => {
         await checkMultigridControllerStatus(sessid)
       if (!multigridControllerStatus.exists) {
         // Check if this instrument has a gain reference directory configured
-        if (
-          !!machineConfig?.gain_reference_directory &&
-          machineConfig.gain_reference_directory.trim() !== ''
-        ) {
+        if (hasGainReference) {
           // Check if a gain reference file has been uploaded
-          if (!session.current_gain_ref) {
+          if (!!!session.current_gain_ref) {
             // Redirect to the gain reference page
             navigate(
               `/sessions/${sessid}/gain_ref_transfer?sessid=${sessid}&setup=true`
@@ -185,10 +204,7 @@ export const Session = () => {
       }
 
       // Check if this instrument has processing recipes configured
-      if (
-        machineConfig?.recipes &&
-        Object.keys(machineConfig.recipes).length > 0
-      ) {
+      if (hasProcessingParams) {
         // Check if processing parameters have been provided
         getSessionProcessingParameterData(sessid).then((params) => {
           if (params === null && session.process) {
@@ -200,7 +216,14 @@ export const Session = () => {
       }
     }
     runRedirectChecks() // Call the async function inside the useEffect()
-  }, [sessid, session, sessionActive, machineConfig, navigate])
+  }, [
+    sessid,
+    session,
+    sessionActive,
+    hasGainReference,
+    hasProcessingParams,
+    navigate,
+  ])
 
   // Load Session page upon initialisation
   const loadSession = useCallback(async () => {
@@ -216,7 +239,7 @@ export const Session = () => {
   // Other Rsync-related functions
   const finaliseAll = async () => {
     if (sessid) await finaliseSession(parseInt(sessid))
-    onClose()
+    onCloseVisitComplete()
   }
 
   const pauseAll = async () => {
@@ -331,7 +354,7 @@ export const Session = () => {
   return (
     <div className="rootContainer">
       {/* Logic for pop-up components */}
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpenVisitComplete} onClose={onCloseVisitComplete}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Confirm Visit Completion</ModalHeader>
@@ -341,7 +364,7 @@ export const Session = () => {
           </ModalBody>
 
           <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose}>
+            <Button variant="ghost" mr={3} onClick={onCloseVisitComplete}>
               Close
             </Button>
             <Button variant="default" onClick={() => finaliseAll()}>
@@ -486,42 +509,68 @@ export const Session = () => {
               ]
             </Heading>
           )}
+          {/* First row of buttons containing transfer-related settings */}
           <Box
             display="flex"
             flexDirection="row"
-            flexWrap="wrap"
             alignItems="start"
             justifyContent="start"
             gap={2}
           >
-            <Button variant="onBlue" onClick={() => onOpen()}>
-              Visit Complete
-            </Button>
-            <IconButton
-              aria-label="Pause all transfers"
-              as={MdPause}
-              variant="onBlue"
-              isDisabled={rsyncersPaused}
-              onClick={() => pauseAll()}
-            />
-            <Button
-              variant="onBlue"
-              onClick={() => {
-                navigate(`session_parameters`)
-              }}
-            >
-              Processing Parameters
-            </Button>
-            <IconButton
-              aria-label="calendar-to-change-end-time"
-              icon={<FaCalendar />}
-              variant="onBlue"
-              onClick={() => onOpenCalendar()}
-            />
-            {!sessionActive ? (
-              <Button variant="onBlue" onClick={() => onOpenReconnect()}>
-                Reconnect
+            <Tooltip label={'Remove visit and files from source folders'}>
+              <Button
+                key="visit_complete"
+                variant="onBlue"
+                onClick={() => onOpenVisitComplete()}
+              >
+                {displayButtonText && 'Visit Complete'}
+                <Icon
+                  as={GiMagicBroom}
+                  boxSize={6}
+                  ml={displayButtonText ? 2 : 0}
+                />
               </Button>
+            </Tooltip>
+            <Tooltip label="Pause all ongoing transfers">
+              <Button
+                key="pause_transfers"
+                variant="onBlue"
+                onClick={() => pauseAll()}
+                isDisabled={rsyncersPaused}
+              >
+                {displayButtonText && 'Pause Transfers'}
+                <Icon as={MdPause} boxSize={6} ml={displayButtonText ? 2 : 0} />
+              </Button>
+            </Tooltip>
+            <Tooltip label={'Update the file transfer end time'}>
+              <Button
+                key="update_visit_end_time"
+                variant="onBlue"
+                onClick={() => onOpenCalendar()}
+              >
+                {displayButtonText && 'Update Visit End Time'}
+                <Icon
+                  as={MdCalendarToday}
+                  boxSize={6}
+                  ml={displayButtonText ? 2 : 0}
+                />
+              </Button>
+            </Tooltip>
+            {!sessionActive ? (
+              <Tooltip label="Reconnect an interrupted session">
+                <Button
+                  key="reconnect"
+                  variant="onBlue"
+                  onClick={() => onOpenReconnect()}
+                >
+                  {displayButtonText && 'Reconnect'}
+                  <Icon
+                    as={MdSync}
+                    boxSize={6}
+                    ml={displayButtonText ? 2 : 0}
+                  />
+                </Button>
+              </Tooltip>
             ) : (
               <></>
             )}
@@ -531,6 +580,73 @@ export const Session = () => {
             {/* <Button aria-label="Subscribe to notifications" rightIcon={<MdEmail/>} variant='onBlue'>
               Subscribe
             </Button> */}
+          </Box>
+          {/* Second row of buttons containing processing-related settings */}
+          <Box
+            display="flex"
+            flexDirection="row"
+            alignItems="start"
+            justifyContent="start"
+            gap={2}
+          >
+            <Tooltip label="Inspect data collections">
+              <Button
+                key="data_collections"
+                variant="onBlue"
+                onClick={() => {
+                  navigate(`../sessions/${sessid}/data_collection_groups`)
+                }}
+              >
+                {displayButtonText && 'Data Collections'}
+                <Icon
+                  as={MdOutlineGridOn}
+                  boxSize={6}
+                  ml={displayButtonText ? 2 : 0}
+                />
+              </Button>
+            </Tooltip>
+            {hasGainReference ? (
+              <Tooltip label={'Upload a new gain reference file'}>
+                <Button
+                  key="gain_ref"
+                  variant="onBlue"
+                  onClick={() => {
+                    navigate(
+                      `../sessions/${sessid}/gain_ref_transfer?sessid=${sessid}`
+                    )
+                  }}
+                >
+                  {displayButtonText && 'Upload Gain Reference'}
+                  <Icon
+                    as={MdFileUpload}
+                    boxSize={6}
+                    ml={displayButtonText ? 2 : 0}
+                  />
+                </Button>
+              </Tooltip>
+            ) : (
+              <></>
+            )}
+            {hasProcessingParams ? (
+              <Tooltip label={'View and update processing parameters'}>
+                <Button
+                  key="processing_params"
+                  variant="onBlue"
+                  onClick={() => {
+                    navigate(`session_parameters`)
+                  }}
+                >
+                  {displayButtonText && 'Processing Parameters'}
+                  <Icon
+                    as={MdOutlineTune}
+                    boxSize={6}
+                    ml={displayButtonText ? 2 : 0}
+                  />
+                </Button>
+              </Tooltip>
+            ) : (
+              <></>
+            )}
           </Box>
         </Box>
         {/* Page contents */}
@@ -590,7 +706,7 @@ export const Session = () => {
           </Box>
           {/* Right column showing instrument card and other buttons */}
           <Box
-            minW="300px"
+            minW="400px"
             maxW="600px"
             flex="1"
             display="flex"
@@ -601,28 +717,6 @@ export const Session = () => {
             overflow="auto"
           >
             <InstrumentCard />
-            <Button
-              key="data_collections"
-              variant="default"
-              rightIcon={<MdOutlineGridOn />}
-              onClick={() => {
-                navigate(`../sessions/${sessid}/data_collection_groups`)
-              }}
-            >
-              Data Collections
-            </Button>
-            <Button
-              key="gain_ref"
-              variant="default"
-              rightIcon={<MdFileUpload />}
-              onClick={() => {
-                navigate(
-                  `../sessions/${sessid}/gain_ref_transfer?sessid=${sessid}`
-                )
-              }}
-            >
-              Transfer Gain Reference
-            </Button>
             <UpstreamVisitsCard sessid={parseInt(sessid ?? '0')} />
           </Box>
         </Box>
