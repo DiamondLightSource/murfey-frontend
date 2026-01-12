@@ -517,7 +517,9 @@ export const Session = () => {
             justifyContent="start"
             gap={2}
           >
-            <Tooltip label={'Remove visit and files from source folders'}>
+            <Tooltip
+              label={'Remove files from source folders and delete visit'}
+            >
               <Button
                 key="visit_complete"
                 variant="onBlue"
