@@ -1,4 +1,4 @@
-import { ArrowForwardIcon } from '@chakra-ui/icons'
+import { ArrowForwardIcon, ArrowRightIcon } from '@chakra-ui/icons'
 import {
   Box,
   FormControl,
@@ -58,12 +58,13 @@ const MultigridSetup = () => {
       : false
     : false
 
-  const handleSelection = async () => {
+  const handleSelection = async (serialem: boolean) => {
     if (typeof sessid !== 'undefined') {
       await setupMultigridWatcher(
         {
           source: selectedDirectory,
           skip_existing_processing: skipExistingProcessing,
+          serialem: serialem,
         } as MultigridWatcherSpec,
         parseInt(sessid)
       )
@@ -163,8 +164,21 @@ const MultigridSetup = () => {
                     <IconButton
                       aria-label="select"
                       icon={<ArrowForwardIcon />}
-                      onClick={handleSelection}
+                      onClick={() => {
+                        handleSelection(false)
+                      }}
                     />
+                    {machineConfig && machineConfig.smartem_api_url ? (
+                      <IconButton
+                        aria-label="select-serialem"
+                        icon={<ArrowRightIcon />}
+                        onClick={() => {
+                          handleSelection(true)
+                        }}
+                      />
+                    ) : (
+                      <></>
+                    )}
                   </Link>
                 </HStack>
               </Stack>
