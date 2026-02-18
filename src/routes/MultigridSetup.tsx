@@ -1,12 +1,12 @@
 import { ArrowForwardIcon, ArrowRightIcon } from '@chakra-ui/icons'
 import {
   Box,
+  Button,
   FormControl,
   FormLabel,
   GridItem,
   Heading,
   HStack,
-  IconButton,
   Link,
   Select,
   Stack,
@@ -136,7 +136,7 @@ const MultigridSetup = () => {
                     }}
                   />
                 </FormControl>
-                <HStack>
+                <VStack>
                   <Select onChange={handleDirectorySelection}>
                     {machineConfig &&
                     machineConfig.data_directories.length > 0 ? (
@@ -151,36 +151,54 @@ const MultigridSetup = () => {
                       </GridItem>
                     )}
                   </Select>
-                  <Link
-                    w={{ base: '100%', md: '19.6%' }}
-                    _hover={{ textDecor: 'none' }}
-                    as={LinkRouter}
-                    to={
-                      recipesDefined
-                        ? `../new_session/parameters/${sessid}`
-                        : `../sessions/${sessid}`
-                    }
-                  >
-                    <IconButton
-                      aria-label="select"
-                      icon={<ArrowForwardIcon />}
-                      onClick={() => {
-                        handleSelection(false)
-                      }}
-                    />
-                    {machineConfig && machineConfig.smartem_api_url ? (
-                      <IconButton
-                        aria-label="select-serialem"
-                        icon={<ArrowRightIcon />}
+                  <HStack w="100%" gap="1">
+                    <Link
+                      w={{ base: '100%' }}
+                      _hover={{ textDecor: 'none' }}
+                      as={LinkRouter}
+                      to={
+                        recipesDefined
+                          ? `../new_session/parameters/${sessid}`
+                          : `../sessions/${sessid}`
+                      }
+                    >
+                      <Button
+                        aria-label="select"
+                        display="flex"
                         onClick={() => {
-                          handleSelection(true)
+                          handleSelection(false)
                         }}
-                      />
-                    ) : (
-                      <></>
-                    )}
-                  </Link>
-                </HStack>
+                      >
+                      EPU or Tomo5
+                      </Button>
+                    </Link>
+                    <Link
+                      w={{ base: '100%' }}
+                      _hover={{ textDecor: 'none' }}
+                      as={LinkRouter}
+                      to={
+                        recipesDefined
+                          ? `../new_session/parameters/${sessid}`
+                          : `../sessions/${sessid}`
+                      }
+                    >
+                      {machineConfig && machineConfig.smartem_api_url ? (
+                        <Button
+                          aria-label="select-serialem"
+                          display="flex"
+                          style={{backgroundColor: '#00A6A6'}}
+                          onClick={() => {
+                            handleSelection(true)
+                          }}
+                        >
+                        SerialEM
+                        </Button>
+                      ) : (
+                        <></>
+                      )}
+                    </Link>
+                  </HStack>
+                </VStack>
               </Stack>
             </VStack>
           </VStack>
