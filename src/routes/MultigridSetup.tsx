@@ -69,6 +69,7 @@ const MultigridSetup = () => {
         parseInt(sessid)
       )
       if (!recipesDefined) await startMultigridWatcher(parseInt(sessid))
+      sessionStorage.setItem('serialemActive', true)
     }
   }
 
