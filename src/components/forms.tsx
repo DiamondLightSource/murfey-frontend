@@ -31,6 +31,16 @@ const formDataTomo: { [key: string]: any } = {
   eer_fractionation: 20,
 }
 
+const formDataAtlasOptics: { [key: string]: any } = {
+  type: 'atlasoptics',
+  magnification: 10000,
+  tilesX: 5,
+  tilesY: 5,
+  spotSize: 7,
+  c2Pecentage: 100,
+  name: '',
+}
+
 const SpaForm = (submissionCallback: (arg0: any) => void) => {
   const validateInt = (char: string) => {
     return /\d/.test(char)
@@ -190,6 +200,55 @@ const TomoForm = (submissionCallback: (arg0: any) => void) => {
   )
 }
 
+const AtlasOpticsForm = (submissionCallback: (arg0: any) => void) => {
+  const setFormElement = (
+    event: React.FormEvent<HTMLFormElement>,
+    callback: (arg0: any) => void
+  ) => {
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
+    formDataAtlasOptics.magnification = formData.get('magnification')
+    callback(formDataAtlasOptics)
+  }
+  return (
+    <form onSubmit={(e) => setFormElement(e, submissionCallback)}>
+      <VStack align="start" spacing={10} width="100%" display="flex">
+        <FormControl>
+          <VStack align="start" spacing={10} width="100%" display="flex">
+            <VStack align="start" width="100%" display="flex">
+              <FormLabel>{'Name'}</FormLabel>
+              <Input defaultValue="" name="name" />
+            </VStack>
+            <VStack align="start" width="100%" display="flex">
+              <FormLabel>{'Magnification'}</FormLabel>
+              <Input defaultValue="10000" name="magnification" />
+            </VStack>
+            <VStack align="start" width="100%" display="flex">
+              <FormLabel>{'Number of tiles (x)'}</FormLabel>
+              <Input defaultValue="5" name="tilesX" />
+            </VStack>
+            <VStack align="start" width="100%" display="flex">
+              <FormLabel>{'Number of tiles (y)'}</FormLabel>
+              <Input defaultValue="5" name="tilesY" />
+            </VStack>
+            <VStack align="start" width="100%" display="flex">
+              <FormLabel>{'Spot size'}</FormLabel>
+              <Input defaultValue="7" name="spotSize" />
+            </VStack>
+            <VStack align="start" width="100%" display="flex">
+              <FormLabel>{'C2 aperture'}</FormLabel>
+              <Input defaultValue="100" name="c2Aperture" />
+            </VStack>
+          </VStack>
+        </FormControl>
+        <Button variant="default" type="submit">
+          Submit
+        </Button>
+      </VStack>
+    </form>
+  )
+}
+
 interface Forms {
   [expType: string]: ReactElement
 }
@@ -201,6 +260,7 @@ export const getForm = (
   let forms = {
     spa: SpaForm(submissionCallback),
     tomography: TomoForm(submissionCallback),
+    atlasoptics: AtlasOpticsForm(submissionCallback),
   } as Forms
   return forms[expType]
 }

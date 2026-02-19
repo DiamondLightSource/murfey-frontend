@@ -22,29 +22,20 @@ type SessionClients = components['schemas']['SessionClients']
 type ProvidedProcessingParameters =
   components['schemas']['ProvidedProcessingParameters']
 
-export const SessionSetup = () => {
+export const AtlasOpticsSetup = () => {
   const sessionClients = useLoaderData() as SessionClients | null
-  const [expType, setExpType] = React.useState('spa')
-  const [procParams, setProcParams] = React.useState()
+  const [atlasParams, setAtlasParams] = React.useState()
   const { sessid } = useParams()
   const [paramsSet, setParamsSet] = React.useState(false)
 
   const handleSelection = (formData: any) => {
     if (typeof sessid !== 'undefined') {
       delete formData.type
-      registerProcessingParameters(
-        formData as ProvidedProcessingParameters,
+      registerAtlasOpticsParameters(
+        formData as ProvidedAtlasOpticsParameters,
         parseInt(sessid)
       )
-      startMultigridWatcher(parseInt(sessid))
       setParamsSet(true)
-    }
-  }
-
-  const handleSkip = async () => {
-    if (sessid !== undefined) {
-      await updateSession(parseInt(sessid), false)
-      startMultigridWatcher(parseInt(sessid))
     }
   }
 
@@ -53,12 +44,10 @@ export const SessionSetup = () => {
       (params) => setProcParams(params)
     )
   const activeStep = sessionClients
-    ? procParams
-      ? 4
+    ? 5
       : sessionClients.session.visit
-        ? 3
+        ? 4
         : 0
-    : 3
   return (
     <div className="rootContainer">
       <Box w="100%" bg="murfey.50">
@@ -74,7 +63,7 @@ export const SessionSetup = () => {
               py="1vh"
             >
               <Heading size="xl" color="murfey.50">
-                Processing parameters
+                Acquisition parameters
               </Heading>
             </VStack>
           </VStack>
@@ -91,26 +80,6 @@ export const SessionSetup = () => {
           </Box>
           <Box
             mt="1em"
-            px="10vw"
-            w="100%"
-            justifyContent={'left'}
-            alignItems={'center'}
-            display={'flex'}
-          >
-            <RadioGroup
-              onChange={setExpType}
-              value={expType}
-              colorScheme="murfey"
-              isDisabled={activeStep !== 3 ? true : false}
-            >
-              <Stack>
-                <Radio value="spa">SPA</Radio>
-                <Radio value="tomography">Tomography</Radio>
-              </Stack>
-            </RadioGroup>
-          </Box>
-          <Box
-            mt="1em"
             ml="10vw"
             w="80%"
             borderWidth="1px"
@@ -122,7 +91,7 @@ export const SessionSetup = () => {
             display={'flex'}
             borderColor={'murfey.400'}
           >
-            {sessid ? getForm(expType, handleSelection) : <></>}
+            {sessid ? getForm('atlasoptics', handleSelection) : <></>}
           </Box>
           <Box
             mt="1em"
@@ -137,7 +106,7 @@ export const SessionSetup = () => {
               key={sessid}
               _hover={{ textDecor: 'none' }}
               as={LinkRouter}
-              to={sessionStorage.getItem('serialemActive') ? `../new_session/acquisition_parameters/${sessid}`: `../sessions/${sessid}`}
+              to={`../sessions/${sessid}`}
             >
               <Button variant="default" isDisabled={!paramsSet}>
                 Next
@@ -148,11 +117,8 @@ export const SessionSetup = () => {
               key={sessid}
               _hover={{ textDecor: 'none' }}
               as={LinkRouter}
-              to={sessionStorage.getItem('serialemActive') ? `../new_session/acquisition_parameters/${sessid}`: `../sessions/${sessid}`}
+              to={`../sessions/${sessid}`}
             >
-              <Button variant="ghost" onClick={handleSkip}>
-                Disable Processing
-              </Button>
             </Link>
           </Box>
         </Stack>

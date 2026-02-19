@@ -31,6 +31,7 @@ import { ProcessingParameters } from 'routes/ProcessingParameters'
 import { Session } from 'routes/Session'
 import { SessionParameters } from 'routes/SessionParameters'
 import { SessionSetup } from 'routes/SessionSetup'
+import { AtlasOpticsSetup } from 'routes/OpticsSetup'
 import { theme } from 'styles/theme'
 
 const { ToastContainer } = createStandaloneToast()
@@ -82,6 +83,12 @@ const router = createBrowserRouter([
       {
         path: '/new_session/parameters/:sessid',
         element: <SessionSetup />,
+        errorElement: <Error />,
+        loader: sessionLoader(queryClient),
+      },
+      {
+        path: '/new_session/acquisition_parameters/:sessid',
+        element: <AtlasOpticsSetup />,
         errorElement: <Error />,
         loader: sessionLoader(queryClient),
       },
