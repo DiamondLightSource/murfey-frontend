@@ -18,12 +18,15 @@ interface StepperStartConditions {
 
 export const SetupStepper = ({ activeStepIndex }: StepperStartConditions) => {
   const steps = [
-    { title: 'Visit', description: 'Select visit', active: true },
-    { title: 'Gain reference', description: 'Transfer and transform', active: true },
-    { title: 'Data location', description: 'Start data transfer', active: true },
-    { title: 'Parameters', description: 'For processing', active: true },
-    { title: 'Acquisition parameters', description: 'For automated acquisition', active: sessionStorage.getItem('serialemActive') },
+    { title: 'Visit', description: 'Select visit' },
+    { title: 'Gain reference', description: 'Transfer and transform' },
+    { title: 'Data location', description: 'Start data transfer' },
+    { title: 'Parameters', description: 'For processing' },
   ]
+
+  if(sessionStorage.getItem('serialemActive')) {
+    steps.push({ title: 'Acquisition parameters', description: 'For automated acquisition' })
+  }
 
   const { activeStep } = useSteps({
     index: activeStepIndex,
@@ -32,7 +35,7 @@ export const SetupStepper = ({ activeStepIndex }: StepperStartConditions) => {
 
   return (
     <Stepper index={activeStep}>
-      {steps.map((step, index) => {step.active ? (
+      {steps.map((step, index) => (
         <Step key={index}>
           <StepIndicator>
             <StepStatus
@@ -49,8 +52,7 @@ export const SetupStepper = ({ activeStepIndex }: StepperStartConditions) => {
 
           <StepSeparator />
         </Step>
-      ): <></>}
-      )}
+      ))}
     </Stepper>
   )
 }
