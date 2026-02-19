@@ -23,6 +23,7 @@ import {
 import React from 'react'
 import { Link as LinkRouter, useLoaderData, useParams } from 'react-router-dom'
 import { components } from 'schema/main'
+import { AcquisitionParametersCard } from 'components/acquisitionParametersCard'
 
 type EditableSessionParameters =
   components['schemas']['EditableSessionProcessingParameters']
@@ -77,11 +78,11 @@ export const SessionParameters = () => {
   const [paramValue, setParamValue] = React.useState('')
   const [paramKey, setParamKey] = React.useState<EditableParameter>('')
   Object.entries(sessionParams ? sessionParams : {}).forEach(([key, value]) =>
-    tableRows.push({
+    (key !== 'acquisition_parameters') ? tableRows.push({
       parameterName: nameLabelMap.get(key) ?? key,
       parameterValue: value.toString(),
       parameterKey: key,
-    } as ProcessingRow)
+    } as ProcessingRow): {}
   )
   let table = { processingRows: tableRows, tag: 'Session' } as ProcessingTable
 
@@ -175,6 +176,11 @@ export const SessionParameters = () => {
           onClick={editParameterDialogue}
         />
       </Box>
+      <VStack>
+        {
+          sessionParams.acquisition_parameters.map((x) => AcquisitionParametersCard(x))
+        }
+      </VStack>
     </div>
   )
 }
