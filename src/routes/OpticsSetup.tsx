@@ -11,29 +11,28 @@ import {
 import { AtlasOpticsSettingsCard } from 'components/acquisitionParametersCard'
 import { getForm } from 'components/forms'
 import { SetupStepper } from 'components/setupStepper'
-import { startMultigridWatcher } from 'loaders/multigridSetup'
-import { getProcessingParameterData } from 'loaders/processingParameters'
-import { registerProcessingParameters } from 'loaders/sessionSetup'
+import { addAtlasOpticsSettings } from 'loaders/acquisitionParameters'
 import React from 'react'
 import { Link as LinkRouter, useParams, useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
 
 type AtlasOptics = components['schemas']['AtlasOptics']
+type AtlasOpticsData = components['schemas']['AtlasOpticsData']
 
 export const AtlasOpticsSetup = () => {
   const atlasOpticsSettings = useLoaderData() as AtlasOptics[] | null
   const [atlasParams, setAtlasParams] = React.useState()
   const { sessid } = useParams()
-  const [paramsSet, setParamsSet] = React.useState(false)
+
+  console.log(atlasOpticsSettings)
 
   const handleSelection = (formData: any) => {
     if (typeof sessid !== 'undefined') {
       delete formData.type
-      registerAtlasOpticsParameters(
-        formData as ProvidedAtlasOpticsParameters,
+      addAtlasOpticsSettings(
+        formData as AtlasOpticsData,
         parseInt(sessid)
       )
-      setParamsSet(true)
     }
   }
 
@@ -41,11 +40,6 @@ export const AtlasOpticsSetup = () => {
 
   return (
     <div className="rootContainer">
-      {
-        atlasOpticsSettings && atlasOpticsSettings.length > 0 ? (
-          atlasOpticsSettings.map((o) => (<AtlasOpticsSettingsCard atlasOptics={o}/>))
-        ): <></>
-      }
       <Box w="100%" bg="murfey.50">
         <Box w="100%" overflow="hidden">
           <VStack className="homeRoot">
@@ -73,6 +67,27 @@ export const AtlasOpticsSetup = () => {
             alignItems={'center'}
           >
             <SetupStepper activeStepIndex={activeStep} />
+          </Box>
+          <Box
+            p={4}
+            w="100%"
+            flex="1"
+            display="grid"
+            gridTemplateColumns={{
+              base: 'repeat(1, minmax(200px, 600px))',
+              sm: 'repeat(2, minmax(200px, 600px))',
+              md: 'repeat(3, minmax(200px, 600px))',
+              lg: 'repeat(4, minmax(200px, 600px))',
+            }}
+            justifyContent="center"
+            overflowY="auto"
+            gap={4}
+          >
+          {
+            atlasOpticsSettings && atlasOpticsSettings.length > 0 ? (
+            atlasOpticsSettings.map((o) => (<AtlasOpticsSettingsCard atlasOptics={o}/>))
+            ): <></>
+          }
           </Box>
           <Box
             mt="1em"
@@ -104,8 +119,8 @@ export const AtlasOpticsSetup = () => {
               as={LinkRouter}
               to={`../sessions/${sessid}`}
             >
-              <Button variant="default" isDisabled={!paramsSet}>
-                Next
+              <Button variant="default">
+                Add
               </Button>
             </Link>
             <Link

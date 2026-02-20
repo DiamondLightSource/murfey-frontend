@@ -33,11 +33,11 @@ const formDataTomo: { [key: string]: any } = {
 
 const formDataAtlasOptics: { [key: string]: any } = {
   type: 'atlasoptics',
-  magnification: 10000,
-  tilesX: 5,
-  tilesY: 5,
-  spotSize: 7,
-  c2Pecentage: 100,
+  mag: 10000,
+  tiles_x: 5,
+  tiles_y: 5,
+  spot_size: 7,
+  c2_pecentage: 100,
   name: '',
 }
 
@@ -208,6 +208,11 @@ const AtlasOpticsForm = (submissionCallback: (arg0: any) => void) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
     formDataAtlasOptics.magnification = formData.get('magnification')
+    formDataAtlasOptics.name = formData.get('name', '')
+    formDataAtlasOptics.tiles_x = formData.get('tiles_x')
+    formDataAtlasOptics.tiles_y = formData.get('tiles_y')
+    formDataAtlasOptics.spot_size = formData.get('spot_size')
+    formDataAtlasOptics.c2_percentage = formData.get('c2_percentage')
     callback(formDataAtlasOptics)
   }
   return (
@@ -221,23 +226,23 @@ const AtlasOpticsForm = (submissionCallback: (arg0: any) => void) => {
             </VStack>
             <VStack align="start" width="100%" display="flex">
               <FormLabel>{'Magnification'}</FormLabel>
-              <Input defaultValue="10000" name="magnification" />
+              <Input defaultValue="10000" name="mag" />
             </VStack>
             <VStack align="start" width="100%" display="flex">
               <FormLabel>{'Number of tiles (x)'}</FormLabel>
-              <Input defaultValue="5" name="tilesX" />
+              <Input defaultValue="5" name="tiles_x" />
             </VStack>
             <VStack align="start" width="100%" display="flex">
               <FormLabel>{'Number of tiles (y)'}</FormLabel>
-              <Input defaultValue="5" name="tilesY" />
+              <Input defaultValue="5" name="tiles_y" />
             </VStack>
             <VStack align="start" width="100%" display="flex">
               <FormLabel>{'Spot size'}</FormLabel>
-              <Input defaultValue="7" name="spotSize" />
+              <Input defaultValue="7" name="spot_size" />
             </VStack>
             <VStack align="start" width="100%" display="flex">
               <FormLabel>{'C2 aperture'}</FormLabel>
-              <Input defaultValue="100" name="c2Aperture" />
+              <Input defaultValue="100" name="c2_percentage" />
             </VStack>
           </VStack>
         </FormControl>
