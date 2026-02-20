@@ -281,6 +281,24 @@ export interface paths {
     /** Set Session Processing Parameters */
     post: operations["set_session_processing_parameters_session_parameters_sessions__session_id__session_processing_parameters_post"];
   };
+  "/session_parameters/atlas_optics": {
+    /** Get All Registered Atlas Optic Settings */
+    get: operations["get_all_registered_atlas_optic_settings_session_parameters_atlas_optics_get"];
+    /** Add Atlas Optics Settings */
+    post: operations["add_atlas_optics_settings_session_parameters_atlas_optics_post"];
+  };
+  "/session_parameters/sessions/{session_id}/atlas_optics": {
+    /** Get Atlas Optics For Session */
+    get: operations["get_atlas_optics_for_session_session_parameters_sessions__session_id__atlas_optics_get"];
+  };
+  "/session_parameters/acquisitions/{acquisition_uuid}/atlas_optics": {
+    /** Get Atlas Optics For Session From Acquisition Uuid */
+    get: operations["get_atlas_optics_for_session_from_acquisition_uuid_session_parameters_acquisitions__acquisition_uuid__atlas_optics_get"];
+  };
+  "/session_parameters/session/{session_id}/atlas_optics/{atlas_optics_id}": {
+    /** Link Session To Atlas Optics */
+    post: operations["link_session_to_atlas_optics_session_parameters_session__session_id__atlas_optics__atlas_optics_id__post"];
+  };
   "/file_io/frontend/sessions/{session_id}/process_gain": {
     /** Process Gain */
     post: operations["process_gain_file_io_frontend_sessions__session_id__process_gain_post"];
@@ -832,6 +850,44 @@ export interface components {
        * @enum {string}
        */
       align_across?: "enabled" | "";
+    };
+    /** AtlasOptics */
+    AtlasOptics: {
+      /** Id */
+      id: number;
+      /** Mag */
+      mag: number;
+      /** Tiles X */
+      tiles_x: number;
+      /** Tiles Y */
+      tiles_y: number;
+      /** Spot Size */
+      spot_size: number;
+      /** C2 Percentage */
+      c2_percentage: number;
+      /**
+       * Name
+       * @default
+       */
+      name?: string;
+    };
+    /** AtlasOpticsData */
+    AtlasOpticsData: {
+      /** Mag */
+      mag: number;
+      /** Tiles X */
+      tiles_x: number;
+      /** Tiles Y */
+      tiles_y: number;
+      /** Spot Size */
+      spot_size: number;
+      /** C2 Percentage */
+      c2_percentage: number;
+      /**
+       * Name
+       * @default
+       */
+      name?: string;
     };
     /** AtlasRegistration */
     AtlasRegistration: {
@@ -1966,6 +2022,8 @@ export interface components {
       id: number;
       /** Name */
       name: string;
+      /** Atlas Optics Id */
+      atlas_optics_id?: number;
       /**
        * Visit
        * @default
@@ -1991,6 +2049,11 @@ export interface components {
        * @default true
        */
       process?: boolean;
+      /**
+       * Acquisition Uuid
+       * @default
+       */
+      acquisition_uuid?: string;
       /** Visit End Time */
       visit_end_time?: string | null;
     };
@@ -3028,6 +3091,106 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["EditableSessionProcessingParameters"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Get All Registered Atlas Optic Settings */
+  get_all_registered_atlas_optic_settings_session_parameters_atlas_optics_get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["AtlasOptics"][];
+        };
+      };
+    };
+  };
+  /** Add Atlas Optics Settings */
+  add_atlas_optics_settings_session_parameters_atlas_optics_post: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AtlasOpticsData"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["AtlasOptics"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Get Atlas Optics For Session */
+  get_atlas_optics_for_session_session_parameters_sessions__session_id__atlas_optics_get: {
+    parameters: {
+      path: {
+        session_id: number;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["AtlasOptics"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Get Atlas Optics For Session From Acquisition Uuid */
+  get_atlas_optics_for_session_from_acquisition_uuid_session_parameters_acquisitions__acquisition_uuid__atlas_optics_get: {
+    parameters: {
+      path: {
+        acquisition_uuid: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["AtlasOptics"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Link Session To Atlas Optics */
+  link_session_to_atlas_optics_session_parameters_session__session_id__atlas_optics__atlas_optics_id__post: {
+    parameters: {
+      path: {
+        session_id: number;
+        atlas_optics_id: number;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": unknown;
         };
       };
       /** @description Validation Error */

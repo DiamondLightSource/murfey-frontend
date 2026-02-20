@@ -8,22 +8,20 @@ import {
   VStack,
   Heading,
 } from '@chakra-ui/react'
+import { AtlasOpticsSettingsCard } from 'components/acquisitionParametersCard'
 import { getForm } from 'components/forms'
 import { SetupStepper } from 'components/setupStepper'
 import { startMultigridWatcher } from 'loaders/multigridSetup'
 import { getProcessingParameterData } from 'loaders/processingParameters'
-import { updateSession } from 'loaders/sessionClients'
 import { registerProcessingParameters } from 'loaders/sessionSetup'
 import React from 'react'
 import { Link as LinkRouter, useParams, useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
 
-type SessionClients = components['schemas']['SessionClients']
-type ProvidedProcessingParameters =
-  components['schemas']['ProvidedProcessingParameters']
+type AtlasOptics = components['schemas']['AtlasOptics']
 
 export const AtlasOpticsSetup = () => {
-  const sessionClients = useLoaderData() as SessionClients | null
+  const atlasOpticsSettings = useLoaderData() as AtlasOptics[] | null
   const [atlasParams, setAtlasParams] = React.useState()
   const { sessid } = useParams()
   const [paramsSet, setParamsSet] = React.useState(false)
@@ -39,17 +37,15 @@ export const AtlasOpticsSetup = () => {
     }
   }
 
-  if (sessionClients)
-    getProcessingParameterData(sessionClients.session.id.toString()).then(
-      (params) => setProcParams(params)
-    )
-  const activeStep = sessionClients
-    ? 5
-      : sessionClients.session.visit
-        ? 4
-        : 0
+  const activeStep = 5
+
   return (
     <div className="rootContainer">
+      {
+        atlasOpticsSettings && atlasOpticsSettings.length > 0 ? (
+          atlasOpticsSettings.map((o) => (<AtlasOpticsSettingsCard atlasOptics={o}/>))
+        ): <></>
+      }
       <Box w="100%" bg="murfey.50">
         <Box w="100%" overflow="hidden">
           <VStack className="homeRoot">

@@ -2,6 +2,7 @@ import { ChakraProvider, createStandaloneToast } from '@chakra-ui/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ProtectedRoutes } from 'components/protectedRoutes'
+import { acquisitionParametersLoader } from 'loaders/acquisitionParameters'
 import { dataCollectionGroupsLoader } from 'loaders/dataCollectionGroups'
 import { gridSquaresLoader } from 'loaders/gridSquares'
 import { instrumentInfoLoader } from 'loaders/hub'
@@ -90,7 +91,7 @@ const router = createBrowserRouter([
         path: '/new_session/acquisition_parameters/:sessid',
         element: <AtlasOpticsSetup />,
         errorElement: <Error />,
-        loader: sessionLoader(queryClient),
+        loader: acquisitionParametersLoader(queryClient),
       },
       {
         path: '/sessions/:sessid',
