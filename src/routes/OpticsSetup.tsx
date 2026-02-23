@@ -41,13 +41,6 @@ export const AtlasOpticsSetup = () => {
 
   return (
     <div className="rootContainer">
-      {atlasOpticsSettings && atlasOpticsSettings.length > 0 ? (
-        atlasOpticsSettings.map((o) => (
-          <AtlasOpticsSettingsCard atlasOptics={o} />
-        ))
-      ) : (
-        <></>
-      )}
       <Box w="100%" bg="murfey.50">
         <Box w="100%" overflow="hidden">
           <VStack className="homeRoot">
@@ -120,7 +113,7 @@ export const AtlasOpticsSetup = () => {
             alignItems={'left'}
             display={'flex'}
           >
-            <HoleTemplate width={200} height={200} />
+            <HoleTemplate width={500} height={500} />
           </Box>
           <Box
             mt="1em"
