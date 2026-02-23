@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { AtlasOpticsSettingsCard } from 'components/acquisitionParametersCard'
 import { getForm } from 'components/forms'
+import { HoleTemplate } from 'components/holeTemplate'
 import { SetupStepper } from 'components/setupStepper'
 import { addAtlasOpticsSettings } from 'loaders/acquisitionParameters'
 import React from 'react'
@@ -40,6 +41,13 @@ export const AtlasOpticsSetup = () => {
 
   return (
     <div className="rootContainer">
+      {atlasOpticsSettings && atlasOpticsSettings.length > 0 ? (
+        atlasOpticsSettings.map((o) => (
+          <AtlasOpticsSettingsCard atlasOptics={o} />
+        ))
+      ) : (
+        <></>
+      )}
       <Box w="100%" bg="murfey.50">
         <Box w="100%" overflow="hidden">
           <VStack className="homeRoot">
@@ -112,6 +120,16 @@ export const AtlasOpticsSetup = () => {
             alignItems={'left'}
             display={'flex'}
           >
+            <HoleTemplate width={200} height={200} />
+          </Box>
+          <Box
+            mt="1em"
+            px="10vw"
+            w="100%"
+            justifyContent={'left'}
+            alignItems={'left'}
+            display={'flex'}
+          >
             <Link
               w={{ base: '100%', md: '19.6%' }}
               key={sessid}
@@ -129,8 +147,7 @@ export const AtlasOpticsSetup = () => {
               _hover={{ textDecor: 'none' }}
               as={LinkRouter}
               to={`../sessions/${sessid}`}
-            >
-            </Link>
+            ></Link>
           </Box>
         </Stack>
       </Box>
