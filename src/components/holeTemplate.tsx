@@ -1,8 +1,8 @@
-import { Box, IconButton, Slider, SliderTrack, SliderFilledTrack, SliderThumb } from '@chakra-ui/react'
+import { Box, Checkbox, IconButton, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, Slider, SliderTrack, SliderFilledTrack, SliderThumb } from '@chakra-ui/react'
 import { Drag, raise } from '@visx/drag'
 import { LinearGradient } from '@visx/gradient'
 import { scaleOrdinal } from '@visx/scale'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { AddIcon, MinusIcon } from '@chakra-ui/icons'
 
 export type HoleTemplateProps = {
@@ -21,17 +21,35 @@ export type Circle = {
 
 export const HoleTemplate = ({ width, height }: HoleTemplateProps) => {
   const [intensity, setIntensity] = useState(1)
-  const [draggingItems, setDraggingItems] = useState<Circle[]>([
-    { radius: width/8, x: width / 2, y: width / 2, id: 'center', width: 2*0.7*width/8, height: 0.6*2*0.7*width/8 } as Circle,
-  ])
+  const [strict, setStrict] = useState(true)
+  const [includeCentralPosition, setIncludeCentralPosition] = useState(true)
+  const [numOnCircumference, setNumOnCircumference] = useState(5)
+  const [positionRadius, setPositionRadius] = useState(0.8)
+  const [draggingItems, setDraggingItems] = useState<Circle[]>([])
 
   const addPosition = () => {
-    setDraggingItems([...draggingItems, { radius: width/8, x: width / 2, y: width / 2, id: 'center', width: 2*0.7*width/8, height: 0.6*2*0.7*width/8 } as Circle])
+    setDraggingItems([...draggingItems, { radius: width/8, x: 0, y: 0, id: 'center', width: 2*0.7*width/8, height: 0.6*2*0.7*width/8 } as Circle])
   }
 
   const removePosition = () => {
     if(draggingItems.length > 1) setDraggingItems(draggingItems.slice(0, -1))
   }
+
+  const addPositionsOnCircumference = (numPositions: number, includeCentral: boolean) => {
+    let angularStep = 2*Math.PI / numPositions
+    let positions = new Array<Circle>(includeCentral ? numPositions + 1 : numPositions)
+    for(let i = 0; i < numPositions; i++) {
+      positions[i] = { radius: width/8, x: (width/3)*Math.sin(i*angularStep), y: (width/3)*Math.cos(i*angularStep), id: `circumference-{i}`, width: 2*0.7*width/8, height: 0.6*2*0.7*width/8 } as Circle
+    } 
+    if(includeCentral) positions[numPositions] =  { radius: width/8, x: 0, y: 0, id: 'center', width: 2*0.7*width/8, height: 0.6*2*0.7*width/8 } as Circle
+    setDraggingItems(positions)
+  }
+
+  useEffect(() => {
+    if(strict) {
+      addPositionsOnCircumference(numOnCircumference, includeCentralPosition)
+    }
+  }, [])
 
   if (draggingItems.length === 0 || width < 10) return null
 
@@ -54,8 +72,8 @@ export const HoleTemplate = ({ width, height }: HoleTemplateProps) => {
             key={`drag-${d.id}`}
             width={width}
             height={height}
-            x={d.x}
-            y={d.y}
+            x={(width/2) - positionRadius*d.x}
+            y={(height/2) - positionRadius*d.y}
             onDragStart={() => {
               // svg follows the painter model
               // so we need to move the data item
@@ -65,6 +83,32 @@ export const HoleTemplate = ({ width, height }: HoleTemplateProps) => {
             }}
           >
             {({ dragStart, dragEnd, dragMove, isDragging, x, y, dx, dy }) => (
+              strict ? (
+              <g>
+              <circle
+                key={`dot-${d.id}`}
+                cx={x}
+                cy={y}
+                r={intensity*d.radius}
+                fillOpacity={0.5}
+                stroke={'transparent'}
+                strokeWidth={2}
+                fill='#00A6A6'
+              />
+              <rect
+                key={`camera-${d.id}`}
+                x={x -0.5*d.width}
+                y={y -0.5*d.height}
+                width={d.width}
+                height={d.height}
+                fillOpacity={0.9}
+                stroke={'transparent'}
+                strokeWidth={2}
+                fill='#00A6A6'
+              />
+              </g>
+
+              ) : (
               <g>
               <circle
                 key={`dot-${d.id}`}
@@ -85,8 +129,8 @@ export const HoleTemplate = ({ width, height }: HoleTemplateProps) => {
               />
               <rect
                 key={`camera-${d.id}`}
-                x={x-0.5*d.width}
-                y={y-0.5*d.height}
+                x={x -0.5*d.width}
+                y={y -0.5*d.height}
                 width={d.width}
                 height={d.height}
                 transform={`translate(${dx}, ${dy})`}
@@ -102,7 +146,7 @@ export const HoleTemplate = ({ width, height }: HoleTemplateProps) => {
                 onTouchEnd={dragEnd}
               />
               </g>
-            )}
+            ))}
           </Drag>
         ))}
       </svg>
@@ -122,8 +166,27 @@ export const HoleTemplate = ({ width, height }: HoleTemplateProps) => {
       >
       <IconButton aria-label='add-position' icon={<AddIcon />} onClick={addPosition} />
       <IconButton aria-label='remove-position' icon={<MinusIcon />} onClick={removePosition} />
+      <Checkbox isChecked={strict} onChange={(e) => setStrict(e.target.checked)}>
+        Apply strict positioning
+      </Checkbox>
       </Box>
+      <Checkbox isChecked={includeCentralPosition} onChange={(e) => {setIncludeCentralPosition(e.target.checked); e.target.checked ? addPosition() : removePosition();}}>
+        Include central position
+      </Checkbox>
       <Slider aria-label='slider-intensity' defaultValue={100} min={0} max={300} step={1} onChange={(val) => setIntensity(val/100)}>
+        <SliderTrack>
+          <SliderFilledTrack />
+        </SliderTrack>
+        <SliderThumb />
+      </Slider>
+      <NumberInput defaultValue={5} min={1} onChange={(value) => addPositionsOnCircumference(value, includeCentralPosition)}>
+        <NumberInputField />
+        <NumberInputStepper>
+          <NumberIncrementStepper />
+          <NumberDecrementStepper />
+        </NumberInputStepper>
+      </NumberInput>
+      <Slider aria-label='slider-position-radius' defaultValue={100} min={0} max={150} step={1} onChange={(val) => setPositionRadius(val/100)}>
         <SliderTrack>
           <SliderFilledTrack />
         </SliderTrack>
