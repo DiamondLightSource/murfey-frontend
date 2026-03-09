@@ -1,5 +1,5 @@
 import { ChakraProvider, createStandaloneToast } from '@chakra-ui/react'
-import { ThemeProvider, createTheme } from '@mui/material/styles'
+import { ThemeProvider, createTheme, THEME_ID } from '@mui/material/styles'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ProtectedRoutes } from 'components/protectedRoutes'
@@ -134,7 +134,7 @@ const router = createBrowserRouter([
 ])
 
 root.render(
-  <ThemeProvider theme={muiTheme}>
+  <ThemeProvider theme={{ [THEME_ID]: muiTheme }}>
     <ChakraProvider theme={theme}>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
