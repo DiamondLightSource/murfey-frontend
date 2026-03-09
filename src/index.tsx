@@ -1,4 +1,5 @@
 import { ChakraProvider, createStandaloneToast } from '@chakra-ui/react'
+import { ThemeProvider, createTheme } from '@mui/material/styles'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ProtectedRoutes } from 'components/protectedRoutes'
@@ -33,6 +34,7 @@ import { SessionParameters } from 'routes/SessionParameters'
 import { SessionSetup } from 'routes/SessionSetup'
 import { theme } from 'styles/theme'
 
+const muiTheme = createTheme()
 const { ToastContainer } = createStandaloneToast()
 const container = document.getElementById('root')!
 const root = createRoot(container)
@@ -132,13 +134,15 @@ const router = createBrowserRouter([
 ])
 
 root.render(
-  <ChakraProvider theme={theme}>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <ToastContainer />
-      {process.env.NODE_ENV === 'development' && (
-        <ReactQueryDevtools initialIsOpen={false} />
-      )}
-    </QueryClientProvider>
-  </ChakraProvider>
+  <ThemeProvider theme={muiTheme}>
+    <ChakraProvider theme={theme}>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+        <ToastContainer />
+        {process.env.NODE_ENV === 'development' && (
+          <ReactQueryDevtools initialIsOpen={false} />
+        )}
+      </QueryClientProvider>
+    </ChakraProvider>
+  </ThemeProvider>
 )
