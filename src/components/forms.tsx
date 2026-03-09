@@ -1,9 +1,13 @@
+import AddIcon from '@mui/icons-material/Add'
+import RemoveIcon from '@mui/icons-material/Remove'
 import {
   Box,
   Button,
   FormControl,
   FormControlLabel,
   FormLabel,
+  IconButton,
+  InputAdornment,
   InputLabel,
   MenuItem,
   Select,
@@ -12,6 +16,7 @@ import {
   TextField,
 } from '@mui/material'
 import React, { ReactElement } from 'react'
+import { colours } from 'styles/colours'
 
 const formDataSPA: { [key: string]: any } = {
   type: 'SPA',
@@ -34,6 +39,7 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
     return /\d/.test(char)
   }
   const [symmetryType, setSymmetryType] = React.useState('C')
+  const [symmetryNum, setSymmetryNum] = React.useState(1)
   const [particleDetection, setParticleDetection] = React.useState(true)
   const [runClass3D, setRunClass3D] = React.useState(true)
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,7 +104,7 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
                   </Select>
                 </FormControl>
                 <TextField
-                  defaultValue={1}
+                  value={symmetryNum}
                   type="number"
                   inputProps={{
                     min: 1,
@@ -106,9 +112,41 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
                       if (!validateInt(e.key)) e.preventDefault()
                     },
                   }}
+                  onChange={(e) =>
+                    setSymmetryNum(Math.max(1, parseInt(e.target.value) || 1))
+                  }
                   disabled={['T', 'O'].includes(symmetryType)}
                   name="symmetry2"
                   fullWidth
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <IconButton
+                          size="small"
+                          disabled={
+                            ['T', 'O'].includes(symmetryType) ||
+                            symmetryNum <= 1
+                          }
+                          onClick={() =>
+                            setSymmetryNum((n) => Math.max(1, n - 1))
+                          }
+                        >
+                          <RemoveIcon fontSize="small" />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          size="small"
+                          disabled={['T', 'O'].includes(symmetryType)}
+                          onClick={() => setSymmetryNum((n) => n + 1)}
+                        >
+                          <AddIcon fontSize="small" />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </Stack>
             </Stack>
@@ -124,6 +162,14 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
                   defaultChecked
                   onChange={handleSwitchChange}
                   name="detect-particle-size"
+                  sx={{
+                    '& .MuiSwitch-switchBase.Mui-checked': {
+                      color: colours.murfey[600].default,
+                    },
+                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                      backgroundColor: colours.murfey[600].default,
+                    },
+                  }}
                 />
               }
               label="Automatically detect particle size"
@@ -144,13 +190,28 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
                   defaultChecked
                   onChange={handleClass3DSwitchChange}
                   name="run-class3d"
+                  sx={{
+                    '& .MuiSwitch-switchBase.Mui-checked': {
+                      color: colours.murfey[600].default,
+                    },
+                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                      backgroundColor: colours.murfey[600].default,
+                    },
+                  }}
                 />
               }
               label="Run 3D classification"
             />
           </Stack>
         </FormControl>
-        <Button variant="contained" type="submit">
+        <Button
+          variant="contained"
+          type="submit"
+          sx={{
+            backgroundColor: colours.murfey[600].default,
+            '&:hover': { backgroundColor: colours.murfey[700].default },
+          }}
+        >
           Submit
         </Button>
       </Stack>
@@ -186,7 +247,14 @@ const TomoForm = (submissionCallback: (arg0: any) => void) => {
             </Stack>
           </Stack>
         </FormControl>
-        <Button variant="contained" type="submit">
+        <Button
+          variant="contained"
+          type="submit"
+          sx={{
+            backgroundColor: colours.murfey[600].default,
+            '&:hover': { backgroundColor: colours.murfey[700].default },
+          }}
+        >
           Submit
         </Button>
       </Stack>
