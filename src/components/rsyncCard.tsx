@@ -1,28 +1,24 @@
+import DensityMediumIcon from '@mui/icons-material/DensityMedium'
 import {
-  Badge,
   Box,
   Button,
   Card,
+  CardContent,
   Checkbox,
+  Chip,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
-  Heading,
+  FormControlLabel,
   IconButton,
-  Input,
   Menu,
-  MenuButton,
   MenuItem,
-  MenuList,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Spinner,
-  Text,
-} from '@chakra-ui/react'
-import { useDisclosure } from '@chakra-ui/react'
+  TextField,
+  Typography,
+} from '@mui/material'
 import {
   requestSymlinkCreation,
   pauseRsyncer,
@@ -32,10 +28,19 @@ import {
   flushSkippedRsyncer,
 } from 'loaders/rsyncers'
 import React from 'react'
-import { MdDensityMedium } from 'react-icons/md'
 import { components } from 'schema/main'
+import { colours } from 'styles/colours'
 
 type RSyncerInfo = components['schemas']['RSyncerInfo']
+
+const tagColor = (
+  tag: string
+): 'success' | 'secondary' | 'warning' | 'error' => {
+  if (tag === 'fractions') return 'success'
+  if (tag === 'metadata') return 'secondary'
+  if (tag === 'atlas') return 'warning'
+  return 'error'
+}
 
 export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
   const destinationParent = rsyncer.destination
@@ -43,28 +48,23 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
     .slice(0, -2)
     .join('/')
   const destinationName = rsyncer.destination.split('/')[-1]
-  const {
-    isOpen: isOpenRsyncerAction,
-    onOpen: onOpenRsyncerAction,
-    onClose: onCloseRsyncerAction,
-  } = useDisclosure()
-  const {
-    isOpen: isOpenSymlink,
-    onOpen: onOpenSymlink,
-    onClose: onCloseSymlink,
-  } = useDisclosure()
+  const [isOpenRsyncerAction, setIsOpenRsyncerAction] = React.useState(false)
+  const [isOpenSymlink, setIsOpenSymlink] = React.useState(false)
   const [rsyncerAction, setRsyncerAction] = React.useState('finalise')
   const [symlinkPath, setSymlinkPath] = React.useState(destinationName)
   const [symlinkOverride, setSymlinkOverride] = React.useState(false)
+  const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(
+    null
+  )
 
   const finalise = () => {
     setRsyncerAction('finalise')
-    onOpenRsyncerAction()
+    setIsOpenRsyncerAction(true)
   }
 
   const remove = () => {
     setRsyncerAction('remove')
-    onOpenRsyncerAction()
+    setIsOpenRsyncerAction(true)
   }
 
   const handleRsyncerAction = async () => {
@@ -73,7 +73,7 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
     } else if (rsyncerAction === 'remove') {
       await removeRsyncer(rsyncer.session_id, rsyncer.source)
     }
-    onCloseRsyncerAction()
+    setIsOpenRsyncerAction(false)
   }
 
   const handleCreateSymlink = async () => {
@@ -83,251 +83,302 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
       destinationParent + '/' + symlinkPath,
       symlinkOverride
     )
-    onCloseSymlink()
+    setIsOpenSymlink(false)
   }
+
+  const closeMenu = () => setMenuAnchorEl(null)
 
   return (
     <Card
-      width="100%"
-      bg={rsyncer.alive ? 'murfey.400' : '#DF928E'}
-      borderColor="murfey.300"
-      _hover={{
-        borderColor: 'murfey.500',
+      sx={{
+        width: '100%',
+        backgroundColor: rsyncer.alive
+          ? colours.murfey[400].default
+          : '#DF928E',
+        border: `1px solid ${colours.murfey[300].default}`,
+        '&:hover': {
+          borderColor: colours.murfey[500].default,
+        },
       }}
-      p={4}
     >
       {/* Pop-up components */}
-      <Modal isOpen={isOpenRsyncerAction} onClose={onCloseRsyncerAction}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>
-            Confirm RSyncer {rsyncerAction}: {rsyncer.source}
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>Are you sure you want to continue?</ModalBody>
+      <Dialog
+        open={isOpenRsyncerAction}
+        onClose={() => setIsOpenRsyncerAction(false)}
+      >
+        <DialogTitle>
+          Confirm RSyncer {rsyncerAction}: {rsyncer.source}
+        </DialogTitle>
+        <DialogContent>Are you sure you want to continue?</DialogContent>
+        <DialogActions>
+          <Button variant="text" onClick={() => setIsOpenRsyncerAction(false)}>
+            Close
+          </Button>
+          <Button variant="contained" onClick={() => handleRsyncerAction()}>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-          <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onCloseRsyncerAction}>
-              Close
-            </Button>
-            <Button variant="default" onClick={() => handleRsyncerAction()}>
-              Confirm
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      <Modal isOpen={isOpenSymlink} onClose={onCloseSymlink}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Create Symlink to {rsyncer.destination}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
+      <Dialog open={isOpenSymlink} onClose={() => setIsOpenSymlink(false)}>
+        <DialogTitle>Create Symlink to {rsyncer.destination}</DialogTitle>
+        <DialogContent>
+          <Typography>
             This will create a symlink to {rsyncer.destination} on the file
             system
-            <Input
-              value={symlinkPath}
-              autoFocus
-              w="80%"
-              onChange={(v) => setSymlinkPath(v.target.value)}
-            />
-            <Checkbox
-              isChecked={symlinkOverride}
-              onChange={(e) => setSymlinkOverride(e.target.checked)}
-            >
-              Replace any existing symlink with this name?
-            </Checkbox>
-          </ModalBody>
+          </Typography>
+          <TextField
+            value={symlinkPath}
+            autoFocus
+            sx={{ width: '80%' }}
+            onChange={(v) => setSymlinkPath(v.target.value)}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={symlinkOverride}
+                onChange={(e) => setSymlinkOverride(e.target.checked)}
+              />
+            }
+            label="Replace any existing symlink with this name?"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button variant="text" onClick={() => setIsOpenSymlink(false)}>
+            Close
+          </Button>
+          <Button variant="contained" onClick={() => handleCreateSymlink()}>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-          <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onCloseSymlink}>
-              Close
-            </Button>
-            <Button variant="default" onClick={() => handleCreateSymlink()}>
-              Confirm
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      {/* Box containing card contents */}
-      <Box
-        flex="1"
-        display="flex"
-        flexDirection="column"
-        alignItems="start"
-        justifyContent="start"
-        gap={4}
-      >
-        {/* Title bar of RSync card */}
+      <CardContent>
+        {/* Box containing card contents */}
         <Box
-          w="100%"
-          display="flex"
-          flexDirection="row"
-          alignItems="center"
-          justifyContent="space-between"
-          gap={4}
+          sx={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'start',
+            justifyContent: 'start',
+            gap: 2,
+          }}
         >
+          {/* Title bar of RSync card */}
           <Box
-            display="flex"
-            flexDirection="row"
-            alignItems="center"
-            justifyContent="start"
-            gap={4}
+            sx={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 2,
+            }}
           >
-            <Heading fontSize="md" fontWeight="bold" lineHeight={1} mt={0.5}>
-              RSync Instance
-            </Heading>
-            <Badge
-              p={1}
-              lineHeight={1}
-              mt={0.5}
-              colorScheme={
-                rsyncer.tag === 'fractions'
-                  ? 'green'
-                  : rsyncer.tag === 'metadata'
-                    ? 'purple'
-                    : rsyncer.tag === 'atlas'
-                      ? 'yellow'
-                      : 'red'
-              }
-            >
-              {rsyncer.tag}
-            </Badge>
             <Box
-              mx={1}
-              boxSize={8}
-              aspectRatio={1}
-              position="relative"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'start',
+                gap: 2,
+              }}
             >
-              {rsyncer.transferring && rsyncer.alive ? (
-                <Spinner boxSize="inherit" color="murfey.700" />
-              ) : (
-                <></>
-              )}
+              <Typography variant="subtitle1" fontWeight="bold" lineHeight={1}>
+                RSync Instance
+              </Typography>
+              <Chip
+                label={rsyncer.tag}
+                color={tagColor(rsyncer.tag)}
+                size="small"
+              />
+              <Box
+                sx={{
+                  mx: 1,
+                  width: 32,
+                  height: 32,
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                {rsyncer.transferring && rsyncer.alive ? (
+                  <CircularProgress
+                    size={32}
+                    sx={{ color: colours.murfey[700].default }}
+                  />
+                ) : (
+                  <></>
+                )}
+              </Box>
             </Box>
-          </Box>
-          <Menu>
-            <MenuButton
-              as={IconButton}
+            <IconButton
               aria-label="Rsync control options"
-              icon={<MdDensityMedium />}
+              onClick={(e) => setMenuAnchorEl(e.currentTarget)}
+            >
+              <DensityMediumIcon />
+            </IconButton>
+            <Menu
+              anchorEl={menuAnchorEl}
+              open={Boolean(menuAnchorEl)}
+              onClose={closeMenu}
+            >
+              {rsyncer.alive
+                ? [
+                    <MenuItem
+                      key="symlink"
+                      onClick={() => {
+                        setIsOpenSymlink(true)
+                        closeMenu()
+                      }}
+                    >
+                      Create symlink
+                    </MenuItem>,
+                    <MenuItem
+                      key="pause"
+                      onClick={() => {
+                        pauseRsyncer(rsyncer.session_id, rsyncer.source)
+                        closeMenu()
+                      }}
+                      disabled={rsyncer.stopping}
+                    >
+                      Pause
+                    </MenuItem>,
+                    <MenuItem
+                      key="flush"
+                      onClick={() => {
+                        flushSkippedRsyncer(rsyncer.session_id, rsyncer.source)
+                        closeMenu()
+                      }}
+                      disabled={rsyncer.stopping}
+                    >
+                      Flush skipped files
+                    </MenuItem>,
+                    <MenuItem
+                      key="stop"
+                      onClick={() => {
+                        remove()
+                        closeMenu()
+                      }}
+                      disabled={rsyncer.stopping}
+                    >
+                      Stop rsync (cannot be resumed)
+                    </MenuItem>,
+                    <MenuItem
+                      key="finalise"
+                      onClick={() => {
+                        finalise()
+                        closeMenu()
+                      }}
+                      disabled={rsyncer.stopping}
+                    >
+                      Remove all source files and stop
+                    </MenuItem>,
+                  ]
+                : [
+                    <MenuItem
+                      key="start"
+                      onClick={() => {
+                        restartRsyncer(rsyncer.session_id, rsyncer.source)
+                        closeMenu()
+                      }}
+                    >
+                      Start
+                    </MenuItem>,
+                    <MenuItem
+                      key="remove"
+                      onClick={() => {
+                        remove()
+                        closeMenu()
+                      }}
+                    >
+                      Remove
+                    </MenuItem>,
+                  ]}
+            </Menu>
+          </Box>
+
+          {/* Contents of RSync card */}
+          <Box
+            sx={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'start',
+              justifyContent: 'start',
+              gap: 1,
+            }}
+          >
+            {/* Source */}
+            <Typography
+              pt={2}
+              variant="caption"
+              textTransform="uppercase"
+              lineHeight={1}
+            >
+              Source
+            </Typography>
+            <Typography
+              variant="body2"
+              lineHeight={1}
+              sx={{ overflowWrap: 'anywhere' }}
+            >
+              {rsyncer.source}
+            </Typography>
+            <Divider
+              sx={{ borderColor: colours.murfey[300].default, width: '100%' }}
             />
-            <MenuList>
-              {rsyncer.alive ? (
-                <>
-                  <MenuItem onClick={() => onOpenSymlink()}>
-                    Create symlink
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() =>
-                      pauseRsyncer(rsyncer.session_id, rsyncer.source)
-                    }
-                    isDisabled={rsyncer.stopping}
-                  >
-                    Pause
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() =>
-                      flushSkippedRsyncer(rsyncer.session_id, rsyncer.source)
-                    }
-                    isDisabled={rsyncer.stopping}
-                  >
-                    Flush skipped files
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => remove()}
-                    isDisabled={rsyncer.stopping}
-                  >
-                    Stop rsync (cannot be resumed)
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => {
-                      finalise()
-                    }}
-                    isDisabled={rsyncer.stopping}
-                  >
-                    Remove all source files and stop
-                  </MenuItem>
-                </>
-              ) : (
-                <>
-                  <MenuItem
-                    onClick={() =>
-                      restartRsyncer(rsyncer.session_id, rsyncer.source)
-                    }
-                  >
-                    Start
-                  </MenuItem>
-                  <MenuItem onClick={() => remove()}>Remove</MenuItem>
-                </>
-              )}
-            </MenuList>
-          </Menu>
+
+            {/* Destination */}
+            <Typography
+              pt={2}
+              variant="caption"
+              textTransform="uppercase"
+              lineHeight={1}
+            >
+              Destination
+            </Typography>
+            <Typography
+              variant="body2"
+              lineHeight={1}
+              sx={{ overflowWrap: 'anywhere' }}
+            >
+              {rsyncer.destination ?? ''}
+            </Typography>
+            <Divider
+              sx={{ borderColor: colours.murfey[300].default, width: '100%' }}
+            />
+
+            {/* Transfer progress */}
+            <Typography
+              pt={2}
+              variant="caption"
+              textTransform="uppercase"
+              lineHeight={1}
+            >
+              Transfer progress
+            </Typography>
+            <Typography variant="h6" fontWeight="bold" lineHeight={1}>
+              {rsyncer.num_files_transferred} transferred
+            </Typography>
+            <Typography variant="h6" fontWeight="bold" lineHeight={1}>
+              {rsyncer.num_files_in_queue} queued
+            </Typography>
+            <Typography variant="h6" fontWeight="bold" lineHeight={1}>
+              {rsyncer.num_files_skipped} skipped
+            </Typography>
+            {rsyncer.analyser_alive ? (
+              <Typography variant="h6" fontWeight="bold" lineHeight={1}>
+                {rsyncer.num_files_to_analyse} to analyse
+              </Typography>
+            ) : (
+              <></>
+            )}
+          </Box>
         </Box>
-        {/* Contents of RSync card */}
-        <Box
-          flex="1"
-          display="flex"
-          flexDirection="column"
-          alignItems="start"
-          justifyContent="start"
-          gap={2}
-        >
-          {/* Source */}
-          <Heading
-            pt={2}
-            fontSize="sm"
-            textTransform="uppercase"
-            lineHeight={1}
-          >
-            Source
-          </Heading>
-          <Text fontSize="sm" lineHeight={1} overflowWrap="anywhere">
-            {rsyncer.source}
-          </Text>
-          <Divider borderColor="murfey.300" />
-          {/* Destination */}
-          <Heading
-            pt={2}
-            fontSize="sm"
-            textTransform="uppercase"
-            lineHeight={1}
-          >
-            Destination
-          </Heading>
-          <Text fontSize="sm" lineHeight={1} overflowWrap="anywhere">
-            {rsyncer.destination ?? ''}
-          </Text>
-          <Divider borderColor="murfey.300" />
-          {/* Transfer progress */}
-          <Heading
-            pt={2}
-            fontSize="sm"
-            textTransform="uppercase"
-            lineHeight={1}
-          >
-            Transfer progress
-          </Heading>
-          <Text fontSize="xl" fontWeight="bold" lineHeight={1}>
-            {rsyncer.num_files_transferred} transferred
-          </Text>
-          <Text fontSize="xl" fontWeight="bold" lineHeight={1}>
-            {rsyncer.num_files_in_queue} queued
-          </Text>
-          <Text fontSize="xl" fontWeight="bold" lineHeight={1}>
-            {rsyncer.num_files_skipped} skipped
-          </Text>
-          {rsyncer.analyser_alive ? (
-            <Text fontSize="xl" fontWeight="bold" lineHeight={1}>
-              {rsyncer.num_files_to_analyse} to analyse
-            </Text>
-          ) : (
-            <></>
-          )}
-        </Box>
-      </Box>
+      </CardContent>
     </Card>
   )
 }
