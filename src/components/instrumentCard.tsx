@@ -1,6 +1,7 @@
-import { Box, Card, Image, Text } from '@chakra-ui/react'
+import { Box, Card, CardContent, Typography } from '@mui/material'
 import { getInstrumentName } from 'loaders/general'
 import React, { useEffect } from 'react'
+import { colours } from 'styles/colours'
 
 const getUrl = (endpoint: string) => {
   return (
@@ -25,41 +26,39 @@ export const InstrumentCard = () => {
   return (
     <Card
       key="mag_table"
-      w="100%"
-      cursor="default"
-      _hover={{
+      sx={{
+        width: '100%',
         cursor: 'default',
-        borderColor: 'murfey.400',
+        '&:hover': { borderColor: colours.murfey[400].default },
       }}
       // Mag table is disabled until backend is fixed
       // onClick={() => {
       //   navigate(`../mag_table`)
       // }}
     >
-      <Box
-        p={4}
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        gap={4}
-      >
-        <Box
-          w="100%"
-          display="flex"
-          alignItems={'center'}
-          justifyContent={'center'}
-        >
-          <Image
-            src={getUrl(
-              `display/instruments/${sessionStorage.getItem('instrumentName')}/image/`
-            )}
-            objectFit="contain"
-            maxW="100%"
-            maxH="600px"
-          />
+      <CardContent>
+        <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
+          <Box
+            width="100%"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Box
+              component="img"
+              src={getUrl(
+                `display/instruments/${sessionStorage.getItem('instrumentName')}/image/`
+              )}
+              sx={{
+                objectFit: 'contain',
+                maxWidth: '100%',
+                maxHeight: '600px',
+              }}
+            />
+          </Box>
+          <Typography align="center">{instrumentName}</Typography>
         </Box>
-        <Text align="center">{instrumentName}</Text>
-      </Box>
+      </CardContent>
     </Card>
   )
 }
