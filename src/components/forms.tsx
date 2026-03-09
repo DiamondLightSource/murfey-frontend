@@ -1,18 +1,16 @@
 import {
+  Box,
   Button,
   FormControl,
+  FormControlLabel,
   FormLabel,
-  Input,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
-  HStack,
-  VStack,
+  InputLabel,
+  MenuItem,
   Select,
+  Stack,
   Switch,
-} from '@chakra-ui/react'
+  TextField,
+} from '@mui/material'
 import React, { ReactElement } from 'react'
 
 const formDataSPA: { [key: string]: any } = {
@@ -38,7 +36,7 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
   const [symmetryType, setSymmetryType] = React.useState('C')
   const [particleDetection, setParticleDetection] = React.useState(true)
   const [runClass3D, setRunClass3D] = React.useState(true)
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSymmetryType(event.target.value)
   }
   const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,84 +70,90 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
 
   return (
     <form onSubmit={(e) => setFormElement(e, submissionCallback)}>
-      <VStack align="start" spacing={10} width="100%" display="flex">
-        <FormControl>
-          <VStack align="start" spacing={10} width="100%" display="flex">
-            <VStack align="start" width="100%" display="flex">
+      <Stack spacing={4} alignItems="start" width="100%">
+        <FormControl fullWidth>
+          <Stack spacing={4} alignItems="start" width="100%">
+            <Stack spacing={1} alignItems="start" width="100%">
               <FormLabel>{'Dose per frame [\u212B / pixel]'}</FormLabel>
-              <Input defaultValue="1" name="dose" />
-            </VStack>
-            <VStack align="start" width="100%" display="flex">
+              <TextField defaultValue="1" name="dose" fullWidth />
+            </Stack>
+            <Stack spacing={1} alignItems="start" width="100%">
               <FormLabel>Symmetry</FormLabel>
-              <HStack align="start" width="100%" display="flex">
-                <Select
-                  defaultValue="C"
-                  onChange={handleChange}
-                  name="symmetry1"
-                >
-                  <option>C</option>
-                  <option>D</option>
-                  <option>T</option>
-                  <option>O</option>
-                  <option>I</option>
-                </Select>
-                <NumberInput
+              <Stack direction="row" spacing={2} width="100%">
+                <FormControl fullWidth>
+                  <InputLabel>Symmetry type</InputLabel>
+                  <Select
+                    defaultValue="C"
+                    onChange={(e) =>
+                      handleChange(e as React.ChangeEvent<HTMLInputElement>)
+                    }
+                    name="symmetry1"
+                    label="Symmetry type"
+                  >
+                    <MenuItem value="C">C</MenuItem>
+                    <MenuItem value="D">D</MenuItem>
+                    <MenuItem value="T">T</MenuItem>
+                    <MenuItem value="O">O</MenuItem>
+                    <MenuItem value="I">I</MenuItem>
+                  </Select>
+                </FormControl>
+                <TextField
                   defaultValue={1}
-                  min={1}
-                  isValidCharacter={validateInt}
-                  isDisabled={['T', 'O'].includes(symmetryType)}
+                  type="number"
+                  inputProps={{
+                    min: 1,
+                    onKeyPress: (e: React.KeyboardEvent) => {
+                      if (!validateInt(e.key)) e.preventDefault()
+                    },
+                  }}
+                  disabled={['T', 'O'].includes(symmetryType)}
                   name="symmetry2"
-                >
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-              </HStack>
-            </VStack>
-            <VStack align="start" width="100%" display="flex">
+                  fullWidth
+                />
+              </Stack>
+            </Stack>
+            <Stack spacing={1} alignItems="start" width="100%">
               <FormLabel>
                 {'EER grouping (number of EER frames in each fraction)'}
               </FormLabel>
-              <Input defaultValue="20" name="eer-grouping" />
-            </VStack>
-            <VStack align="start" width="100%" display="flex">
-              <HStack>
-                <FormLabel>Automatically detect particle size</FormLabel>
+              <TextField defaultValue="20" name="eer-grouping" fullWidth />
+            </Stack>
+            <FormControlLabel
+              control={
                 <Switch
                   defaultChecked
-                  colorScheme="murfey"
                   onChange={handleSwitchChange}
                   name="detect-particle-size"
                 />
-              </HStack>
-            </VStack>
-            {!particleDetection ? (
-              <VStack align="start" width="100%" display="flex">
+              }
+              label="Automatically detect particle size"
+            />
+            {!particleDetection && (
+              <Stack spacing={1} alignItems="start" width="100%">
                 <FormLabel>{'Particle diameter [\u212B]'}</FormLabel>
-                <Input defaultValue={200} name="particle-diameter" />
-              </VStack>
-            ) : (
-              <></>
+                <TextField
+                  defaultValue={200}
+                  name="particle-diameter"
+                  fullWidth
+                />
+              </Stack>
             )}
-            <VStack align="start" width="100%" display="flex">
-              <HStack>
-                <FormLabel>Run 3D classification</FormLabel>
+            <FormControlLabel
+              control={
                 <Switch
                   defaultChecked
-                  colorScheme="murfey"
                   onChange={handleClass3DSwitchChange}
                   name="run-class3d"
                 />
-              </HStack>
-            </VStack>
-          </VStack>
+              }
+              label="Run 3D classification"
+            />
+          </Stack>
         </FormControl>
-        <Button variant="default" type="submit">
+        <Button variant="contained" type="submit">
           Submit
         </Button>
-      </VStack>
+      </Stack>
     </form>
   )
 }
@@ -167,25 +171,25 @@ const TomoForm = (submissionCallback: (arg0: any) => void) => {
   }
   return (
     <form onSubmit={(e) => setFormElement(e, submissionCallback)}>
-      <VStack align="start" spacing={10} width="100%" display="flex">
-        <FormControl>
-          <VStack align="start" spacing={10} width="100%" display="flex">
-            <VStack align="start" width="100%" display="flex">
+      <Stack spacing={4} alignItems="start" width="100%">
+        <FormControl fullWidth>
+          <Stack spacing={4} alignItems="start" width="100%">
+            <Stack spacing={1} alignItems="start" width="100%">
               <FormLabel>{'Dose per frame [\u212B / pixel]'}</FormLabel>
-              <Input defaultValue="0.5" name="dose" />
-            </VStack>
-            <VStack align="start" width="100%" display="flex">
+              <TextField defaultValue="0.5" name="dose" fullWidth />
+            </Stack>
+            <Stack spacing={1} alignItems="start" width="100%">
               <FormLabel>
                 {'EER grouping (number of EER frames in each fraction)'}
               </FormLabel>
-              <Input defaultValue="20" name="eer-grouping" />
-            </VStack>
-          </VStack>
+              <TextField defaultValue="20" name="eer-grouping" fullWidth />
+            </Stack>
+          </Stack>
         </FormControl>
-        <Button variant="default" type="submit">
+        <Button variant="contained" type="submit">
           Submit
         </Button>
-      </VStack>
+      </Stack>
     </form>
   )
 }
