@@ -217,6 +217,7 @@ export const RsyncCard = ({ rsyncer }: { rsyncer: RSyncerInfo }) => {
             <IconButton
               aria-label="Rsync control options"
               onClick={(e) => setMenuAnchorEl(e.currentTarget)}
+              sx={{ backgroundColor: colours.murfey[500].default }}
             >
               <DensityMediumIcon />
             </IconButton>

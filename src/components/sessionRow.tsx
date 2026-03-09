@@ -172,7 +172,25 @@ export const SessionRow = ({
                     left: '50%',
                     display: 'flex',
                     color: 'black',
-                    animation: `${spin} 2s linear infinite, ${pulseGlow} 2s ease-in-out infinite`,
+                    '@keyframes spin': {
+                      from: {
+                        transform: 'translate(-50%, -50%) rotate(360deg)',
+                      },
+                      to: { transform: 'translate(-50%, -50%) rotate(0deg)' },
+                    },
+                    '@keyframes pulseGlow': {
+                      '0%': {
+                        filter: `drop-shadow(0 0 2px ${isFinalising ? 'red' : 'green'})`,
+                      },
+                      '50%': {
+                        filter: `drop-shadow(0 0 0px ${isFinalising ? 'red' : 'green'})`,
+                      },
+                      '100%': {
+                        filter: `drop-shadow(0 0 2px ${isFinalising ? 'red' : 'green'})`,
+                      },
+                    },
+                    animation:
+                      'spin 2s linear infinite, pulseGlow 2s ease-in-out infinite',
                   }}
                 >
                   <MdSync size={24} />
@@ -200,6 +218,7 @@ export const SessionRow = ({
               aria-label="Delete session"
               onClick={() => setIsOpenDelete(true)}
               disabled={isActive || sessionFinalising}
+              sx={{ backgroundColor: colours.murfey[500].default }}
             >
               <MdDelete />
             </IconButton>
@@ -211,6 +230,7 @@ export const SessionRow = ({
               aria-label="Clean up session"
               onClick={() => setIsOpenCleanup(true)}
               disabled={!isActive || sessionFinalising}
+              sx={{ backgroundColor: colours.murfey[500].default }}
             >
               <GiMagicBroom />
             </IconButton>

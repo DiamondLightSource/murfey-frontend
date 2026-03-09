@@ -1,7 +1,6 @@
 import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
 import {
-  Box,
   Button,
   FormControl,
   FormControlLabel,
@@ -39,7 +38,7 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
     return /\d/.test(char)
   }
   const [symmetryType, setSymmetryType] = React.useState('C')
-  const [symmetryNum, setSymmetryNum] = React.useState(1)
+  const [symmetryNum, setSymmetryNum] = React.useState<number | ''>(1)
   const [particleDetection, setParticleDetection] = React.useState(true)
   const [runClass3D, setRunClass3D] = React.useState(true)
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,9 +111,15 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
                       if (!validateInt(e.key)) e.preventDefault()
                     },
                   }}
-                  onChange={(e) =>
-                    setSymmetryNum(Math.max(1, parseInt(e.target.value) || 1))
-                  }
+                  onChange={(e) => {
+                    const val = e.target.value
+                    setSymmetryNum(
+                      val === '' ? '' : Math.max(1, parseInt(val) || 1)
+                    )
+                  }}
+                  onBlur={() => {
+                    if (symmetryNum === '') setSymmetryNum(1)
+                  }}
                   disabled={['T', 'O'].includes(symmetryType)}
                   name="symmetry2"
                   fullWidth
@@ -125,10 +130,13 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
                           size="small"
                           disabled={
                             ['T', 'O'].includes(symmetryType) ||
+                            symmetryNum === '' ||
                             symmetryNum <= 1
                           }
                           onClick={() =>
-                            setSymmetryNum((n) => Math.max(1, n - 1))
+                            setSymmetryNum((n) =>
+                              Math.max(1, (n as number) - 1)
+                            )
                           }
                         >
                           <RemoveIcon fontSize="small" />
@@ -140,7 +148,9 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
                         <IconButton
                           size="small"
                           disabled={['T', 'O'].includes(symmetryType)}
-                          onClick={() => setSymmetryNum((n) => n + 1)}
+                          onClick={() =>
+                            setSymmetryNum((n) => (n === '' ? 1 : n + 1))
+                          }
                         >
                           <AddIcon fontSize="small" />
                         </IconButton>
