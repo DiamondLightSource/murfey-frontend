@@ -26,6 +26,7 @@ export const InstrumentCard = () => {
   return (
     <Card
       key="mag_table"
+      variant="outlined"
       sx={{
         width: '100%',
         cursor: 'default',
