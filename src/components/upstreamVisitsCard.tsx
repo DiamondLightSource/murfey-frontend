@@ -1,9 +1,10 @@
-import { Card, Box, Button, Heading } from '@chakra-ui/react'
+import FileDownloadIcon from '@mui/icons-material/FileDownload'
+import { Box, Button, Card, CardContent, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import { getUpstreamVisits, upstreamDataDownloadRequest } from 'loaders/general'
 import { getInstrumentInfo } from 'loaders/general'
 import React, { useCallback, useEffect } from 'react'
-import { MdFileDownload } from 'react-icons/md'
+import { colours } from 'styles/colours'
 
 const InstrumentUpstreamVisitsCard = ({
   sessid,
@@ -35,63 +36,63 @@ const InstrumentUpstreamVisitsCard = ({
     // Display upstream visits for a single instrument
     // Parameters to take: instrument name and upstream visits dict
     <Card
-      w="100%"
-      p={4}
-      cursor="default"
-      _hover={{
+      variant="outlined"
+      sx={{
+        width: '100%',
         cursor: 'default',
-        borderColor: 'murfey.400',
+        '&:hover': { borderColor: colours.murfey[400].default },
       }}
     >
-      <Box
-        flex="1"
-        display="flex"
-        flexDirection="column"
-        alignItems="start"
-        justifyContent="start"
-        gap={4}
-      >
-        <Heading fontSize="md" fontWeight="bold" lineHeight={1}>
-          {displayName}
-        </Heading>
-        {/* Map each visit to a button */}
-        {/* Allow buttons to wrap horizontally*/}
+      <CardContent>
         <Box
-          w="100%"
-          display="grid"
-          gridTemplateColumns="repeat(auto-fit, 16ch)"
-          justifyContent="center"
-          gap={4}
+          flex="1"
+          display="flex"
+          flexDirection="column"
+          alignItems="start"
+          justifyContent="start"
+          gap={2}
         >
-          {!!Object.keys(sortedVisits).length ? (
-            Object.entries(sortedVisits).map(
-              ([visitName, visitPath]: [string, string]) => {
-                return (
-                  <Button
-                    maxW="16ch"
-                    variant="default"
-                    rightIcon={<MdFileDownload />}
-                    cursor="pointer"
-                    onClick={() =>
-                      upstreamDataDownloadRequest(
-                        instrumentName,
-                        sessid,
-                        visitName,
-                        visitPath
-                      )
-                    }
-                    fontSize="md"
-                  >
-                    {visitName}
-                  </Button>
-                )
-              }
-            )
-          ) : (
-            <>No related visits found</>
-          )}
+          <Typography variant="subtitle1" fontWeight="bold" lineHeight={1}>
+            {displayName}
+          </Typography>
+          {/* Map each visit to a button */}
+          {/* Allow buttons to wrap horizontally*/}
+          <Box
+            width="100%"
+            display="grid"
+            sx={{ gridTemplateColumns: 'repeat(auto-fit, 16ch)' }}
+            justifyContent="center"
+            gap={2}
+          >
+            {!!Object.keys(sortedVisits).length ? (
+              Object.entries(sortedVisits).map(
+                ([visitName, visitPath]: [string, string]) => {
+                  return (
+                    <Button
+                      key={visitName}
+                      variant="contained"
+                      endIcon={<FileDownloadIcon />}
+                      onClick={() =>
+                        upstreamDataDownloadRequest(
+                          instrumentName,
+                          sessid,
+                          visitName,
+                          visitPath
+                        )
+                      }
+                      sx={{ maxWidth: '16ch' }}
+                    >
+                      {visitName}
+                    </Button>
+                  )
+                }
+              )
+            ) : (
+              <>No related visits found</>
+            )}
+          </Box>
         </Box>
-      </Box>
+      </CardContent>
     </Card>
   )
 }
@@ -140,42 +141,44 @@ export const UpstreamVisitsCard = ({ sessid }: { sessid: number }) => {
 
   return !!Object.keys(upstreamVisits).length && !!instrumentInfo ? (
     <Card
-      w="100%"
-      p={4}
-      cursor="default"
-      _hover={{
+      variant="outlined"
+      sx={{
+        width: '100%',
         cursor: 'default',
-        borderColor: 'murfey.400',
+        '&:hover': { borderColor: colours.murfey[400].default },
       }}
     >
-      <Box
-        flex="1"
-        display="flex"
-        flexDirection="column"
-        alignItems="start"
-        justifyContent="start"
-        gap={4}
-      >
-        <Heading fontSize="md" fontWeight="bold" lineHeight={1}>
-          Download Upstream Visit Data
-        </Heading>
-        {/* Map each instrument to its own card */}
-        {Object.entries(upstreamVisits).map(
-          ([instrumentName, instrumentVisits]: [
-            string,
-            Record<string, string>,
-          ]) => {
-            return (
-              <InstrumentUpstreamVisitsCard
-                sessid={sessid}
-                instrumentName={instrumentName}
-                displayName={getDisplayName(instrumentName)}
-                instrumentVisits={instrumentVisits}
-              />
-            )
-          }
-        )}
-      </Box>
+      <CardContent>
+        <Box
+          flex="1"
+          display="flex"
+          flexDirection="column"
+          alignItems="start"
+          justifyContent="start"
+          gap={2}
+        >
+          <Typography variant="subtitle1" fontWeight="bold" lineHeight={1}>
+            Download Upstream Visit Data
+          </Typography>
+          {/* Map each instrument to its own card */}
+          {Object.entries(upstreamVisits).map(
+            ([instrumentName, instrumentVisits]: [
+              string,
+              Record<string, string>,
+            ]) => {
+              return (
+                <InstrumentUpstreamVisitsCard
+                  key={instrumentName}
+                  sessid={sessid}
+                  instrumentName={instrumentName}
+                  displayName={getDisplayName(instrumentName)}
+                  instrumentVisits={instrumentVisits}
+                />
+              )
+            }
+          )}
+        </Box>
+      </CardContent>
     </Card>
   ) : (
     <></>
