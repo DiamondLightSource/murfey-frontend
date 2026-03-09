@@ -1,18 +1,11 @@
-import {
-  Box,
-  Flex,
-  IconButton,
-  Image,
-  Tooltip,
-  BoxProps,
-  Icon,
-} from '@chakra-ui/react'
+import { Box, BoxProps, IconButton, Tooltip } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import { getInstrumentConnectionStatus } from 'loaders/general'
 import React, { useEffect } from 'react'
-import { MdSignalWifi4Bar, MdOutlineSignalWifiBad } from 'react-icons/md'
-import { TbMicroscope, TbSnowflake, TbHomeCog } from 'react-icons/tb'
+import { MdOutlineSignalWifiBad, MdSignalWifi4Bar } from 'react-icons/md'
+import { TbHomeCog, TbMicroscope, TbSnowflake } from 'react-icons/tb'
 import { useNavigate } from 'react-router-dom'
+import { colours } from 'styles/colours'
 
 export interface LinkDescriptor {
   label: string
@@ -59,76 +52,86 @@ export const Navbar = ({
   }, [instrumentServerConnectionResponse])
 
   return (
-    <Box position="sticky" top="0" zIndex={1} w="100%" h={12} {...props}>
-      <Flex
-        px={{
-          base: 4,
-          md: 12,
-        }}
-        py={2}
-        gap={2}
-        direction="row"
+    <Box
+      position="sticky"
+      top={0}
+      zIndex={1}
+      width="100%"
+      height={48}
+      {...props}
+    >
+      <Box
+        display="flex"
+        flexDirection="row"
         alignItems="center"
-        bg="murfey.800"
+        gap={1}
+        px={{ xs: 2, md: 6 }}
+        py={1}
+        sx={{ backgroundColor: colours.murfey[800].default }}
       >
         {logo ? (
-          <Box maxW={24}>
-            <Image src={logo} objectFit="contain" />
-          </Box>
-        ) : null}
-        <Tooltip label="Back to the Hub">
-          <IconButton
-            onClick={() => {
-              navigate(`/hub`)
-            }}
-            size="sm"
-            icon={
-              <>
-                <TbHomeCog />
-              </>
-            }
-            aria-label="Back to the Hub"
-            _hover={{ background: 'transparent', color: 'murfey.500' }}
+          <Box
+            component="img"
+            src={logo}
+            sx={{ maxWidth: '6rem', objectFit: 'contain' }}
           />
+        ) : null}
+        <Tooltip title="Back to the Hub">
+          <IconButton
+            onClick={() => navigate('/hub')}
+            size="small"
+            aria-label="Back to the Hub"
+            sx={{
+              color: 'white',
+              '&:hover': {
+                background: 'transparent',
+                color: colours.murfey[500].default,
+              },
+            }}
+          >
+            <TbHomeCog />
+          </IconButton>
         </Tooltip>
         {/* Add the instrument name as a URL query parameter to trigger a reload */}
-        <Tooltip label="Back to the microscope">
+        <Tooltip title="Back to the microscope">
           <IconButton
-            onClick={() => {
-              navigate(`/home`)
-            }}
-            size="sm"
-            icon={
-              <>
-                <TbSnowflake />
-                <TbMicroscope />
-              </>
-            }
+            onClick={() => navigate('/home')}
+            size="small"
             aria-label="Back to the microscope"
-            _hover={{ background: 'transparent', color: 'murfey.500' }}
-          />
+            sx={{
+              color: 'white',
+              '&:hover': {
+                background: 'transparent',
+                color: colours.murfey[500].default,
+              },
+            }}
+          >
+            <TbSnowflake />
+            <TbMicroscope />
+          </IconButton>
         </Tooltip>
         <Tooltip
-          label={
+          title={
             instrumentServerConnected
               ? 'Connected to instrument server'
               : 'No instrument server connection'
           }
         >
           <span tabIndex={0}>
-            <Icon
-              as={
-                instrumentServerConnected
-                  ? MdSignalWifi4Bar
-                  : MdOutlineSignalWifiBad
-              }
-              color={instrumentServerConnected ? 'white' : 'red'}
-              mt={2}
-              ml={1}
-            />
+            {instrumentServerConnected ? (
+              <MdSignalWifi4Bar
+                color="white"
+                style={{ marginTop: 8, marginLeft: 4 }}
+              />
+            ) : (
+              <MdOutlineSignalWifiBad
+                color="red"
+                style={{ marginTop: 8, marginLeft: 4 }}
+              />
+            )}
           </span>
         </Tooltip>
-      </Flex>
+      </Box>
     </Box>
   )
 }
