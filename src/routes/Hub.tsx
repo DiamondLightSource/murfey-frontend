@@ -1,7 +1,10 @@
-import { Card, Image, Text, Heading, Box } from '@chakra-ui/react'
+import Box from '@mui/material/Box'
+import Card from '@mui/material/Card'
+import Typography from '@mui/material/Typography'
 import { useEffect, useState } from 'react'
 import { TbMicroscope, TbSnowflake } from 'react-icons/tb'
 import { useLoaderData, useNavigate } from 'react-router-dom'
+import { colours } from 'styles/colours'
 
 const getUrl = (endpoint: string) => {
   return process.env.REACT_APP_HUB_ENDPOINT + endpoint
@@ -66,92 +69,116 @@ export const Hub = () => {
 
   return (
     // Start with a Box spanning width and height of browser window
-    <Box w="100vw" h="100vh" display="flex" flexDirection="column">
+    <Box
+      sx={{
+        width: '100vw',
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       {/* Title Bar */}
       <Box
-        bg="murfey.700"
-        w="100%"
-        px={{
-          base: 8,
-          md: 32,
+        sx={{
+          bgcolor: colours.murfey[700].default,
+          width: '100%',
+          px: { xs: 8, md: 32 },
+          py: 4,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+          justifyContent: 'flex-start',
+          gap: 2,
         }}
-        py={4}
-        display="flex"
-        flexDirection="column"
-        alignItems="start"
-        justifyContent="start"
-        gap={2}
       >
         {/* Show CryoEM icons on one row */}
         <Box
-          display="inline-flex"
-          flexDirection="row"
-          justifyContent="center"
-          alignItems="start"
-          fontSize="3xl"
-          color="murfey.50"
+          sx={{
+            display: 'inline-flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+            fontSize: '3rem',
+            color: colours.murfey[50].default,
+          }}
         >
           <TbSnowflake />
           <TbMicroscope />
         </Box>
-        <Heading fontSize="3xl" w="100%" color="murfey.50">
+        <Typography
+          variant="h4"
+          sx={{ width: '100%', color: colours.murfey[50].default }}
+        >
           Murfey Hub
-        </Heading>
+        </Typography>
       </Box>
       {/* Main body of Hub page showing the instruments */}
       {/* Render as a grid that overflows vertically */}
       <Box
-        p={4}
-        w="100%"
-        flex="1"
-        display="grid"
-        gridTemplateColumns={{
-          base: 'repeat(1, minmax(200px, 600px))',
-          sm: 'repeat(2, minmax(200px, 600px))',
-          md: 'repeat(3, minmax(200px, 600px))',
-          lg: 'repeat(4, minmax(200px, 600px))',
+        sx={{
+          p: 4,
+          width: '100%',
+          flex: 1,
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: 'repeat(1, minmax(200px, 600px))',
+            sm: 'repeat(2, minmax(200px, 600px))',
+            md: 'repeat(3, minmax(200px, 600px))',
+            lg: 'repeat(4, minmax(200px, 600px))',
+          },
+          justifyContent: 'center',
+          overflowY: 'auto',
+          gap: 4,
         }}
-        justifyContent="center"
-        overflowY="auto"
-        gap={4}
       >
         {instrumentInfo?.map((instrumentInfo, index) => {
           return (
             <Card
               key={index}
-              w="100%"
-              minH="400px"
-              maxH="600px"
-              cursor="pointer"
               onClick={() => navigateToInstrumentHome(instrumentInfo)}
+              sx={{
+                width: '100%',
+                minHeight: '400px',
+                maxHeight: '600px',
+                cursor: 'pointer',
+              }}
             >
               <Box
-                p={4}
-                h="100%"
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                justifyContent="space-between"
-                gap={4}
+                sx={{
+                  p: 4,
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 4,
+                }}
               >
                 <Box
-                  w="100%"
-                  flex="1"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  overflow="hidden"
+                  sx={{
+                    width: '100%',
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden',
+                  }}
                 >
-                  <Image
+                  <Box
+                    component="img"
                     src={getUrl(
                       `instrument/${instrumentInfo.instrument_name}/image`
                     )}
-                    objectFit="contain"
-                    maxW="100%"
-                    maxH="100%"
+                    sx={{
+                      objectFit: 'contain',
+                      maxWidth: '100%',
+                      maxHeight: '100%',
+                    }}
                   />
                 </Box>
-                <Text textAlign="center">{instrumentInfo.display_name}</Text>
+                <Typography textAlign="center">
+                  {instrumentInfo.display_name}
+                </Typography>
               </Box>
             </Card>
           )

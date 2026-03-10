@@ -1,20 +1,15 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Heading,
-  List,
-  ListItem,
-  Modal,
-  ModalContent,
-  ModalCloseButton,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  useDisclosure,
-  ModalBody,
-  Text,
-} from '@chakra-ui/react'
+import CloseIcon from '@mui/icons-material/Close'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import Divider from '@mui/material/Divider'
+import IconButton from '@mui/material/IconButton'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import Typography from '@mui/material/Typography'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { InstrumentCard } from 'components/instrumentCard'
 import { SessionRow } from 'components/sessionRow'
@@ -26,6 +21,7 @@ import { checkMultigridControllerStatus } from 'loaders/sessionSetup'
 import React, { useEffect } from 'react'
 import { useNavigate, useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
+import { colours } from 'styles/colours'
 import { convertUKNaiveToUTC } from 'utils/generic'
 
 type Session = components['schemas']['Session']
@@ -129,11 +125,10 @@ export const Home = () => {
   }, [expandedSessions])
 
   // Handle logic for when clicking on "New Session" button
-  const {
-    isOpen: isOpenVisitCleanupPrompt,
-    onOpen: onOpenVisitCleanupPrompt,
-    onClose: onCloseVisitCleanupPrompt,
-  } = useDisclosure()
+  const [isOpenVisitCleanupPrompt, setIsOpenVisitCleanupPrompt] =
+    React.useState(false)
+  const onOpenVisitCleanupPrompt = () => setIsOpenVisitCleanupPrompt(true)
+  const onCloseVisitCleanupPrompt = () => setIsOpenVisitCleanupPrompt(false)
 
   const handleNewSession = () => {
     // Check for stale, still running sessions
@@ -178,130 +173,155 @@ export const Home = () => {
       {/* Parent container for page contents */}
       <Box
         className="homeRoot"
-        overflow="auto"
-        display="flex"
-        flexDirection="column"
-        flex="1"
+        sx={{
+          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          flex: 1,
+        }}
       >
         {/* Logic for pop-up components */}
         {/* Visit cleanup prompt */}
-        <Modal
-          isOpen={isOpenVisitCleanupPrompt}
+        <Dialog
+          open={isOpenVisitCleanupPrompt}
           onClose={onCloseVisitCleanupPrompt}
         >
-          <ModalOverlay />
-          <ModalContent>
-            {/* Header line */}
-            <ModalHeader>Running Visits</ModalHeader>
-            <ModalCloseButton />
-            {/* Main body */}
-            <ModalBody gap={2}>
-              <Text>
-                The following expired visits are still running and should be
-                cleaned up:
-              </Text>
-              <List>
-                {staleRunningSessions?.map((session) => (
-                  <ListItem key={session.id} pl={4}>
-                    {session.visit}: {session.id}
-                  </ListItem>
-                ))}
-              </List>
-              <Text>Proceed with cleaning up old running visits?</Text>
-            </ModalBody>
-            {/* Bottom of dialog box */}
-            <ModalFooter>
-              <Button
-                variant="ghost"
-                mr={3}
-                onClick={() => {
-                  onCloseVisitCleanupPrompt()
-                  navigate(`../instruments/${instrumentName}/new_session`)
-                }}
-              >
-                Skip Cleanup
-              </Button>
-              <Button variant="default" onClick={handleVisitCleanupPrompt}>
-                Confirm
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+          {/* Header line */}
+          <DialogTitle>
+            Running Visits
+            <IconButton
+              aria-label="close"
+              onClick={onCloseVisitCleanupPrompt}
+              sx={{ position: 'absolute', right: 8, top: 8 }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          {/* Main body */}
+          <DialogContent
+            sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+          >
+            <Typography>
+              The following expired visits are still running and should be
+              cleaned up:
+            </Typography>
+            <List>
+              {staleRunningSessions?.map((session) => (
+                <ListItem key={session.id} sx={{ pl: 4 }}>
+                  {session.visit}: {session.id}
+                </ListItem>
+              ))}
+            </List>
+            <Typography>
+              Proceed with cleaning up old running visits?
+            </Typography>
+          </DialogContent>
+          {/* Bottom of dialog box */}
+          <DialogActions>
+            <Button
+              variant="text"
+              sx={{ mr: 3 }}
+              onClick={() => {
+                onCloseVisitCleanupPrompt()
+                navigate(`../instruments/${instrumentName}/new_session`)
+              }}
+            >
+              Skip Cleanup
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleVisitCleanupPrompt}
+              sx={{ bgcolor: colours.murfey[600].default }}
+            >
+              Confirm
+            </Button>
+          </DialogActions>
+        </Dialog>
         {/* Sessions title bar */}
         <Box
-          bg="murfey.700"
-          w="100%"
-          px={{
-            base: 8,
-            md: 16,
+          sx={{
+            bgcolor: colours.murfey[700].default,
+            width: '100%',
+            px: { xs: 8, md: 16 },
+            py: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
+            gap: 2,
           }}
-          py={4}
-          display="flex"
-          flexDirection="column"
-          alignItems="start"
-          justifyContent="start"
-          gap={2}
         >
-          <Heading color="murfey.50" fontSize="3xl" lineHeight={1}>
+          <Typography
+            variant="h4"
+            sx={{ color: colours.murfey[50].default, lineHeight: 1 }}
+          >
             Murfey Sessions
-          </Heading>
-          <Heading
-            color="murfey.50"
-            fontSize="md"
-            fontWeight="200"
-            lineHeight={1}
+          </Typography>
+          <Typography
+            sx={{
+              color: colours.murfey[50].default,
+              fontSize: 'md',
+              fontWeight: 200,
+              lineHeight: 1,
+            }}
           >
             Microscope Data Transfer Control System
-          </Heading>
+          </Typography>
           <Button
-            variant="onBlue"
-            maxW="200px"
-            textAlign="center"
+            variant="outlined"
             onClick={handleNewSession}
+            sx={{
+              maxWidth: '200px',
+              textAlign: 'center',
+              color: colours.murfey[500].default,
+              borderColor: colours.murfey[500].default,
+              fontSize: 'sm',
+              '&:hover': {
+                color: colours.murfey[300].default,
+                bgcolor: colours.murfey[500].default,
+              },
+            }}
           >
             New Session
           </Button>
         </Box>
         {/* Sessions page contents */}
         <Box
-          p={4}
-          flex="1"
-          display="flex"
-          flexDirection="row"
-          alignItems="start"
-          justifyContent="space-evenly"
-          gap={{
-            base: 8,
-            md: 32,
+          sx={{
+            p: 4,
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            justifyContent: 'space-evenly',
+            gap: { xs: 8, md: 32 },
+            overflow: 'auto',
           }}
-          overflow="auto"
         >
           {/* Left column showing known Murfey sessions */}
           <Box
-            minW="300px"
-            maxW="600px"
-            flex="1"
-            pl={{
-              base: 8,
-              md: 16,
+            sx={{
+              minWidth: '300px',
+              maxWidth: '600px',
+              flex: 1,
+              pl: { xs: 8, md: 16 },
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              justifyContent: 'flex-start',
+              gap: 4,
+              overflow: 'auto',
             }}
-            display="flex"
-            flexDirection="column"
-            alignItems="start"
-            justifyContent="start"
-            gap={4}
-            overflow="auto"
           >
-            <Heading
-              textAlign="left"
-              w="100%"
-              fontSize="2xl"
-              mt={8}
-              lineHeight={1}
+            <Typography
+              variant="h5"
+              sx={{ textAlign: 'left', width: '100%', mt: 8, lineHeight: 1 }}
             >
               Existing Sessions
-            </Heading>
-            <Divider borderColor="murfey.300" />
+            </Typography>
+            <Divider
+              sx={{ borderColor: colours.murfey[300].default, width: '100%' }}
+            />
             {/* Display sessions in descending order of session ID */}
             {expandedSessions && expandedSessions.length > 0 ? (
               expandedSessions.map((session) => {
@@ -315,13 +335,27 @@ export const Home = () => {
                 )
               })
             ) : (
-              <Heading w="100%" py={4} variant="notFound">
+              <Typography
+                sx={{
+                  width: '100%',
+                  py: 4,
+                  textAlign: 'center',
+                  color: colours.murfey[300].default,
+                }}
+              >
                 No sessions found
-              </Heading>
+              </Typography>
             )}
           </Box>
           {/* Right column showing instrument card */}
-          <Box minW="400px" maxW="600px" flex="1" overflow="auto">
+          <Box
+            sx={{
+              minWidth: '400px',
+              maxWidth: '600px',
+              flex: 1,
+              overflow: 'auto',
+            }}
+          >
             <InstrumentCard />
           </Box>
         </Box>
