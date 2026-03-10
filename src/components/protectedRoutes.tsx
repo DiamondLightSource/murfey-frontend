@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react'
+import Box from '@mui/material/Box'
 import { Navbar } from 'components/navbar'
 import { WebSocketHandler } from 'components/webSocketHandler'
 import { Navigate, Outlet } from 'react-router-dom'
@@ -10,11 +10,11 @@ export const ProtectedRoutes = () => {
     <div className="rootContainer">
       <WebSocketHandler />
       {/* Page to display, which occupies full browser window */}
-      <Box w="100vw" h="100vh">
+      <Box sx={{ width: '100vw', height: '100vh' }}>
         {/* Navigation bar attached to top of page */}
         <Navbar logo="/images/diamondgs.png" />
         {/* Page to be displayed occupies the remaining space */}
-        <Box className="main" overflow="auto" flex="1">
+        <Box className="main" sx={{ overflow: 'auto', flex: 1 }}>
           <Outlet />
         </Box>
       </Box>

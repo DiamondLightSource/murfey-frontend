@@ -1,17 +1,11 @@
-import {
-  CardBody,
-  Card,
-  CardHeader,
-  Image,
-  Text,
-  Box,
-  Tooltip,
-  VStack,
-  Slider,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
-} from '@chakra-ui/react'
+import Box from '@mui/material/Box'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import CardHeader from '@mui/material/CardHeader'
+import Slider from '@mui/material/Slider'
+import Stack from '@mui/material/Stack'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import { getFoilHoles, getNumMovies } from 'loaders/gridSquares'
 import { useCallback, useState, useEffect } from 'react'
 import { components } from 'schema/main'
@@ -85,22 +79,25 @@ const GridSquareCard = (
       `display/sessions/${sessid}/data_collection_groups/${dcgid}/grid_squares/${gs.name}/foil_holes/${fhName}/image`
     )
     return (
-      <VStack>
-        <Text>{fhName}</Text>
-        {fhImage ? <Image src={fhImageUrl} /> : <></>}
-      </VStack>
+      <Stack alignItems="center">
+        <Typography>{fhName}</Typography>
+        {fhImage ? <img src={fhImageUrl} alt={`Foil hole ${fhName}`} /> : <></>}
+      </Stack>
     )
   }
 
   return (
-    <Card align="center" display="flex">
-      <CardHeader>{gs.name}</CardHeader>
-      <CardBody>
+    <Card
+      sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}
+    >
+      <CardHeader title={gs.name} />
+      <CardContent>
         <Box position="relative" display="flex">
-          <Image
+          <img
             src={getUrl(
               `display/sessions/${sessid}/data_collection_groups/${dcgid}/grid_squares/${gs.name}/image`
             )}
+            alt={`Grid square ${gs.name}`}
           />
           <svg
             width={gs.thumbnail_size_x}
@@ -109,7 +106,8 @@ const GridSquareCard = (
           >
             {zip(foilHoleXPositions, foilHoleYPositions).map((pos, index) => (
               <Tooltip
-                label={foilHoleTooltip(
+                key={index}
+                title={foilHoleTooltip(
                   foilHoleNames[index],
                   foilHoleImages[index]
                 )}
@@ -119,7 +117,7 @@ const GridSquareCard = (
                   cy={`${pos[1]}px`}
                   r={`${sliderValue}px`}
                   stroke="blue"
-                  stroke-width="2"
+                  strokeWidth="2"
                   fill="blue"
                   opacity="0.3"
                 />
@@ -127,20 +125,15 @@ const GridSquareCard = (
             ))}
           </svg>
         </Box>
-        <Text align="center">{numFoilHoles} foil holes</Text>
-        <Text align="center">{numMovies} movies</Text>
+        <Typography align="center">{numFoilHoles} foil holes</Typography>
+        <Typography align="center">{numMovies} movies</Typography>
         <Slider
           defaultValue={10}
           min={5}
           max={50}
-          onChange={(val) => setSliderValue(val)}
-        >
-          <SliderTrack>
-            <SliderFilledTrack />
-          </SliderTrack>
-          <SliderThumb />
-        </Slider>
-      </CardBody>
+          onChange={(_, val) => setSliderValue(val as number)}
+        />
+      </CardContent>
     </Card>
   )
 }

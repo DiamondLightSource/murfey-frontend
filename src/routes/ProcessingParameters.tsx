@@ -1,22 +1,18 @@
-import {
-  Accordion,
-  AccordionButton,
-  AccordionPanel,
-  AccordionItem,
-  AccordionIcon,
-  Box,
-  Heading,
-  IconButton,
-  HStack,
-  VStack,
-  Switch,
-  Text,
-} from '@chakra-ui/react'
 import { Table } from '@diamondlightsource/ui-components'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import Accordion from '@mui/material/Accordion'
+import AccordionDetails from '@mui/material/AccordionDetails'
+import AccordionSummary from '@mui/material/AccordionSummary'
+import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
+import Stack from '@mui/material/Stack'
+import Switch from '@mui/material/Switch'
+import Typography from '@mui/material/Typography'
 import React from 'react'
 import { MdEditNote } from 'react-icons/md'
 import { useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
+import { colours } from 'styles/colours'
 
 type ProcessingDetails = components['schemas']['ProcessingDetails']
 
@@ -97,82 +93,78 @@ const ProcessingParameters = () => {
   }
   return (
     <div className="rootContainer">
-      <Box w="100%" bg="murfey.50">
-        <Box w="100%" overflow="hidden">
-          <VStack className="homeRoot">
-            <VStack
-              bg="murfey.700"
-              justifyContent="start"
-              alignItems="start"
-              display="flex"
-              w="100%"
-              px="10vw"
-              py="1vh"
+      <Box sx={{ width: '100%', bgcolor: colours.murfey[50].default }}>
+        <Box sx={{ width: '100%', overflow: 'hidden' }}>
+          <Stack className="homeRoot">
+            <Stack
+              alignItems="flex-start"
+              justifyContent="flex-start"
+              sx={{
+                bgcolor: colours.murfey[700].default,
+                width: '100%',
+                px: '10vw',
+                py: '1vh',
+              }}
             >
-              <Heading size="xl" color="murfey.50">
+              <Typography
+                variant="h4"
+                sx={{ color: colours.murfey[50].default }}
+              >
                 Processing Parameters
-              </Heading>
-              <HStack>
-                <Switch colorScheme="murfey" onChange={handleToggle} />
-                <Text color="murfey.50">Show extra processing parameters</Text>
-              </HStack>
-            </VStack>
-          </VStack>
+              </Typography>
+              <Stack direction="row" alignItems="center">
+                <Switch onChange={handleToggle} />
+                <Typography sx={{ color: colours.murfey[50].default }}>
+                  Show extra processing parameters
+                </Typography>
+              </Stack>
+            </Stack>
+          </Stack>
         </Box>
-        <Accordion>
-          {tableRows.map((tr) => {
-            return (
-              <AccordionItem>
-                <AccordionButton bg="murfey.400">
-                  <Box as="span" flex="1" textAlign="left">
-                    Main Processing Parameters (Processing Job ID {tr.tag})
-                  </Box>
-                  <AccordionIcon />
-                </AccordionButton>
-                <AccordionPanel>
-                  <Table
-                    data={tr.processingRows}
-                    headers={[
-                      { key: 'parameterName', label: 'Parameter' },
-                      { key: 'parameterValue', label: 'Value' },
-                    ]}
-                    label={'processingParameterData'}
-                  />
-                </AccordionPanel>
-              </AccordionItem>
-            )
-          })}
-          {showExtra ? (
-            tableRowsExtra.map((tre) => {
-              return (
-                <AccordionItem>
-                  <AccordionButton bg="murfey.500">
-                    <Box as="span" flex="1" textAlign="left">
-                      Extra Processing Parameters (Processing Job ID {tre.tag})
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                  <AccordionPanel>
-                    <IconButton
-                      aria-label="Edit parameters"
-                      icon={<MdEditNote />}
-                    />
-                    <Table
-                      data={tre.processingRows}
-                      headers={[
-                        { key: 'parameterName', label: 'Parameter' },
-                        { key: 'parameterValue', label: 'Value' },
-                      ]}
-                      label={'processingParameterData'}
-                    />
-                  </AccordionPanel>
-                </AccordionItem>
-              )
-            })
-          ) : (
-            <></>
-          )}
-        </Accordion>
+        {tableRows.map((tr) => (
+          <Accordion key={tr.tag}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              sx={{ bgcolor: colours.murfey[400].default }}
+            >
+              Main Processing Parameters (Processing Job ID {tr.tag})
+            </AccordionSummary>
+            <AccordionDetails>
+              <Table
+                data={tr.processingRows}
+                headers={[
+                  { key: 'parameterName', label: 'Parameter' },
+                  { key: 'parameterValue', label: 'Value' },
+                ]}
+                label={'processingParameterData'}
+              />
+            </AccordionDetails>
+          </Accordion>
+        ))}
+        {showExtra &&
+          tableRowsExtra.map((tre) => (
+            <Accordion key={tre.tag}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                sx={{ bgcolor: colours.murfey[500].default }}
+              >
+                Extra Processing Parameters (Processing Job ID {tre.tag})
+              </AccordionSummary>
+              <AccordionDetails>
+                <IconButton aria-label="Edit parameters">
+                  <MdEditNote />
+                </IconButton>
+                <Table
+                  data={tre.processingRows}
+                  headers={[
+                    { key: 'parameterName', label: 'Parameter' },
+                    { key: 'parameterValue', label: 'Value' },
+                  ]}
+                  label={'processingParameterData'}
+                />
+              </AccordionDetails>
+            </Accordion>
+          ))}
       </Box>
     </div>
   )
