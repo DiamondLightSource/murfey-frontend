@@ -54,17 +54,6 @@ export const SessionRow = ({
     console.log(`Session ${sessid} marked for cleanup`)
   }
 
-  // Set up animations for the sync icon
-  const spin = keyframes`
-    from { transform: translate(-50%, -50%) rotate(360deg); }
-    to { transform: translate(-50%, -50%) rotate(0deg); }
-  `
-  const pulseGlow = keyframes`
-    0% { filter: drop-shadow(0 0 2px ${isFinalising ? 'red' : 'green'}) }
-    50% { filter: drop-shadow(0 0 0px ${isFinalising ? 'red' : 'green'}) }
-    100% { filter: drop-shadow(0 0 2px ${isFinalising ? 'red' : 'green'}) }
-  `
-
   return (
     <>
       <Box
@@ -156,9 +145,8 @@ export const SessionRow = ({
             {/* Sync status */}
             <Box
               position="relative"
-              width={24}
               height={24}
-              sx={{ aspectRatio: '1' }}
+              width={24}
               display="flex"
               alignItems="center"
               justifyContent="center"
@@ -199,9 +187,6 @@ export const SessionRow = ({
                 // Show a sync error icon when disconnected
                 <Box
                   sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
                     display: 'flex',
                     color: 'black',
                   }}
@@ -218,7 +203,7 @@ export const SessionRow = ({
               aria-label="Delete session"
               onClick={() => setIsOpenDelete(true)}
               disabled={isActive || sessionFinalising}
-              sx={{ backgroundColor: colours.murfey[500].default }}
+              sx={{ color: colours.murfey[500].default, border: '2px solid gray' }}
             >
               <MdDelete />
             </IconButton>
@@ -230,7 +215,7 @@ export const SessionRow = ({
               aria-label="Clean up session"
               onClick={() => setIsOpenCleanup(true)}
               disabled={!isActive || sessionFinalising}
-              sx={{ backgroundColor: colours.murfey[500].default }}
+              sx={{ color: colours.murfey[500].default, border: '2px solid gray' }}
             >
               <GiMagicBroom />
             </IconButton>
