@@ -1,6 +1,8 @@
-import { createStandaloneToast } from '@chakra-ui/toast'
-import { baseToast } from '@diamondlightsource/ui-components'
-const { toast } = createStandaloneToast()
+import { TOAST_EVENT, ToastDetail } from 'components/toastProvider'
+
+const showToast = (detail: ToastDetail) => {
+  window.dispatchEvent(new CustomEvent(TOAST_EVENT, { detail }))
+}
 
 const controller = new AbortController()
 
@@ -82,12 +84,11 @@ export const client = async (
       url: response.url,
     }
   } catch (err) {
-    if (!toast.isActive('main-toast') && errToast) {
-      toast({
-        ...baseToast,
-        title:
+    if (errToast) {
+      showToast({
+        message:
           'An error has occurred while fetching data, please try again later.',
-        status: 'error',
+        severity: 'error',
       })
     }
 
