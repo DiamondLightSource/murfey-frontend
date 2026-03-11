@@ -1,26 +1,26 @@
-import { useBreakpointValue, useDisclosure } from '@chakra-ui/react'
-import {
-  Box,
-  Button,
-  Divider,
-  FormControl,
-  FormLabel,
-  GridItem,
-  Heading,
-  HStack,
-  Icon,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Select,
-  Switch,
-  Tooltip,
-  VStack,
-} from '@chakra-ui/react'
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
+import CloseIcon from '@mui/icons-material/Close'
+import FileUploadIcon from '@mui/icons-material/FileUpload'
+import GridOnIcon from '@mui/icons-material/GridOn'
+import PauseIcon from '@mui/icons-material/Pause'
+import SyncIcon from '@mui/icons-material/Sync'
+import TuneIcon from '@mui/icons-material/Tune'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import Divider from '@mui/material/Divider'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import IconButton from '@mui/material/IconButton'
+import Select from '@mui/material/Select'
+import Stack from '@mui/material/Stack'
+import { useTheme } from '@mui/material/styles'
+import Switch from '@mui/material/Switch'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import { useQuery } from '@tanstack/react-query'
 import { InstrumentCard } from 'components/instrumentCard'
 import { RsyncCard } from 'components/rsyncCard'
@@ -38,22 +38,24 @@ import { updateVisitEndTime, getSessionData } from 'loaders/sessionClients'
 import { checkMultigridControllerStatus } from 'loaders/sessionSetup'
 import React, { useEffect, useCallback } from 'react'
 import { GiMagicBroom } from 'react-icons/gi'
-import {
-  MdCalendarToday,
-  MdFileUpload,
-  MdOutlineGridOn,
-  MdOutlineTune,
-  MdPause,
-  MdSync,
-} from 'react-icons/md'
 import { useLoaderData, useParams, useNavigate } from 'react-router-dom'
 import { components } from 'schema/main'
+import { colours } from 'styles/colours'
 import { convertUKNaiveToUTC, convertUTCToUKNaive } from 'utils/generic'
 
 type RSyncerInfo = components['schemas']['RSyncerInfo']
 type SessionSchema = components['schemas']['Session']
 type MachineConfig = components['schemas']['MachineConfig']
 type MultigridWatcherSpec = components['schemas']['MultigridWatcherSetup']
+
+const onBlueButtonSx = {
+  color: colours.murfey[500].default,
+  borderColor: colours.murfey[500].default,
+  '&:hover': {
+    color: colours.murfey[300].default,
+    bgcolor: colours.murfey[500].default,
+  },
+}
 
 export const Session = () => {
   // ----------------------------------------------------------------------------------
@@ -95,8 +97,8 @@ export const Session = () => {
   const [rsyncersPaused, setRsyncersPaused] = React.useState(false)
 
   // Button rendering conditions
-  const displayButtonText =
-    useBreakpointValue({ base: false, md: true }) ?? false
+  const theme = useTheme()
+  const displayButtonText = useMediaQuery(theme.breakpoints.up('md'))
 
   // ----------------------------------------------------------------------------------
   // Load Rsyncer data via a polling query
@@ -140,21 +142,17 @@ export const Session = () => {
 
   // ----------------------------------------------------------------------------------
   // UI utility hooks
-  const {
-    isOpen: isOpenVisitComplete,
-    onOpen: onOpenVisitComplete,
-    onClose: onCloseVisitComplete,
-  } = useDisclosure()
-  const {
-    isOpen: isOpenReconnect,
-    onOpen: onOpenReconnect,
-    onClose: onCloseReconnect,
-  } = useDisclosure()
-  const {
-    isOpen: isOpenCalendar,
-    onOpen: onOpenCalendar,
-    onClose: onCloseCalendar,
-  } = useDisclosure()
+  const [isOpenVisitComplete, setIsOpenVisitComplete] = React.useState(false)
+  const onOpenVisitComplete = () => setIsOpenVisitComplete(true)
+  const onCloseVisitComplete = () => setIsOpenVisitComplete(false)
+
+  const [isOpenReconnect, setIsOpenReconnect] = React.useState(false)
+  const onOpenReconnect = () => setIsOpenReconnect(true)
+  const onCloseReconnect = () => setIsOpenReconnect(false)
+
+  const [isOpenCalendar, setIsOpenCalendar] = React.useState(false)
+  const onOpenCalendar = () => setIsOpenCalendar(true)
+  const onCloseCalendar = () => setIsOpenCalendar(false)
 
   // ----------------------------------------------------------------------------------
   // Functions
@@ -354,147 +352,185 @@ export const Session = () => {
   return (
     <div className="rootContainer">
       {/* Logic for pop-up components */}
-      <Modal isOpen={isOpenVisitComplete} onClose={onCloseVisitComplete}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Confirm Visit Completion</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
+      <Dialog open={isOpenVisitComplete} onClose={onCloseVisitComplete}>
+        <DialogTitle>
+          Confirm Visit Completion
+          <IconButton
+            aria-label="close"
+            onClick={onCloseVisitComplete}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <Typography>
             Are you sure you want to remove all data associated with this visit?
-          </ModalBody>
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="text" onClick={onCloseVisitComplete}>
+            Close
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => finaliseAll()}
+            sx={{ bgcolor: colours.murfey[600].default }}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-          <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onCloseVisitComplete}>
-              Close
-            </Button>
-            <Button variant="default" onClick={() => finaliseAll()}>
-              Confirm
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      <Modal isOpen={isOpenReconnect} onClose={onCloseReconnect}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Restart Transfers</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <FormControl display="flex" alignItems="center">
-              <VStack>
-                <HStack>
-                  <FormLabel mb="0">Data directory</FormLabel>
-                  <Select onChange={handleDirectorySelection}>
-                    {machineConfig &&
-                    machineConfig['data_directories'].length > 0 ? (
-                      machineConfig['data_directories'].map((value) => {
-                        return <option value={value}>{value}</option>
-                      })
-                    ) : (
-                      <GridItem colSpan={5}>
-                        <Heading textAlign="center" py={4} variant="notFound">
-                          No Data Directories Found
-                        </Heading>
-                      </GridItem>
-                    )}
-                  </Select>
-                </HStack>
-                <HStack>
-                  <FormLabel mb="0">Do not process existing data</FormLabel>
-                  <Switch
-                    id="skip-existing-processing-reconnect"
-                    isChecked={false}
-                    onChange={() => {
-                      setSkipExistingProcessing(!skipExistingProcessing)
-                    }}
-                  />
-                </HStack>
-              </VStack>
-            </FormControl>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onCloseReconnect}>
-              Close
-            </Button>
-            <Button variant="default" onClick={handleReconnect}>
-              Confirm
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      <Modal isOpen={isOpenCalendar} onClose={onCloseCalendar} size={'xl'}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Select data transfer end time</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <input
-              aria-label="Date and time"
-              type="datetime-local"
-              defaultValue={convertUTCToUKNaive(defaultVisitEndTime)}
-              onChange={(e) => {
-                let timestamp = e.target.value
-                timestamp += ':00'
-                const newVisitEndTime = new Date(convertUKNaiveToUTC(timestamp))
-                setProposedVisitEndTime(newVisitEndTime)
-              }}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              variant="ghost"
-              mr={3}
-              onClick={() => {
-                onCloseCalendar()
-                setProposedVisitEndTime(null)
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="default"
-              onClick={() => {
-                if (proposedVisitEndTime) {
-                  setVisitEndTime(proposedVisitEndTime)
-                  setTriggerVisitEndTimeUpdate(true)
+      <Dialog open={isOpenReconnect} onClose={onCloseReconnect}>
+        <DialogTitle>
+          Restart Transfers
+          <IconButton
+            aria-label="close"
+            onClick={onCloseReconnect}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <Stack spacing={2} sx={{ pt: 1 }}>
+            <Stack direction="row" spacing={2} alignItems="center">
+              <Typography>Data directory</Typography>
+              <Select
+                native
+                onChange={
+                  handleDirectorySelection as React.ChangeEventHandler<HTMLSelectElement>
                 }
-              }}
-            >
-              Confirm
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+              >
+                {machineConfig &&
+                machineConfig['data_directories'].length > 0 ? (
+                  machineConfig['data_directories'].map((value) => {
+                    return (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    )
+                  })
+                ) : (
+                  <option disabled>No Data Directories Found</option>
+                )}
+              </Select>
+            </Stack>
+            <FormControlLabel
+              control={
+                <Switch
+                  id="skip-existing-processing-reconnect"
+                  checked={false}
+                  onChange={() => {
+                    setSkipExistingProcessing(!skipExistingProcessing)
+                  }}
+                />
+              }
+              label="Do not process existing data"
+            />
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="text" onClick={onCloseReconnect}>
+            Close
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleReconnect}
+            sx={{ bgcolor: colours.murfey[600].default }}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={isOpenCalendar} onClose={onCloseCalendar} maxWidth="xl">
+        <DialogTitle>
+          Select data transfer end time
+          <IconButton
+            aria-label="close"
+            onClick={onCloseCalendar}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <input
+            aria-label="Date and time"
+            type="datetime-local"
+            defaultValue={convertUTCToUKNaive(defaultVisitEndTime)}
+            onChange={(e) => {
+              let timestamp = e.target.value
+              timestamp += ':00'
+              const newVisitEndTime = new Date(convertUKNaiveToUTC(timestamp))
+              setProposedVisitEndTime(newVisitEndTime)
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="text"
+            onClick={() => {
+              onCloseCalendar()
+              setProposedVisitEndTime(null)
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              if (proposedVisitEndTime) {
+                setVisitEndTime(proposedVisitEndTime)
+                setTriggerVisitEndTimeUpdate(true)
+              }
+            }}
+            sx={{ bgcolor: colours.murfey[600].default }}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       {/* Parent container for page contents */}
       <Box
         className="homeRoot"
-        overflow="auto"
-        display="flex"
-        flexDirection="column"
-        flex="1"
-        bg="murfey.50"
+        sx={{
+          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          flex: 1,
+          bgcolor: colours.murfey[50].default,
+        }}
       >
         {/* Page title bar */}
         <Box
-          bg="murfey.700"
-          w="100%"
-          px={{
-            base: 8,
-            md: 16,
+          sx={{
+            bgcolor: colours.murfey[700].default,
+            width: '100%',
+            px: { xs: 4, md: 8 },
+            py: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
+            gap: 1,
           }}
-          py={4}
-          display="flex"
-          flexDirection="column"
-          alignItems="start"
-          justifyContent="start"
-          gap={2}
         >
-          <Heading color="murfey.50" fontSize="3xl" lineHeight={1}>
+          <Typography
+            variant="h4"
+            sx={{ color: colours.murfey[50].default, lineHeight: 1 }}
+          >
             Session {sessid}: {session ? session.visit : null}
-          </Heading>
+          </Typography>
           {/* Display visit end time if set for this session */}
           {visitEndTime && (
-            <Heading color="murfey.50" fontSize="2xl" lineHeight={1}>
+            <Typography
+              variant="h5"
+              sx={{ color: colours.murfey[50].default, lineHeight: 1 }}
+            >
               [Transfer ends at{' '}
               {visitEndTime.toLocaleString('en-GB', {
                 weekday: 'short',
@@ -507,143 +543,125 @@ export const Session = () => {
                 timeZoneName: 'short',
               })}
               ]
-            </Heading>
+            </Typography>
           )}
           {/* First row of buttons containing transfer-related settings */}
           <Box
-            display="flex"
-            flexDirection="row"
-            alignItems="start"
-            justifyContent="start"
-            gap={2}
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'flex-start',
+              justifyContent: 'flex-start',
+              gap: 1,
+            }}
           >
-            <Tooltip
-              label={'Remove files from source folders and delete visit'}
-            >
+            <Tooltip title="Remove files from source folders and delete visit">
               <Button
                 key="visit_complete"
-                variant="onBlue"
+                variant="outlined"
                 onClick={() => onOpenVisitComplete()}
+                sx={onBlueButtonSx}
               >
                 {displayButtonText && 'Visit Complete'}
-                <Icon
-                  as={GiMagicBroom}
-                  boxSize={6}
-                  ml={displayButtonText ? 2 : 0}
+                <GiMagicBroom
+                  size={24}
+                  style={{ marginLeft: displayButtonText ? 8 : 0 }}
                 />
               </Button>
             </Tooltip>
-            <Tooltip label="Pause all ongoing transfers">
+            <Tooltip title="Pause all ongoing transfers">
               <Button
                 key="pause_transfers"
-                variant="onBlue"
+                variant="outlined"
                 onClick={() => pauseAll()}
-                isDisabled={rsyncersPaused}
+                disabled={rsyncersPaused}
+                sx={onBlueButtonSx}
               >
                 {displayButtonText && 'Pause Transfers'}
-                <Icon as={MdPause} boxSize={6} ml={displayButtonText ? 2 : 0} />
+                <PauseIcon sx={{ ml: displayButtonText ? 1 : 0 }} />
               </Button>
             </Tooltip>
-            <Tooltip label={'Update the file transfer end time'}>
+            <Tooltip title="Update the file transfer end time">
               <Button
                 key="update_visit_end_time"
-                variant="onBlue"
+                variant="outlined"
                 onClick={() => onOpenCalendar()}
+                sx={onBlueButtonSx}
               >
                 {displayButtonText && 'Update Visit End Time'}
-                <Icon
-                  as={MdCalendarToday}
-                  boxSize={6}
-                  ml={displayButtonText ? 2 : 0}
-                />
+                <CalendarTodayIcon sx={{ ml: displayButtonText ? 1 : 0 }} />
               </Button>
             </Tooltip>
             {!sessionActive ? (
-              <Tooltip label="Reconnect an interrupted session">
+              <Tooltip title="Reconnect an interrupted session">
                 <Button
                   key="reconnect"
-                  variant="onBlue"
+                  variant="outlined"
                   onClick={() => onOpenReconnect()}
+                  sx={onBlueButtonSx}
                 >
                   {displayButtonText && 'Reconnect'}
-                  <Icon
-                    as={MdSync}
-                    boxSize={6}
-                    ml={displayButtonText ? 2 : 0}
-                  />
+                  <SyncIcon sx={{ ml: displayButtonText ? 1 : 0 }} />
                 </Button>
               </Tooltip>
             ) : (
               <></>
             )}
-            {/* <Spacer /> */}
-            {/* <ViewIcon color="white" /> */}
-            {/* <Switch colorScheme="murfey" id="monitor" /> */}
-            {/* <Button aria-label="Subscribe to notifications" rightIcon={<MdEmail/>} variant='onBlue'>
-              Subscribe
-            </Button> */}
           </Box>
           {/* Second row of buttons containing processing-related settings */}
           <Box
-            display="flex"
-            flexDirection="row"
-            alignItems="start"
-            justifyContent="start"
-            gap={2}
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'flex-start',
+              justifyContent: 'flex-start',
+              gap: 1,
+            }}
           >
-            <Tooltip label="Inspect data collections">
+            <Tooltip title="Inspect data collections">
               <Button
                 key="data_collections"
-                variant="onBlue"
+                variant="outlined"
                 onClick={() => {
                   navigate(`../sessions/${sessid}/data_collection_groups`)
                 }}
+                sx={onBlueButtonSx}
               >
                 {displayButtonText && 'Data Collections'}
-                <Icon
-                  as={MdOutlineGridOn}
-                  boxSize={6}
-                  ml={displayButtonText ? 2 : 0}
-                />
+                <GridOnIcon sx={{ ml: displayButtonText ? 1 : 0 }} />
               </Button>
             </Tooltip>
             {hasGainReference ? (
-              <Tooltip label={'Upload a new gain reference file'}>
+              <Tooltip title="Upload a new gain reference file">
                 <Button
                   key="gain_ref"
-                  variant="onBlue"
+                  variant="outlined"
                   onClick={() => {
                     navigate(
                       `../sessions/${sessid}/gain_ref_transfer?sessid=${sessid}`
                     )
                   }}
+                  sx={onBlueButtonSx}
                 >
                   {displayButtonText && 'Upload Gain Reference'}
-                  <Icon
-                    as={MdFileUpload}
-                    boxSize={6}
-                    ml={displayButtonText ? 2 : 0}
-                  />
+                  <FileUploadIcon sx={{ ml: displayButtonText ? 1 : 0 }} />
                 </Button>
               </Tooltip>
             ) : (
               <></>
             )}
             {hasProcessingParams ? (
-              <Tooltip label={'View and update processing parameters'}>
+              <Tooltip title="View and update processing parameters">
                 <Button
                   key="processing_params"
-                  variant="onBlue"
+                  variant="outlined"
                   onClick={() => {
                     navigate(`session_parameters`)
                   }}
+                  sx={onBlueButtonSx}
                 >
                   {displayButtonText && 'Processing Parameters'}
-                  <Icon
-                    as={MdOutlineTune}
-                    boxSize={6}
-                    ml={displayButtonText ? 2 : 0}
-                  />
+                  <TuneIcon sx={{ ml: displayButtonText ? 1 : 0 }} />
                 </Button>
               </Tooltip>
             ) : (
@@ -653,44 +671,41 @@ export const Session = () => {
         </Box>
         {/* Page contents */}
         <Box
-          p={4}
-          flex="1"
-          display="flex"
-          flexDirection="row"
-          alignItems="start"
-          justifyContent="space-evenly"
-          gap={{
-            base: 8,
-            md: 32,
+          sx={{
+            p: 2,
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            justifyContent: 'space-evenly',
+            gap: { xs: 4, md: 16 },
+            overflow: 'auto',
           }}
-          overflow="auto"
         >
           {/* Left column displaying RSyncers for this session */}
           <Box
-            minW="400px"
-            maxW="600px"
-            flex="1"
-            pl={{
-              base: 8,
-              md: 16,
+            sx={{
+              minWidth: '400px',
+              maxWidth: '600px',
+              flex: 1,
+              pl: { xs: 4, md: 8 },
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              justifyContent: 'flex-start',
+              gap: 2,
+              overflow: 'auto',
             }}
-            display="flex"
-            flexDirection="column"
-            alignItems="start"
-            justifyContent="start"
-            gap={4}
-            overflow="auto"
           >
-            <Heading
-              textAlign="left"
-              w="100%"
-              fontSize="2xl"
-              mt={8}
-              lineHeight={1}
+            <Typography
+              variant="h5"
+              sx={{ textAlign: 'left', width: '100%', mt: 4, lineHeight: 1 }}
             >
               Transfer Status
-            </Heading>
-            <Divider borderColor="murfey.300" />
+            </Typography>
+            <Divider
+              sx={{ width: '100%', borderColor: colours.murfey[300].default }}
+            />
             {rsyncers && rsyncers.length > 0 ? (
               rsyncers.map(
                 (r): React.ReactElement => (
@@ -701,22 +716,24 @@ export const Session = () => {
                 )
               )
             ) : (
-              <Heading w="100%" py={4} variant="notFound">
+              <Typography sx={{ width: '100%', py: 2 }}>
                 No RSyncers Found
-              </Heading>
+              </Typography>
             )}
           </Box>
           {/* Right column showing instrument card and other buttons */}
           <Box
-            minW="400px"
-            maxW="600px"
-            flex="1"
-            display="flex"
-            flexDirection="column"
-            alignItems="start"
-            justifyContent="start"
-            gap={4}
-            overflow="auto"
+            sx={{
+              minWidth: '400px',
+              maxWidth: '600px',
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              justifyContent: 'flex-start',
+              gap: 2,
+              overflow: 'auto',
+            }}
           >
             <InstrumentCard />
             <UpstreamVisitsCard sessid={parseInt(sessid ?? '0')} />
