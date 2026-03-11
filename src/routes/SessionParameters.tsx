@@ -1,20 +1,14 @@
-import {
-  Box,
-  Button,
-  Heading,
-  Input,
-  Link,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  VStack,
-} from '@chakra-ui/react'
-import { useDisclosure } from '@chakra-ui/react'
 import { Table } from '@diamondlightsource/ui-components'
+import CloseIcon from '@mui/icons-material/Close'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import IconButton from '@mui/material/IconButton'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   updateSessionProcessingParameters,
@@ -23,6 +17,7 @@ import {
 import React from 'react'
 import { Link as LinkRouter, useLoaderData, useParams } from 'react-router-dom'
 import { components } from 'schema/main'
+import { colours, onBlueButtonSx } from 'styles/colours'
 
 type EditableSessionParameters =
   components['schemas']['EditableSessionProcessingParameters']
@@ -62,7 +57,9 @@ export const SessionParameters = () => {
   const queryClient = useQueryClient()
 
   // Set component hooks
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [isOpen, setIsOpen] = React.useState(false)
+  const onOpen = () => setIsOpen(true)
+  const onClose = () => setIsOpen(false)
 
   // Construct parameters table to display
   let tableRows = [] as ProcessingRow[]
@@ -115,55 +112,77 @@ export const SessionParameters = () => {
   if (isError) return <p>Error loading processing parameters for session.</p>
   return (
     <div className="rootContainer">
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Edit processing parameter</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {paramName}
-            <Input
-              value={paramValue}
-              autoFocus
-              w="80%"
-              onChange={(v) => setParamValue(v.target.value)}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button variant="default" onClick={() => handleParameterEdit()}>
-              Confirm
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      <Box w="100%" bg="murfey.50">
-        <Box w="100%" overflow="hidden">
-          <VStack className="homeRoot">
-            <VStack
-              bg="murfey.700"
-              justifyContent="start"
-              alignItems="start"
-              display="flex"
-              w="100%"
-              px="10vw"
-              py="1vh"
-            >
-              <Heading size="xl" color="murfey.50">
-                Session Processing Parameters
-              </Heading>
-              <Link
-                w={{ base: '100%', md: '19.6%' }}
-                _hover={{ textDecor: 'none' }}
-                as={LinkRouter}
-                to={`extra_parameters`}
-              >
-                <Button variant="onBlue">Extra Parameters</Button>
-              </Link>
-            </VStack>
-          </VStack>
+      <Dialog open={isOpen} onClose={onClose}>
+        <DialogTitle>
+          Edit processing parameter
+          <IconButton
+            aria-label="close"
+            onClick={onClose}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <Typography sx={{ mb: 1 }}>{paramName}</Typography>
+          <TextField
+            value={paramValue}
+            autoFocus
+            size="small"
+            sx={{ width: '80%' }}
+            onChange={(v) => setParamValue(v.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button variant="text" onClick={onClose}>
+            Close
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => handleParameterEdit()}
+            sx={{ bgcolor: colours.murfey[600].default }}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Box
+        className="homeRoot"
+        sx={{
+          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          flex: 1,
+          bgcolor: colours.murfey[50].default,
+        }}
+      >
+        <Box
+          sx={{
+            bgcolor: colours.murfey[700].default,
+            width: '100%',
+            px: { xs: 4, md: 8 },
+            py: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
+            gap: 1,
+          }}
+        >
+          <Typography
+            variant="h4"
+            sx={{ color: colours.murfey[50].default, lineHeight: 1 }}
+          >
+            Session Processing Parameters
+          </Typography>
+          <Button
+            component={LinkRouter}
+            to="extra_parameters"
+            variant="outlined"
+            sx={onBlueButtonSx}
+          >
+            Extra Parameters
+          </Button>
         </Box>
         <Table
           data={table.processingRows}

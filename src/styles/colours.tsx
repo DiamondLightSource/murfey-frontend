@@ -13,4 +13,13 @@ const colours = {
   },
 }
 
-export { colours }
+const onBlueButtonSx = {
+  color: colours.murfey[500].default,
+  borderColor: colours.murfey[500].default,
+  '&:hover': {
+    color: colours.murfey[300].default,
+    bgcolor: colours.murfey[500].default,
+  },
+}
+
+export { colours, onBlueButtonSx }

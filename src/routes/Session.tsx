@@ -40,22 +40,13 @@ import React, { useEffect, useCallback } from 'react'
 import { GiMagicBroom } from 'react-icons/gi'
 import { useLoaderData, useParams, useNavigate } from 'react-router-dom'
 import { components } from 'schema/main'
-import { colours } from 'styles/colours'
+import { colours, onBlueButtonSx } from 'styles/colours'
 import { convertUKNaiveToUTC, convertUTCToUKNaive } from 'utils/generic'
 
 type RSyncerInfo = components['schemas']['RSyncerInfo']
 type SessionSchema = components['schemas']['Session']
 type MachineConfig = components['schemas']['MachineConfig']
 type MultigridWatcherSpec = components['schemas']['MultigridWatcherSetup']
-
-const onBlueButtonSx = {
-  color: colours.murfey[500].default,
-  borderColor: colours.murfey[500].default,
-  '&:hover': {
-    color: colours.murfey[300].default,
-    bgcolor: colours.murfey[500].default,
-  },
-}
 
 export const Session = () => {
   // ----------------------------------------------------------------------------------
