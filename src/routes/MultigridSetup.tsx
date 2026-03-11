@@ -137,7 +137,7 @@ const MultigridSetup = () => {
                   }
                   label="Do not process existing data"
                 />
-                <Stack direction="row" spacing={2}>
+                <Stack direction="row" display="flex" spacing={2}>
                   <Select
                     native
                     onChange={
@@ -158,19 +158,21 @@ const MultigridSetup = () => {
                       <option disabled>No Data Directories Found</option>
                     )}
                   </Select>
-                  <IconButton
-                    aria-label="select"
-                    component={LinkRouter}
-                    to={
-                      recipesDefined
-                        ? `../new_session/parameters/${sessid}`
-                        : `../sessions/${sessid}`
-                    }
-                    onClick={handleSelection}
-                    sx={{ border: '2px solid grey' }}
-                  >
-                    <ArrowForwardIcon />
-                  </IconButton>
+                  <Box sx={{ justifyContent: 'center'  }}>
+                    <IconButton
+                      aria-label="select"
+                      component={LinkRouter}
+                      to={
+                        recipesDefined
+                          ? `../new_session/parameters/${sessid}`
+                          : `../sessions/${sessid}`
+                      }
+                      onClick={handleSelection}
+                      sx={{ border: '2px solid grey' }}
+                    >
+                      <ArrowForwardIcon sx={{ color: colours.murfey[500].default }} />
+                    </IconButton>
+                  </Box>
                 </Stack>
               </Stack>
             </Box>

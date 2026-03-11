@@ -136,11 +136,13 @@ export const Hub = () => {
             <Card
               key={index}
               onClick={() => navigateToInstrumentHome(instrumentInfo)}
+              variant='outlined'
               sx={{
                 width: '100%',
                 minHeight: '400px',
                 maxHeight: '600px',
                 cursor: 'pointer',
+                '&:hover': { borderColor: colours.murfey[400].default },
               }}
             >
               <Box
