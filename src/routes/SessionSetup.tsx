@@ -1,13 +1,10 @@
-import {
-  Button,
-  Box,
-  RadioGroup,
-  Radio,
-  Stack,
-  Link,
-  VStack,
-  Heading,
-} from '@chakra-ui/react'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 import { getForm } from 'components/forms'
 import { SetupStepper } from 'components/setupStepper'
 import { startMultigridWatcher } from 'loaders/multigridSetup'
@@ -17,6 +14,7 @@ import { registerProcessingParameters } from 'loaders/sessionSetup'
 import React from 'react'
 import { Link as LinkRouter, useParams, useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
+import { colours } from 'styles/colours'
 
 type SessionClients = components['schemas']['SessionClients']
 type ProvidedProcessingParameters =
@@ -61,99 +59,115 @@ export const SessionSetup = () => {
     : 3
   return (
     <div className="rootContainer">
-      <Box w="100%" bg="murfey.50">
-        <Box w="100%" overflow="hidden">
-          <VStack className="homeRoot">
-            <VStack
-              bg="murfey.700"
-              justifyContent="start"
-              alignItems="start"
-              display="flex"
-              w="100%"
-              px="10vw"
-              py="1vh"
+      <Box sx={{ width: '100%', bgcolor: colours.murfey[50].default }}>
+        <Box sx={{ width: '100%', overflow: 'hidden' }}>
+          <Box className="homeRoot">
+            <Box
+              sx={{
+                bgcolor: colours.murfey[700].default,
+                justifyContent: 'flex-start',
+                alignItems: 'flex-start',
+                display: 'flex',
+                flexDirection: 'column',
+                width: '100%',
+                px: '10vw',
+                py: '1vh',
+              }}
             >
-              <Heading size="xl" color="murfey.50">
+              <Typography
+                variant="h4"
+                sx={{ color: colours.murfey[50].default }}
+              >
                 Processing parameters
-              </Heading>
-            </VStack>
-          </VStack>
+              </Typography>
+            </Box>
+          </Box>
         </Box>
         <Stack>
           <Box
-            mt="1em"
-            px="10vw"
-            w="100%"
-            justifyContent={'center'}
-            alignItems={'center'}
+            sx={{
+              mt: '1em',
+              px: '10vw',
+              width: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
           >
             <SetupStepper activeStepIndex={activeStep} />
           </Box>
           <Box
-            mt="1em"
-            px="10vw"
-            w="100%"
-            justifyContent={'left'}
-            alignItems={'center'}
-            display={'flex'}
+            sx={{
+              mt: '1em',
+              px: '10vw',
+              width: '100%',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              display: 'flex',
+            }}
           >
             <RadioGroup
-              onChange={setExpType}
+              onChange={(e) => setExpType(e.target.value)}
               value={expType}
-              colorScheme="murfey"
-              isDisabled={activeStep !== 3 ? true : false}
             >
               <Stack>
-                <Radio value="spa">SPA</Radio>
-                <Radio value="tomography">Tomography</Radio>
+                <FormControlLabel
+                  value="spa"
+                  control={<Radio disabled={activeStep !== 3} />}
+                  label="SPA"
+                />
+                <FormControlLabel
+                  value="tomography"
+                  control={<Radio disabled={activeStep !== 3} />}
+                  label="Tomography"
+                />
               </Stack>
             </RadioGroup>
           </Box>
           <Box
-            mt="1em"
-            ml="10vw"
-            w="80%"
-            borderWidth="1px"
-            borderRadius="lg"
-            overflow="hidden"
-            padding="10px"
-            justifyContent={'left'}
-            alignItems={'left'}
-            display={'flex'}
-            borderColor={'murfey.400'}
+            sx={{
+              mt: '1em',
+              ml: '10vw',
+              width: '80%',
+              border: '1px solid',
+              borderRadius: 1,
+              overflow: 'hidden',
+              padding: '10px',
+              justifyContent: 'flex-start',
+              alignItems: 'flex-start',
+              display: 'flex',
+              borderColor: colours.murfey[400].default,
+            }}
           >
             {sessid ? getForm(expType, handleSelection) : <></>}
           </Box>
           <Box
-            mt="1em"
-            px="10vw"
-            w="100%"
-            justifyContent={'left'}
-            alignItems={'left'}
-            display={'flex'}
+            sx={{
+              mt: '1em',
+              px: '10vw',
+              width: '100%',
+              justifyContent: 'flex-start',
+              alignItems: 'flex-start',
+              display: 'flex',
+              gap: 2,
+            }}
           >
-            <Link
-              w={{ base: '100%', md: '19.6%' }}
-              key={sessid}
-              _hover={{ textDecor: 'none' }}
-              as={LinkRouter}
+            <Button
+              variant="contained"
+              disabled={!paramsSet}
+              component={LinkRouter}
               to={`../sessions/${sessid}`}
+              sx={{ bgcolor: colours.murfey[600].default }}
             >
-              <Button variant="default" isDisabled={!paramsSet}>
-                Next
-              </Button>
-            </Link>
-            <Link
-              w={{ base: '100%', md: '19.6%' }}
-              key={sessid}
-              _hover={{ textDecor: 'none' }}
-              as={LinkRouter}
+              Next
+            </Button>
+            <Button
+              variant="text"
+              component={LinkRouter}
               to={`../sessions/${sessid}`}
+              onClick={handleSkip}
             >
-              <Button variant="ghost" onClick={handleSkip}>
-                Disable Processing
-              </Button>
-            </Link>
+              Disable Processing
+            </Button>
           </Box>
         </Stack>
       </Box>
