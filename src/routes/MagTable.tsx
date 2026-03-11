@@ -1,41 +1,35 @@
-import {
-  Button,
-  Box,
-  Heading,
-  HStack,
-  IconButton,
-  Input,
-  VStack,
-  TableContainer,
-  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
-  Text,
-  TableCaption,
-  Modal,
-  ModalOverlay,
-  ModalHeader,
-  ModalContent,
-  ModalBody,
-  ModalCloseButton,
-  FormControl,
-  useDisclosure,
-} from '@chakra-ui/react'
+import AddIcon from '@mui/icons-material/Add'
+import CloseIcon from '@mui/icons-material/Close'
+import RemoveIcon from '@mui/icons-material/Remove'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import IconButton from '@mui/material/IconButton'
+import Stack from '@mui/material/Stack'
+import MuiTable from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableFooter from '@mui/material/TableFooter'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import { addMagTableRow, removeMagTableRow } from 'loaders/magTable'
 import React from 'react'
-import { MdAdd, MdHorizontalRule } from 'react-icons/md'
 import { useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
+import { colours } from 'styles/colours'
 
 type MagTableRow = components['schemas']['MagnificationLookup']
 
 export const MagTable = () => {
   const magTable = useLoaderData() as MagTableRow[] | null
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [isOpen, setIsOpen] = React.useState(false)
+  const onOpen = () => setIsOpen(true)
+  const onClose = () => setIsOpen(false)
 
   const handleRemoveRow = (mag: number) => {
     removeMagTableRow(mag)
@@ -54,107 +48,114 @@ export const MagTable = () => {
   return (
     <div className="rootContainer">
       <title>Murfey</title>
-      <Box w="100%" bg="murfey.50">
-        <Box w="100%" overflow="hidden">
-          <VStack className="homeRoot">
-            <VStack
-              bg="murfey.700"
-              justifyContent="start"
-              alignItems="start"
-              display="flex"
-              w="100%"
-              px="10vw"
-              py="1vh"
+      <Dialog open={isOpen} onClose={onClose}>
+        <DialogTitle>
+          Add Mag Table Row
+          <IconButton
+            aria-label="close"
+            onClick={onClose}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <form onSubmit={handleForm}>
+            <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
+              <TextField
+                placeholder="Magnification"
+                name="magnification"
+                size="small"
+              />
+              <TextField
+                placeholder="Pixel size (Angstroms)"
+                name="pixelSize"
+                size="small"
+              />
+            </Stack>
+            <Button
+              variant="contained"
+              type="submit"
+              sx={{ bgcolor: colours.murfey[600].default }}
             >
-              <Heading size="xl" color="murfey.50">
-                Magnification Table
-              </Heading>
-            </VStack>
-
-            <VStack
-              mt="0 !important"
-              w="100%"
-              px="10vw"
-              justifyContent="start"
-              alignItems="start"
-            >
-              <TableContainer>
-                <Table variant="simple">
-                  <TableCaption>Magnification Table</TableCaption>
-                  <Thead>
-                    <Tr>
-                      <Th>Magnification</Th>
-                      <Th>Pixel Size</Th>
-                      <Th>Remove</Th>
-                    </Tr>
-                  </Thead>
-                  <Modal isOpen={isOpen} onClose={onClose}>
-                    <ModalOverlay />
-                    <ModalContent>
-                      <ModalHeader>Add Mag Table Row</ModalHeader>
-                      <ModalCloseButton />
-                      <ModalBody>
-                        <form onSubmit={handleForm}>
-                          <FormControl>
-                            <HStack>
-                              <Input
-                                placeholder="Magnification"
-                                name="magnification"
-                              />
-                              <Input
-                                placeholder="Pixel size (Angstroms)"
-                                name="pixelSize"
-                              />
-                            </HStack>
-                          </FormControl>
-                          <Button variant="default" type="submit">
-                            Submit
-                          </Button>
-                        </form>
-                      </ModalBody>
-                    </ModalContent>
-                  </Modal>
-                  <Tbody>
-                    {magTable && magTable.length > 0 ? (
-                      magTable.map((row) => {
-                        return (
-                          <Tr>
-                            <Td>
-                              <Text>{row.magnification}</Text>
-                            </Td>
-                            <Td>
-                              <Text>{row.pixel_size}</Text>
-                            </Td>
-                            <Td>
-                              <IconButton
-                                aria-label="Remove row from database"
-                                icon={<MdHorizontalRule />}
-                                onClick={() =>
-                                  handleRemoveRow(row.magnification)
-                                }
-                              ></IconButton>
-                            </Td>
-                          </Tr>
-                        )
-                      })
-                    ) : (
-                      <></>
-                    )}
-                  </Tbody>
-                  <Tfoot>
-                    <HStack>
-                      <IconButton
-                        aria-label="Add row to mag table"
-                        icon={<MdAdd />}
-                        size="m"
-                        onClick={onOpen}
-                      ></IconButton>
-                    </HStack>
-                  </Tfoot>
-                </Table>
-              </TableContainer>
-            </VStack>
-          </VStack>
+              Submit
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+      <Box
+        className="homeRoot"
+        sx={{
+          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          flex: 1,
+          bgcolor: colours.murfey[50].default,
+        }}
+      >
+        <Box
+          sx={{
+            bgcolor: colours.murfey[700].default,
+            width: '100%',
+            px: { xs: 4, md: 8 },
+            py: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
+          }}
+        >
+          <Typography
+            variant="h4"
+            sx={{ color: colours.murfey[50].default, lineHeight: 1 }}
+          >
+            Magnification Table
+          </Typography>
+        </Box>
+        <Box sx={{ px: { xs: 4, md: 8 }, pt: 2 }}>
+          <TableContainer>
+            <MuiTable>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Magnification</TableCell>
+                  <TableCell>Pixel Size</TableCell>
+                  <TableCell>Remove</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {magTable && magTable.length > 0 ? (
+                  magTable.map((row) => (
+                    <TableRow key={row.magnification}>
+                      <TableCell>{row.magnification}</TableCell>
+                      <TableCell>{row.pixel_size}</TableCell>
+                      <TableCell>
+                        <IconButton
+                          aria-label="Remove row from database"
+                          onClick={() => handleRemoveRow(row.magnification)}
+                        >
+                          <RemoveIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <></>
+                )}
+              </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TableCell colSpan={3}>
+                    <IconButton
+                      aria-label="Add row to mag table"
+                      onClick={onOpen}
+                    >
+                      <AddIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              </TableFooter>
+            </MuiTable>
+          </TableContainer>
         </Box>
       </Box>
     </div>

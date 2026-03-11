@@ -1,7 +1,9 @@
-import { Box, Heading, VStack } from '@chakra-ui/react'
 import { Table } from '@diamondlightsource/ui-components'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 import { useNavigate, useLoaderData, useParams } from 'react-router-dom'
 import { components } from 'schema/main'
+import { colours } from 'styles/colours'
 
 type DataCollectionGroup = components['schemas']['DataCollectionGroup']
 
@@ -23,30 +25,44 @@ const DataCollectionGroups = () => {
 
   return (
     <div className="rootContainer">
-      <Box w="100%" bg="murfey.50">
-        <Box w="100%" overflow="hidden">
-          <VStack className="homeRoot">
-            <VStack
-              bg="murfey.700"
-              justifyContent="start"
-              alignItems="start"
-              display="flex"
-              w="100%"
-              px="10vw"
-              py="1vh"
-            >
-              <Heading size="xl" color="murfey.50">
-                Data Collection Groups
-              </Heading>
-            </VStack>
-          </VStack>
+      <Box
+        className="homeRoot"
+        sx={{
+          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          flex: 1,
+          bgcolor: colours.murfey[50].default,
+        }}
+      >
+        <Box
+          sx={{
+            bgcolor: colours.murfey[700].default,
+            width: '100%',
+            px: { xs: 4, md: 8 },
+            py: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
+          }}
+        >
+          <Typography
+            variant="h4"
+            sx={{ color: colours.murfey[50].default, lineHeight: 1 }}
+          >
+            Data Collection Groups
+          </Typography>
         </Box>
         <Box
-          mt="1em"
-          px="10vw"
-          w="100%"
-          justifyContent={'center'}
-          alignItems={'center'}
+          sx={{
+            mt: '1em',
+            px: { xs: 4, md: 8 },
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
         >
           {dataCollectionGroups ? (
             <Table

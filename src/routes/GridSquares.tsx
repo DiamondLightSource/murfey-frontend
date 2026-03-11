@@ -1,7 +1,9 @@
-import { Box, Heading, VStack } from '@chakra-ui/react'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 import { GridSquareCard } from 'components/gridSquareCard'
 import { useLoaderData, useParams } from 'react-router-dom'
 import { components } from 'schema/main'
+import { colours } from 'styles/colours'
 
 type GridSquare = components['schemas']['GridSquare']
 
@@ -18,30 +20,44 @@ export const GridSquares = () => {
 
   const res = (
     <div className="rootContainer">
-      <Box w="100%" bg="murfey.50">
-        <Box w="100%" overflow="hidden">
-          <VStack className="homeRoot">
-            <VStack
-              bg="murfey.700"
-              justifyContent="start"
-              alignItems="start"
-              display="flex"
-              w="100%"
-              px="10vw"
-              py="1vh"
-            >
-              <Heading size="xl" color="murfey.50">
-                Grid Squares
-              </Heading>
-            </VStack>
-          </VStack>
+      <Box
+        className="homeRoot"
+        sx={{
+          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          flex: 1,
+          bgcolor: colours.murfey[50].default,
+        }}
+      >
+        <Box
+          sx={{
+            bgcolor: colours.murfey[700].default,
+            width: '100%',
+            px: { xs: 4, md: 8 },
+            py: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
+          }}
+        >
+          <Typography
+            variant="h4"
+            sx={{ color: colours.murfey[50].default, lineHeight: 1 }}
+          >
+            Grid Squares
+          </Typography>
         </Box>
         <Box
-          mt="1em"
-          ml="1em"
-          w="95%"
-          justifyContent={'center'}
-          alignItems={'center'}
+          sx={{
+            mt: '1em',
+            ml: '1em',
+            width: '95%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
         >
           {gridSquares && gridSquares.length > 0 ? (
             gridSquares.map((gs) => GridSquareCard(gs, sessid, dcgid))
