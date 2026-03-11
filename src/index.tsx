@@ -1,4 +1,4 @@
-import { ThemeProvider, createTheme, THEME_ID } from '@mui/material/styles'
+import { CssVarsProvider, extendTheme } from '@mui/material/styles'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ProtectedRoutes } from 'components/protectedRoutes'
@@ -32,7 +32,7 @@ import { ProcessingParameters } from 'routes/ProcessingParameters'
 import { Session } from 'routes/Session'
 import { SessionParameters } from 'routes/SessionParameters'
 import { SessionSetup } from 'routes/SessionSetup'
-const muiTheme = createTheme()
+const muiTheme = extendTheme()
 const container = document.getElementById('root')!
 const root = createRoot(container)
 const queryClient = new QueryClient({
@@ -131,7 +131,7 @@ const router = createBrowserRouter([
 ])
 
 root.render(
-  <ThemeProvider theme={{ [THEME_ID]: muiTheme }}>
+  <CssVarsProvider theme={muiTheme}>
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
       <ToastProvider />
@@ -139,5 +139,5 @@ root.render(
         <ReactQueryDevtools initialIsOpen={false} />
       )}
     </QueryClientProvider>
-  </ThemeProvider>
+  </CssVarsProvider>
 )
