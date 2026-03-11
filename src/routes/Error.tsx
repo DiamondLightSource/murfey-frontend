@@ -1,7 +1,11 @@
-import { Heading, Link, VStack, Box, Text, Code } from '@chakra-ui/react'
 import { Navbar } from '@diamondlightsource/ui-components'
+import Box from '@mui/material/Box'
+import Link from '@mui/material/Link'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 import { useEffect, useState } from 'react'
 import { useRouteError } from 'react-router-dom'
+import { colours } from 'styles/colours'
 
 interface ErrorType {
   status: number
@@ -32,25 +36,39 @@ const Error = () => {
   return (
     <div className="rootContainer">
       <Navbar logo={'/images/diamondgs.png'} />
-      <Box marginTop={12} className="main">
-        <VStack h="100%" justifyContent="center">
-          <Heading color="murfey.800">{heading}</Heading>
-          <Text color="murfey.300">{message}</Text>
+      <Box sx={{ mt: 12 }} className="main">
+        <Stack
+          height="100%"
+          justifyContent="center"
+          alignItems="center"
+          spacing={2}
+        >
+          <Typography variant="h4" sx={{ color: colours.murfey[800].default }}>
+            {heading}
+          </Typography>
+          <Typography sx={{ color: colours.murfey[300].default }}>
+            {message}
+          </Typography>
           {details && (
-            <Code
-              fontFamily="monospace"
-              w="50%"
-              h="30%"
-              overflow="visible"
-              p={3}
+            <Box
+              component="code"
+              sx={{
+                fontFamily: 'monospace',
+                width: '50%',
+                overflow: 'visible',
+                p: 3,
+                bgcolor: colours.murfey[100].default,
+                color: colours.murfey[800].default,
+                borderRadius: 1,
+              }}
             >
               {details}
-            </Code>
+            </Box>
           )}
-          <Link color="murfey.600" href="/">
+          <Link href="/" sx={{ color: colours.murfey[600].default }}>
             Go home
           </Link>
-        </VStack>
+        </Stack>
       </Box>
     </div>
   )
