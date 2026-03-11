@@ -1,18 +1,11 @@
-import { ArrowForwardIcon } from '@chakra-ui/icons'
-import {
-  Box,
-  FormControl,
-  FormLabel,
-  GridItem,
-  Heading,
-  HStack,
-  IconButton,
-  Link,
-  Select,
-  Stack,
-  Switch,
-  VStack,
-} from '@chakra-ui/react'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import Box from '@mui/material/Box'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import IconButton from '@mui/material/IconButton'
+import Select from '@mui/material/Select'
+import Stack from '@mui/material/Stack'
+import Switch from '@mui/material/Switch'
+import Typography from '@mui/material/Typography'
 import { SetupStepper } from 'components/setupStepper'
 import {
   setupMultigridWatcher,
@@ -22,6 +15,7 @@ import { getSessionData } from 'loaders/sessionClients'
 import React, { useEffect } from 'react'
 import { Link as LinkRouter, useLoaderData, useParams } from 'react-router-dom'
 import { components } from 'schema/main'
+import { colours } from 'styles/colours'
 
 type MachineConfig = components['schemas']['MachineConfig']
 type MultigridWatcherSpec = components['schemas']['MultigridWatcherSetup']
@@ -73,103 +67,114 @@ const MultigridSetup = () => {
 
   return (
     <div className="rootContainer">
-      <Box w="100%" bg="murfey.50">
-        <Box w="100%" overflow="hidden">
-          <VStack className="homeRoot">
-            <VStack
-              bg="murfey.700"
-              justifyContent="start"
-              alignItems="start"
-              display="flex"
-              w="100%"
-              px="10vw"
-              py="1vh"
+      <Box sx={{ width: '100%', bgcolor: colours.murfey[50].default }}>
+        <Box sx={{ width: '100%', overflow: 'hidden' }}>
+          <Box className="homeRoot">
+            <Box
+              sx={{
+                bgcolor: colours.murfey[700].default,
+                justifyContent: 'flex-start',
+                alignItems: 'flex-start',
+                display: 'flex',
+                flexDirection: 'column',
+                width: '100%',
+                px: '10vw',
+                py: '1vh',
+              }}
             >
-              <Heading size="xl" color="murfey.50">
+              <Typography
+                variant="h4"
+                sx={{ color: colours.murfey[50].default }}
+              >
                 Select data directory
-              </Heading>
-            </VStack>
-          </VStack>
+              </Typography>
+            </Box>
+          </Box>
         </Box>
         <Box
-          mt="1em"
-          px="10vw"
-          w="100%"
-          justifyContent={'center'}
-          alignItems={'center'}
-          display={'flex'}
-        ></Box>
-        <Box
-          mt="1em"
-          px="10vw"
-          w="100%"
-          justifyContent={'center'}
-          alignItems={'center'}
+          sx={{
+            mt: '1em',
+            px: '10vw',
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
         >
           <SetupStepper activeStepIndex={activeStep} />
         </Box>
         <Box
-          mt="1em"
-          px="10vw"
-          w="100%"
-          justifyContent={'center'}
-          alignItems={'center'}
-          display={'flex'}
+          sx={{
+            mt: '1em',
+            px: '10vw',
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+            display: 'flex',
+          }}
         >
-          <VStack
-            mt="0 !important"
-            w="100%"
-            px="10vw"
-            justifyContent="start"
-            alignItems="start"
+          <Box
+            sx={{
+              mt: 0,
+              width: '100%',
+              px: '10vw',
+              justifyContent: 'flex-start',
+              alignItems: 'flex-start',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
           >
-            <VStack w="100%" spacing={0}>
-              <Stack w="100%" spacing={5} py="0.8em">
-                <FormControl display="flex" alignItems="center">
-                  <FormLabel mb="0">Do not process existing data</FormLabel>
-                  <Switch
-                    id="skip-existing-processing"
-                    isChecked={!processByDefault}
-                    onChange={() => {
-                      setSkipExistingProcessing(!skipExistingProcessing)
-                    }}
-                  />
-                </FormControl>
-                <HStack>
-                  <Select onChange={handleDirectorySelection}>
+            <Box sx={{ width: '100%' }}>
+              <Stack sx={{ width: '100%', py: '0.8em' }} spacing={5}>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      id="skip-existing-processing"
+                      checked={!processByDefault}
+                      onChange={() => {
+                        setSkipExistingProcessing(!skipExistingProcessing)
+                      }}
+                    />
+                  }
+                  label="Do not process existing data"
+                />
+                <Stack direction="row" spacing={2}>
+                  <Select
+                    native
+                    onChange={
+                      handleDirectorySelection as React.ChangeEventHandler<HTMLSelectElement>
+                    }
+                    sx={{ flexGrow: 1 }}
+                  >
                     {machineConfig &&
                     machineConfig.data_directories.length > 0 ? (
                       machineConfig.data_directories.map((value) => {
-                        return <option value={value}>{value}</option>
+                        return (
+                          <option key={value} value={value}>
+                            {value}
+                          </option>
+                        )
                       })
                     ) : (
-                      <GridItem colSpan={5}>
-                        <Heading textAlign="center" py={4} variant="notFound">
-                          No Data Directories Found
-                        </Heading>
-                      </GridItem>
+                      <option disabled>No Data Directories Found</option>
                     )}
                   </Select>
-                  <Link
-                    w={{ base: '100%', md: '19.6%' }}
-                    _hover={{ textDecor: 'none' }}
-                    as={LinkRouter}
+                  <IconButton
+                    aria-label="select"
+                    component={LinkRouter}
                     to={
                       recipesDefined
                         ? `../new_session/parameters/${sessid}`
                         : `../sessions/${sessid}`
                     }
+                    onClick={handleSelection}
+                    sx={{ border: '2px solid grey' }}
                   >
-                    <IconButton
-                      aria-label="select"
-                      icon={<ArrowForwardIcon />}
-                      onClick={handleSelection}
-                    />
-                  </Link>
-                </HStack>
+                    <ArrowForwardIcon />
+                  </IconButton>
+                </Stack>
               </Stack>
-            </VStack>
-          </VStack>
+            </Box>
+          </Box>
         </Box>
       </Box>
     </div>
