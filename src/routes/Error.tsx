@@ -1,4 +1,4 @@
-import { Navbar } from '@diamondlightsource/ui-components'
+import { Navbar } from '@diamondlightsource/sci-react-ui'
 import Box from '@mui/material/Box'
 import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
@@ -35,7 +35,12 @@ const Error = () => {
 
   return (
     <div className="rootContainer">
-      <Navbar logo={'/images/diamondgs.png'} />
+      <Navbar
+        logo={{
+          src: '/images/diamondgs.png',
+          alt: 'Diamond Light Source logo',
+        }}
+      />
       <Box sx={{ mt: 12 }} className="main">
         <Stack
           height="100%"

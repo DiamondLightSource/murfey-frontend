@@ -1,6 +1,6 @@
-import { Table } from '@diamondlightsource/ui-components'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import { DataTable } from 'components/dataTable'
 import { useNavigate, useLoaderData, useParams } from 'react-router-dom'
 import { components } from 'schema/main'
 import { colours } from 'styles/colours'
@@ -65,7 +65,7 @@ const DataCollectionGroups = () => {
           }}
         >
           {dataCollectionGroups ? (
-            <Table
+            <DataTable
               width="80%"
               data={Object.values(dataCollectionGroups)}
               headers={[

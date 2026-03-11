@@ -1,4 +1,3 @@
-import { Table } from '@diamondlightsource/ui-components'
 import CloseIcon from '@mui/icons-material/Close'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -10,6 +9,7 @@ import IconButton from '@mui/material/IconButton'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { DataTable } from 'components/dataTable'
 import {
   updateSessionProcessingParameters,
   getSessionProcessingParameterData,
@@ -184,7 +184,7 @@ export const SessionParameters = () => {
             Extra Parameters
           </Button>
         </Box>
-        <Table
+        <DataTable
           data={table.processingRows}
           headers={[
             { key: 'parameterName', label: 'Parameter' },

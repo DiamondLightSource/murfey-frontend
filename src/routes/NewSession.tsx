@@ -1,4 +1,3 @@
-import { Table } from '@diamondlightsource/ui-components'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import CloseIcon from '@mui/icons-material/Close'
 import Box from '@mui/material/Box'
@@ -14,6 +13,7 @@ import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
+import { DataTable } from 'components/dataTable'
 import { SetupStepper } from 'components/setupStepper'
 import { sessionTokenCheck, sessionHandshake } from 'loaders/jwt'
 import { getMachineConfigData } from 'loaders/machineConfig'
@@ -368,7 +368,7 @@ const NewSession = () => {
             display: 'flex',
           }}
         >
-          <Table
+          <DataTable
             data={formattedVisits}
             headers={[
               { key: 'name', label: 'Name' },

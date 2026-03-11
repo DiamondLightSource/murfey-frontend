@@ -1,4 +1,3 @@
-import { Table } from '@diamondlightsource/ui-components'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import Accordion from '@mui/material/Accordion'
 import AccordionDetails from '@mui/material/AccordionDetails'
@@ -8,6 +7,7 @@ import IconButton from '@mui/material/IconButton'
 import Stack from '@mui/material/Stack'
 import Switch from '@mui/material/Switch'
 import Typography from '@mui/material/Typography'
+import { DataTable } from 'components/dataTable'
 import React from 'react'
 import { MdEditNote } from 'react-icons/md'
 import { useLoaderData } from 'react-router-dom'
@@ -130,7 +130,7 @@ const ProcessingParameters = () => {
               Main Processing Parameters (Processing Job ID {tr.tag})
             </AccordionSummary>
             <AccordionDetails>
-              <Table
+              <DataTable
                 data={tr.processingRows}
                 headers={[
                   { key: 'parameterName', label: 'Parameter' },
@@ -154,7 +154,7 @@ const ProcessingParameters = () => {
                 <IconButton aria-label="Edit parameters">
                   <MdEditNote />
                 </IconButton>
-                <Table
+                <DataTable
                   data={tre.processingRows}
                   headers={[
                     { key: 'parameterName', label: 'Parameter' },
