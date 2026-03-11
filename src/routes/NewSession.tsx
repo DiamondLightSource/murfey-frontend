@@ -1,36 +1,28 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardBody,
-  Input,
-  Heading,
-  Link,
-  Stack,
-  HStack,
-  VStack,
-  Modal,
-  ModalOverlay,
-  ModalHeader,
-  ModalContent,
-  ModalFooter,
-  ModalCloseButton,
-  ModalBody,
-  IconButton,
-  Tooltip,
-  Text,
-} from '@chakra-ui/react'
-import { useDisclosure } from '@chakra-ui/react'
 import { Table } from '@diamondlightsource/ui-components'
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
+import CloseIcon from '@mui/icons-material/Close'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import IconButton from '@mui/material/IconButton'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import { SetupStepper } from 'components/setupStepper'
 import { sessionTokenCheck, sessionHandshake } from 'loaders/jwt'
 import { getMachineConfigData } from 'loaders/machineConfig'
 import { createSession, getSessionDataForVisit } from 'loaders/sessionClients'
 import React, { useCallback, useEffect } from 'react'
-import { FaCalendar } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { Link as LinkRouter, useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
+import { colours } from 'styles/colours'
 import {
   convertUTCToUKNaive,
   convertUKNaiveToUTC,
@@ -53,17 +45,9 @@ const NewSession = () => {
       }))
     : []
 
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const {
-    isOpen: isOpenVisitCheck,
-    onOpen: onOpenVisitCheck,
-    onClose: onCloseVisitCheck,
-  } = useDisclosure()
-  const {
-    isOpen: isOpenCalendar,
-    onOpen: onOpenCalendar,
-    onClose: onCloseCalendar,
-  } = useDisclosure()
+  const [isOpen, setIsOpen] = React.useState(false)
+  const [isOpenVisitCheck, setIsOpenVisitCheck] = React.useState(false)
+  const [isOpenCalendar, setIsOpenCalendar] = React.useState(false)
   const [selectedVisit, setSelectedVisit] = React.useState('')
   const [sessionReference, setSessionReference] = React.useState('')
   const [activeSessionsForVisit, setActiveSessionsForVisit] = React.useState<
@@ -161,171 +145,228 @@ const NewSession = () => {
             `../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`
           )
         : navigate(`/new_session/setup/${sid}`)
-    } else onOpenVisitCheck()
+    } else setIsOpenVisitCheck(true)
   }
 
   return instrumentName ? (
     <div className="rootContainer">
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Create visit</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Input
-              placeholder="Session name"
-              onChange={handleVisitNameChange}
-            />
-            <Input
-              placeholder="Session reference"
-              value={sessionReference}
-              onChange={handleChange}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              variant="default"
-              isDisabled={selectedVisit === '' ? true : false}
-              onClick={() => {
-                handleCreateSession(instrumentName)
-              }}
-            >
-              Create session
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      <Modal isOpen={isOpenVisitCheck} onClose={onCloseVisitCheck}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>
-            An active session already exists for this visit
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
+      {/* Create session modal */}
+      <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
+        <DialogTitle>
+          Create session
+          <IconButton
+            aria-label="close"
+            onClick={() => setIsOpen(false)}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent
+          sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}
+        >
+          <TextField
+            placeholder="Session name"
+            onChange={handleVisitNameChange}
+            size="small"
+          />
+          <TextField
+            placeholder="Session reference"
+            value={sessionReference}
+            onChange={handleChange}
+            size="small"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            disabled={selectedVisit === ''}
+            onClick={() => {
+              handleCreateSession(instrumentName)
+            }}
+            sx={{ bgcolor: colours.murfey[600].default }}
+          >
+            Create session
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Active session warning modal */}
+      <Dialog
+        open={isOpenVisitCheck}
+        onClose={() => setIsOpenVisitCheck(false)}
+      >
+        <DialogTitle>
+          An active session already exists for this visit
+          <IconButton
+            aria-label="close"
+            onClick={() => setIsOpenVisitCheck(false)}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent
+          sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+        >
+          <Typography>
             You may want to edit one of the following sessions instead
             (otherwise you may start multiple transfers for the same source)
-            <VStack>
-              {activeSessionsForVisit.map((session) => {
-                return session ? (
-                  <Link
-                    w={{ base: '100%', md: '19.6%' }}
-                    key="gain_ref"
-                    _hover={{ textDecor: 'none' }}
-                    as={LinkRouter}
-                    to={`/sessions/${session.id}`}
-                  >
-                    <Button variant="default">{session.id}</Button>
-                  </Link>
-                ) : (
-                  <></>
-                )
-              })}
-            </VStack>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              variant="ghost"
-              isDisabled={selectedVisit === '' ? true : false}
-              onClick={() => {
-                startMurfeySession(instrumentName).then((sid: number) => {
-                  gainRefDir
-                    ? navigate(
-                        `../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`
-                      )
-                    : navigate(`/new_session/setup/${sid}`)
-                })
-              }}
-            >
-              Ignore and continue
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      <Modal isOpen={isOpenCalendar} onClose={onCloseCalendar} size={'xl'}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Select data transfer end time</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <input
-              aria-label="Date and time"
-              type="datetime-local"
-              // Convert UTC into local UK time, and set seconds to 0
-              defaultValue={
-                convertUTCToUKNaive(defaultVisitEndTime).slice(0, 16) + ':00'
+          </Typography>
+          <Stack spacing={1}>
+            {activeSessionsForVisit.map((session) => {
+              return session ? (
+                <Button
+                  key={session.id}
+                  variant="contained"
+                  component={LinkRouter}
+                  to={`/sessions/${session.id}`}
+                  sx={{ bgcolor: colours.murfey[600].default }}
+                >
+                  {session.id}
+                </Button>
+              ) : (
+                <></>
+              )
+            })}
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="text"
+            disabled={selectedVisit === ''}
+            onClick={() => {
+              startMurfeySession(instrumentName).then((sid: number) => {
+                gainRefDir
+                  ? navigate(
+                      `../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`
+                    )
+                  : navigate(`/new_session/setup/${sid}`)
+              })
+            }}
+          >
+            Ignore and continue
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Calendar/end time modal */}
+      <Dialog
+        open={isOpenCalendar}
+        onClose={() => setIsOpenCalendar(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          Select data transfer end time
+          <IconButton
+            aria-label="close"
+            onClick={() => setIsOpenCalendar(false)}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <input
+            aria-label="Date and time"
+            type="datetime-local"
+            // Convert UTC into local UK time, and set seconds to 0
+            defaultValue={
+              convertUTCToUKNaive(defaultVisitEndTime).slice(0, 16) + ':00'
+            }
+            onChange={(e) => {
+              // The seconds field is removed when it's 0, so add it back
+              let timestamp = e.target.value
+              timestamp += ':00'
+              // Find the equivalent UTC time and save that
+              let newEndTime = new Date(convertUKNaiveToUTC(timestamp))
+              setProposedEndTime(newEndTime)
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="text"
+            onClick={() => {
+              setIsOpenCalendar(false)
+              setProposedEndTime(null)
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              if (proposedEndTime) {
+                setEndTime(proposedEndTime)
+                setIsOpenCalendar(false)
               }
-              onChange={(e) => {
-                // The seconds field is removed when it's 0, so add it back
-                let timestamp = e.target.value
-                timestamp += ':00'
-                // Find the equivalent UTC time and save that
-                let newEndTime = new Date(convertUKNaiveToUTC(timestamp))
-                setProposedEndTime(newEndTime)
-              }}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              variant="ghost"
-              mr={3}
-              onClick={() => {
-                onCloseCalendar()
-                setProposedEndTime(null)
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="default"
-              onClick={() => {
-                if (proposedEndTime) {
-                  setEndTime(proposedEndTime)
-                  onCloseCalendar()
-                }
+            }}
+            sx={{ bgcolor: colours.murfey[600].default }}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Box sx={{ width: '100%', bgcolor: colours.murfey[50].default }}>
+        <Box sx={{ width: '100%', overflow: 'hidden' }}>
+          <Box className="homeRoot">
+            <Box
+              sx={{
+                bgcolor: colours.murfey[700].default,
+                justifyContent: 'flex-start',
+                alignItems: 'flex-start',
+                display: 'flex',
+                flexDirection: 'column',
+                width: '100%',
+                px: '10vw',
+                py: '1vh',
               }}
             >
-              Confirm
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      <Box w="100%" bg="murfey.50">
-        <Box w="100%" overflow="hidden">
-          <VStack className="homeRoot">
-            <VStack
-              bg="murfey.700"
-              justifyContent="start"
-              alignItems="start"
-              display="flex"
-              w="100%"
-              px="10vw"
-              py="1vh"
-            >
-              <Heading size="xl" color="murfey.50">
+              <Typography
+                variant="h4"
+                sx={{ color: colours.murfey[50].default }}
+              >
                 Current visits
-              </Heading>
-              <Button variant="onBlue" onClick={() => onOpen()}>
-                Create visit
+              </Typography>
+              <Button
+                variant="outlined"
+                onClick={() => setIsOpen(true)}
+                sx={{
+                  color: colours.murfey[500].default,
+                  borderColor: colours.murfey[500].default,
+                  '&:hover': {
+                    color: colours.murfey[300].default,
+                    bgcolor: colours.murfey[500].default,
+                  },
+                }}
+              >
+                Create session
               </Button>
-            </VStack>
-          </VStack>
+            </Box>
+          </Box>
         </Box>
         <Box
-          mt="1em"
-          px="10vw"
-          w="100%"
-          justifyContent={'center'}
-          alignItems={'center'}
+          sx={{
+            mt: '1em',
+            px: '10vw',
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
         >
           <SetupStepper activeStepIndex={0} />
         </Box>
         <Box
-          mt="1em"
-          w="100%"
-          justifyContent={'center'}
-          alignItems={'center'}
-          display={'flex'}
+          sx={{
+            mt: '1em',
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+            display: 'flex',
+          }}
         >
           <Table
             data={formattedVisits}
@@ -340,25 +381,28 @@ const NewSession = () => {
           />
         </Box>
         <Box
-          mt="1em"
-          w="100%"
-          justifyContent={'center'}
-          alignItems={'center'}
-          display={'flex'}
+          sx={{
+            mt: '1em',
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+            display: 'flex',
+          }}
         >
-          <Stack>
-            <Input
+          <Stack spacing={2}>
+            <TextField
               placeholder="Session reference"
               value={sessionReference}
               onChange={handleChange}
+              size="small"
             />
-            <VStack>
+            <Stack spacing={2} alignItems="center">
               <Card>
-                <CardBody>
-                  <HStack>
-                    <VStack>
-                      <Text>Transfers will stop after:</Text>
-                      <Text>
+                <CardContent>
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    <Stack spacing={1}>
+                      <Typography>Transfers will stop after:</Typography>
+                      <Typography>
                         {endTime
                           ? new Intl.DateTimeFormat('en-GB', {
                               timeZone: 'Europe/London',
@@ -373,29 +417,30 @@ const NewSession = () => {
                               hour12: false,
                             }).format(endTime)
                           : 'NOT SET'}
-                      </Text>
-                    </VStack>
-                    <Tooltip label="Set end time for data transfer">
+                      </Typography>
+                    </Stack>
+                    <Tooltip title="Set end time for data transfer">
                       <IconButton
                         aria-label="calendar-for-end-time"
-                        onClick={() => onOpenCalendar()}
+                        onClick={() => setIsOpenCalendar(true)}
                       >
-                        <FaCalendar />
+                        <CalendarTodayIcon />
                       </IconButton>
                     </Tooltip>
-                  </HStack>
-                </CardBody>
+                  </Stack>
+                </CardContent>
               </Card>
               <Button
-                variant="default"
-                isDisabled={selectedVisit === '' ? true : false}
+                variant="contained"
+                disabled={selectedVisit === ''}
                 onClick={() => {
                   handleCreateSession(instrumentName)
                 }}
+                sx={{ bgcolor: colours.murfey[600].default }}
               >
                 Create session for visit {selectedVisit}
               </Button>
-            </VStack>
+            </Stack>
           </Stack>
         </Box>
       </Box>

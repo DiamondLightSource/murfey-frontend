@@ -1,20 +1,15 @@
-import {
-  Button,
-  Box,
-  Heading,
-  HStack,
-  VStack,
-  Input,
-  Checkbox,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalBody,
-  ModalHeader,
-  Tooltip,
-  Link,
-} from '@chakra-ui/react'
 import { Table } from '@diamondlightsource/ui-components'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Checkbox from '@mui/material/Checkbox'
+import Dialog from '@mui/material/Dialog'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import { SetupStepper } from 'components/setupStepper'
 import { getMachineConfigData } from 'loaders/machineConfig'
 import {
@@ -31,6 +26,7 @@ import {
 } from 'react-router-dom'
 import { CircleLoader } from 'react-spinners'
 import { components } from 'schema/main'
+import { colours } from 'styles/colours'
 import { convertUTCToUKNaive, formatUTCISOToUKLocal } from 'utils/generic'
 
 type File = components['schemas']['File']
@@ -96,89 +92,96 @@ export const GainRefTransfer = () => {
 
   return (
     <div className="rootContainer">
-      <Box w="100%" bg="murfey.50">
-        <Box w="100%" overflow="hidden">
-          <VStack className="homeRoot">
-            <VStack
-              bg="murfey.700"
-              justifyContent="start"
-              alignItems="start"
-              display="flex"
-              w="100%"
-              px="10vw"
-              py="1vh"
+      <Box sx={{ width: '100%', bgcolor: colours.murfey[50].default }}>
+        <Box sx={{ width: '100%', overflow: 'hidden' }}>
+          <Box className="homeRoot">
+            <Box
+              sx={{
+                bgcolor: colours.murfey[700].default,
+                justifyContent: 'flex-start',
+                alignItems: 'flex-start',
+                display: 'flex',
+                flexDirection: 'column',
+                width: '100%',
+                px: '10vw',
+                py: '1vh',
+              }}
             >
-              <Heading size="xl" color="murfey.50">
+              <Typography
+                variant="h4"
+                sx={{ color: colours.murfey[50].default }}
+              >
                 Possible Gain Reference Files
-              </Heading>
-            </VStack>
-          </VStack>
+              </Typography>
+            </Box>
+          </Box>
         </Box>
-        <Modal isOpen={processing} onClose={() => void 0}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Processing gain reference</ModalHeader>
-            <ModalBody>
-              <CircleLoader />
-            </ModalBody>
-          </ModalContent>
-        </Modal>
+        <Dialog open={processing} onClose={() => void 0}>
+          <DialogTitle>Processing gain reference</DialogTitle>
+          <DialogContent>
+            <CircleLoader />
+          </DialogContent>
+        </Dialog>
         <Box
-          mt="1em"
-          px="10vw"
-          w="100%"
-          justifyContent={'center'}
-          alignItems={'center'}
+          sx={{
+            mt: '1em',
+            px: '10vw',
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
         >
           {searchParams.get('setup') ? (
             <SetupStepper activeStepIndex={1} />
           ) : null}
         </Box>
         <Box
-          mt="1em"
-          w="100%"
-          justifyContent={'center'}
-          alignItems={'center'}
-          display={'flex'}
+          sx={{
+            mt: '1em',
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+            display: 'flex',
+          }}
         >
-          <HStack>
-            <VStack>
-              <Tooltip label="Tag appended to gain reference name">
-                <Input
-                  placeholder={tag}
-                  w="50%"
-                  display={'flex'}
-                  onChange={(e) => setTag(e.target.value)}
-                />
-              </Tooltip>
-              <Checkbox
-                isChecked={falcon}
-                onChange={(e) => setFalcon(e.target.checked)}
-              >
-                Falcon
-              </Checkbox>
-              <Table
-                width="80%"
-                data={possibleGainRefsFormatted}
-                headers={[
-                  { key: 'name', label: 'Name' },
-                  { key: 'timestampFormatted', label: 'Timestamp' },
-                  { key: 'size', label: 'Size [MB]' },
-                  { key: 'full_path', label: 'Full path' },
-                ]}
-                label={'gainRefData'}
-                onClick={SelectGainRef}
+          <Stack spacing={2} alignItems="center">
+            <Tooltip title="Tag appended to gain reference name">
+              <TextField
+                placeholder={tag}
+                size="small"
+                sx={{ width: '50%' }}
+                onChange={(e) => setTag(e.target.value)}
               />
-              <Link
-                w={{ base: '100%', md: '19.6%' }}
-                _hover={{ textDecor: 'none' }}
-                as={LinkRouter}
-                to={`../new_session/setup/${searchParams.get('sessid')}`}
-              >
-                <Button variant="ghost">Skip gain reference</Button>
-              </Link>
-            </VStack>
-          </HStack>
+            </Tooltip>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={falcon}
+                  onChange={(e) => setFalcon(e.target.checked)}
+                />
+              }
+              label="Falcon"
+            />
+            <Table
+              width="80%"
+              data={possibleGainRefsFormatted}
+              headers={[
+                { key: 'name', label: 'Name' },
+                { key: 'timestampFormatted', label: 'Timestamp' },
+                { key: 'size', label: 'Size [MB]' },
+                { key: 'full_path', label: 'Full path' },
+              ]}
+              label={'gainRefData'}
+              onClick={SelectGainRef}
+            />
+            <Button
+              variant="text"
+              component={LinkRouter}
+              to={`../new_session/setup/${searchParams.get('sessid')}`}
+            >
+              Skip gain reference
+            </Button>
+          </Stack>
         </Box>
       </Box>
     </div>
