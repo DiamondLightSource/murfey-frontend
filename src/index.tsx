@@ -32,8 +32,6 @@ import { ProcessingParameters } from 'routes/ProcessingParameters'
 import { Session } from 'routes/Session'
 import { SessionParameters } from 'routes/SessionParameters'
 import { SessionSetup } from 'routes/SessionSetup'
-import { theme } from 'styles/theme'
-
 const muiTheme = createTheme()
 const { ToastContainer } = createStandaloneToast()
 const container = document.getElementById('root')!
@@ -135,7 +133,7 @@ const router = createBrowserRouter([
 
 root.render(
   <ThemeProvider theme={{ [THEME_ID]: muiTheme }}>
-    <ChakraProvider theme={theme}>
+    <ChakraProvider>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
         <ToastContainer />
