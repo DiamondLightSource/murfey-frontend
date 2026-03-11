@@ -1,17 +1,15 @@
-import {
-  Button,
-  Input,
-  VStack,
-  FormControl,
-  Card,
-  CardBody,
-  Heading,
-  HStack,
-} from '@chakra-ui/react'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import { getJWT } from 'loaders/jwt'
 import React from 'react'
 import { TbMicroscope, TbSnowflake } from 'react-icons/tb'
 import { useNavigate, Navigate } from 'react-router-dom'
+import { colours } from 'styles/colours'
 
 const Login = () => {
   const [username, setUsername] = React.useState('')
@@ -24,33 +22,40 @@ const Login = () => {
   const navigate = useNavigate()
 
   return sessionStorage.getItem('murfeyServerURL') ? (
-    <VStack
-      bg="murfey.700"
-      justifyContent="start"
-      alignItems="start"
-      display="flex"
-      w="100%"
-      px="10vw"
-      py="1vh"
+    <Box
+      sx={{
+        bgcolor: colours.murfey[700].default,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        width: '100%',
+        px: '10vw',
+        py: '1vh',
+      }}
     >
-      <Heading size="xl" color="murfey.50">
-        <HStack>
-          {' '}
-          <TbSnowflake /> <TbMicroscope />{' '}
-        </HStack>
+      <Typography
+        variant="h4"
+        sx={{ color: colours.murfey[50].default, mb: 2 }}
+      >
+        <Stack direction="row" spacing={1} component="span" sx={{ mb: 0.5 }}>
+          <TbSnowflake />
+          <TbMicroscope />
+        </Stack>
         Murfey Login
-      </Heading>
+      </Typography>
       <Card>
-        <CardBody>
-          <FormControl>
-            <Input placeholder="Username" onChange={handleUsername} />
-            <Input
+        <CardContent>
+          <Stack spacing={1}>
+            <TextField placeholder="Username" onChange={handleUsername} />
+            <TextField
               placeholder="Password"
               onChange={handlePassword}
               type="password"
             />
             <Button
-              variant="default"
+              variant="contained"
+              sx={{ bgcolor: colours.murfey[600].default }}
               onClick={() => {
                 getJWT({ username: username, password: password })
                   .then((jwt) =>
@@ -69,10 +74,10 @@ const Login = () => {
             >
               Login
             </Button>
-          </FormControl>
-        </CardBody>
+          </Stack>
+        </CardContent>
       </Card>
-    </VStack>
+    </Box>
   ) : (
     <Navigate to="/hub" replace />
   )
