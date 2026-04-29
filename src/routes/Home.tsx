@@ -1,3 +1,5 @@
+import { setSourceMapsEnabled } from 'process'
+
 import {
   Box,
   Button,
@@ -24,7 +26,12 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { InstrumentCard } from 'components/instrumentCard'
 import { SessionRow } from 'components/sessionRow'
-import { createSilence } from 'loaders/alertManager'
+import {
+  createSilence,
+  getLongestSilence,
+  getSilences,
+  Silence,
+} from 'loaders/alertManager'
 import { getInstrumentConnectionStatus } from 'loaders/general'
 import { sessionTokenCheck } from 'loaders/jwt'
 import { finaliseSession } from 'loaders/rsyncers'
@@ -182,10 +189,33 @@ export const Home = () => {
     onClose: onCloseCalendar,
   } = useDisclosure()
 
-  const [endTime, setEndTime] = React.useState<Date | null>(null)
+  const [existingEndTime, setExistingEndTime] = React.useState<Date | null>(
+    null
+  ) //end time of longest existing silence
+  const [endTime, setEndTime] = React.useState<Date | null>(null) //end time of new silence
   const [proposedEndTime, setProposedEndTime] = React.useState<Date | null>(
     null
+  ) //whilst date being picked
+  const [activeSilences, setActiveSilences] = React.useState<Silence | null>(
+    null
   )
+
+  useEffect(() => {
+    if (!sessionsData) return
+    const getActiveSilences = async () => {
+      const silences = await getLongestSilence(
+        instrumentName ? instrumentName : ''
+      )
+
+      if (silences == null) return false
+      setActiveSilences(silences)
+      const newEndTime = new Date(silences.endsAt)
+      console.log(newEndTime)
+      setExistingEndTime(newEndTime)
+    }
+    getActiveSilences()
+  }, [endTime])
+
   // Upon initialisation, zero out seconds field
   const defaultVisitEndTime = (() => {
     let now = new Date()
@@ -209,6 +239,7 @@ export const Home = () => {
     console.log(proposedEndTime)
     if (microscope == null || proposedEndTime == null) return null
     createSilence(microscope, proposedEndTime)
+    setEndTime(null)
   }
 
   // Page rendering logic below here
@@ -272,6 +303,7 @@ export const Home = () => {
         </Modal>
         <Modal isOpen={isOpenCalendar} onClose={onCloseCalendar} size={'xl'}>
           <ModalOverlay />
+          9T09:43:00.000Z
           <ModalContent>
             <ModalHeader>Select Silence End Time</ModalHeader>
             <ModalCloseButton />
@@ -413,13 +445,30 @@ export const Home = () => {
           </Box>
           {/* Right column showing instrument card */}
           <VStack>
-            <Box minW="400px" maxW="600px" flex="1" overflow="auto">
+            <Box minW="400px" maxW="600px" flex=":1" overflow="auto">
               <InstrumentCard />
             </Box>
-            <Card>
+            <Card width={'100%'}>
               <CardBody>
-                <HStack>
+                <VStack>
                   <VStack>
+                    <Text>{activeSilences ? 'Alerts Silenced Until' : ''}</Text>
+                    <Text>
+                      {existingEndTime
+                        ? new Intl.DateTimeFormat('en-GB', {
+                            timeZone: 'Europe/London',
+                            weekday: 'short',
+                            year: 'numeric',
+                            month: 'short',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            timeZoneName: 'short',
+                            hour12: false,
+                          }).format(existingEndTime)
+                        : ''}
+                    </Text>
                     <Text>Silence alerts until</Text>
                     <Text>
                       {endTime
@@ -438,25 +487,27 @@ export const Home = () => {
                         : 'NOT SET'}
                     </Text>
                   </VStack>
-                  <Tooltip label="Set end time for silence">
-                    <IconButton
-                      aria-label="calendar-for-end-time"
-                      onClick={() => onOpenCalendar()}
+                  <HStack>
+                    <Tooltip label="Set end time for silence">
+                      <IconButton
+                        aria-label="calendar-for-end-time"
+                        onClick={() => onOpenCalendar()}
+                      >
+                        <FaCalendar />
+                      </IconButton>
+                    </Tooltip>
+                    <Button
+                      variant="default"
+                      isDisabled={proposedEndTime ? false : true}
+                      onClick={() => {
+                        console.log(instrumentName)
+                        handleCreateSilence(instrumentName, proposedEndTime)
+                      }}
                     >
-                      <FaCalendar />
-                    </IconButton>
-                  </Tooltip>
-                  <Button
-                    variant="default"
-                    isDisabled={proposedEndTime ? false : true}
-                    onClick={() => {
-                      console.log(instrumentName)
-                      handleCreateSilence(instrumentName, proposedEndTime)
-                    }}
-                  >
-                    Silence Alerts
-                  </Button>
-                </HStack>
+                      Silence Alerts
+                    </Button>
+                  </HStack>
+                </VStack>
               </CardBody>
             </Card>
           </VStack>
