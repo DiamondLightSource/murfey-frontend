@@ -14,19 +14,27 @@ import {
   useDisclosure,
   ModalBody,
   Text,
+  VStack,
+  Card,
+  CardBody,
+  HStack,
+  Tooltip,
+  IconButton,
 } from '@chakra-ui/react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { InstrumentCard } from 'components/instrumentCard'
 import { SessionRow } from 'components/sessionRow'
+import { createSilence } from 'loaders/alertManager'
 import { getInstrumentConnectionStatus } from 'loaders/general'
 import { sessionTokenCheck } from 'loaders/jwt'
 import { finaliseSession } from 'loaders/rsyncers'
 import { getAllSessionsData } from 'loaders/sessionClients'
 import { checkMultigridControllerStatus } from 'loaders/sessionSetup'
 import React, { useEffect } from 'react'
+import { FaCalendar } from 'react-icons/fa'
 import { useNavigate, useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
-import { convertUKNaiveToUTC } from 'utils/generic'
+import { convertUKNaiveToUTC, convertUTCToUKNaive } from 'utils/generic'
 
 type Session = components['schemas']['Session']
 type ExpandedSession = Session & {
@@ -167,6 +175,41 @@ export const Home = () => {
     onCloseVisitCleanupPrompt()
     navigate(`../instruments/${instrumentName}/new_session`)
   }
+  // Create Silence values and logic
+  const {
+    isOpen: isOpenCalendar,
+    onOpen: onOpenCalendar,
+    onClose: onCloseCalendar,
+  } = useDisclosure()
+
+  const [endTime, setEndTime] = React.useState<Date | null>(null)
+  const [proposedEndTime, setProposedEndTime] = React.useState<Date | null>(
+    null
+  )
+  // Upon initialisation, zero out seconds field
+  const defaultVisitEndTime = (() => {
+    let now = new Date()
+    let timestamp = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      now.getHours(),
+      now.getMinutes(),
+      0, // Set seconds to 0
+      0 // Set milliseconds to 0
+    ).toISOString()
+    return timestamp
+  })()
+
+  const handleCreateSilence = (
+    microscope: string | null,
+    proposedEndTime: Date | null
+  ) => {
+    console.log(microscope)
+    console.log(proposedEndTime)
+    if (microscope == null || proposedEndTime == null) return null
+    createSilence(microscope, proposedEndTime)
+  }
 
   // Page rendering logic below here
   if (isLoading) return <p>Loading sessions...</p>
@@ -222,6 +265,54 @@ export const Home = () => {
                 Skip Cleanup
               </Button>
               <Button variant="default" onClick={handleVisitCleanupPrompt}>
+                Confirm
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+        <Modal isOpen={isOpenCalendar} onClose={onCloseCalendar} size={'xl'}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Select Silence End Time</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <input
+                aria-label="Date and time"
+                type="datetime-local"
+                // Convert UTC into local UK time, and set seconds to 0
+                defaultValue={
+                  convertUTCToUKNaive(defaultVisitEndTime).slice(0, 16) + ':00'
+                }
+                onChange={(e) => {
+                  // The seconds field is removed when it's 0, so add it back
+                  let timestamp = e.target.value
+                  timestamp += ':00'
+                  // Find the equivalent UTC time and save that
+                  let newEndTime = new Date(convertUKNaiveToUTC(timestamp))
+                  setProposedEndTime(newEndTime)
+                }}
+              />
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                variant="ghost"
+                mr={3}
+                onClick={() => {
+                  onCloseCalendar()
+                  setProposedEndTime(null)
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="default"
+                onClick={() => {
+                  if (proposedEndTime) {
+                    setEndTime(proposedEndTime)
+                    onCloseCalendar()
+                  }
+                }}
+              >
                 Confirm
               </Button>
             </ModalFooter>
@@ -321,9 +412,54 @@ export const Home = () => {
             )}
           </Box>
           {/* Right column showing instrument card */}
-          <Box minW="400px" maxW="600px" flex="1" overflow="auto">
-            <InstrumentCard />
-          </Box>
+          <VStack>
+            <Box minW="400px" maxW="600px" flex="1" overflow="auto">
+              <InstrumentCard />
+            </Box>
+            <Card>
+              <CardBody>
+                <HStack>
+                  <VStack>
+                    <Text>Silence alerts until</Text>
+                    <Text>
+                      {endTime
+                        ? new Intl.DateTimeFormat('en-GB', {
+                            timeZone: 'Europe/London',
+                            weekday: 'short',
+                            year: 'numeric',
+                            month: 'short',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            timeZoneName: 'short',
+                            hour12: false,
+                          }).format(endTime)
+                        : 'NOT SET'}
+                    </Text>
+                  </VStack>
+                  <Tooltip label="Set end time for silence">
+                    <IconButton
+                      aria-label="calendar-for-end-time"
+                      onClick={() => onOpenCalendar()}
+                    >
+                      <FaCalendar />
+                    </IconButton>
+                  </Tooltip>
+                  <Button
+                    variant="default"
+                    isDisabled={proposedEndTime ? false : true}
+                    onClick={() => {
+                      console.log(instrumentName)
+                      handleCreateSilence(instrumentName, proposedEndTime)
+                    }}
+                  >
+                    Silence Alerts
+                  </Button>
+                </HStack>
+              </CardBody>
+            </Card>
+          </VStack>
         </Box>
       </Box>
     </div>
