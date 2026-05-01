@@ -28,6 +28,7 @@ import { InstrumentCard } from 'components/instrumentCard'
 import { SessionRow } from 'components/sessionRow'
 import {
   createSilence,
+  deleteSilence,
   getLongestSilence,
   getSilences,
   Silence,
@@ -196,28 +197,28 @@ export const Home = () => {
   const [proposedEndTime, setProposedEndTime] = React.useState<Date | null>(
     null
   ) //whilst date being picked
-  const [activeSilences, setActiveSilences] = React.useState<Silence | null>(
-    null
-  )
-
+  const [activeSilence, setActiveSilence] = React.useState<Silence | null>(null)
+  //when page loads, find longest active silence. Find again when a new silence is addeds
+  const getActiveSilence = async () => {
+    const silence: Silence | null = await getLongestSilence(
+      instrumentName ? instrumentName : ''
+    )
+    if (silence == null) {
+      setActiveSilence(null)
+      setExistingEndTime(null)
+      return null
+    }
+    setActiveSilence(silence)
+    setExistingEndTime(new Date(silence.endsAt))
+  }
+  //find active silence on loads
   useEffect(() => {
     if (!sessionsData) return
-    const getActiveSilences = async () => {
-      const silences = await getLongestSilence(
-        instrumentName ? instrumentName : ''
-      )
-
-      if (silences == null) return false
-      setActiveSilences(silences)
-      const newEndTime = new Date(silences.endsAt)
-      console.log(newEndTime)
-      setExistingEndTime(newEndTime)
-    }
-    getActiveSilences()
-  }, [endTime])
+    getActiveSilence()
+  }, [])
 
   // Upon initialisation, zero out seconds field
-  const defaultVisitEndTime = (() => {
+  const defaultSilenceEndTime = (() => {
     let now = new Date()
     let timestamp = new Date(
       now.getFullYear(),
@@ -231,17 +232,21 @@ export const Home = () => {
     return timestamp
   })()
 
-  const handleCreateSilence = (
+  const handleCreateSilence = async (
     microscope: string | null,
     proposedEndTime: Date | null
   ) => {
-    console.log(microscope)
-    console.log(proposedEndTime)
     if (microscope == null || proposedEndTime == null) return null
-    createSilence(microscope, proposedEndTime)
+    await createSilence(microscope, proposedEndTime)
+    getActiveSilence() //find which is the longest silence
     setEndTime(null)
   }
-
+  const handleDeleteSilence = async (microscope: string | null) => {
+    if (microscope == null) return null
+    await deleteSilence(microscope)
+    getActiveSilence() //reset active silences to null
+    setEndTime(null)
+  }
   // Page rendering logic below here
   if (isLoading) return <p>Loading sessions...</p>
   if (isError || !data) return <p>Failed to load sessions.</p>
@@ -313,7 +318,8 @@ export const Home = () => {
                 type="datetime-local"
                 // Convert UTC into local UK time, and set seconds to 0
                 defaultValue={
-                  convertUTCToUKNaive(defaultVisitEndTime).slice(0, 16) + ':00'
+                  convertUTCToUKNaive(defaultSilenceEndTime).slice(0, 16) +
+                  ':00'
                 }
                 onChange={(e) => {
                   // The seconds field is removed when it's 0, so add it back
@@ -452,7 +458,7 @@ export const Home = () => {
               <CardBody>
                 <VStack>
                   <VStack>
-                    <Text>{activeSilences ? 'Alerts Silenced Until' : ''}</Text>
+                    <Text>{activeSilence ? 'Alerts Silenced Until' : ''}</Text>
                     <Text>
                       {existingEndTime
                         ? new Intl.DateTimeFormat('en-GB', {
@@ -469,6 +475,21 @@ export const Home = () => {
                           }).format(existingEndTime)
                         : ''}
                     </Text>
+                    {existingEndTime ? (
+                      <Button
+                        variant="default"
+                        isActive={existingEndTime ? false : true}
+                        isDisabled={existingEndTime ? false : true}
+                        onClick={() => {
+                          console.log('delete silence clicked' + instrumentName)
+                          handleDeleteSilence(instrumentName)
+                        }}
+                      >
+                        Delete Silence
+                      </Button>
+                    ) : (
+                      ''
+                    )}
                     <Text>Silence alerts until</Text>
                     <Text>
                       {endTime
@@ -498,10 +519,10 @@ export const Home = () => {
                     </Tooltip>
                     <Button
                       variant="default"
-                      isDisabled={proposedEndTime ? false : true}
+                      isDisabled={endTime ? false : true}
                       onClick={() => {
                         console.log(instrumentName)
-                        handleCreateSilence(instrumentName, proposedEndTime)
+                        handleCreateSilence(instrumentName, endTime)
                       }}
                     >
                       Silence Alerts
