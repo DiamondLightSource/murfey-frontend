@@ -30,7 +30,6 @@ import {
   createSilence,
   deleteSilence,
   getLongestSilence,
-  getSilences,
   Silence,
 } from 'loaders/alertManager'
 import { getInstrumentConnectionStatus } from 'loaders/general'
@@ -184,6 +183,7 @@ export const Home = () => {
     navigate(`../instruments/${instrumentName}/new_session`)
   }
   // Create Silence values and logic
+  //calendar selection popup intialisation
   const {
     isOpen: isOpenCalendar,
     onOpen: onOpenCalendar,
@@ -196,9 +196,10 @@ export const Home = () => {
   const [endTime, setEndTime] = React.useState<Date | null>(null) //end time of new silence
   const [proposedEndTime, setProposedEndTime] = React.useState<Date | null>(
     null
-  ) //whilst date being picked
+  ) //whilst date being chosen by user
   const [activeSilence, setActiveSilence] = React.useState<Silence | null>(null)
-  //when page loads, find longest active silence. Find again when a new silence is addeds
+
+  //find longest active silence
   const getActiveSilence = async () => {
     const silence: Silence | null = await getLongestSilence(
       instrumentName ? instrumentName : ''
@@ -211,13 +212,14 @@ export const Home = () => {
     setActiveSilence(silence)
     setExistingEndTime(new Date(silence.endsAt))
   }
-  //find active silence on loads
+
+  //on load, find longest active silence
   useEffect(() => {
     if (!sessionsData) return
     getActiveSilence()
   }, [])
 
-  // Upon initialisation, zero out seconds field
+  // Upon initialisation, zero out seconds field for calendar date/time picker
   const defaultSilenceEndTime = (() => {
     let now = new Date()
     let timestamp = new Date(
@@ -238,7 +240,7 @@ export const Home = () => {
   ) => {
     if (microscope == null || proposedEndTime == null) return null
     await createSilence(microscope, proposedEndTime)
-    getActiveSilence() //find which is the longest silence
+    getActiveSilence() //find which is now the longest silence
     setEndTime(null)
   }
   const handleDeleteSilence = async (microscope: string | null) => {

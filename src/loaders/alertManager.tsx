@@ -40,15 +40,12 @@ export const createSilence = async (
 
 export const getSilences = async (instrumentName: string) => {
   instrumentName = 'm00' //for testing
-  const response = await client.get(`session_info/silences/${instrumentName}`)
+  const response = await client.get(`session_info/silences/${instrumentName}`) //should return active silences
   if (response.status !== 200) {
     return null
   }
   let silences: Silence[] = response.data
-  const activeSilences: Silence[] = silences.filter(
-    (item: Silence) => item.status.state == 'active'
-  )
-  return activeSilences
+  return silences
 }
 
 export const getLongestSilence = async (instrumentName: string) => {
