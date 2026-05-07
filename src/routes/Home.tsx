@@ -312,7 +312,7 @@ export const Home = () => {
           <ModalOverlay />
           9T09:43:00.000Z
           <ModalContent>
-            <ModalHeader>Select Silence End Time</ModalHeader>
+            <ModalHeader>Turn off alerts until (select time)</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <input
@@ -460,8 +460,8 @@ export const Home = () => {
               <CardBody>
                 <VStack>
                   <VStack>
-                    <Text>{activeSilence ? 'Alerts Silenced Until' : ''}</Text>
                     <Text>
+                      {activeSilence ? 'Alerts off until ' : ''}
                       {existingEndTime
                         ? new Intl.DateTimeFormat('en-GB', {
                             timeZone: 'Europe/London',
@@ -487,38 +487,41 @@ export const Home = () => {
                           handleDeleteSilence(instrumentName)
                         }}
                       >
-                        Delete Silence
+                        Turn On Alerts
                       </Button>
                     ) : (
                       ''
                     )}
-                    <Text>Silence alerts until</Text>
-                    <Text>
-                      {endTime
-                        ? new Intl.DateTimeFormat('en-GB', {
-                            timeZone: 'Europe/London',
-                            weekday: 'short',
-                            year: 'numeric',
-                            month: 'short',
-                            day: '2-digit',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            second: '2-digit',
-                            timeZoneName: 'short',
-                            hour12: false,
-                          }).format(endTime)
-                        : 'NOT SET'}
-                    </Text>
+                    <Text>Turn off alerts until</Text>
+                    <HStack>
+                      <Text>
+                        {endTime
+                          ? new Intl.DateTimeFormat('en-GB', {
+                              timeZone: 'Europe/London',
+                              weekday: 'short',
+                              year: 'numeric',
+                              month: 'short',
+                              day: '2-digit',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              second: '2-digit',
+                              timeZoneName: 'short',
+                              hour12: false,
+                            }).format(endTime)
+                          : 'NOT SET'}
+                      </Text>
+                      <Tooltip label="Set end time for silence">
+                        <IconButton
+                          aria-label="calendar-for-end-time"
+                          onClick={() => onOpenCalendar()}
+                        >
+                          <FaCalendar />
+                        </IconButton>
+                      </Tooltip>
+                    </HStack>
                   </VStack>
+
                   <HStack>
-                    <Tooltip label="Set end time for silence">
-                      <IconButton
-                        aria-label="calendar-for-end-time"
-                        onClick={() => onOpenCalendar()}
-                      >
-                        <FaCalendar />
-                      </IconButton>
-                    </Tooltip>
                     <Button
                       variant="default"
                       isDisabled={endTime ? false : true}
@@ -527,7 +530,7 @@ export const Home = () => {
                         handleCreateSilence(instrumentName, endTime)
                       }}
                     >
-                      Silence Alerts
+                      Turn Off Alerts
                     </Button>
                   </HStack>
                 </VStack>
