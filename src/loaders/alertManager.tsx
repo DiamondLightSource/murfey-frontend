@@ -29,9 +29,6 @@ export const createSilence = async (
     `session_info/silences/${instrumentName}?end_time=${proposedEndTime.toISOString()}`,
     {}
   )
-  console.log(response.status)
-  console.log(response.data)
-  console.log(response)
   if (response.status !== 200) {
     return null
   }
@@ -39,7 +36,6 @@ export const createSilence = async (
 }
 
 export const getSilences = async (instrumentName: string) => {
-  instrumentName = 'm00' //for testing
   const response = await client.get(`session_info/silences/${instrumentName}`) //should return active silences
   if (response.status !== 200) {
     return null
@@ -50,7 +46,7 @@ export const getSilences = async (instrumentName: string) => {
 
 export const getLongestSilence = async (instrumentName: string) => {
   const activeSilences: Silence[] | null = await getSilences(instrumentName)
-  if (activeSilences == null || activeSilences.length == 0) return null
+  if (activeSilences === null || activeSilences.length === 0) return null
   const longestSilence = activeSilences.reduce((a, b) =>
     a.endsAt > b.endsAt ? a : b
   )

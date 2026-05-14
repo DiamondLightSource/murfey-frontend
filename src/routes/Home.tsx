@@ -1,5 +1,3 @@
-import { setSourceMapsEnabled } from 'process'
-
 import {
   Box,
   Button,
@@ -182,7 +180,9 @@ export const Home = () => {
     onCloseVisitCleanupPrompt()
     navigate(`../instruments/${instrumentName}/new_session`)
   }
-  // Create Silence values and logic
+
+  // Turn alerts on/off - values and logic
+
   //calendar selection popup intialisation
   const {
     isOpen: isOpenCalendar,
@@ -192,31 +192,29 @@ export const Home = () => {
 
   const [existingEndTime, setExistingEndTime] = React.useState<Date | null>(
     null
-  ) //end time of longest existing silence
-  const [endTime, setEndTime] = React.useState<Date | null>(null) //end time of new silence
+  ) //longest silence endtime
+  const [endTime, setEndTime] = React.useState<Date | null>(null) //new silence endtime
   const [proposedEndTime, setProposedEndTime] = React.useState<Date | null>(
     null
-  ) //whilst date being chosen by user
-  const [activeSilence, setActiveSilence] = React.useState<Silence | null>(null)
+  ) //whilst date being chosen
 
-  //find longest active silence
-  const getActiveSilence = async () => {
+  //find longest existing silence and set existing end time
+  const checkExistingEndTime = async () => {
     const silence: Silence | null = await getLongestSilence(
       instrumentName ? instrumentName : ''
     )
     if (silence == null) {
-      setActiveSilence(null)
       setExistingEndTime(null)
       return null
     }
-    setActiveSilence(silence)
-    setExistingEndTime(new Date(silence.endsAt))
+    const existingEndsAt = new Date(silence.endsAt)
+    setExistingEndTime(existingEndsAt)
+    return existingEndsAt
   }
 
-  //on load, find longest active silence
+  //on load, find and set longest active silence end time
   useEffect(() => {
-    if (!sessionsData) return
-    getActiveSilence()
+    checkExistingEndTime()
   }, [])
 
   // Upon initialisation, zero out seconds field for calendar date/time picker
@@ -238,17 +236,18 @@ export const Home = () => {
     microscope: string | null,
     proposedEndTime: Date | null
   ) => {
-    if (microscope == null || proposedEndTime == null) return null
+    if (!microscope || !proposedEndTime) return null
     await createSilence(microscope, proposedEndTime)
-    getActiveSilence() //find which is now the longest silence
+    checkExistingEndTime() //find which is now the longest silence
     setEndTime(null)
   }
   const handleDeleteSilence = async (microscope: string | null) => {
     if (microscope == null) return null
     await deleteSilence(microscope)
-    getActiveSilence() //reset active silences to null
+    checkExistingEndTime() //reset active silences to null
     setEndTime(null)
   }
+
   // Page rendering logic below here
   if (isLoading) return <p>Loading sessions...</p>
   if (isError || !data) return <p>Failed to load sessions.</p>
@@ -461,7 +460,7 @@ export const Home = () => {
                 <VStack>
                   <VStack>
                     <Text>
-                      {activeSilence ? 'Alerts off until ' : ''}
+                      {existingEndTime ? 'Alerts off until ' : ''}
                       {existingEndTime
                         ? new Intl.DateTimeFormat('en-GB', {
                             timeZone: 'Europe/London',
@@ -480,10 +479,7 @@ export const Home = () => {
                     {existingEndTime ? (
                       <Button
                         variant="default"
-                        isActive={existingEndTime ? false : true}
-                        isDisabled={existingEndTime ? false : true}
                         onClick={() => {
-                          console.log('delete silence clicked' + instrumentName)
                           handleDeleteSilence(instrumentName)
                         }}
                       >
