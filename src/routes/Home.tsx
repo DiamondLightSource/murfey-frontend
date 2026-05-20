@@ -503,7 +503,6 @@ export const Home = () => {
                       variant="default"
                       isDisabled={endTime ? false : true}
                       onClick={() => {
-                        console.log(instrumentName)
                         handleCreateSilence(instrumentName, endTime)
                       }}
                     >
