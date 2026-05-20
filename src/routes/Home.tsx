@@ -39,7 +39,11 @@ import React, { useEffect } from 'react'
 import { FaCalendar } from 'react-icons/fa'
 import { useNavigate, useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
-import { convertUKNaiveToUTC, convertUTCToUKNaive } from 'utils/generic'
+import {
+  convertUKNaiveToUTC,
+  convertUTCToUKNaive,
+  formatUTCISOToUKLocal,
+} from 'utils/generic'
 
 type Session = components['schemas']['Session']
 type ExpandedSession = Session & {
@@ -205,11 +209,12 @@ export const Home = () => {
     )
     if (silence == null) {
       setExistingEndTime(null)
-      return null
+      // return null
+    } else {
+      const existingEndsAt = new Date(silence.endsAt)
+      setExistingEndTime(existingEndsAt)
     }
-    const existingEndsAt = new Date(silence.endsAt)
-    setExistingEndTime(existingEndsAt)
-    return existingEndsAt
+    // return existingEndsAt
   }
 
   //on load, find and set longest active silence end time
@@ -459,23 +464,14 @@ export const Home = () => {
               <CardBody>
                 <VStack>
                   <VStack>
-                    <Text>
-                      {existingEndTime ? 'Alerts off until ' : ''}
-                      {existingEndTime
-                        ? new Intl.DateTimeFormat('en-GB', {
-                            timeZone: 'Europe/London',
-                            weekday: 'short',
-                            year: 'numeric',
-                            month: 'short',
-                            day: '2-digit',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            second: '2-digit',
-                            timeZoneName: 'short',
-                            hour12: false,
-                          }).format(existingEndTime)
-                        : ''}
-                    </Text>
+                    {existingEndTime ? (
+                      <Text>
+                        {'Alerts off until ' +
+                          formatUTCISOToUKLocal(existingEndTime.toString())}
+                      </Text>
+                    ) : (
+                      ''
+                    )}
                     {existingEndTime ? (
                       <Button
                         variant="default"
@@ -492,18 +488,7 @@ export const Home = () => {
                     <HStack>
                       <Text>
                         {endTime
-                          ? new Intl.DateTimeFormat('en-GB', {
-                              timeZone: 'Europe/London',
-                              weekday: 'short',
-                              year: 'numeric',
-                              month: 'short',
-                              day: '2-digit',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              second: '2-digit',
-                              timeZoneName: 'short',
-                              hour12: false,
-                            }).format(endTime)
+                          ? formatUTCISOToUKLocal(endTime.toString())
                           : 'NOT SET'}
                       </Text>
                       <Tooltip label="Set end time for silence">
@@ -516,7 +501,6 @@ export const Home = () => {
                       </Tooltip>
                     </HStack>
                   </VStack>
-
                   <HStack>
                     <Button
                       variant="default"
