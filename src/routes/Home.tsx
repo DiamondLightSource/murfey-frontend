@@ -35,7 +35,7 @@ import { sessionTokenCheck } from 'loaders/jwt'
 import { finaliseSession } from 'loaders/rsyncers'
 import { getAllSessionsData } from 'loaders/sessionClients'
 import { checkMultigridControllerStatus } from 'loaders/sessionSetup'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { FaCalendar } from 'react-icons/fa'
 import { useNavigate, useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
@@ -203,24 +203,22 @@ export const Home = () => {
   ) //whilst date being chosen
 
   //find longest existing silence and set existing end time
-  const checkExistingEndTime = async () => {
+  const checkExistingEndTime = useCallback(async () => {
     const silence: Silence | null = await getLongestSilence(
       instrumentName ? instrumentName : ''
     )
     if (silence == null) {
       setExistingEndTime(null)
-      // return null
     } else {
       const existingEndsAt = new Date(silence.endsAt)
       setExistingEndTime(existingEndsAt)
     }
-    // return existingEndsAt
-  }
+  }, [instrumentName])
 
   //on load, find and set longest active silence end time
   useEffect(() => {
     checkExistingEndTime()
-  }, [])
+  }, [checkExistingEndTime])
 
   // Upon initialisation, zero out seconds field for calendar date/time picker
   const defaultSilenceEndTime = (() => {
@@ -314,7 +312,6 @@ export const Home = () => {
         </Modal>
         <Modal isOpen={isOpenCalendar} onClose={onCloseCalendar} size={'xl'}>
           <ModalOverlay />
-          9T09:43:00.000Z
           <ModalContent>
             <ModalHeader>Turn off alerts until (select time)</ModalHeader>
             <ModalCloseButton />
