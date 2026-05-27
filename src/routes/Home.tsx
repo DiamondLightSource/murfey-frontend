@@ -1,28 +1,44 @@
 import CloseIcon from '@mui/icons-material/Close'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogTitle from '@mui/material/DialogTitle'
-import Divider from '@mui/material/Divider'
-import IconButton from '@mui/material/IconButton'
-import List from '@mui/material/List'
-import ListItem from '@mui/material/ListItem'
-import Typography from '@mui/material/Typography'
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Card,
+  CardContent,
+  Divider,
+  IconButton,
+  List,
+  ListItem,
+  Tooltip,
+  Typography,
+} from '@mui/material'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { InstrumentCard } from 'components/instrumentCard'
 import { SessionRow } from 'components/sessionRow'
+import {
+  createSilence,
+  deleteSilence,
+  getLongestSilence,
+  Silence,
+} from 'loaders/alertManager'
 import { getInstrumentConnectionStatus } from 'loaders/general'
 import { sessionTokenCheck } from 'loaders/jwt'
 import { finaliseSession } from 'loaders/rsyncers'
 import { getAllSessionsData } from 'loaders/sessionClients'
 import { checkMultigridControllerStatus } from 'loaders/sessionSetup'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
+import { FaCalendar } from 'react-icons/fa'
 import { useNavigate, useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
 import { colours } from 'styles/colours'
-import { convertUKNaiveToUTC } from 'utils/generic'
+import {
+  convertUKNaiveToUTC,
+  convertUTCToUKNaive,
+  formatUTCISOToUKLocal,
+} from 'utils/generic'
 
 type Session = components['schemas']['Session']
 type ExpandedSession = Session & {
@@ -163,6 +179,70 @@ export const Home = () => {
     navigate(`../instruments/${instrumentName}/new_session`)
   }
 
+  // Turn alerts on/off - values and logic
+
+  //calendar selection popup intialisation
+  const [isOpenCalendar, setIsOpenCalendar] = React.useState(false)
+  const onOpenCalendar = () => setIsOpenCalendar(true)
+  const onCloseCalendar = () => setIsOpenCalendar(false)
+
+  const [existingEndTime, setExistingEndTime] = React.useState<Date | null>(
+    null
+  ) //longest silence endtime
+  const [endTime, setEndTime] = React.useState<Date | null>(null) //new silence endtime
+  const [proposedEndTime, setProposedEndTime] = React.useState<Date | null>(
+    null
+  ) //whilst date being chosen
+
+  //find longest existing silence and set existing end time
+  const checkExistingEndTime = useCallback(async () => {
+    const silence: Silence | null = await getLongestSilence(
+      instrumentName ? instrumentName : ''
+    )
+    if (silence == null) {
+      setExistingEndTime(null)
+    } else {
+      const existingEndsAt = new Date(silence.endsAt)
+      setExistingEndTime(existingEndsAt)
+    }
+  }, [instrumentName])
+
+  //on load, find and set longest active silence end time
+  useEffect(() => {
+    checkExistingEndTime()
+  }, [checkExistingEndTime])
+
+  // Upon initialisation, zero out seconds field for calendar date/time picker
+  const defaultSilenceEndTime = (() => {
+    let now = new Date()
+    let timestamp = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      now.getHours(),
+      now.getMinutes(),
+      0, // Set seconds to 0
+      0 // Set milliseconds to 0
+    ).toISOString()
+    return timestamp
+  })()
+
+  const handleCreateSilence = async (
+    microscope: string | null,
+    proposedEndTime: Date | null
+  ) => {
+    if (!microscope || !proposedEndTime) return null
+    await createSilence(microscope, proposedEndTime)
+    checkExistingEndTime() //find which is now the longest silence
+    setEndTime(null)
+  }
+  const handleDeleteSilence = async (microscope: string | null) => {
+    if (microscope == null) return null
+    await deleteSilence(microscope)
+    checkExistingEndTime() //reset active silences to null
+    setEndTime(null)
+  }
+
   // Page rendering logic below here
   if (isLoading) return <p>Loading sessions...</p>
   if (isError || !data) return <p>Failed to load sessions.</p>
@@ -236,6 +316,54 @@ export const Home = () => {
               Confirm
             </Button>
           </DialogActions>
+        </Dialog>
+
+        <Dialog open={isOpenCalendar} onClose={onCloseCalendar}>
+          <DialogContent>
+            <DialogTitle>Turn off alerts until (select time)</DialogTitle>
+            <DialogContent>
+              <input
+                aria-label="Date and time"
+                type="datetime-local"
+                // Convert UTC into local UK time, and set seconds to 0
+                defaultValue={
+                  convertUTCToUKNaive(defaultSilenceEndTime).slice(0, 16) +
+                  ':00'
+                }
+                onChange={(e) => {
+                  // The seconds field is removed when it's 0, so add it back
+                  let timestamp = e.target.value
+                  timestamp += ':00'
+                  // Find the equivalent UTC time and save that
+                  let newEndTime = new Date(convertUKNaiveToUTC(timestamp))
+                  setProposedEndTime(newEndTime)
+                }}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button
+                variant="text"
+                sx={{ mr: 3 }}
+                onClick={() => {
+                  onCloseCalendar()
+                  setProposedEndTime(null)
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  if (proposedEndTime) {
+                    setEndTime(proposedEndTime)
+                    onCloseCalendar()
+                  }
+                }}
+              >
+                Confirm
+              </Button>
+            </DialogActions>
+          </DialogContent>
         </Dialog>
         {/* Sessions title bar */}
         <Box
@@ -357,6 +485,63 @@ export const Home = () => {
             }}
           >
             <InstrumentCard />
+            <Card variant="outlined" sx={{ width: '100%' }}>
+              <CardContent>
+                <Box
+                  display="flex"
+                  flexDirection={'column'}
+                  alignItems={'center'}
+                >
+                  {existingEndTime ? (
+                    <Typography>
+                      {'Alerts off until ' +
+                        formatUTCISOToUKLocal(existingEndTime.toString())}
+                    </Typography>
+                  ) : (
+                    ''
+                  )}
+                  {existingEndTime ? (
+                    <Button
+                      variant="contained"
+                      onClick={() => {
+                        handleDeleteSilence(instrumentName)
+                      }}
+                    >
+                      Turn On Alerts
+                    </Button>
+                  ) : (
+                    ''
+                  )}
+                  <Typography>Turn off alerts until</Typography>
+                  <Box display="flex" flexDirection="row" alignItems={'center'}>
+                    <Typography>
+                      {endTime
+                        ? formatUTCISOToUKLocal(endTime.toString())
+                        : 'NOT SET'}
+                    </Typography>
+                    <Tooltip title="Set end time for silence">
+                      <IconButton
+                        aria-label="calendar-for-end-time"
+                        onClick={() => onOpenCalendar()}
+                      >
+                        <FaCalendar />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                  <Box>
+                    <Button
+                      variant="contained"
+                      disabled={endTime ? false : true}
+                      onClick={() => {
+                        handleCreateSilence(instrumentName, endTime)
+                      }}
+                    >
+                      Turn Off Alerts
+                    </Button>
+                  </Box>
+                </Box>
+              </CardContent>
+            </Card>
           </Box>
         </Box>
       </Box>

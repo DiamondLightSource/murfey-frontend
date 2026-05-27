@@ -158,7 +158,7 @@ const MultigridSetup = () => {
                       <option disabled>No Data Directories Found</option>
                     )}
                   </Select>
-                  <Box sx={{ justifyContent: 'center'  }}>
+                  <Box sx={{ justifyContent: 'center' }}>
                     <IconButton
                       aria-label="select"
                       component={LinkRouter}
@@ -170,7 +170,9 @@ const MultigridSetup = () => {
                       onClick={handleSelection}
                       sx={{ border: '2px solid grey' }}
                     >
-                      <ArrowForwardIcon sx={{ color: colours.murfey[500].default }} />
+                      <ArrowForwardIcon
+                        sx={{ color: colours.murfey[500].default }}
+                      />
                     </IconButton>
                   </Box>
                 </Stack>

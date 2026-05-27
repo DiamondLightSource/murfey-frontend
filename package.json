@@ -1,6 +1,6 @@
 {
   "name": "murfey-frontend",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "private": true,
   "dependencies": {
     "@diamondlightsource/sci-react-ui": "^0.4.1",
@@ -121,7 +121,7 @@
     "openapi-typescript": "^6.7.2",
     "prettier": "^3.6.0",
     "typescript": "^5",
-    "vite": "^7.0.0",
+    "vite": "^7.3.2",
     "vite-tsconfig-paths": "^4.3.2"
   }
 }

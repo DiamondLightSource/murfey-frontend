@@ -14,7 +14,7 @@ import DialogTitle from '@mui/material/DialogTitle'
 import Divider from '@mui/material/Divider'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import IconButton from '@mui/material/IconButton'
-import Select from '@mui/material/Select'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
 import Stack from '@mui/material/Stack'
 import { useTheme } from '@mui/material/styles'
 import Switch from '@mui/material/Switch'
@@ -142,8 +142,8 @@ export const Session = () => {
   const onCloseReconnect = () => setIsOpenReconnect(false)
 
   const [isOpenCalendar, setIsOpenCalendar] = React.useState(false)
-  const onOpenCalendar = () => setIsOpenCalendar(true)
-  const onCloseCalendar = () => setIsOpenCalendar(false)
+  const onOpenCalendar = useCallback(() => setIsOpenCalendar(true), [])
+  const onCloseCalendar = useCallback(() => setIsOpenCalendar(false), [])
 
   // ----------------------------------------------------------------------------------
   // Functions
@@ -315,7 +315,7 @@ export const Session = () => {
     onCloseCalendar,
   ])
 
-  const handleDirectorySelection = (e: React.ChangeEvent<HTMLSelectElement>) =>
+  const handleDirectorySelection = (e: SelectChangeEvent) =>
     setSelectedDirectory(e.target.value)
 
   const handleReconnect = async () => {
@@ -388,12 +388,7 @@ export const Session = () => {
           <Stack spacing={2} sx={{ pt: 1 }}>
             <Stack direction="row" spacing={2} alignItems="center">
               <Typography>Data directory</Typography>
-              <Select
-                native
-                onChange={
-                  handleDirectorySelection as React.ChangeEventHandler<HTMLSelectElement>
-                }
-              >
+              <Select native onChange={handleDirectorySelection}>
                 {machineConfig &&
                 machineConfig['data_directories'].length > 0 ? (
                   machineConfig['data_directories'].map((value) => {

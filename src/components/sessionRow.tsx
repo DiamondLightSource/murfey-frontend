@@ -1,4 +1,3 @@
-import { keyframes } from '@emotion/react'
 import {
   Box,
   Button,
@@ -203,7 +202,10 @@ export const SessionRow = ({
               aria-label="Delete session"
               onClick={() => setIsOpenDelete(true)}
               disabled={isActive || sessionFinalising}
-              sx={{ color: colours.murfey[500].default, border: '2px solid gray' }}
+              sx={{
+                color: colours.murfey[500].default,
+                border: '2px solid gray',
+              }}
             >
               <MdDelete />
             </IconButton>
@@ -215,7 +217,10 @@ export const SessionRow = ({
               aria-label="Clean up session"
               onClick={() => setIsOpenCleanup(true)}
               disabled={!isActive || sessionFinalising}
-              sx={{ color: colours.murfey[500].default, border: '2px solid gray' }}
+              sx={{
+                color: colours.murfey[500].default,
+                border: '2px solid gray',
+              }}
             >
               <GiMagicBroom />
             </IconButton>

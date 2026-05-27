@@ -136,7 +136,7 @@ export const Hub = () => {
             <Card
               key={index}
               onClick={() => navigateToInstrumentHome(instrumentInfo)}
-              variant='outlined'
+              variant="outlined"
               sx={{
                 width: '100%',
                 minHeight: '400px',
