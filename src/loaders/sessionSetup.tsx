@@ -24,7 +24,7 @@ export const registerProcessingParameters = async (
 export const checkMultigridControllerStatus = async (sessionId: string) => {
   try {
     const response = await client.get(
-      `/instrument_server/sessions/${sessionId}/multigrid_controller/status`
+      `instrument_server/sessions/${sessionId}/multigrid_controller/status`
     )
     // Return the response as-is; no need to turn it into a Boolean at this stage
     return response.data

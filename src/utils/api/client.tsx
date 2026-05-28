@@ -40,8 +40,10 @@ export const client = async (
   method: string | null = null,
   errToast: boolean = true,
   prefix: string = getPrefix(
-    sessionStorage.getItem('murfeyServerURL') ??
-      process.env.REACT_APP_API_ENDPOINT
+    standardiseBaseUrl(
+      sessionStorage.getItem('murfeyServerURL') ??
+        process.env.REACT_APP_API_ENDPOINT
+    )
   )
 ): Promise<never | Response> => {
   const config: RequestConfig = {
@@ -125,7 +127,7 @@ client.hub_get = async (
     null,
     'GET',
     errToast,
-    getPrefix(process.env.REACT_APP_HUB_ENDPOINT)
+    getPrefix(standardiseBaseUrl(process.env.REACT_APP_HUB_ENDPOINT))
   )
 }
 
@@ -156,5 +158,15 @@ client.put = async (
   return await client(endpoint, { ...customConfig }, body, 'PUT')
 }
 
+export const standardiseBaseUrl = (url: string | undefined) => {
+  // Standardises the base URL so that it always has a trailing slash
+  return url?.replace(/\/+$/, '') + '/'
+}
+
 export const prependApiUrl = (url: string) =>
-  `${getPrefix(sessionStorage.getItem('murfeyServerURL') ?? process.env.REACT_APP_API_ENDPOINT)}${url}`
+  `${getPrefix(
+    standardiseBaseUrl(
+      sessionStorage.getItem('murfeyServerURL') ??
+        process.env.REACT_APP_API_ENDPOINT
+    )
+  )}${url}`

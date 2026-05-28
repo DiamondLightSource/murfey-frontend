@@ -2,11 +2,14 @@ import { Box, Card, CardContent, Typography } from '@mui/material'
 import { getInstrumentName } from 'loaders/general'
 import React, { useEffect } from 'react'
 import { colours } from 'styles/colours'
+import { standardiseBaseUrl } from 'utils/api/client'
 
 const getUrl = (endpoint: string) => {
   return (
-    (sessionStorage.getItem('murfeyServerURL') ??
-      process.env.REACT_APP_API_ENDPOINT) + endpoint
+    standardiseBaseUrl(
+      sessionStorage.getItem('murfeyServerURL') ??
+        process.env.REACT_APP_API_ENDPOINT
+    ) + endpoint
   )
 }
 

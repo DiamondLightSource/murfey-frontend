@@ -9,14 +9,17 @@ import Typography from '@mui/material/Typography'
 import { getFoilHoles, getNumMovies } from 'loaders/gridSquares'
 import { useCallback, useState, useEffect } from 'react'
 import { components } from 'schema/main'
+import { standardiseBaseUrl } from 'utils/api/client'
 
 type GridSquare = components['schemas']['GridSquare']
 type FoilHole = components['schemas']['FoilHole']
 
 const getUrl = (endpoint: string) => {
   return (
-    (sessionStorage.getItem('murfeyServerURL') ??
-      process.env.REACT_APP_API_ENDPOINT) + endpoint
+    standardiseBaseUrl(
+      sessionStorage.getItem('murfeyServerURL') ??
+        process.env.REACT_APP_API_ENDPOINT
+    ) + endpoint
   )
 }
 

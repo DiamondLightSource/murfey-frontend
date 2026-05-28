@@ -5,9 +5,10 @@ import { useEffect, useState } from 'react'
 import { TbMicroscope, TbSnowflake } from 'react-icons/tb'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { colours } from 'styles/colours'
+import { standardiseBaseUrl } from 'utils/api/client'
 
 const getUrl = (endpoint: string) => {
-  return process.env.REACT_APP_HUB_ENDPOINT + endpoint
+  return standardiseBaseUrl(process.env.REACT_APP_HUB_ENDPOINT) + endpoint
 }
 
 type InstrumentInfo = {

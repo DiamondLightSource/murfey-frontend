@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import useWebSocket from 'react-use-websocket'
+import { standardiseBaseUrl } from 'utils/api/client'
 import { v4 as uuid4 } from 'uuid'
 
 export const WebSocketHandler = () => {
@@ -9,10 +10,11 @@ export const WebSocketHandler = () => {
   const queryClient = useQueryClient()
 
   // Set up a websocket connection that persists across all protected routes
-  const baseURL =
+  const baseURL = standardiseBaseUrl(
     sessionStorage.getItem('murfeyServerURL') ??
-    process.env.REACT_APP_API_ENDPOINT
-  const wsURL = baseURL ? baseURL.replace('http', 'ws') : 'ws://localhost:8000'
+      process.env.REACT_APP_API_ENDPOINT
+  )
+  const wsURL = baseURL ? baseURL.replace('http', 'ws') : 'ws://localhost:8000/'
 
   // Helper function to parse websocket messages
   const parseWebsocketMessage = (message: any) => {
