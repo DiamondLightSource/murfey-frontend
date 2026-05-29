@@ -30,15 +30,15 @@ type Session = components['schemas']['Session']
 type SessionRowProps = {
   session: Session
   instrumentName: string | null
-  isActive: boolean
-  isFinalising: boolean
+  isActive: boolean | undefined
+  isFinalising: boolean | undefined
 }
 
 export const SessionRow = ({
   session,
   instrumentName = null,
-  isActive = false,
-  isFinalising = false,
+  isActive = undefined,
+  isFinalising = undefined,
 }: SessionRowProps) => {
   // Set up query client
   const queryClient = useQueryClient()
@@ -47,6 +47,7 @@ export const SessionRow = ({
   const navigate = useNavigate()
 
   // Set up React states
+  const isLoading = isActive === undefined && isFinalising === undefined
   const [sessionFinalising, setSessionFinalising] = React.useState(isFinalising)
 
   // Set up utility hooks
@@ -70,6 +71,10 @@ export const SessionRow = ({
   }
 
   // Set up animations for the sync icon
+  const bounce = keyframes`
+    0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+    40% { transform: scale(1); opacity: 1; }
+  `
   const spin = keyframes`
     from { transform: translate(-50%, -50%) rotate(360deg); }
     to { transform: translate(-50%, -50%) rotate(0deg); }
@@ -189,7 +194,41 @@ export const SessionRow = ({
                 alignItems="center"
                 justifyContent="center"
               >
-                {isActive ? (
+                {isLoading ? (
+                  // Show three pulsing dots
+                  <Box display="flex" gap={1}>
+                    <Box
+                      w={1}
+                      h={1}
+                      bg="black"
+                      borderRadius="full"
+                      sx={{
+                        animation: `${bounce} 1s infinite ease-in-out`,
+                        animationDelay: '0.1s',
+                      }}
+                    />
+                    <Box
+                      w={1}
+                      h={1}
+                      bg="black"
+                      borderRadius="full"
+                      sx={{
+                        animation: `${bounce} 1s infinite ease-in-out`,
+                        animationDelay: '0.2s',
+                      }}
+                    />
+                    <Box
+                      w={1}
+                      h={1}
+                      bg="black"
+                      borderRadius="full"
+                      sx={{
+                        animation: `${bounce} 1s infinite ease-in-out`,
+                        animationDelay: '0.3s',
+                      }}
+                    />
+                  </Box>
+                ) : isActive ? (
                   // Show a pulsing spinning sync icon when running
                   <Icon
                     as={MdSync}
@@ -224,7 +263,7 @@ export const SessionRow = ({
             aria-label="Delete session"
             icon={<MdDelete />}
             onClick={onOpenDelete}
-            isDisabled={isActive || sessionFinalising}
+            isDisabled={isLoading || isActive || sessionFinalising}
           />
         </Tooltip>
         <Tooltip label="Clean up visit files">
@@ -232,7 +271,7 @@ export const SessionRow = ({
             aria-label="Clean up session"
             icon={<GiMagicBroom />}
             onClick={onOpenCleanup}
-            isDisabled={!isActive || sessionFinalising}
+            isDisabled={isLoading || !isActive || sessionFinalising}
           />
         </Tooltip>
       </Box>
