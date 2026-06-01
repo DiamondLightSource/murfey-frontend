@@ -107,16 +107,12 @@ export const Home = () => {
       // Check every session's status
       const sessionStatuses = await Promise.all(
         sessionsData.map(async (session) => {
-          const isActive = !instrumentServerConnected
-            ? false
-            : await sessionTokenCheck(session.id)
-          const isFinalising = !instrumentServerConnected
-            ? false
-            : await checkMultigridControllerStatus(session.id.toString()).then(
-                (status) => {
-                  return status.finalising
-                }
-              )
+          const isActive = await sessionTokenCheck(session.id)
+          const isFinalising = await checkMultigridControllerStatus(
+            session.id.toString()
+          ).then((status) => {
+            return status.finalising
+          })
           return [
             session.id,
             {
