@@ -35,7 +35,7 @@ import { sessionTokenCheck } from 'loaders/jwt'
 import { finaliseSession } from 'loaders/rsyncers'
 import { getAllSessionsData } from 'loaders/sessionClients'
 import { checkMultigridControllerStatus } from 'loaders/sessionSetup'
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { FaCalendar } from 'react-icons/fa'
 import { useNavigate, useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
@@ -46,10 +46,14 @@ import {
 } from 'utils/generic'
 
 type Session = components['schemas']['Session']
-type ExpandedSession = Session & {
-  isActive: boolean
-  isFinalising: boolean
+type SessionsResponse = {
+  current: Session[]
+} | null
+type SessionStatus = {
+  isActive: boolean | undefined
+  isFinalising: boolean | undefined
 }
+
 export const Home = () => {
   const instrumentName = sessionStorage.getItem('instrumentName')
   const queryKey = ['homepageSessions', instrumentName]
@@ -59,17 +63,14 @@ export const Home = () => {
   const queryClient = useQueryClient()
 
   // Load and set current data
-  const preloadedData = useLoaderData()
-  const { data, isLoading, isError } = useQuery({
+  const preloadedData = useLoaderData() as SessionsResponse
+  const { data, isLoading, isError } = useQuery<SessionsResponse>({
     queryKey,
     queryFn,
     initialData: preloadedData,
     enabled: !!instrumentName,
     staleTime: 0, // Always refetch on mount unless preloaded
   })
-  const sessionsData = data as {
-    current: Session[]
-  } | null
 
   const navigate = useNavigate()
 
@@ -86,64 +87,73 @@ export const Home = () => {
     setInstrumentServerConnected(!!instrumentServerConnectionResponse)
   }, [instrumentServerConnectionResponse])
 
-  // Load sessions for current instrument
-  const [expandedSessions, setExpandedSessions] = React.useState<
-    ExpandedSession[] | null
-  >(null)
+  // Sort the loaded sessions and set React state
+  const [sessionsData, setSessionsData] = useState<Session[]>([])
   useEffect(() => {
-    // Skip if sessions is still null
-    if (!sessionsData) return
+    // Early return if session information not loaded
+    if (!data) return
 
-    const getSessions = async () => {
-      // Sort by session ID in descending order
-      const sortedSessions = [...sessionsData.current].sort(
-        (a, b) => b.id - a.id
-      )
+    // Sort by session ID in descending order
+    const sortedSessions = [...data.current].sort((a, b) => b.id - a.id)
+    setSessionsData(sortedSessions)
+  }, [data])
 
-      // Collect additional information about the sessions
-      const expandedSessions: ExpandedSession[] = await Promise.all(
-        sortedSessions.map(async (session) => {
+  // Query session statuses and set React state
+  const [sessionStatuses, setSessionStatuses] = useState<
+    Record<number, SessionStatus>
+  >({})
+  useEffect(() => {
+    const getSessionStatus = async () => {
+      // Check every session's status
+      const sessionStatuses = await Promise.all(
+        sessionsData.map(async (session) => {
           const isActive = await sessionTokenCheck(session.id)
           const isFinalising = await checkMultigridControllerStatus(
             session.id.toString()
           ).then((status) => {
             return status.finalising
           })
-          return {
-            ...session,
-            isActive: !!isActive,
-            isFinalising: !!isFinalising,
-          }
+          return [
+            session.id,
+            {
+              isActive,
+              isFinalising,
+            },
+          ] as const
         })
       )
-      setExpandedSessions(expandedSessions)
+      setSessionStatuses(Object.fromEntries(sessionStatuses))
     }
-
-    getSessions()
+    getSessionStatus()
   }, [sessionsData, instrumentServerConnected])
+
+  // Check if all the statuses have been loaded
+  const allStatusesLoaded = sessionsData.every(
+    (session) => sessionStatuses[session.id]?.isActive !== undefined
+  )
 
   // Look for stale running sessions
   const [staleRunningSessions, setStaleRunningSessions] = React.useState<
-    ExpandedSession[] | null
+    Session[] | null
   >(null)
   useEffect(() => {
     // Skip effect if sessions haven't loaded yet
-    if (!expandedSessions) return
+    if (!sessionsData) return
 
     // Get current timestamp
     const currentTimestamp = new Date()
 
     setStaleRunningSessions(
-      expandedSessions.filter((session) => {
+      sessionsData.filter((session) => {
         if (!session.visit_end_time) return false
-        if (!session.isActive) return false
+        if (!sessionStatuses[session.id]?.isActive) return false
         const sessionEndTimeUTC = new Date(
           convertUKNaiveToUTC(session.visit_end_time)
         )
         return sessionEndTimeUTC < currentTimestamp
       })
     )
-  }, [expandedSessions])
+  }, [sessionsData, sessionStatuses])
 
   // Handle logic for when clicking on "New Session" button
   const {
@@ -164,22 +174,31 @@ export const Home = () => {
   }
   const handleVisitCleanupPrompt = () => {
     // Guard against null/undefined
-    if (!!staleRunningSessions) {
-      // Iterate through stale sessions and trigger cleanup on them
-      const updatedSessions = staleRunningSessions.map((session) => {
-        finaliseSession(session.id)
-        console.log(`Session ${session.id} marked for cleanup`)
-        return {
-          ...session,
+    if (!staleRunningSessions) return
+
+    // Iterate through stale sessions and trigger cleanup on them
+    for (const session of staleRunningSessions) {
+      finaliseSession(session.id)
+      console.log(`Session ${session.id} marked for cleanup`)
+    }
+
+    // Mark all sessions as finalising
+    setSessionStatuses((prev) => {
+      const updatedStatuses = { ...prev }
+      for (const session of staleRunningSessions) {
+        updatedStatuses[session.id] = {
+          ...updatedStatuses[session.id],
           isFinalising: true,
         }
-      })
-      // Update the React state and refetch queries
-      setExpandedSessions(updatedSessions)
-      queryClient.refetchQueries({
-        queryKey: queryKey,
-      })
-    }
+      }
+      return updatedStatuses
+    })
+
+    // Refetch session information
+    queryClient.refetchQueries({
+      queryKey: queryKey,
+    })
+
     // Close the window, and move to next page
     onCloseVisitCleanupPrompt()
     navigate(`../instruments/${instrumentName}/new_session`)
@@ -385,14 +404,21 @@ export const Home = () => {
           >
             Microscope Data Transfer Control System
           </Heading>
-          <Button
-            variant="onBlue"
-            maxW="200px"
-            textAlign="center"
-            onClick={handleNewSession}
+          <Tooltip
+            label={
+              !allStatusesLoaded ? 'Sessions are still loading' : undefined
+            }
           >
-            New Session
-          </Button>
+            <Button
+              variant="onBlue"
+              maxW="200px"
+              textAlign="center"
+              isDisabled={!allStatusesLoaded}
+              onClick={handleNewSession}
+            >
+              New Session
+            </Button>
+          </Tooltip>
         </Box>
         {/* Sessions page contents */}
         <Box
@@ -435,22 +461,14 @@ export const Home = () => {
             </Heading>
             <Divider borderColor="murfey.300" />
             {/* Display sessions in descending order of session ID */}
-            {expandedSessions && expandedSessions.length > 0 ? (
-              expandedSessions.map((session) => {
-                return (
-                  <SessionRow
-                    session={session}
-                    instrumentName={instrumentName}
-                    isActive={session.isActive}
-                    isFinalising={session.isFinalising}
-                  />
-                )
-              })
-            ) : (
-              <Heading w="100%" py={4} variant="notFound">
-                No sessions found
-              </Heading>
-            )}
+            {sessionsData.map((session) => (
+              <SessionRow
+                session={session}
+                instrumentName={instrumentName}
+                isActive={sessionStatuses[session.id]?.isActive}
+                isFinalising={sessionStatuses[session.id]?.isFinalising}
+              ></SessionRow>
+            ))}
           </Box>
           {/* Right column showing instrument card */}
           <VStack>
