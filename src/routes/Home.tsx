@@ -98,7 +98,7 @@ export const Home = () => {
     setSessionsData(sortedSessions)
   }, [data])
 
-  // Query and session statuses and set React state
+  // Query session statuses and set React state
   const [sessionStatuses, setSessionStatuses] = useState<
     Record<number, SessionStatus>
   >({})
