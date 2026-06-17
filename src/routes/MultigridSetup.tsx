@@ -1,8 +1,6 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons'
 import {
   Box,
-  FormControl,
-  FormLabel,
   GridItem,
   Heading,
   HStack,
@@ -10,7 +8,6 @@ import {
   Link,
   Select,
   Stack,
-  Switch,
   VStack,
 } from '@chakra-ui/react'
 import { SetupStepper } from 'components/setupStepper'
@@ -37,9 +34,6 @@ const MultigridSetup = () => {
     })
   const [selectedDirectory, setSelectedDirectory] =
     React.useState(initialDirectory)
-  const processByDefault = machineConfig
-    ? machineConfig.process_by_default
-    : true
   const [session, setSession] = React.useState<Session>()
 
   useEffect(() => {

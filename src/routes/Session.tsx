@@ -17,7 +17,6 @@ import {
   ModalBody,
   ModalCloseButton,
   Select,
-  Switch,
   Tooltip,
   VStack,
 } from '@chakra-ui/react'
