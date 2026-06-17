@@ -166,8 +166,11 @@ export const Session = () => {
         config.gain_reference_directory.trim() !== ''
       )
     )
+    const acquisitionSoftware = ['epu', 'tomo']
     setHasProcessingParams(
-      !!(config.recipes && Object.keys(config.recipes).length > 0)
+      !!acquisitionSoftware.some((software) =>
+        config.acquisition_software?.includes(software)
+      )
     )
   }
   useEffect(() => {
