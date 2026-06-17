@@ -17,7 +17,6 @@ import {
   ModalBody,
   ModalCloseButton,
   Select,
-  Switch,
   Tooltip,
   VStack,
 } from '@chakra-ui/react'
@@ -71,8 +70,6 @@ export const Session = () => {
   // Session information
   const [session, setSession] = React.useState<SessionSchema>()
   const [sessionActive, setSessionActive] = React.useState(false)
-  const [skipExistingProcessing, setSkipExistingProcessing] =
-    React.useState(false)
 
   // File transfer source information
   const [selectedDirectory, setSelectedDirectory] = React.useState('')
@@ -335,7 +332,6 @@ export const Session = () => {
       await setupMultigridWatcher(
         {
           source: selectedDirectory,
-          skip_existing_processing: skipExistingProcessing,
           destination_overrides: rsyncers
             ? Object.fromEntries(rsyncers.map((r) => [r.source, r.destination]))
             : {},
@@ -397,16 +393,6 @@ export const Session = () => {
                       </GridItem>
                     )}
                   </Select>
-                </HStack>
-                <HStack>
-                  <FormLabel mb="0">Do not process existing data</FormLabel>
-                  <Switch
-                    id="skip-existing-processing-reconnect"
-                    isChecked={false}
-                    onChange={() => {
-                      setSkipExistingProcessing(!skipExistingProcessing)
-                    }}
-                  />
                 </HStack>
               </VStack>
             </FormControl>

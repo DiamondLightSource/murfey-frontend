@@ -1,8 +1,6 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons'
 import {
   Box,
-  FormControl,
-  FormLabel,
   GridItem,
   Heading,
   HStack,
@@ -10,7 +8,6 @@ import {
   Link,
   Select,
   Stack,
-  Switch,
   VStack,
 } from '@chakra-ui/react'
 import { SetupStepper } from 'components/setupStepper'
@@ -37,11 +34,6 @@ const MultigridSetup = () => {
     })
   const [selectedDirectory, setSelectedDirectory] =
     React.useState(initialDirectory)
-  const processByDefault = machineConfig
-    ? machineConfig.process_by_default
-    : true
-  const [skipExistingProcessing, setSkipExistingProcessing] =
-    React.useState(!processByDefault)
   const [session, setSession] = React.useState<Session>()
 
   useEffect(() => {
@@ -63,7 +55,6 @@ const MultigridSetup = () => {
       await setupMultigridWatcher(
         {
           source: selectedDirectory,
-          skip_existing_processing: skipExistingProcessing,
         } as MultigridWatcherSpec,
         parseInt(sessid)
       )
@@ -125,16 +116,6 @@ const MultigridSetup = () => {
           >
             <VStack w="100%" spacing={0}>
               <Stack w="100%" spacing={5} py="0.8em">
-                <FormControl display="flex" alignItems="center">
-                  <FormLabel mb="0">Do not process existing data</FormLabel>
-                  <Switch
-                    id="skip-existing-processing"
-                    isChecked={!processByDefault}
-                    onChange={() => {
-                      setSkipExistingProcessing(!skipExistingProcessing)
-                    }}
-                  />
-                </FormControl>
                 <HStack>
                   <Select onChange={handleDirectorySelection}>
                     {machineConfig &&

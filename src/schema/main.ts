@@ -1376,11 +1376,6 @@ export interface components {
        */
       source: string
       /**
-       * Skip Existing Processing
-       * @default false
-       */
-      skip_existing_processing?: boolean
-      /**
        * Destination Overrides
        * @default {}
        */
