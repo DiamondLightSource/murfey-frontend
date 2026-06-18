@@ -166,8 +166,12 @@ export const Session = () => {
         config.gain_reference_directory.trim() !== ''
       )
     )
+    // Check if this instrument requires user-provided processing parameters
+    const softwareNeedingParameters = ['epu', 'tomo']
     setHasProcessingParams(
-      !!(config.recipes && Object.keys(config.recipes).length > 0)
+      !!softwareNeedingParameters.some((software) =>
+        config.acquisition_software?.includes(software)
+      )
     )
   }
   useEffect(() => {

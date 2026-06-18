@@ -44,9 +44,13 @@ const MultigridSetup = () => {
   const handleDirectorySelection = (e: React.ChangeEvent<HTMLSelectElement>) =>
     setSelectedDirectory(e.target.value)
 
-  const recipesDefined = machineConfig
-    ? machineConfig.recipes
-      ? Object.keys(machineConfig.recipes).length !== 0
+  // Check if this instrument requires user-provided processing parameters
+  const softwareNeedingParameters = ['epu', 'tomo']
+  const hasProcessingParameters = machineConfig
+    ? machineConfig.acquisition_software
+      ? !!softwareNeedingParameters.some((software) =>
+          machineConfig.acquisition_software?.includes(software)
+        )
       : false
     : false
 
@@ -58,7 +62,8 @@ const MultigridSetup = () => {
         } as MultigridWatcherSpec,
         parseInt(sessid)
       )
-      if (!recipesDefined) await startMultigridWatcher(parseInt(sessid))
+      if (!hasProcessingParameters)
+        await startMultigridWatcher(parseInt(sessid))
     }
   }
 
@@ -136,7 +141,7 @@ const MultigridSetup = () => {
                     _hover={{ textDecor: 'none' }}
                     as={LinkRouter}
                     to={
-                      recipesDefined
+                      hasProcessingParameters
                         ? `../new_session/parameters/${sessid}`
                         : `../sessions/${sessid}`
                     }
