@@ -47,7 +47,11 @@ import {
 } from 'react-icons/md'
 import { useLoaderData, useParams, useNavigate } from 'react-router-dom'
 import { components } from 'schema/main'
-import { convertUKNaiveToUTC, convertUTCToUKNaive } from 'utils/generic'
+import {
+  checkForProcessingParameters,
+  convertUKNaiveToUTC,
+  convertUTCToUKNaive,
+} from 'utils/generic'
 
 type RSyncerInfo = components['schemas']['RSyncerInfo']
 type SessionSchema = components['schemas']['Session']
@@ -160,6 +164,7 @@ export const Session = () => {
   const handleMachineConfig = (config: MachineConfig) => {
     setMachineConfig(config)
     setSelectedDirectory(config['data_directories'][0])
+    // Check if the instrument needs a gain reference
     setHasGainReference(
       !!(
         !!config.gain_reference_directory &&
@@ -167,12 +172,7 @@ export const Session = () => {
       )
     )
     // Check if this instrument requires user-provided processing parameters
-    const softwareNeedingParameters = ['epu', 'tomo']
-    setHasProcessingParams(
-      !!softwareNeedingParameters.some((software) =>
-        config.acquisition_software?.includes(software)
-      )
-    )
+    setHasProcessingParams(checkForProcessingParameters(config))
   }
   useEffect(() => {
     getMachineConfigData().then((config) => handleMachineConfig(config))

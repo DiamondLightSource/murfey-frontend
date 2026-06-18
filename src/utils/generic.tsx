@@ -1,3 +1,5 @@
+import { components } from 'schema/main'
+
 const timeFormatter = new Intl.DateTimeFormat('en-GB', {
   dateStyle: 'short',
   timeStyle: 'short',
@@ -98,4 +100,12 @@ export const formatUTCISOToUKLocal = (utcIsoString: string) => {
     hour12: false,
     timeZoneName: 'short',
   })
+}
+
+type MachineConfig = components['schemas']['MachineConfig']
+export const checkForProcessingParameters = (config: MachineConfig) => {
+  const softwareNeedingParameters = ['epu', 'tomo']
+  return !!softwareNeedingParameters.some((software) =>
+    config.acquisition_software?.includes(software)
+  )
 }

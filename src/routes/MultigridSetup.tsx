@@ -19,6 +19,7 @@ import { getSessionData } from 'loaders/sessionClients'
 import React, { useEffect } from 'react'
 import { Link as LinkRouter, useLoaderData, useParams } from 'react-router-dom'
 import { components } from 'schema/main'
+import { checkForProcessingParameters } from 'utils/generic'
 
 type MachineConfig = components['schemas']['MachineConfig']
 type MultigridWatcherSpec = components['schemas']['MultigridWatcherSetup']
@@ -45,13 +46,8 @@ const MultigridSetup = () => {
     setSelectedDirectory(e.target.value)
 
   // Check if this instrument requires user-provided processing parameters
-  const softwareNeedingParameters = ['epu', 'tomo']
   const hasProcessingParameters = machineConfig
-    ? machineConfig.acquisition_software
-      ? !!softwareNeedingParameters.some((software) =>
-          machineConfig.acquisition_software?.includes(software)
-        )
-      : false
+    ? checkForProcessingParameters(machineConfig)
     : false
 
   const handleSelection = async () => {
