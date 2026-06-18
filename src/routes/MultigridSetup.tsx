@@ -44,10 +44,11 @@ const MultigridSetup = () => {
   const handleDirectorySelection = (e: React.ChangeEvent<HTMLSelectElement>) =>
     setSelectedDirectory(e.target.value)
 
-  const acquisitionSoftware = ['epu', 'tomo']
+  // Check if this instrument requires user-provided processing parameters
+  const softwareNeedingParameters = ['epu', 'tomo']
   const hasProcessingParameters = machineConfig
     ? machineConfig.acquisition_software
-      ? !!acquisitionSoftware.some((software) =>
+      ? !!softwareNeedingParameters.some((software) =>
           machineConfig.acquisition_software?.includes(software)
         )
       : false

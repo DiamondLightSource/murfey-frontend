@@ -166,9 +166,10 @@ export const Session = () => {
         config.gain_reference_directory.trim() !== ''
       )
     )
-    const acquisitionSoftware = ['epu', 'tomo']
+    // Check if this instrument requires user-provided processing parameters
+    const softwareNeedingParameters = ['epu', 'tomo']
     setHasProcessingParams(
-      !!acquisitionSoftware.some((software) =>
+      !!softwareNeedingParameters.some((software) =>
         config.acquisition_software?.includes(software)
       )
     )
