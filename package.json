@@ -1,6 +1,6 @@
 {
   "name": "murfey-frontend",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "private": true,
   "dependencies": {
     "@chakra-ui/icons": "^2.2.4",
