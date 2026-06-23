@@ -1,7 +1,18 @@
-import { Card, Image, Text, Heading, Box } from '@chakra-ui/react'
+import {
+  Card,
+  Image,
+  Text,
+  Heading,
+  Box,
+  Button,
+  Icon,
+  Tooltip,
+} from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
+import { MdLogout } from 'react-icons/md'
 import { TbMicroscope, TbSnowflake } from 'react-icons/tb'
 import { useLoaderData, useNavigate } from 'react-router-dom'
+import { logout } from 'utils/auth'
 
 const getUrl = (endpoint: string) => {
   return process.env.REACT_APP_HUB_ENDPOINT + endpoint
@@ -70,33 +81,60 @@ export const Hub = () => {
       {/* Title Bar */}
       <Box
         bg="murfey.700"
-        w="100%"
-        px={{
+        pl={{
           base: 8,
           md: 32,
         }}
+        pr={{
+          base: 8,
+        }}
         py={4}
+        w="100%"
         display="flex"
-        flexDirection="column"
-        alignItems="start"
-        justifyContent="start"
-        gap={2}
+        flexDirection="row"
+        alignItems="center"
+        justifyContent="space-between"
       >
-        {/* Show CryoEM icons on one row */}
+        {/* Title on the left */}
         <Box
-          display="inline-flex"
-          flexDirection="row"
-          justifyContent="center"
+          display="flex"
+          flexDirection="column"
           alignItems="start"
-          fontSize="3xl"
-          color="murfey.50"
+          justifyContent="start"
+          gap={2}
         >
-          <TbSnowflake />
-          <TbMicroscope />
+          {/* Show CryoEM icons on one row */}
+          <Box
+            display="inline-flex"
+            flexDirection="row"
+            justifyContent="center"
+            alignItems="start"
+            fontSize="3xl"
+            color="murfey.50"
+          >
+            <TbSnowflake />
+            <TbMicroscope />
+          </Box>
+          <Heading fontSize="3xl" w="100%" color="murfey.50">
+            Murfey Hub
+          </Heading>
         </Box>
-        <Heading fontSize="3xl" w="100%" color="murfey.50">
-          Murfey Hub
-        </Heading>
+        {/* Logout button on the right */}
+        <Box>
+          <Tooltip label="Sign out from Murfey">
+            <Button
+              aria-label="Sign out from Murfey"
+              onClick={() => {
+                logout()
+              }}
+              size="sm"
+              _hover={{ background: 'transparent', color: 'murfey.500' }}
+            >
+              {'Sign Out'}
+              <Icon as={MdLogout} boxSize={6} ml={2} />
+            </Button>
+          </Tooltip>
+        </Box>
       </Box>
       {/* Main body of Hub page showing the instruments */}
       {/* Render as a grid that overflows vertically */}

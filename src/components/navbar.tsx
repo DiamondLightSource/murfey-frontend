@@ -1,18 +1,23 @@
 import {
   Box,
-  Flex,
+  BoxProps,
+  Button,
+  Icon,
   IconButton,
   Image,
   Tooltip,
-  BoxProps,
-  Icon,
 } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
 import { getInstrumentConnectionStatus } from 'loaders/general'
 import React, { useEffect } from 'react'
-import { MdSignalWifi4Bar, MdOutlineSignalWifiBad } from 'react-icons/md'
+import {
+  MdSignalWifi4Bar,
+  MdOutlineSignalWifiBad,
+  MdLogout,
+} from 'react-icons/md'
 import { TbMicroscope, TbSnowflake, TbHomeCog } from 'react-icons/tb'
 import { useNavigate } from 'react-router-dom'
+import { logout } from 'utils/auth'
 
 export interface LinkDescriptor {
   label: string
@@ -60,75 +65,102 @@ export const Navbar = ({
 
   return (
     <Box position="sticky" top="0" zIndex={1} w="100%" h={12} {...props}>
-      <Flex
-        px={{
+      <Box
+        pl={{
           base: 4,
           md: 12,
         }}
+        pr={{
+          base: 4,
+        }}
         py={2}
-        gap={2}
-        direction="row"
+        display="flex"
+        flexDirection="row"
         alignItems="center"
+        justifyContent="space-between"
         bg="murfey.800"
       >
-        {logo ? (
-          <Box maxW={24}>
-            <Image src={logo} objectFit="contain" />
-          </Box>
-        ) : null}
-        <Tooltip label="Back to the Hub">
-          <IconButton
-            onClick={() => {
-              navigate(`/hub`)
-            }}
-            size="sm"
-            icon={
-              <>
-                <TbHomeCog />
-              </>
-            }
-            aria-label="Back to the Hub"
-            _hover={{ background: 'transparent', color: 'murfey.500' }}
-          />
-        </Tooltip>
-        {/* Add the instrument name as a URL query parameter to trigger a reload */}
-        <Tooltip label="Back to the microscope">
-          <IconButton
-            onClick={() => {
-              navigate(`/home`)
-            }}
-            size="sm"
-            icon={
-              <>
-                <TbSnowflake />
-                <TbMicroscope />
-              </>
-            }
-            aria-label="Back to the microscope"
-            _hover={{ background: 'transparent', color: 'murfey.500' }}
-          />
-        </Tooltip>
-        <Tooltip
-          label={
-            instrumentServerConnected
-              ? 'Connected to instrument server'
-              : 'No instrument server connection'
-          }
+        <Box
+          gap={2}
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="flex-start"
         >
-          <span tabIndex={0}>
-            <Icon
-              as={
-                instrumentServerConnected
-                  ? MdSignalWifi4Bar
-                  : MdOutlineSignalWifiBad
+          {logo ? (
+            <Box maxW={24}>
+              <Image src={logo} objectFit="contain" />
+            </Box>
+          ) : null}
+          <Tooltip label="Back to the Hub">
+            <IconButton
+              onClick={() => {
+                navigate(`/hub`)
+              }}
+              size="sm"
+              icon={
+                <>
+                  <TbHomeCog />
+                </>
               }
-              color={instrumentServerConnected ? 'white' : 'red'}
-              mt={2}
-              ml={1}
+              aria-label="Back to the Hub"
+              _hover={{ background: 'transparent', color: 'murfey.500' }}
             />
-          </span>
-        </Tooltip>
-      </Flex>
+          </Tooltip>
+          {/* Add the instrument name as a URL query parameter to trigger a reload */}
+          <Tooltip label="Back to the microscope">
+            <IconButton
+              onClick={() => {
+                navigate(`/home`)
+              }}
+              size="sm"
+              icon={
+                <>
+                  <TbSnowflake />
+                  <TbMicroscope />
+                </>
+              }
+              aria-label="Back to the microscope"
+              _hover={{ background: 'transparent', color: 'murfey.500' }}
+            />
+          </Tooltip>
+          <Tooltip
+            label={
+              instrumentServerConnected
+                ? 'Connected to instrument server'
+                : 'No instrument server connection'
+            }
+          >
+            <span tabIndex={0}>
+              <Icon
+                as={
+                  instrumentServerConnected
+                    ? MdSignalWifi4Bar
+                    : MdOutlineSignalWifiBad
+                }
+                color={instrumentServerConnected ? 'white' : 'red'}
+                mt={2}
+                ml={1}
+              />
+            </span>
+          </Tooltip>
+        </Box>
+        <Box>
+          <Tooltip label="Sign out from Murfey">
+            <Button
+              aria-label="Sign out from Murfey"
+              onClick={() => {
+                logout()
+              }}
+              size="sm"
+              _hover={{ background: 'transparent', color: 'murfey.500' }}
+            >
+              {'Sign Out'}
+              <Icon as={MdLogout} boxSize={6} ml={2} />
+            </Button>
+          </Tooltip>
+        </Box>
+      </Box>
     </Box>
   )
 }
