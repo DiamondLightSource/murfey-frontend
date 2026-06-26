@@ -1110,26 +1110,6 @@ export interface components {
     }
     /** MachineConfig */
     MachineConfig: {
-      /** Acquisition Software */
-      acquisition_software: string[]
-      /** Calibrations */
-      calibrations: {
-        [key: string]: {
-          [key: string]: Record<string, never> | number
-        }
-      }
-      /** Data Directories */
-      data_directories: string[]
-      /**
-       * Rsync Basepath
-       * Format: path
-       */
-      rsync_basepath: string
-      /**
-       * Default Model
-       * Format: path
-       */
-      default_model: string
       /**
        * Display Name
        * @default
@@ -1141,10 +1121,43 @@ export interface components {
        */
       instrument_name?: string
       /**
+       * Instrument Type
+       * @default
+       */
+      instrument_type?: string
+      /**
        * Image Path
        * Format: path
        */
       image_path?: string
+      /**
+       * Machine Override
+       * @default
+       */
+      machine_override?: string
+      /**
+       * Camera
+       * @default FALCON
+       */
+      camera?: string
+      /**
+       * Superres
+       * @default false
+       */
+      superres?: boolean
+      /**
+       * Calibrations
+       * @default {}
+       */
+      calibrations: {
+        [key: string]: {
+          [key: string]: Record<string, never> | number
+        }
+      }
+      /** Acquisition Software
+       * @default []
+       */
+      acquisition_software: string[]
       /**
        * Software Versions
        * @default {}
@@ -1152,6 +1165,181 @@ export interface components {
       software_versions?: {
         [key: string]: string
       }
+      /**
+       * Software Settings Output Directories
+       * @default {}
+       */
+      software_settings_output_directories?: {
+        [key: string]: string[]
+      }
+      /**
+       * Data Required Substrings
+       * @default {}
+       */
+      data_required_substrings?: {
+        [key: string]: {
+          [key: string]: string[]
+        }
+      }
+      /** Data Directories */
+      data_directories: string[]
+      /**
+       * Create Directories
+       * @default [
+       *   "atlas"
+       * ]
+       */
+      create_directories?: string[]
+      /**
+       * Analyse Created Directories
+       * @default []
+       */
+      analyse_created_directories?: string[]
+      /**
+       * Gain Reference Directory
+       * Format: path
+       * @default
+       */
+      gain_reference_directory?: string
+      /**
+       * Eer Fractionation File Template
+       * @default
+       */
+      eer_fractionation_file_template?: string
+      /**
+       * Single Data Directory
+       * @default false
+       */
+      single_data_directory?: boolean
+      /**
+       * Data Transfer Enabled
+       * @default true
+       */
+      data_transfer_enabled?: boolean
+      /**
+       * Substrings Blacklist
+       * @default {}
+       */
+      substrings_blacklist?: {
+        [key: string]: string[]
+      }
+      /**
+       * Mkdir Chmod
+       * @default 1512
+       */
+      mkdir_chmod?: number
+      /**
+       * Rsync Url
+       * @default
+       */
+      rsync_url?: string
+      /**
+       * Rsync Module
+       * @default
+       */
+      rsync_module?: string
+      /**
+       * Rsync Basepath
+       * Format: path
+       */
+      rsync_basepath: string
+      /**
+       * Rsync Chmod
+       * @default
+       */
+      rsync_chmod?: string
+      /**
+       * Allow Removal
+       * @default false
+       */
+      allow_removal?: boolean
+      /**
+       * Upstream Data Directories
+       * @default {}
+       */
+      upstream_data_directories?: {
+        [key: string]: string
+      }
+      /**
+       * Upstream Data Download Directory
+       * Format: path
+       * @default
+       */
+      upstream_data_download_directory?: string
+      /**
+       * Upstream Data Search Strings
+       * @default {}
+       */
+      upstream_data_search_strings?: {
+        [key: string]: string[]
+      }
+      /**
+       * Upstream Data Tiff Locations
+       * @default [
+       *   "processed"
+       * ]
+       */
+      upstream_data_tiff_locations?: string[]
+      /**
+       * Processing Enabled
+       * @default true
+       */
+      processing_enabled?: boolean
+      /**
+       * Process By Default
+       * @default true
+       */
+      process_by_default?: boolean
+      /**
+       * Gain Directory Name
+       * @default processing
+       */
+      gain_directory_name?: string
+      /**
+       * Process Multiple Datasets
+       * @default true
+       */
+      process_multiple_datasets?: boolean
+      /**
+       * Processed Directory Name
+       * @default processed
+       */
+      processed_directory_name?: string
+      /**
+       * Processed Extra Directory
+       * @default
+       */
+      processed_extra_directory?: string
+      /**
+       * Recipes
+       * @default {
+       *   "em-spa-bfactor": "em-spa-bfactor",
+       *   "em-spa-class2d": "em-spa-class2d",
+       *   "em-spa-class3d": "em-spa-class3d",
+       *   "em-spa-preprocess": "em-spa-preprocess",
+       *   "em-spa-refine": "em-spa-refine",
+       *   "em-tomo-preprocess": "em-tomo-preprocess",
+       *   "em-tomo-align": "em-tomo-align"
+       * }
+       */
+      recipes?: {
+        [key: string]: string
+      }
+      /**
+       * Default Model
+       * Format: path
+       */
+      default_model: string
+      /**
+       * Picking Model Search Directory
+       * @default processing
+       */
+      picking_model_search_directory?: string
+      /**
+       * Initial Model Search Directory
+       * @default processing/initial_model
+       */
+      initial_model_search_directory?: string
       /**
        * External Executables
        * @default {}
@@ -1174,92 +1362,6 @@ export interface components {
         [key: string]: string
       }
       /**
-       * Rsync Module
-       * @default
-       */
-      rsync_module?: string
-      /**
-       * Create Directories
-       * @default [
-       *   "atlas"
-       * ]
-       */
-      create_directories?: string[]
-      /**
-       * Analyse Created Directories
-       * @default []
-       */
-      analyse_created_directories?: string[]
-      /**
-       * Gain Reference Directory
-       * Format: path
-       */
-      gain_reference_directory?: string
-      /**
-       * Eer Fractionation File Template
-       * @default
-       */
-      eer_fractionation_file_template?: string
-      /**
-       * Processed Directory Name
-       * @default processed
-       */
-      processed_directory_name?: string
-      /**
-       * Gain Directory Name
-       * @default processing
-       */
-      gain_directory_name?: string
-      /**
-       * Node Creator Queue
-       * @default node_creator
-       */
-      node_creator_queue?: string
-      /**
-       * Superres
-       * @default false
-       */
-      superres?: boolean
-      /**
-       * Camera
-       * @default FALCON
-       */
-      camera?: string
-      /**
-       * Data Required Substrings
-       * @default {}
-       */
-      data_required_substrings?: {
-        [key: string]: {
-          [key: string]: string[]
-        }
-      }
-      /**
-       * Allow Removal
-       * @default false
-       */
-      allow_removal?: boolean
-      /**
-       * Data Transfer Enabled
-       * @default true
-       */
-      data_transfer_enabled?: boolean
-      /**
-       * Processing Enabled
-       * @default true
-       */
-      processing_enabled?: boolean
-      /**
-       * Machine Override
-       * @default
-       */
-      machine_override?: string
-      /**
-       * Processed Extra Directory
-       * @default
-       */
-      processed_extra_directory?: string
-      /**
        * Plugin Packages
        * @default {}
        */
@@ -1267,94 +1369,45 @@ export interface components {
         [key: string]: string
       }
       /**
-       * Software Settings Output Directories
-       * @default {}
-       */
-      software_settings_output_directories?: {
-        [key: string]: string[]
-      }
-      /**
-       * Process By Default
-       * @default true
-       */
-      process_by_default?: boolean
-      /**
-       * Recipes
-       * @default {
-       *   "em-spa-bfactor": "em-spa-bfactor",
-       *   "em-spa-class2d": "em-spa-class2d",
-       *   "em-spa-class3d": "em-spa-class3d",
-       *   "em-spa-preprocess": "em-spa-preprocess",
-       *   "em-spa-refine": "em-spa-refine",
-       *   "em-tomo-preprocess": "em-tomo-preprocess",
-       *   "em-tomo-align": "em-tomo-align"
-       * }
-       */
-      recipes?: {
-        [key: string]: string
-      }
-      /**
-       * Upstream Data Directories
-       * @default []
-       */
-      upstream_data_directories?: string[]
-      /**
-       * Upstream Data Download Directory
+       * Security Configuration Path
        * Format: path
        */
-      upstream_data_download_directory?: string
-      /**
-       * Upstream Data Tiff Locations
-       * @default [
-       *   "processed"
-       * ]
-       */
-      upstream_data_tiff_locations?: string[]
-      /**
-       * Model Search Directory
-       * @default processing
-       */
-      model_search_directory?: string
-      /**
-       * Initial Model Search Directory
-       * @default processing/initial_model
-       */
-      initial_model_search_directory?: string
-      /**
-       * Failure Queue
-       * @default
-       */
-      failure_queue?: string
-      /**
-       * Instrument Server Url
-       * @default http://localhost:8001
-       */
-      instrument_server_url?: string
-      /**
-       * Frontend Url
-       * @default http://localhost:3000
-       */
-      frontend_url?: string
+      security_configuration_path?: string
       /**
        * Murfey Url
        * @default http://localhost:8000
        */
       murfey_url?: string
       /**
-       * Rsync Url
+       * Frontend Url
+       * @default http://localhost:3000
+       */
+      frontend_url?: string
+      /**
+       * Instrument Server Url
+       * @default http://localhost:8001
+       */
+      instrument_server_url?: string
+      /**
+       * Smartem Api Url
        * @default
        */
-      rsync_url?: string
+      smartem_api_url?: string
       /**
-       * Security Configuration Path
-       * Format: path
-       */
-      security_configuration_path?: string
-      /**
-       * Auth Url
+       * Alert Manager Url
        * @default
        */
-      auth_url?: string
+      alertmanager_url?: string
+      /**
+       * Failure Queue
+       * @default
+       */
+      failure_queue?: string
+      /**
+       * Node Creator Queue
+       * @default node_creator
+       */
+      node_creator_queue?: string
       /**
        * Notifications Queue
        * @default pato_notification

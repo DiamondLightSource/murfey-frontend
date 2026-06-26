@@ -1,20 +1,39 @@
-import { Card, Box, Button, Heading } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  Card,
+  Checkbox,
+  Heading,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  useDisclosure,
+} from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
 import { getUpstreamVisits, upstreamDataDownloadRequest } from 'loaders/general'
 import { getInstrumentInfo } from 'loaders/general'
+import { getMachineConfigData } from 'loaders/machineConfig'
 import React, { useCallback, useEffect } from 'react'
 import { MdFileDownload } from 'react-icons/md'
+import { components } from 'schema/main'
+
+type MachineConfig = components['schemas']['MachineConfig']
 
 const InstrumentUpstreamVisitsCard = ({
   sessid,
   instrumentName,
   displayName,
   instrumentVisits,
+  searchStrings,
 }: {
   sessid: number
   instrumentName: string
   displayName: string
   instrumentVisits: Record<string, string>
+  searchStrings: string[]
 }) => {
   // Sort visits in ascending order
   const sortedVisits = Object.fromEntries(
@@ -31,6 +50,52 @@ const InstrumentUpstreamVisitsCard = ({
     })
   )
 
+  // Choose which search strings to perform the download with
+  const [visitName, setVisitName] = React.useState<string>('')
+  const [visitPath, setVisitPath] = React.useState<string>('')
+  const [selectedSearchStrings, setSelectedSearchStrings] = React.useState<
+    string[]
+  >([])
+  const {
+    isOpen: isOpenSelectSearchStrings,
+    onOpen: onOpenSelectSearchStrings,
+    onClose: onCloseSelectSearchStrings,
+  } = useDisclosure()
+
+  const toggleSelectedSearchStrings = (value: string) => {
+    setSelectedSearchStrings((prev) => {
+      if (prev.includes(value)) {
+        return prev.filter((v) => v !== value)
+      } else {
+        return [...prev, value]
+      }
+    })
+  }
+
+  const resetValues = () => {
+    // Set states back to default values
+    setVisitName('')
+    setVisitPath('')
+    setSelectedSearchStrings([])
+  }
+
+  const handleCloseSelectSearchStrings = () => {
+    resetValues()
+    onCloseSelectSearchStrings()
+  }
+
+  const handleUpstreamDataDownloadRequest = () => {
+    // Request upstream data download
+    upstreamDataDownloadRequest(
+      instrumentName,
+      sessid,
+      visitName,
+      visitPath,
+      searchStrings.filter((item) => selectedSearchStrings.includes(item))
+    )
+    handleCloseSelectSearchStrings()
+  }
+
   return (
     // Display upstream visits for a single instrument
     // Parameters to take: instrument name and upstream visits dict
@@ -43,6 +108,53 @@ const InstrumentUpstreamVisitsCard = ({
         borderColor: 'murfey.400',
       }}
     >
+      {/* Logic for pop-up components */}
+      <Modal
+        isOpen={isOpenSelectSearchStrings}
+        onClose={handleCloseSelectSearchStrings}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Select search strings</ModalHeader>
+          <ModalBody>
+            Select the search strings you would like to use to find and download
+            files with
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="left"
+              justifyContent="start"
+            >
+              {searchStrings.map((item) => (
+                <Checkbox
+                  key={item}
+                  isChecked={selectedSearchStrings.includes(item)}
+                  onChange={() => toggleSelectedSearchStrings(item)}
+                  pl={2}
+                >
+                  {item}
+                </Checkbox>
+              ))}
+            </Box>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button
+              variant="ghost"
+              mr={3}
+              onClick={handleCloseSelectSearchStrings}
+            >
+              Close
+            </Button>
+            <Button
+              variant="default"
+              onClick={() => handleUpstreamDataDownloadRequest()}
+            >
+              Confirm
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <Box
         flex="1"
         display="flex"
@@ -72,14 +184,12 @@ const InstrumentUpstreamVisitsCard = ({
                     variant="default"
                     rightIcon={<MdFileDownload />}
                     cursor="pointer"
-                    onClick={() =>
-                      upstreamDataDownloadRequest(
-                        instrumentName,
-                        sessid,
-                        visitName,
-                        visitPath
-                      )
-                    }
+                    onClick={() => {
+                      setVisitName(visitName)
+                      setVisitPath(visitPath)
+                      setSelectedSearchStrings(searchStrings)
+                      onOpenSelectSearchStrings()
+                    }}
                     fontSize="md"
                   >
                     {visitName}
@@ -138,6 +248,22 @@ export const UpstreamVisitsCard = ({ sessid }: { sessid: number }) => {
       : instrumentName
   }
 
+  // Set up queryClient to get the current instrument's machine config
+  const { data: machineConfig } = useQuery<MachineConfig>({
+    queryKey: ['machineConfig'],
+    queryFn: getMachineConfigData,
+    staleTime: 60000,
+  })
+  const getUpstreamDataSearchStrings = (instrumentName: string) => {
+    // Early returns if the key or instrument doesn't exist
+    if (!machineConfig?.upstream_data_search_strings) return []
+    if (!machineConfig.upstream_data_search_strings[instrumentName]) return []
+    // Return filtered list of strings
+    return Array.from(
+      new Set(machineConfig.upstream_data_search_strings[instrumentName])
+    )
+  }
+
   return !!Object.keys(upstreamVisits).length && !!instrumentInfo ? (
     <Card
       w="100%"
@@ -171,6 +297,7 @@ export const UpstreamVisitsCard = ({ sessid }: { sessid: number }) => {
                 instrumentName={instrumentName}
                 displayName={getDisplayName(instrumentName)}
                 instrumentVisits={instrumentVisits}
+                searchStrings={getUpstreamDataSearchStrings(instrumentName)}
               />
             )
           }

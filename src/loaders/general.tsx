@@ -52,13 +52,15 @@ export const upstreamDataDownloadRequest = async (
   instrumentName: string,
   sessid: number,
   visitName: string,
-  visitPath: string
+  visitPath: string,
+  searchStrings: string[]
 ) => {
   const response = await client.post(
     `instrument_server/visits/${visitName}/sessions/${sessid}/upstream_file_data_request`,
     {
       upstream_instrument: instrumentName,
       upstream_visit_path: visitPath,
+      search_strings: searchStrings,
     }
   )
 
