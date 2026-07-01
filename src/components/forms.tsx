@@ -76,7 +76,7 @@ const SpaForm = (submissionCallback: (arg0: any) => void) => {
         <FormControl>
           <VStack align="start" spacing={10} width="100%" display="flex">
             <VStack align="start" width="100%" display="flex">
-              <FormLabel>{'Dose per frame [\u212B / pixel]'}</FormLabel>
+              <FormLabel>{'Dose per frame [e\u207B / \u212B\u00B2]'}</FormLabel>
               <Input defaultValue="1" name="dose" />
             </VStack>
             <VStack align="start" width="100%" display="flex">
@@ -171,7 +171,7 @@ const TomoForm = (submissionCallback: (arg0: any) => void) => {
         <FormControl>
           <VStack align="start" spacing={10} width="100%" display="flex">
             <VStack align="start" width="100%" display="flex">
-              <FormLabel>{'Dose per frame [\u212B / pixel]'}</FormLabel>
+              <FormLabel>{'Dose per frame [e\u207B / \u212B\u00B2]'}</FormLabel>
               <Input defaultValue="0.5" name="dose" />
             </VStack>
             <VStack align="start" width="100%" display="flex">
