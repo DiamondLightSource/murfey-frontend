@@ -38,7 +38,7 @@ type ProcessingTable = {
 }
 
 const nameLabelMap: Map<string, string> = new Map([
-  ['dose_per_frame', 'Dose per frame [e- / \u212B]'],
+  ['dose_per_frame', 'Dose per frame [e\u207B / \u212B\u00B2]'],
   ['gain_ref', 'Gain Reference'],
   ['symmetry', 'Symmetry'],
   ['eer_fractionation_file', 'EER fractionation file (for motion correction)'],
