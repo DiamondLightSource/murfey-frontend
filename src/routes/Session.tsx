@@ -87,6 +87,7 @@ export const Session = () => {
 
   // Machine config and instrument information
   const [machineConfig, setMachineConfig] = React.useState<MachineConfig>()
+  const [workflowName, setWorkflowName] = React.useState<string | null>(null)
   const [hasGainReference, setHasGainReference] = React.useState<boolean>(false)
   const [hasProcessingParams, setHasProcessingParams] =
     React.useState<boolean>(false)
@@ -163,6 +164,16 @@ export const Session = () => {
   // Get machine config and set up related settings
   const handleMachineConfig = (config: MachineConfig) => {
     setMachineConfig(config)
+    // Determine the workflow associated with this instrument
+    if (
+      ['epu', 'tomo', 'smartem'].some((software) =>
+        config.acquisition_software.includes(software)
+      )
+    ) {
+      setWorkflowName('tem')
+    } else if (config.acquisition_software.includes('sim')) {
+      setWorkflowName('sim')
+    }
     setSelectedDirectory(config['data_directories'][0])
     // Check if the instrument needs a gain reference
     setHasGainReference(
@@ -189,12 +200,12 @@ export const Session = () => {
         await checkMultigridControllerStatus(sessid)
       if (!multigridControllerStatus.exists) {
         // Check if this instrument has a gain reference directory configured
-        if (hasGainReference) {
+        if (hasGainReference && !!workflowName) {
           // Check if a gain reference file has been uploaded
           if (!!!session.current_gain_ref) {
             // Redirect to the gain reference page
             navigate(
-              `/sessions/${sessid}/gain_ref_transfer?sessid=${sessid}&setup=true`
+              `/sessions/${sessid}/gain_ref_transfer?sessid=${sessid}&setup=true&workflow=${workflowName}`
             )
             return
           }
@@ -221,6 +232,7 @@ export const Session = () => {
     sessid,
     session,
     sessionActive,
+    workflowName,
     hasGainReference,
     hasProcessingParams,
     navigate,
@@ -604,7 +616,7 @@ export const Session = () => {
                   variant="onBlue"
                   onClick={() => {
                     navigate(
-                      `../sessions/${sessid}/gain_ref_transfer?sessid=${sessid}`
+                      `../sessions/${sessid}/gain_ref_transfer?sessid=${sessid}&workflow=${workflowName}`
                     )
                   }}
                 >
