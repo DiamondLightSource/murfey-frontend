@@ -148,6 +148,16 @@ const NewSession = () => {
     setEndTime(endTime)
   }
 
+  const handleNextSetupPage = (sid: number) => {
+    if (!!gainRefDir && !!workflowName) {
+      navigate(
+        `../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true&workflow=${workflowName}`
+      )
+    } else {
+      navigate(`/new_session/setup/${sid}`)
+    }
+  }
+
   const startMurfeySession = async (iName: string) => {
     const sid = await createSession(
       selectedVisit,
@@ -167,11 +177,7 @@ const NewSession = () => {
       })
     ) {
       const sid = await startMurfeySession(iName)
-      gainRefDir
-        ? navigate(
-            `../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`
-          )
-        : navigate(`/new_session/setup/${sid}`)
+      handleNextSetupPage(sid)
     } else onOpenVisitCheck()
   }
 
@@ -240,11 +246,7 @@ const NewSession = () => {
               isDisabled={selectedVisit === '' ? true : false}
               onClick={() => {
                 startMurfeySession(instrumentName).then((sid: number) => {
-                  gainRefDir
-                    ? navigate(
-                        `../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`
-                      )
-                    : navigate(`/new_session/setup/${sid}`)
+                  handleNextSetupPage(sid)
                 })
               }}
             >
