@@ -69,6 +69,7 @@ const NewSession = () => {
   const [activeSessionsForVisit, setActiveSessionsForVisit] = React.useState<
     (Session | null)[]
   >([])
+  const [workflowName, setWorkflowName] = React.useState<string | null>(null)
   const [gainRefDir, setGainRefDir] = React.useState<string | null>()
   const [endTime, setEndTime] = React.useState<Date | null>(null)
   const [proposedEndTime, setProposedEndTime] = React.useState<Date | null>(
@@ -93,6 +94,16 @@ const NewSession = () => {
   })()
 
   const handleMachineConfig = (mcfg: MachineConfig) => {
+    // Determine the workflow associated with this instrument
+    if (
+      ['epu', 'tomo', 'smartem'].some((software) =>
+        mcfg.acquisition_software.includes(software)
+      )
+    ) {
+      setWorkflowName('tem')
+    } else if (mcfg.acquisition_software.includes('sim')) {
+      setWorkflowName('sim')
+    }
     setGainRefDir(mcfg.gain_reference_directory)
   }
 
