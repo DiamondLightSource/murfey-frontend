@@ -27,6 +27,7 @@ import { Login } from 'routes/Login'
 import { MagTable } from 'routes/MagTable'
 import { MultigridSetup } from 'routes/MultigridSetup'
 import { NewSession } from 'routes/NewSession'
+import { OTFFileTransfer } from 'routes/OTFFileTransfer'
 import { ProcessingParameters } from 'routes/ProcessingParameters'
 import { Session } from 'routes/Session'
 import { SessionParameters } from 'routes/SessionParameters'
@@ -90,6 +91,11 @@ const router = createBrowserRouter([
         element: <Session />,
         errorElement: <Error />,
         loader: rsyncerLoader(queryClient),
+      },
+      {
+        path: '/sessions/:sessid/otf_transfer',
+        element: <OTFFileTransfer />,
+        errorElement: <Error />,
       },
       {
         path: '/sessions/:sessid/gain_ref_transfer',

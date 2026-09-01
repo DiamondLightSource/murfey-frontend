@@ -87,6 +87,7 @@ export const Session = () => {
 
   // Machine config and instrument information
   const [machineConfig, setMachineConfig] = React.useState<MachineConfig>()
+  const [workflowName, setWorkflowName] = React.useState<string | null>()
   const [hasGainReference, setHasGainReference] = React.useState<boolean>(false)
   const [hasProcessingParams, setHasProcessingParams] =
     React.useState<boolean>(false)
@@ -163,6 +164,18 @@ export const Session = () => {
   // Get machine config and set up related settings
   const handleMachineConfig = (config: MachineConfig) => {
     setMachineConfig(config)
+    // Determine the workflow associated with this instrument
+    if (
+      ['epu', 'tomo', 'smartem'].some((software) =>
+        config.acquisition_software.includes(software)
+      )
+    ) {
+      setWorkflowName('tem')
+    } else if (config.acquisition_software.includes('sim')) {
+      setWorkflowName('sim')
+    } else {
+      setWorkflowName('other')
+    }
     setSelectedDirectory(config['data_directories'][0])
     // Check if the instrument needs a gain reference
     setHasGainReference(
@@ -181,22 +194,35 @@ export const Session = () => {
   // Redirect user to earlier stages of the setup depending on what is missing
   useEffect(() => {
     // Exit early if required states are undefined
-    if (session === undefined || sessid === undefined || !sessionActive) return
+    if (
+      session === undefined ||
+      sessid === undefined ||
+      !sessionActive ||
+      workflowName === undefined
+    )
+      return
 
     const runRedirectChecks = async () => {
       // Check if the multigrid controller for the session exists
       const multigridControllerStatus =
         await checkMultigridControllerStatus(sessid)
       if (!multigridControllerStatus.exists) {
-        // Check if this instrument has a gain reference directory configured
-        if (hasGainReference) {
-          // Check if a gain reference file has been uploaded
+        // Check if this instrument has a reference file directory configured
+        if (hasGainReference && !!workflowName) {
+          // Check if a reference file has been uploaded
           if (!!!session.current_gain_ref) {
-            // Redirect to the gain reference page
-            navigate(
-              `/sessions/${sessid}/gain_ref_transfer?sessid=${sessid}&setup=true`
-            )
-            return
+            // Redirect to the appropriate page based on workflow name
+            if (workflowName === 'tem') {
+              navigate(
+                `/sessions/${sessid}/gain_ref_transfer?sessid=${sessid}&setup=true`
+              )
+              return
+            } else if (workflowName === 'sim') {
+              navigate(
+                `/sessions/${sessid}/otf_transfer?sessid=${sessid}&setup=true`
+              )
+              return
+            }
           }
         }
         // Redirect to set up multigrid controller
@@ -221,6 +247,7 @@ export const Session = () => {
     sessid,
     session,
     sessionActive,
+    workflowName,
     hasGainReference,
     hasProcessingParams,
     navigate,
@@ -603,9 +630,17 @@ export const Session = () => {
                   key="gain_ref"
                   variant="onBlue"
                   onClick={() => {
-                    navigate(
-                      `../sessions/${sessid}/gain_ref_transfer?sessid=${sessid}`
-                    )
+                    if (workflowName === 'tem') {
+                      navigate(
+                        `../sessions/${sessid}/gain_ref_transfer?sessid=${sessid}`
+                      )
+                      return
+                    } else if (workflowName === 'sim') {
+                      navigate(
+                        `../sessions/${sessid}/otf_transfer?sessid=${sessid}`
+                      )
+                      return
+                    }
                   }}
                 >
                   {displayButtonText && 'Upload Gain Reference'}
