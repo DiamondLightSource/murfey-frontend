@@ -199,15 +199,20 @@ export const Session = () => {
       const multigridControllerStatus =
         await checkMultigridControllerStatus(sessid)
       if (!multigridControllerStatus.exists) {
-        // Check if this instrument has a gain reference directory configured
+        // Check if this instrument has a reference file directory configured
         if (hasGainReference && !!workflowName) {
-          // Check if a gain reference file has been uploaded
+          // Check if a reference file has been uploaded
           if (!!!session.current_gain_ref) {
-            // Redirect to the gain reference page
-            navigate(
-              `/sessions/${sessid}/gain_ref_transfer?sessid=${sessid}&setup=true&workflow=${workflowName}`
-            )
-            return
+            // Redirect to the appropriate page based on workflow name
+            if (workflowName === 'tem') {
+              navigate(
+                `/sessions/${sessid}/gain_ref_transfer?sessid=${sessid}&setup=true`
+              )
+            } else if (workflowName === 'sim') {
+              navigate(
+                `/sessions/${sessid}/otf_transfer?sessid=${sessid}&setup=true`
+              )
+            }
           }
         }
         // Redirect to set up multigrid controller
@@ -615,9 +620,15 @@ export const Session = () => {
                   key="gain_ref"
                   variant="onBlue"
                   onClick={() => {
-                    navigate(
-                      `../sessions/${sessid}/gain_ref_transfer?sessid=${sessid}&workflow=${workflowName}`
-                    )
+                    if (workflowName === 'tem') {
+                      navigate(
+                        `../sessions/${sessid}/gain_ref_transfer?sessid=${sessid}`
+                      )
+                    } else if (workflowName === 'sim') {
+                      navigate(
+                        `../sessions/${sessid}/otf_transfer?sessid=${sessid}`
+                      )
+                    }
                   }}
                 >
                   {displayButtonText && 'Upload Gain Reference'}

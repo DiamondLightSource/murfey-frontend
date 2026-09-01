@@ -149,10 +149,14 @@ const NewSession = () => {
   }
 
   const handleNextSetupPage = (sid: number) => {
-    if (!!gainRefDir && !!workflowName) {
-      navigate(
-        `../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true&workflow=${workflowName}`
-      )
+    if (!!gainRefDir) {
+      if (workflowName === 'tem') {
+        navigate(
+          `../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`
+        )
+      } else if (workflowName === 'sim') {
+        navigate(`../sessions/${sid}/otf_transfer?sessid=${sid}&setup=true`)
+      }
     } else {
       navigate(`/new_session/setup/${sid}`)
     }
