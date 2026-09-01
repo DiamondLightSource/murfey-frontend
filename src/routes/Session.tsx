@@ -87,7 +87,7 @@ export const Session = () => {
 
   // Machine config and instrument information
   const [machineConfig, setMachineConfig] = React.useState<MachineConfig>()
-  const [workflowName, setWorkflowName] = React.useState<string | null>(null)
+  const [workflowName, setWorkflowName] = React.useState<string | null>()
   const [hasGainReference, setHasGainReference] = React.useState<boolean>(false)
   const [hasProcessingParams, setHasProcessingParams] =
     React.useState<boolean>(false)
@@ -173,6 +173,8 @@ export const Session = () => {
       setWorkflowName('tem')
     } else if (config.acquisition_software.includes('sim')) {
       setWorkflowName('sim')
+    } else {
+      setWorkflowName('other')
     }
     setSelectedDirectory(config['data_directories'][0])
     // Check if the instrument needs a gain reference
@@ -192,7 +194,13 @@ export const Session = () => {
   // Redirect user to earlier stages of the setup depending on what is missing
   useEffect(() => {
     // Exit early if required states are undefined
-    if (session === undefined || sessid === undefined || !sessionActive) return
+    if (
+      session === undefined ||
+      sessid === undefined ||
+      !sessionActive ||
+      workflowName === undefined
+    )
+      return
 
     const runRedirectChecks = async () => {
       // Check if the multigrid controller for the session exists
