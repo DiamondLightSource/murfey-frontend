@@ -156,11 +156,14 @@ const NewSession = () => {
         navigate(
           `../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`
         )
+        return
       } else if (workflowName === 'sim') {
         navigate(`../sessions/${sid}/otf_transfer?sessid=${sid}&setup=true`)
+        return
       }
     } else {
       navigate(`/new_session/setup/${sid}`)
+      return
     }
   }
 

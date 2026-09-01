@@ -216,10 +216,12 @@ export const Session = () => {
               navigate(
                 `/sessions/${sessid}/gain_ref_transfer?sessid=${sessid}&setup=true`
               )
+              return
             } else if (workflowName === 'sim') {
               navigate(
                 `/sessions/${sessid}/otf_transfer?sessid=${sessid}&setup=true`
               )
+              return
             }
           }
         }
@@ -632,10 +634,12 @@ export const Session = () => {
                       navigate(
                         `../sessions/${sessid}/gain_ref_transfer?sessid=${sessid}`
                       )
+                      return
                     } else if (workflowName === 'sim') {
                       navigate(
                         `../sessions/${sessid}/otf_transfer?sessid=${sessid}`
                       )
+                      return
                     }
                   }}
                 >
