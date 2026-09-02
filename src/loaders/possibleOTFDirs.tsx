@@ -30,3 +30,16 @@ export const otfDirLoader =
     }
     return queryClient.ensureQueryData(singleQuery)
   }
+
+export const transferOTFDir = async (sessionId: number, otfDir: string) => {
+  const response = await client.post(
+    `instrument_server/sessions/${sessionId}/upload_otf_dir`,
+    {
+      dir_path: otfDir,
+    }
+  )
+  if (response.status !== 200) {
+    return null
+  }
+  return response.data
+}
