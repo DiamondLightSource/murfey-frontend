@@ -10,6 +10,8 @@ import {
 import { Table } from '@diamondlightsource/ui-components'
 import { keyframes } from '@emotion/react'
 import { SetupStepper } from 'components/setupStepper'
+import { updateCurrentGainReference } from 'loaders/possibleGainRefs'
+import { transferOTFDir } from 'loaders/possibleOTFDirs'
 import React from 'react'
 import { useLoaderData, useSearchParams, useNavigate } from 'react-router-dom'
 import { components } from 'schema/main'
@@ -38,19 +40,25 @@ export const OTFFileTransfer = () => {
   const navigate = useNavigate()
 
   // Process the selected OTF directory and navigate accordingly
-  const selectOTFDir = async (data: Record<string, any>) => {
+  const handleOTFDir = async (data: Record<string, any>) => {
     setProcessing(true) // Triggers transfer pop-up
     const sessid = searchParams.get('sessid')
     const setup = searchParams.get('setup')
 
-    // Handle the transfer
+    // Request the transfer
     if (sessid) {
-      console.log(`Will transfer selected OTF directory ${data.full_path}`)
+      const transferStatus = await transferOTFDir(
+        parseInt(sessid),
+        data['full_path']
+      )
+      // If successful, update the database with the file path
+      if (transferStatus.success && transferStatus.destination_path) {
+        await updateCurrentGainReference(
+          parseInt(sessid),
+          transferStatus.destination_path
+        )
+      }
     }
-
-    // Add a sleep as a placeholder to simulate file transfer
-    await new Promise((resolve) => setTimeout(resolve, 5000))
-
     // Move to next page
     if (setup) {
       sessid ? navigate(`/new_session/setup/${sessid}`) : navigate('/')
@@ -154,7 +162,7 @@ export const OTFFileTransfer = () => {
               { key: 'full_path', label: 'Full path' },
             ]}
             label={'otfDirData'}
-            onClick={selectOTFDir}
+            onClick={handleOTFDir}
           />
         </Box>
       </Box>
