@@ -63,6 +63,7 @@ export const OTFFileTransfer = () => {
   return (
     <div className="rootContainer">
       <Box w="100%" bg="murfey.50">
+        {/* Pop-up for showing loading progress */}
         <Modal isOpen={processing} onClose={() => void 0}>
           <ModalOverlay />
           <ModalContent>
