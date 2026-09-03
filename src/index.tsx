@@ -8,6 +8,7 @@ import { instrumentInfoLoader } from 'loaders/hub'
 import { machineConfigLoader } from 'loaders/machineConfig'
 import { magTableLoader } from 'loaders/magTable'
 import { gainRefLoader } from 'loaders/possibleGainRefs'
+import { otfDirLoader } from 'loaders/possibleOTFDirs'
 import {
   processingParametersLoader,
   sessionParametersLoader,
@@ -96,6 +97,7 @@ const router = createBrowserRouter([
         path: '/sessions/:sessid/otf_transfer',
         element: <OTFFileTransfer />,
         errorElement: <Error />,
+        loader: otfDirLoader(queryClient),
       },
       {
         path: '/sessions/:sessid/gain_ref_transfer',
