@@ -24,7 +24,6 @@ import { useDisclosure } from '@chakra-ui/react'
 import { Table } from '@diamondlightsource/ui-components'
 import { SetupStepper } from 'components/setupStepper'
 import { sessionTokenCheck, sessionHandshake } from 'loaders/jwt'
-import { getMachineConfigData } from 'loaders/machineConfig'
 import { createSession, getSessionDataForVisit } from 'loaders/sessionClients'
 import React, { useCallback, useEffect } from 'react'
 import { FaCalendar } from 'react-icons/fa'
@@ -38,7 +37,6 @@ import {
 } from 'utils/generic'
 
 type Visit = components['schemas']['Visit']
-type MachineConfig = components['schemas']['MachineConfig']
 type Session = components['schemas']['Session']
 
 const NewSession = () => {
@@ -69,8 +67,6 @@ const NewSession = () => {
   const [activeSessionsForVisit, setActiveSessionsForVisit] = React.useState<
     (Session | null)[]
   >([])
-  const [workflowName, setWorkflowName] = React.useState<string | null>()
-  const [gainRefDir, setGainRefDir] = React.useState<string | null>()
   const [endTime, setEndTime] = React.useState<Date | null>(null)
   const [proposedEndTime, setProposedEndTime] = React.useState<Date | null>(
     null
@@ -93,22 +89,6 @@ const NewSession = () => {
     return timestamp
   })()
 
-  const handleMachineConfig = (mcfg: MachineConfig) => {
-    // Determine the workflow associated with this instrument
-    if (
-      ['epu', 'tomo', 'smartem'].some((software) =>
-        mcfg.acquisition_software.includes(software)
-      )
-    ) {
-      setWorkflowName('tem')
-    } else if (mcfg.acquisition_software.includes('sim')) {
-      setWorkflowName('sim')
-    } else {
-      setWorkflowName('other')
-    }
-    setGainRefDir(mcfg.gain_reference_directory)
-  }
-
   const instrumentName = sessionStorage.getItem('instrumentName')
 
   const alreadyActiveSessions = useCallback(async () => {
@@ -123,9 +103,6 @@ const NewSession = () => {
     )
   }, [selectedVisit, instrumentName])
 
-  useEffect(() => {
-    getMachineConfigData().then((mcfg) => handleMachineConfig(mcfg))
-  }, [])
   useEffect(() => {
     alreadyActiveSessions().then((sessions) =>
       setActiveSessionsForVisit(sessions)
@@ -151,20 +128,7 @@ const NewSession = () => {
   }
 
   const handleNextSetupPage = (sid: number) => {
-    if (!!gainRefDir) {
-      if (workflowName === 'tem') {
-        navigate(
-          `../sessions/${sid}/gain_ref_transfer?sessid=${sid}&setup=true`
-        )
-        return
-      } else if (workflowName === 'sim') {
-        navigate(`../sessions/${sid}/otf_transfer?sessid=${sid}&setup=true`)
-        return
-      }
-    } else {
-      navigate(`/new_session/setup/${sid}`)
-      return
-    }
+    navigate(`../new_session/setup/${sid}`)
   }
 
   const startMurfeySession = async (iName: string) => {
