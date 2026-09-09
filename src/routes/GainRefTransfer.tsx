@@ -47,10 +47,25 @@ export const GainRefTransfer = () => {
   const [searchParams] = useSearchParams()
   const setup = searchParams.get('setup')
   const navigate = useNavigate()
+
   const [processing, setProcessing] = React.useState(false)
   const [tag, setTag] = React.useState('')
   const [falcon, setFalcon] = React.useState(false)
   const [falconPreset, setFalconPreset] = React.useState(false)
+
+  const handleNextSetupPage = () => {
+    !!setup
+      ? // If going through initial setup, go to processing parameters
+        navigate(`/new_session/parameters/${sessid}`)
+      : // Otherwise, return to the session page
+        navigate(`/sessions/${sessid}`)
+    return
+  }
+
+  if (!falconPreset) {
+    setFalconPreset(true)
+    getMachineConfigData().then((cfg) => setFalcon(cfg.camera === 'FALCON'))
+  }
 
   const handleSelectGainRef = async (data: Record<string, any>) => {
     // Early exit if session ID not found
@@ -77,19 +92,6 @@ export const GainRefTransfer = () => {
     }
     setProcessing(false)
     handleNextSetupPage()
-  }
-  const handleNextSetupPage = () => {
-    !!setup
-      ? // If going through initial setup, go to processing parameters
-        navigate(`/new_session/parameters/${sessid}`)
-      : // Otherwise, return to the session page
-        navigate(`/sessions/${sessid}`)
-    return
-  }
-
-  if (!falconPreset) {
-    setFalconPreset(true)
-    getMachineConfigData().then((cfg) => setFalcon(cfg.camera === 'FALCON'))
   }
 
   // Construct a default tag based on the current datetime upon loading page
