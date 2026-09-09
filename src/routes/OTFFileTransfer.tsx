@@ -139,7 +139,7 @@ export const OTFFileTransfer = () => {
           overflow="hidden"
         >
           <Heading size="xl" color="murfey.50">
-            Possible OTF Directories
+            Upload OTF Files
           </Heading>
         </Box>
         {/* Setup steps progress indicator  */}
@@ -166,9 +166,9 @@ export const OTFFileTransfer = () => {
             width="80%"
             data={possibleOTFDirsFormatted}
             headers={[
-              { key: 'name', label: 'Name' },
+              { key: 'name', label: 'Folder Name' },
               { key: 'timestampFormatted', label: 'Timestamp' },
-              { key: 'full_path', label: 'Full path' },
+              { key: 'full_path', label: 'Full Path' },
             ]}
             label={'otfDirData'}
             onClick={handleSelectOTFDir}

@@ -117,7 +117,7 @@ export const GainRefTransfer = () => {
               py="1vh"
             >
               <Heading size="xl" color="murfey.50">
-                Possible Gain Reference Files
+                Upload Gain Reference File
               </Heading>
             </VStack>
           </VStack>
@@ -169,10 +169,10 @@ export const GainRefTransfer = () => {
                 width="80%"
                 data={possibleGainRefsFormatted}
                 headers={[
-                  { key: 'name', label: 'Name' },
+                  { key: 'name', label: 'File Name' },
                   { key: 'timestampFormatted', label: 'Timestamp' },
                   { key: 'size', label: 'Size [MB]' },
-                  { key: 'full_path', label: 'Full path' },
+                  { key: 'full_path', label: 'Full Path' },
                 ]}
                 label={'gainRefData'}
                 onClick={handleSelectGainRef}
