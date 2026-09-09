@@ -12,7 +12,6 @@ import {
   ModalBody,
   ModalHeader,
   Tooltip,
-  Link,
 } from '@chakra-ui/react'
 import { Table } from '@diamondlightsource/ui-components'
 import { SetupStepper } from 'components/setupStepper'
@@ -24,9 +23,9 @@ import {
 } from 'loaders/possibleGainRefs'
 import React, { useEffect } from 'react'
 import {
-  Link as LinkRouter,
   useNavigate,
   useLoaderData,
+  useParams,
   useSearchParams,
 } from 'react-router-dom'
 import { CircleLoader } from 'react-spinners'
@@ -44,39 +43,48 @@ export const GainRefTransfer = () => {
         timestampFormatted: formatUTCISOToUKLocal(gainRefs.timestamp),
       }))
     : []
-  let [searchParams] = useSearchParams()
+  const { sessid } = useParams()
+  const [searchParams] = useSearchParams()
+  const setup = searchParams.get('setup')
   const navigate = useNavigate()
   const [processing, setProcessing] = React.useState(false)
   const [tag, setTag] = React.useState('')
   const [falcon, setFalcon] = React.useState(false)
   const [falconPreset, setFalconPreset] = React.useState(false)
 
-  const SelectGainRef = async (data: Record<string, any>, index: number) => {
+  const handleSelectGainRef = async (data: Record<string, any>) => {
+    // Early exit if session ID not found
+    if (!!!sessid) return
+
+    // Request for the gain reference transfer
     setProcessing(true)
-    const sessid = searchParams.get('sessid')
-    const setup = searchParams.get('setup')
-    if (sessid) {
-      const transferStatus = await transferGainReference(
+    const transferStatus = await transferGainReference(
+      parseInt(sessid),
+      data['full_path']
+    )
+    if (transferStatus.success) {
+      const preparedGainReference = await prepareGainReference(
         parseInt(sessid),
-        data['full_path']
+        data['full_path'],
+        !falcon,
+        falcon,
+        tag
       )
-      if (transferStatus.success) {
-        const preparedGainReference = await prepareGainReference(
-          parseInt(sessid),
-          data['full_path'],
-          !falcon,
-          falcon,
-          tag
-        )
-        await updateCurrentGainReference(
-          parseInt(sessid),
-          preparedGainReference.gain_ref
-        )
-      }
+      await updateCurrentGainReference(
+        parseInt(sessid),
+        preparedGainReference.gain_ref
+      )
     }
-    if (setup) sessid ? navigate(`/new_session/setup/${sessid}`) : navigate('/')
-    else sessid ? navigate(`/sessions/${sessid}`) : navigate('/')
     setProcessing(false)
+    handleNextSetupPage()
+  }
+  const handleNextSetupPage = () => {
+    !!setup
+      ? // If going through initial setup, go to processing parameters
+        navigate(`/new_session/parameters/${sessid}`)
+      : // Otherwise, return to the session page
+        navigate(`/sessions/${sessid}`)
+    return
   }
 
   if (!falconPreset) {
@@ -167,16 +175,11 @@ export const GainRefTransfer = () => {
                   { key: 'full_path', label: 'Full path' },
                 ]}
                 label={'gainRefData'}
-                onClick={SelectGainRef}
+                onClick={handleSelectGainRef}
               />
-              <Link
-                w={{ base: '100%', md: '19.6%' }}
-                _hover={{ textDecor: 'none' }}
-                as={LinkRouter}
-                to={`../new_session/setup/${searchParams.get('sessid')}`}
-              >
-                <Button variant="ghost">Skip gain reference</Button>
-              </Link>
+              <Button variant="ghost" onClick={handleNextSetupPage}>
+                Skip gain reference
+              </Button>
             </VStack>
           </HStack>
         </Box>
