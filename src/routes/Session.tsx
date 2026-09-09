@@ -87,9 +87,10 @@ export const Session = () => {
 
   // Machine config and instrument information
   const [machineConfig, setMachineConfig] = React.useState<MachineConfig>()
-  const [workflowName, setWorkflowName] = React.useState<string | null>()
-  const [hasGainReference, setHasGainReference] = React.useState<boolean>(false)
-  const [hasProcessingParams, setHasProcessingParams] =
+  const [workflowName, setWorkflowName] = React.useState<string>()
+  const [needsGainReference, setNeedsGainReference] =
+    React.useState<boolean>(false)
+  const [needsProcessingParams, setNeedsProcessingParams] =
     React.useState<boolean>(false)
 
   // Rsyncer information
@@ -178,14 +179,14 @@ export const Session = () => {
     }
     setSelectedDirectory(config['data_directories'][0])
     // Check if the instrument needs a gain reference
-    setHasGainReference(
+    setNeedsGainReference(
       !!(
         !!config.gain_reference_directory &&
         config.gain_reference_directory.trim() !== ''
       )
     )
     // Check if this instrument requires user-provided processing parameters
-    setHasProcessingParams(checkForProcessingParameters(config))
+    setNeedsProcessingParams(checkForProcessingParameters(config))
   }
   useEffect(() => {
     getMachineConfigData().then((config) => handleMachineConfig(config))
@@ -207,31 +208,27 @@ export const Session = () => {
       const multigridControllerStatus =
         await checkMultigridControllerStatus(sessid)
       if (!multigridControllerStatus.exists) {
-        // Check if this instrument has a reference file directory configured
-        if (hasGainReference && !!workflowName) {
-          // Check if a reference file has been uploaded
-          if (!!!session.current_gain_ref) {
-            // Redirect to the appropriate page based on workflow name
-            if (workflowName === 'tem') {
-              navigate(
-                `/sessions/${sessid}/gain_ref_transfer?sessid=${sessid}&setup=true`
-              )
-              return
-            } else if (workflowName === 'sim') {
-              navigate(
-                `/sessions/${sessid}/otf_transfer?sessid=${sessid}&setup=true`
-              )
-              return
-            }
-          }
-        }
         // Redirect to set up multigrid controller
         navigate(`/new_session/setup/${sessid}`)
         return
       }
-
-      // Check if this instrument has processing recipes configured
-      if (hasProcessingParams) {
+      // Check if this instrument has a reference file directory configured
+      if (needsGainReference && !!!session.current_gain_ref) {
+        // Redirect to the appropriate page based on workflow name
+        if (workflowName === 'tem') {
+          navigate(
+            `/sessions/${sessid}/gain_ref_transfer?sessid=${sessid}&setup=true`
+          )
+          return
+        } else if (workflowName === 'sim') {
+          navigate(
+            `/sessions/${sessid}/otf_transfer?sessid=${sessid}&setup=true`
+          )
+          return
+        }
+      }
+      // Check if this instrument requires processing parameters configured
+      if (needsProcessingParams) {
         // Check if processing parameters have been provided
         getSessionProcessingParameterData(sessid).then((params) => {
           if (params === null && session.process) {
@@ -248,8 +245,8 @@ export const Session = () => {
     session,
     sessionActive,
     workflowName,
-    hasGainReference,
-    hasProcessingParams,
+    needsGainReference,
+    needsProcessingParams,
     navigate,
   ])
 
@@ -624,7 +621,7 @@ export const Session = () => {
                 />
               </Button>
             </Tooltip>
-            {hasGainReference ? (
+            {needsGainReference ? (
               <Tooltip label={'Upload a new gain reference file'}>
                 <Button
                   key="gain_ref"
@@ -654,7 +651,7 @@ export const Session = () => {
             ) : (
               <></>
             )}
-            {hasProcessingParams ? (
+            {needsProcessingParams ? (
               <Tooltip label={'View and update processing parameters'}>
                 <Button
                   key="processing_params"
