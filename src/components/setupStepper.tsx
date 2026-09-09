@@ -19,9 +19,9 @@ interface StepperStartConditions {
 export const SetupStepper = ({ activeStepIndex }: StepperStartConditions) => {
   const steps = [
     { title: 'Visit', description: 'Select visit' },
-    { title: 'Gain reference', description: 'Transfer and transform' },
-    { title: 'Data location', description: 'Start data transfer' },
-    { title: 'Parameters', description: 'For processing' },
+    { title: 'Data location', description: 'Create or look for visits here' },
+    { title: 'Reference files', description: 'Transfer and process files' },
+    { title: 'Parameters', description: 'Configure processing parameters' },
   ]
 
   const { activeStep } = useSteps({
