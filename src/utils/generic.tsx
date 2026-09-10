@@ -104,8 +104,22 @@ export const formatUTCISOToUKLocal = (utcIsoString: string) => {
 
 type MachineConfig = components['schemas']['MachineConfig']
 export const checkForProcessingParameters = (config: MachineConfig) => {
-  const softwareNeedingParameters = ['epu', 'tomo']
+  const softwareNeedingParameters = ['epu', 'tomo', 'smartem']
   return !!softwareNeedingParameters.some((software) =>
     config.acquisition_software?.includes(software)
   )
+}
+
+export const determineWorkflowName = (config: MachineConfig) => {
+  if (
+    ['epu', 'tomo', 'smartem'].some((software) =>
+      config.acquisition_software.includes(software)
+    )
+  ) {
+    return 'tem'
+  } else if (config.acquisition_software.includes('sim')) {
+    return 'sim'
+  } else {
+    return 'other'
+  }
 }

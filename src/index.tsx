@@ -82,18 +82,6 @@ const router = createBrowserRouter([
         loader: machineConfigLoader(queryClient),
       },
       {
-        path: '/new_session/parameters/:sessid',
-        element: <SessionSetup />,
-        errorElement: <Error />,
-        loader: sessionLoader(queryClient),
-      },
-      {
-        path: '/sessions/:sessid',
-        element: <Session />,
-        errorElement: <Error />,
-        loader: rsyncerLoader(queryClient),
-      },
-      {
         path: '/sessions/:sessid/otf_transfer',
         element: <OTFFileTransfer />,
         errorElement: <Error />,
@@ -104,6 +92,18 @@ const router = createBrowserRouter([
         element: <GainRefTransfer />,
         errorElement: <Error />,
         loader: gainRefLoader(queryClient),
+      },
+      {
+        path: '/new_session/parameters/:sessid',
+        element: <SessionSetup />,
+        errorElement: <Error />,
+        loader: sessionLoader(queryClient),
+      },
+      {
+        path: '/sessions/:sessid',
+        element: <Session />,
+        errorElement: <Error />,
+        loader: rsyncerLoader(queryClient),
       },
       {
         path: '/sessions/:sessid/session_parameters',

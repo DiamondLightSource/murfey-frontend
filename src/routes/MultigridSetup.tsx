@@ -5,7 +5,6 @@ import {
   Heading,
   HStack,
   IconButton,
-  Link,
   Select,
   Stack,
   VStack,
@@ -17,9 +16,9 @@ import {
 } from 'loaders/multigridSetup'
 import { getSessionData } from 'loaders/sessionClients'
 import React, { useEffect } from 'react'
-import { Link as LinkRouter, useLoaderData, useParams } from 'react-router-dom'
+import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
 import { components } from 'schema/main'
-import { checkForProcessingParameters } from 'utils/generic'
+import { determineWorkflowName } from 'utils/generic'
 
 type MachineConfig = components['schemas']['MachineConfig']
 type MultigridWatcherSpec = components['schemas']['MultigridWatcherSetup']
@@ -27,40 +26,74 @@ type Session = components['schemas']['Session']
 
 const MultigridSetup = () => {
   const machineConfig = useLoaderData() as MachineConfig | null
+  const navigate = useNavigate()
   const { sessid } = useParams()
-  let initialDirectory = ''
-  if (machineConfig)
-    machineConfig.data_directories.forEach((value) => {
-      if (initialDirectory === '') initialDirectory = value
-    })
-  const [selectedDirectory, setSelectedDirectory] =
-    React.useState(initialDirectory)
-  const [session, setSession] = React.useState<Session>()
 
+  const [selectedDirectory, setSelectedDirectory] = React.useState<string>('')
+  const [session, setSession] = React.useState<Session>()
+  const [workflowName, setWorkflowName] = React.useState<string>()
+  const [needsGainRef, setNeedsGainRef] = React.useState<boolean>()
+
+  // Load session information using the session ID
   useEffect(() => {
+    if (!!!sessid) return
     getSessionData(sessid).then((sess) => setSession(sess.session))
   }, [sessid])
   const activeStep = session != null ? (session.started ? 3 : 2) : 2
 
-  const handleDirectorySelection = (e: React.ChangeEvent<HTMLSelectElement>) =>
+  // Set the React states using machine config and session information
+  useEffect(() => {
+    // Early returns if prerequisites are not ready
+    if (!!!machineConfig) return
+    if (!!!session) return
+
+    // Determine the workflow associated with this instrument
+    setWorkflowName(determineWorkflowName(machineConfig))
+
+    // Set the initial directory
+    machineConfig.data_directories.forEach((value) => {
+      if (!!!selectedDirectory || selectedDirectory === '') {
+        setSelectedDirectory(value)
+      }
+    })
+
+    // Check if it needs a gain reference
+    setNeedsGainRef(!!machineConfig.gain_reference_directory)
+  }, [machineConfig, session, selectedDirectory])
+
+  const handleDirectorySelection = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setSelectedDirectory(e.target.value)
+  }
 
-  // Check if this instrument requires user-provided processing parameters
-  const hasProcessingParameters = machineConfig
-    ? checkForProcessingParameters(machineConfig)
-    : false
-
-  const handleSelection = async () => {
-    if (typeof sessid !== 'undefined') {
-      await setupMultigridWatcher(
-        {
-          source: selectedDirectory,
-        } as MultigridWatcherSpec,
-        parseInt(sessid)
-      )
-      if (!hasProcessingParameters)
-        await startMultigridWatcher(parseInt(sessid))
+  const handleConfirmSelection = async () => {
+    if (sessid === undefined) return
+    // Send request to setup multigrid watcher
+    await setupMultigridWatcher(
+      {
+        source: selectedDirectory,
+      } as MultigridWatcherSpec,
+      parseInt(sessid)
+    )
+    // Check if it needs a reference file
+    if (needsGainRef) {
+      if (workflowName === 'tem') {
+        navigate(
+          `../sessions/${sessid}/gain_ref_transfer?sessid=${sessid}&setup=true`
+        )
+        return
+      } else if (workflowName === 'sim') {
+        navigate(
+          `../sessions/${sessid}/otf_transfer?sessid=${sessid}&setup=true`
+        )
+        return
+      }
     }
+    // Otherwise, start the multigrid watcher
+    await startMultigridWatcher(parseInt(sessid))
+    navigate(`../sessions/${sessid}`)
+    return
   }
 
   return (
@@ -132,22 +165,11 @@ const MultigridSetup = () => {
                       </GridItem>
                     )}
                   </Select>
-                  <Link
-                    w={{ base: '100%', md: '19.6%' }}
-                    _hover={{ textDecor: 'none' }}
-                    as={LinkRouter}
-                    to={
-                      hasProcessingParameters
-                        ? `../new_session/parameters/${sessid}`
-                        : `../sessions/${sessid}`
-                    }
-                  >
-                    <IconButton
-                      aria-label="select"
-                      icon={<ArrowForwardIcon />}
-                      onClick={handleSelection}
-                    />
-                  </Link>
+                  <IconButton
+                    aria-label="select"
+                    icon={<ArrowForwardIcon />}
+                    onClick={handleConfirmSelection}
+                  />
                 </HStack>
               </Stack>
             </VStack>

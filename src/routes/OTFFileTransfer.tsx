@@ -10,10 +10,16 @@ import {
 import { Table } from '@diamondlightsource/ui-components'
 import { keyframes } from '@emotion/react'
 import { SetupStepper } from 'components/setupStepper'
+import { startMultigridWatcher } from 'loaders/multigridSetup'
 import { updateCurrentGainReference } from 'loaders/possibleGainRefs'
 import { transferOTFDir } from 'loaders/possibleOTFDirs'
 import React from 'react'
-import { useLoaderData, useSearchParams, useNavigate } from 'react-router-dom'
+import {
+  useLoaderData,
+  useParams,
+  useSearchParams,
+  useNavigate,
+} from 'react-router-dom'
 import { components } from 'schema/main'
 import { formatUTCISOToUKLocal } from 'utils/generic'
 
@@ -21,6 +27,11 @@ type File = components['schemas']['File']
 
 export const OTFFileTransfer = () => {
   const possibleOTFDirs = useLoaderData() as File[] | null
+  const { sessid } = useParams()
+  const [searchParams] = useSearchParams()
+  const setup = searchParams.get('setup')
+  const navigate = useNavigate()
+
   const [processing, setProcessing] = React.useState(false)
 
   // Set up animation for the loading icon
@@ -36,36 +47,34 @@ export const OTFFileTransfer = () => {
         timestampFormatted: formatUTCISOToUKLocal(otfDirs.timestamp),
       }))
     : []
-  let [searchParams] = useSearchParams()
-  const navigate = useNavigate()
 
   // Process the selected OTF directory and navigate accordingly
-  const handleOTFDir = async (data: Record<string, any>) => {
-    setProcessing(true) // Triggers transfer pop-up
-    const sessid = searchParams.get('sessid')
-    const setup = searchParams.get('setup')
+  const handleSelectOTFDir = async (data: Record<string, any>) => {
+    // Don't do anything if session ID is not set
+    if (!!!sessid) return
 
     // Request the transfer
-    if (sessid) {
-      const transferStatus = await transferOTFDir(
+    setProcessing(true) // Activate transfer pop-up
+    const transferStatus = await transferOTFDir(
+      parseInt(sessid),
+      data['full_path']
+    )
+    // If successful, update the database with the file path
+    if (transferStatus.success && transferStatus.destination_path) {
+      await updateCurrentGainReference(
         parseInt(sessid),
-        data['full_path']
+        transferStatus.destination_path
       )
-      // If successful, update the database with the file path
-      if (transferStatus.success && transferStatus.destination_path) {
-        await updateCurrentGainReference(
-          parseInt(sessid),
-          transferStatus.destination_path
-        )
-      }
     }
-    // Move to next page
-    if (setup) {
-      sessid ? navigate(`/new_session/setup/${sessid}`) : navigate('/')
-    } else {
-      sessid ? navigate(`/sessions/${sessid}`) : navigate('/')
+    setProcessing(false) // Deactivate transfer pop-up
+
+    // If this is part of the initial setup process, start the multigrid watcher
+    if (!!setup) {
+      await startMultigridWatcher(parseInt(sessid))
     }
-    setProcessing(false) // Deactivates transfer pop-up
+    // Navigate to the session page
+    navigate(`../sessions/${sessid}`)
+    return
   }
 
   return (
@@ -130,7 +139,7 @@ export const OTFFileTransfer = () => {
           overflow="hidden"
         >
           <Heading size="xl" color="murfey.50">
-            Possible OTF Directories
+            Upload OTF Files
           </Heading>
         </Box>
         {/* Setup steps progress indicator  */}
@@ -157,12 +166,12 @@ export const OTFFileTransfer = () => {
             width="80%"
             data={possibleOTFDirsFormatted}
             headers={[
-              { key: 'name', label: 'Name' },
+              { key: 'name', label: 'Folder Name' },
               { key: 'timestampFormatted', label: 'Timestamp' },
-              { key: 'full_path', label: 'Full path' },
+              { key: 'full_path', label: 'Full Path' },
             ]}
             label={'otfDirData'}
-            onClick={handleOTFDir}
+            onClick={handleSelectOTFDir}
           />
         </Box>
       </Box>
