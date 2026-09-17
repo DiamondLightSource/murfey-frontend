@@ -56,8 +56,8 @@ const NewSession = () => {
     onOpen: onOpenCalendar,
     onClose: onCloseCalendar,
   } = useDisclosure()
-  const [selectedVisit, setSelectedVisit] = React.useState('')
-  const [sessionReference, setSessionReference] = React.useState('')
+  const [visitName, setVisitName] = React.useState('')
+  const [sessionDescription, setSessionDescription] = React.useState('')
   const [activeSessionsForVisit, setActiveSessionsForVisit] = React.useState<
     Session[]
   >([])
@@ -89,14 +89,19 @@ const NewSession = () => {
 
   const instrumentName = sessionStorage.getItem('instrumentName')
 
-  const handleVisitInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedVisit(event.target.value)
-    setSessionReference(event.target.value)
+  const handleVisitNameInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setVisitName(event.target.value)
+  }
+
+  const handleSessionDescriptionInput = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setSessionDescription(event.target.value)
   }
 
   const selectVisit = (data: Record<string, any>, index: number) => {
-    setSelectedVisit(data.name)
-    setSessionReference(data.name)
+    setVisitName(data.name)
+    setSessionDescription(data.proposal_title)
     // Add an hour to the listed end time
     const endTime = new Date(new Date(data.end).getTime() + 3600 * 1000 * 2)
     setEndTime(endTime)
@@ -108,8 +113,8 @@ const NewSession = () => {
 
   const startMurfeySession = async (iName: string) => {
     const sessid = await createSession(
-      selectedVisit,
-      sessionReference,
+      visitName,
+      sessionDescription === '' ? visitName : sessionDescription,
       iName,
       endTime
     )
@@ -120,7 +125,7 @@ const NewSession = () => {
   const alreadyActiveSessions = async () => {
     // Check if there are active sessions for the selected visit
     const sessionsToCheck: Session[] = await getSessionDataForVisit(
-      selectedVisit,
+      visitName,
       instrumentName ?? ''
     )
     return Promise.all(
@@ -213,7 +218,7 @@ const NewSession = () => {
           <ModalFooter>
             <Button
               variant="ghost"
-              isDisabled={selectedVisit === '' || ignoreAndContinueDisabled}
+              isDisabled={visitName === '' || ignoreAndContinueDisabled}
               onClick={() => {
                 // Disable the button to show that it's working
                 setIgnoreAndContinueDisabled(true)
@@ -351,8 +356,14 @@ const NewSession = () => {
             {/* Visit name input */}
             <Input
               placeholder="Visit name"
-              value={sessionReference}
-              onChange={handleVisitInput}
+              value={visitName}
+              onChange={handleVisitNameInput}
+            />
+            {/* Visit description input */}
+            <Input
+              placeholder="Session description (optional)"
+              value={sessionDescription}
+              onChange={handleSessionDescriptionInput}
             />
             {/* Transfer end time indicator */}
             <Card
@@ -412,12 +423,12 @@ const NewSession = () => {
           </Box>
           <Button
             variant="default"
-            isDisabled={selectedVisit === '' || createSessionDisabled}
+            isDisabled={visitName === '' || createSessionDisabled}
             onClick={() => {
               handleCreateSession(instrumentName)
             }}
           >
-            Create session for visit {selectedVisit}
+            Create session for visit {visitName}
           </Button>
         </Box>
       </Box>
