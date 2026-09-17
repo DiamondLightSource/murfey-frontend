@@ -1871,30 +1871,34 @@ export interface components {
       name: string
       /**
        * Visit
-       * @default
+       * @default ""
        */
-      visit?: string
+      visit: string
       /**
        * Started
        * @default false
        */
-      started?: boolean
+      started: boolean
       /**
        * Current Gain Ref
-       * @default
+       * @default ""
        */
-      current_gain_ref?: string
+      current_gain_ref: string
       /**
        * Instrument Name
-       * @default
+       * @default ""
        */
-      instrument_name?: string
+      instrument_name: string
       /**
        * Process
-       * @default
+       * @default true
        */
-      process?: boolean
-      visit_end_time: string
+      process: boolean
+      /**
+       * Visit End Time
+       * @default null
+       */
+      visit_end_time: string | null
     }
     /** SessionClients */
     SessionClients: {
