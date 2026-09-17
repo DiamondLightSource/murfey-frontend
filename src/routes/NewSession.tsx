@@ -2,13 +2,8 @@ import {
   Box,
   Button,
   Card,
-  CardBody,
   Input,
   Heading,
-  Link,
-  Stack,
-  HStack,
-  VStack,
   Modal,
   ModalOverlay,
   ModalHeader,
@@ -25,10 +20,10 @@ import { Table } from '@diamondlightsource/ui-components'
 import { SetupStepper } from 'components/setupStepper'
 import { sessionTokenCheck, sessionHandshake } from 'loaders/jwt'
 import { createSession, getSessionDataForVisit } from 'loaders/sessionClients'
-import React, { useCallback, useEffect } from 'react'
+import React from 'react'
 import { FaCalendar } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
-import { Link as LinkRouter, useLoaderData } from 'react-router-dom'
+import { useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
 import {
   convertUTCToUKNaive,
@@ -51,7 +46,6 @@ const NewSession = () => {
       }))
     : []
 
-  const { isOpen, onOpen, onClose } = useDisclosure()
   const {
     isOpen: isOpenVisitCheck,
     onOpen: onOpenVisitCheck,
@@ -62,15 +56,19 @@ const NewSession = () => {
     onOpen: onOpenCalendar,
     onClose: onCloseCalendar,
   } = useDisclosure()
-  const [selectedVisit, setSelectedVisit] = React.useState('')
-  const [sessionReference, setSessionReference] = React.useState('')
+  const [visitName, setVisitName] = React.useState('')
+  const [sessionDescription, setSessionDescription] = React.useState('')
   const [activeSessionsForVisit, setActiveSessionsForVisit] = React.useState<
-    (Session | null)[]
+    Session[]
   >([])
   const [endTime, setEndTime] = React.useState<Date | null>(null)
   const [proposedEndTime, setProposedEndTime] = React.useState<Date | null>(
     null
   )
+  const [createSessionDisabled, setCreateSessionDisabled] =
+    React.useState<boolean>(false)
+  const [ignoreAndContinueDisabled, setIgnoreAndContinueDisabled] =
+    React.useState<boolean>(false)
 
   const navigate = useNavigate()
 
@@ -91,9 +89,43 @@ const NewSession = () => {
 
   const instrumentName = sessionStorage.getItem('instrumentName')
 
-  const alreadyActiveSessions = useCallback(async () => {
+  const handleVisitNameInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setVisitName(event.target.value)
+  }
+
+  const handleSessionDescriptionInput = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setSessionDescription(event.target.value)
+  }
+
+  const selectVisit = (data: Record<string, any>, index: number) => {
+    setVisitName(data.name)
+    setSessionDescription(data.proposal_title)
+    // Add an hour to the listed end time
+    const endTime = new Date(new Date(data.end).getTime() + 3600 * 1000 * 2)
+    setEndTime(endTime)
+  }
+
+  const handleNextSetupPage = (sessid: number) => {
+    navigate(`../new_session/setup/${sessid}`)
+  }
+
+  const startMurfeySession = async (iName: string) => {
+    const sessid = await createSession(
+      visitName,
+      sessionDescription === '' ? visitName : sessionDescription,
+      iName,
+      endTime
+    )
+    await sessionHandshake(sessid)
+    return sessid
+  }
+
+  const alreadyActiveSessions = async () => {
+    // Check if there are active sessions for the selected visit
     const sessionsToCheck: Session[] = await getSessionDataForVisit(
-      selectedVisit,
+      visitName,
       instrumentName ?? ''
     )
     return Promise.all(
@@ -101,91 +133,42 @@ const NewSession = () => {
         return (await sessionTokenCheck(session.id)) ? session : null
       })
     )
-  }, [selectedVisit, instrumentName])
-
-  useEffect(() => {
-    alreadyActiveSessions().then((sessions) =>
-      setActiveSessionsForVisit(sessions)
-    )
-  }, [selectedVisit, alreadyActiveSessions])
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setSessionReference(event.target.value)
-
-  const handleVisitNameChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setSelectedVisit(event.target.value)
-    setSessionReference(event.target.value)
   }
 
-  function selectVisit(data: Record<string, any>, index: number) {
-    setSelectedVisit(data.name)
-    setSessionReference(data.name)
-    // Add an hour to the listed end time
-    const endTime = new Date(new Date(data.end).getTime() + 3600 * 1000 * 2)
-    setEndTime(endTime)
-  }
-
-  const handleNextSetupPage = (sid: number) => {
-    navigate(`../new_session/setup/${sid}`)
-  }
-
-  const startMurfeySession = async (iName: string) => {
-    const sid = await createSession(
-      selectedVisit,
-      sessionReference,
-      iName,
-      endTime
-    )
-    await sessionHandshake(sid)
-    return sid
-  }
-
-  const handleCreateSession = async (iName: string) => {
-    if (
-      !activeSessionsForVisit.length ||
-      activeSessionsForVisit.every((elem) => {
-        return elem === null
-      })
-    ) {
-      const sid = await startMurfeySession(iName)
-      handleNextSetupPage(sid)
-    } else onOpenVisitCheck()
+  const handleCreateSession = (iName: string) => {
+    // Disable the button to show that it's working
+    setCreateSessionDisabled(true)
+    alreadyActiveSessions().then(async (activeSessions) => {
+      // Check for active sessions
+      if (
+        activeSessions !== null &&
+        activeSessions.length &&
+        activeSessions.every((elem) => {
+          return elem !== null
+        })
+      ) {
+        // If there are active sessions, load the popup
+        setActiveSessionsForVisit(activeSessions)
+        onOpenVisitCheck()
+      } else {
+        // Otherwise, start session and move to next page
+        const sessid = await startMurfeySession(iName)
+        handleNextSetupPage(sessid)
+      }
+    })
   }
 
   return instrumentName ? (
     <div className="rootContainer">
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Create visit</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Input
-              placeholder="Session name"
-              onChange={handleVisitNameChange}
-            />
-            <Input
-              placeholder="Session reference"
-              value={sessionReference}
-              onChange={handleChange}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              variant="default"
-              isDisabled={selectedVisit === '' ? true : false}
-              onClick={() => {
-                handleCreateSession(instrumentName)
-              }}
-            >
-              Create session
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      <Modal isOpen={isOpenVisitCheck} onClose={onCloseVisitCheck}>
+      {/* Pop-ups section */}
+      {/* Pop-up warning about creating a duplicate live visit */}
+      <Modal
+        isOpen={isOpenVisitCheck}
+        onClose={() => {
+          setCreateSessionDisabled(false)
+          onCloseVisitCheck()
+        }}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
@@ -193,33 +176,56 @@ const NewSession = () => {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            You may want to edit one of the following sessions instead
-            (otherwise you may start multiple transfers for the same source)
-            <VStack>
-              {activeSessionsForVisit.map((session) => {
-                return session ? (
-                  <Link
-                    w={{ base: '100%', md: '19.6%' }}
-                    key="gain_ref"
-                    _hover={{ textDecor: 'none' }}
-                    as={LinkRouter}
-                    to={`/sessions/${session.id}`}
-                  >
-                    <Button variant="default">{session.id}</Button>
-                  </Link>
-                ) : (
-                  <></>
-                )
-              })}
-            </VStack>
+            <Box
+              w="100%"
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="start"
+              gap={4}
+            >
+              <Box
+                w="100%"
+                px={2}
+                display="flex"
+                flexDirection="row"
+                alignItems="center"
+                justifyContent="start"
+                gap={2}
+              >
+                {activeSessionsForVisit.map((session) => {
+                  return session ? (
+                    <Button
+                      key="gain_ref"
+                      variant="default"
+                      onClick={() => {
+                        navigate(`/sessions/${session.id}`)
+                      }}
+                    >
+                      {session.id}
+                    </Button>
+                  ) : (
+                    <></>
+                  )
+                })}
+              </Box>
+              <Text>
+                You may want to edit one of the above sessions instead
+                (otherwise you may start multiple transfers for the same source)
+              </Text>
+            </Box>
           </ModalBody>
           <ModalFooter>
             <Button
               variant="ghost"
-              isDisabled={selectedVisit === '' ? true : false}
+              isDisabled={visitName === '' || ignoreAndContinueDisabled}
               onClick={() => {
-                startMurfeySession(instrumentName).then((sid: number) => {
-                  handleNextSetupPage(sid)
+                // Disable the button to show that it's working
+                setIgnoreAndContinueDisabled(true)
+                // Start Murfey, then move on to the next page
+                startMurfeySession(instrumentName).then((sessid: number) => {
+                  handleNextSetupPage(sessid)
+                  setIgnoreAndContinueDisabled(false)
                 })
               }}
             >
@@ -228,6 +234,7 @@ const NewSession = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      {/* Pop-up to set transfer end time with */}
       <Modal isOpen={isOpenCalendar} onClose={onCloseCalendar} size={'xl'}>
         <ModalOverlay />
         <ModalContent>
@@ -276,113 +283,153 @@ const NewSession = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Box w="100%" bg="murfey.50">
-        <Box w="100%" overflow="hidden">
-          <VStack className="homeRoot">
-            <VStack
-              bg="murfey.700"
-              justifyContent="start"
-              alignItems="start"
-              display="flex"
-              w="100%"
-              px="10vw"
-              py="1vh"
-            >
-              <Heading size="xl" color="murfey.50">
-                Current visits
-              </Heading>
-              <Button variant="onBlue" onClick={() => onOpen()}>
-                Create visit
-              </Button>
-            </VStack>
-          </VStack>
-        </Box>
+      {/* Parent container fpr page contents */}
+      <Box
+        className="homeRoot"
+        overflow="auto"
+        display="flex"
+        flexDirection="column"
+        flex="1"
+        bg="murfey.50"
+      >
+        {/* Page title bar */}
         <Box
-          mt="1em"
-          px="10vw"
+          bg="murfey.700"
           w="100%"
-          justifyContent={'center'}
-          alignItems={'center'}
+          px={{
+            base: 8,
+            md: 16,
+          }}
+          py={4}
+          display="flex"
+          flexDirection="column"
+          alignItems="start"
+          justifyContent="start"
+          gap={2}
         >
-          <SetupStepper activeStepIndex={0} />
+          <Heading size="xl" color="murfey.50">
+            Create Session
+          </Heading>
+          <Heading size="md" color="murfey.50">
+            Choose from a currently active visit or manually input one
+          </Heading>
         </Box>
+        {/* Page contents */}
         <Box
-          mt="1em"
-          w="100%"
-          justifyContent={'center'}
-          alignItems={'center'}
-          display={'flex'}
+          overflow="auto"
+          p={8}
+          flex="1"
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="start"
+          gap={8}
         >
-          <Table
-            data={formattedVisits}
-            headers={[
-              { key: 'name', label: 'Name' },
-              { key: 'startFormatted', label: 'Start Time' },
-              { key: 'endFormatted', label: 'End Time' },
-              { key: 'proposal_title', label: 'Description' },
-            ]}
-            label={'visitData'}
-            onClick={selectVisit}
-          />
-        </Box>
-        <Box
-          mt="1em"
-          w="100%"
-          justifyContent={'center'}
-          alignItems={'center'}
-          display={'flex'}
-        >
-          <Stack>
-            <Input
-              placeholder="Session reference"
-              value={sessionReference}
-              onChange={handleChange}
+          {/* Setup steps progress indicator */}
+          <Box w="80%" minW="600px">
+            <SetupStepper activeStepIndex={0} />
+          </Box>
+          {/* Table showing current visit information */}
+          <Box w="80%" minW="600px">
+            <Table
+              data={formattedVisits}
+              headers={[
+                { key: 'name', label: 'Name' },
+                { key: 'startFormatted', label: 'Start Time' },
+                { key: 'endFormatted', label: 'End Time' },
+                { key: 'proposal_title', label: 'Description' },
+              ]}
+              label={'visitData'}
+              onClick={selectVisit}
             />
-            <VStack>
-              <Card>
-                <CardBody>
-                  <HStack>
-                    <VStack>
-                      <Text>Transfers will stop after:</Text>
-                      <Text>
-                        {endTime
-                          ? new Intl.DateTimeFormat('en-GB', {
-                              timeZone: 'Europe/London',
-                              weekday: 'short',
-                              year: 'numeric',
-                              month: 'short',
-                              day: '2-digit',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              second: '2-digit',
-                              timeZoneName: 'short',
-                              hour12: false,
-                            }).format(endTime)
-                          : 'NOT SET'}
-                      </Text>
-                    </VStack>
-                    <Tooltip label="Set end time for data transfer">
-                      <IconButton
-                        aria-label="calendar-for-end-time"
-                        onClick={() => onOpenCalendar()}
-                      >
-                        <FaCalendar />
-                      </IconButton>
-                    </Tooltip>
-                  </HStack>
-                </CardBody>
-              </Card>
-              <Button
-                variant="default"
-                isDisabled={selectedVisit === '' ? true : false}
-                onClick={() => {
-                  handleCreateSession(instrumentName)
-                }}
+          </Box>
+          {/* Visit name and transfer end time information */}
+          <Box
+            minW="400px"
+            maxW="600px"
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            gap={4}
+          >
+            {/* Visit name input */}
+            <Input
+              placeholder="Visit name"
+              value={visitName}
+              onChange={handleVisitNameInput}
+            />
+            {/* Visit description input */}
+            <Input
+              placeholder="Session description (optional)"
+              value={sessionDescription}
+              onChange={handleSessionDescriptionInput}
+            />
+            {/* Transfer end time indicator */}
+            <Card
+              w="100%"
+              p={4}
+              cursor="default"
+              _hover={{
+                cursor: 'default',
+                borderColor: 'murfey.400',
+              }}
+            >
+              <Box
+                w="100%"
+                display="flex"
+                flexDirection="column"
+                alignItems="start"
+                gap={4}
               >
-                Create session for visit {selectedVisit}
-              </Button>
-            </VStack>
-          </Stack>
+                <Text>Transfers will stop after:</Text>
+                <Box
+                  w="100%"
+                  pl={4}
+                  display="flex"
+                  flexDirection="row"
+                  alignItems="center"
+                  justifyContent="space-between"
+                >
+                  <Text>
+                    {endTime
+                      ? new Intl.DateTimeFormat('en-GB', {
+                          timeZone: 'Europe/London',
+                          weekday: 'short',
+                          year: 'numeric',
+                          month: 'short',
+                          day: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          second: '2-digit',
+                          timeZoneName: 'short',
+                          hour12: false,
+                        }).format(endTime)
+                      : 'NOT SET'}
+                  </Text>
+                  <Tooltip label="Set end time for data transfer">
+                    <IconButton
+                      aria-label="calendar-for-end-time"
+                      icon={<FaCalendar />}
+                      onClick={() => onOpenCalendar()}
+                    />
+                  </Tooltip>
+                </Box>
+                <Text>
+                  (To receive alerts, a transfer end time needs to be set)
+                </Text>
+              </Box>
+            </Card>
+          </Box>
+          <Button
+            variant="default"
+            isDisabled={visitName === '' || createSessionDisabled}
+            onClick={() => {
+              handleCreateSession(instrumentName)
+            }}
+          >
+            Create session for visit {visitName}
+          </Button>
         </Box>
       </Box>
     </div>
