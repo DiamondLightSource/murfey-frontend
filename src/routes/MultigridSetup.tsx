@@ -1,14 +1,5 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons'
-import {
-  Box,
-  GridItem,
-  Heading,
-  HStack,
-  IconButton,
-  Select,
-  Stack,
-  VStack,
-} from '@chakra-ui/react'
+import { Box, Heading, IconButton, Select } from '@chakra-ui/react'
 import { SetupStepper } from 'components/setupStepper'
 import {
   setupMultigridWatcher,
@@ -33,6 +24,7 @@ const MultigridSetup = () => {
   const [session, setSession] = React.useState<Session>()
   const [workflowName, setWorkflowName] = React.useState<string>()
   const [needsGainRef, setNeedsGainRef] = React.useState<boolean>()
+  const [buttonDisabled, setButtonDisabled] = React.useState<boolean>(false)
 
   // Load session information using the session ID
   useEffect(() => {
@@ -68,6 +60,7 @@ const MultigridSetup = () => {
   }
 
   const handleConfirmSelection = async () => {
+    setButtonDisabled(true)
     if (sessid === undefined) return
     // Send request to setup multigrid watcher
     await setupMultigridWatcher(
@@ -82,98 +75,104 @@ const MultigridSetup = () => {
         navigate(
           `../sessions/${sessid}/gain_ref_transfer?sessid=${sessid}&setup=true`
         )
+        setButtonDisabled(false)
         return
       } else if (workflowName === 'sim') {
         navigate(
           `../sessions/${sessid}/otf_transfer?sessid=${sessid}&setup=true`
         )
+        setButtonDisabled(false)
         return
       }
     }
     // Otherwise, start the multigrid watcher
     await startMultigridWatcher(parseInt(sessid))
     navigate(`../sessions/${sessid}`)
+    setButtonDisabled(false)
     return
   }
 
   return (
     <div className="rootContainer">
-      <Box w="100%" bg="murfey.50">
-        <Box w="100%" overflow="hidden">
-          <VStack className="homeRoot">
-            <VStack
-              bg="murfey.700"
-              justifyContent="start"
-              alignItems="start"
-              display="flex"
-              w="100%"
-              px="10vw"
-              py="1vh"
-            >
-              <Heading size="xl" color="murfey.50">
-                Select data directory
-              </Heading>
-            </VStack>
-          </VStack>
-        </Box>
+      {/* Parent container for page contents */}
+      <Box
+        className="homeRoot"
+        overflow="auto"
+        display="flex"
+        flexDirection="column"
+        flex="1"
+        bg="murfey.50"
+      >
+        {/* Page title bar */}
         <Box
-          mt="1em"
-          px="10vw"
+          bg="murfey.700"
           w="100%"
-          justifyContent={'center'}
-          alignItems={'center'}
-          display={'flex'}
-        ></Box>
-        <Box
-          mt="1em"
-          px="10vw"
-          w="100%"
-          justifyContent={'center'}
-          alignItems={'center'}
+          px={{
+            base: 8,
+            md: 16,
+          }}
+          py={4}
+          display="flex"
+          flexDirection="column"
+          alignItems="start"
+          justifyContent="start"
+          gap={2}
         >
-          <SetupStepper activeStepIndex={activeStep} />
+          <Heading size="xl" color="murfey.50">
+            Select Data Directory
+          </Heading>
         </Box>
+        {/* Page contents */}
         <Box
-          mt="1em"
-          px="10vw"
-          w="100%"
-          justifyContent={'center'}
-          alignItems={'center'}
-          display={'flex'}
+          overflow="auto"
+          p={8}
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="start"
+          flex="1"
+          gap={8}
         >
-          <VStack
-            mt="0 !important"
+          {/* Setup steps progress indicator */}
+          <Box w="80%" minW="600px">
+            <SetupStepper activeStepIndex={activeStep} />
+          </Box>
+          {/* Drop-down menu for data directories */}
+          <Box
             w="100%"
-            px="10vw"
-            justifyContent="start"
-            alignItems="start"
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
           >
-            <VStack w="100%" spacing={0}>
-              <Stack w="100%" spacing={5} py="0.8em">
-                <HStack>
-                  <Select onChange={handleDirectorySelection}>
-                    {machineConfig &&
-                    machineConfig.data_directories.length > 0 ? (
-                      machineConfig.data_directories.map((value) => {
-                        return <option value={value}>{value}</option>
-                      })
-                    ) : (
-                      <GridItem colSpan={5}>
-                        <Heading textAlign="center" py={4} variant="notFound">
-                          No Data Directories Found
-                        </Heading>
-                      </GridItem>
-                    )}
-                  </Select>
-                  <IconButton
-                    aria-label="select"
-                    icon={<ArrowForwardIcon />}
-                    onClick={handleConfirmSelection}
-                  />
-                </HStack>
-              </Stack>
-            </VStack>
-          </VStack>
+            {machineConfig && machineConfig.data_directories.length > 0 ? (
+              machineConfig.data_directories.map((value) => {
+                return (
+                  <Box
+                    minW="600px"
+                    maxW="800px"
+                    display="flex"
+                    flexDirection="row"
+                    alignItems="center"
+                    justifyContent="center"
+                    gap={4}
+                  >
+                    <Select onChange={handleDirectorySelection}>
+                      <option value={value}>{value}</option>
+                    </Select>
+                    <IconButton
+                      aria-label="select"
+                      icon={<ArrowForwardIcon />}
+                      isDisabled={buttonDisabled}
+                      onClick={handleConfirmSelection}
+                    />
+                  </Box>
+                )
+              })
+            ) : (
+              <Heading size="xl">No Data Directories Found</Heading>
+            )}
+          </Box>
         </Box>
       </Box>
     </div>
