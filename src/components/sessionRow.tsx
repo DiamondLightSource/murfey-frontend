@@ -183,7 +183,7 @@ export const SessionRow = ({
             >
               {/* Visit name and ID */}
               <Text mt={0.5} fontSize="sm" lineHeight={1}>
-                {session.name}: {session.id}
+                {session.visit}: {session.id}
               </Text>
               {/* Sync status */}
               <Box
