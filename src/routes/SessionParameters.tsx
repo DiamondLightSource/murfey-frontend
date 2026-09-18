@@ -3,7 +3,6 @@ import {
   Button,
   Heading,
   Input,
-  Link,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -11,7 +10,6 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  VStack,
 } from '@chakra-ui/react'
 import { useDisclosure } from '@chakra-ui/react'
 import { Table } from '@diamondlightsource/ui-components'
@@ -21,7 +19,7 @@ import {
   getSessionProcessingParameterData,
 } from 'loaders/processingParameters'
 import React from 'react'
-import { Link as LinkRouter, useLoaderData, useParams } from 'react-router-dom'
+import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
 import { components } from 'schema/main'
 
 type EditableSessionParameters =
@@ -76,6 +74,9 @@ export const SessionParameters = () => {
   const [paramName, setParamName] = React.useState('')
   const [paramValue, setParamValue] = React.useState('')
   const [paramKey, setParamKey] = React.useState<EditableParameter>('')
+
+  const navigate = useNavigate()
+
   Object.entries(sessionParams ? sessionParams : {}).forEach(([key, value]) =>
     tableRows.push({
       parameterName: nameLabelMap.get(key) ?? key,
@@ -115,6 +116,7 @@ export const SessionParameters = () => {
   if (isError) return <p>Error loading processing parameters for session.</p>
   return (
     <div className="rootContainer">
+      {/* Pop-up for submitting processing parameter edits */}
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -139,41 +141,75 @@ export const SessionParameters = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Box w="100%" bg="murfey.50">
-        <Box w="100%" overflow="hidden">
-          <VStack className="homeRoot">
-            <VStack
-              bg="murfey.700"
-              justifyContent="start"
-              alignItems="start"
-              display="flex"
-              w="100%"
-              px="10vw"
-              py="1vh"
-            >
-              <Heading size="xl" color="murfey.50">
-                Session Processing Parameters
-              </Heading>
-              <Link
-                w={{ base: '100%', md: '19.6%' }}
-                _hover={{ textDecor: 'none' }}
-                as={LinkRouter}
-                to={`extra_parameters`}
-              >
-                <Button variant="onBlue">Extra Parameters</Button>
-              </Link>
-            </VStack>
-          </VStack>
+      {/* Parent container for page contents */}
+      <Box
+        className="homeRoot"
+        overflow="auto"
+        display="flex"
+        flexDirection="column"
+        flex="1"
+        bg="murfey.50"
+      >
+        {/* Page title bar */}
+        <Box
+          bg="murfey.700"
+          w="100%"
+          px={{
+            base: 8,
+            md: 16,
+          }}
+          py={4}
+          display="flex"
+          flexDirection="column"
+          alignItems="start"
+          justifyContent="start"
+          gap={2}
+        >
+          <Heading size="xl" color="murfey.50">
+            Session Processing Parameters
+          </Heading>
+          <Button variant="onBlue" onClick={() => navigate(`extra_parameters`)}>
+            Extra Parameters
+          </Button>
         </Box>
-        <Table
-          data={table.processingRows}
-          headers={[
-            { key: 'parameterName', label: 'Parameter' },
-            { key: 'parameterValue', label: 'Value' },
-          ]}
-          label={'sessionParameterData'}
-          onClick={editParameterDialogue}
-        />
+        {/* Page contents */}
+        <Box
+          overflow="auto"
+          p={8}
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="start"
+          flex="1"
+          gap={8}
+        >
+          {/* Table showing processing parameters */}
+          <Box
+            w="80%"
+            minW="600px"
+            display="flex"
+            flexDirection="column"
+            alignItems="start"
+            justifyContent="start"
+            gap={4}
+          >
+            <Table
+              data={table.processingRows}
+              headers={[
+                { key: 'parameterName', label: 'Parameter' },
+                { key: 'parameterValue', label: 'Value' },
+              ]}
+              label={'sessionParameterData'}
+              onClick={editParameterDialogue}
+            />
+            <Button
+              variant="default"
+              onClick={() => navigate(`../sessions/${sessid}`)}
+            >
+              Back to Session
+            </Button>
+          </Box>
+        </Box>
       </Box>
     </div>
   )
