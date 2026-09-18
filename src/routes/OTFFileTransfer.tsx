@@ -154,35 +154,38 @@ export const OTFFileTransfer = () => {
             Upload OTF Files
           </Heading>
         </Box>
-        {/* Page contenst */}
-        <Box
-          overflow="auto"
-          p={8}
-          flex="1"
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="start"
-          gap={8}
-        >
-          {/* Setup steps progress indicator  */}
-          {searchParams.get('setup') ? (
-            <Box w="80%" minW="600px">
-              <SetupStepper activeStepIndex={1} />
+        {/* Overflow container for page contents */}
+        <Box overflow="auto" minW={0} flex="1">
+          {/* Page contents */}
+          <Box
+            w="100%"
+            minW="1000px"
+            p={8}
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="start"
+            gap={8}
+          >
+            {/* Setup steps progress indicator  */}
+            {searchParams.get('setup') ? (
+              <Box w="80%" minW="960px">
+                <SetupStepper activeStepIndex={1} />
+              </Box>
+            ) : null}
+            {/* Table showing OTF directory information */}
+            <Box w="80%" minW="800px">
+              <Table
+                data={possibleOTFDirsFormatted}
+                headers={[
+                  { key: 'name', label: 'Folder Name' },
+                  { key: 'timestampFormatted', label: 'Timestamp' },
+                  { key: 'full_path', label: 'Full Path' },
+                ]}
+                label={'otfDirData'}
+                onClick={handleSelectOTFDir}
+              />
             </Box>
-          ) : null}
-          {/* Table showing OTF directory information */}
-          <Box w="80%" minW="600px">
-            <Table
-              data={possibleOTFDirsFormatted}
-              headers={[
-                { key: 'name', label: 'Folder Name' },
-                { key: 'timestampFormatted', label: 'Timestamp' },
-                { key: 'full_path', label: 'Full Path' },
-              ]}
-              label={'otfDirData'}
-              onClick={handleSelectOTFDir}
-            />
           </Box>
         </Box>
       </Box>

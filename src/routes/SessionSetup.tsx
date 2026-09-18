@@ -82,86 +82,89 @@ export const SessionSetup = () => {
             Set Processing Parameters
           </Heading>
         </Box>
-        {/* Page contents */}
-        <Box
-          overflow="auto"
-          p={8}
-          flex="1"
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="start"
-          gap={8}
-        >
-          {/* Setup steps progress indicator */}
-          <Box w="80%" minW="600px">
-            <SetupStepper activeStepIndex={1} />
-          </Box>
-          {/* Parameters forms */}
+        {/* Overflow container for page contents */}
+        <Box overflow="auto" minW={0} flex="1">
+          {/* Page contents */}
           <Box
-            w="80%"
-            minW="600px"
+            w="100%"
+            minW="1000px"
+            p={8}
             display="flex"
             flexDirection="column"
-            alignItems="start"
+            alignItems="center"
             justifyContent="start"
-            gap={4}
+            gap={8}
           >
-            {/* Toggle between SPA and tomography parameters */}
-            <RadioGroup
-              onChange={setExpType}
-              value={expType}
-              colorScheme="murfey"
-              isDisabled={activeStep !== 3 ? true : false}
-            >
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="start"
-                justifyContent="start"
-                gap={2}
-              >
-                <Radio value="spa">SPA</Radio>
-                <Radio value="tomography">Tomography</Radio>
-              </Box>
-            </RadioGroup>
-            {/* Selected processing parameters form */}
-            <Box
-              p={4}
-              borderWidth="1px"
-              borderRadius="lg"
-              borderColor={'murfey.400'}
-              display={'flex'}
-              justifyContent={'start'}
-              alignItems={'start'}
-            >
-              {sessid ? getForm(expType, handleSelection) : <></>}
+            {/* Setup steps progress indicator */}
+            <Box w="80%" minW="960px">
+              <SetupStepper activeStepIndex={1} />
             </Box>
-            {/* Bottom row of buttons */}
+            {/* Parameters forms */}
             <Box
-              display={'flex'}
-              flexDirection="row"
-              alignItems={'left'}
-              justifyContent={'left'}
+              w="80%"
+              minW="600px"
+              display="flex"
+              flexDirection="column"
+              alignItems="start"
+              justifyContent="start"
               gap={4}
             >
-              <Button
-                variant="default"
-                isDisabled={!paramsSet}
-                onClick={() => navigate(`../sessions/${sessid}`)}
+              {/* Toggle between SPA and tomography parameters */}
+              <RadioGroup
+                onChange={setExpType}
+                value={expType}
+                colorScheme="murfey"
+                isDisabled={activeStep !== 3 ? true : false}
               >
-                Go to Session
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  handleSkip().then(() => {
-                    navigate(`../sessions/${sessid}`)
-                  })
-                }}
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                  alignItems="start"
+                  justifyContent="start"
+                  gap={2}
+                >
+                  <Radio value="spa">SPA</Radio>
+                  <Radio value="tomography">Tomography</Radio>
+                </Box>
+              </RadioGroup>
+              {/* Selected processing parameters form */}
+              <Box
+                p={4}
+                borderWidth="1px"
+                borderRadius="lg"
+                borderColor={'murfey.400'}
+                display={'flex'}
+                justifyContent={'start'}
+                alignItems={'start'}
               >
-                Disable Processing
-              </Button>
+                {sessid ? getForm(expType, handleSelection) : <></>}
+              </Box>
+              {/* Bottom row of buttons */}
+              <Box
+                display={'flex'}
+                flexDirection="row"
+                alignItems={'left'}
+                justifyContent={'left'}
+                gap={4}
+              >
+                <Button
+                  variant="default"
+                  isDisabled={!paramsSet}
+                  onClick={() => navigate(`../sessions/${sessid}`)}
+                >
+                  Go to Session
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    handleSkip().then(() => {
+                      navigate(`../sessions/${sessid}`)
+                    })
+                  }}
+                >
+                  Disable Processing
+                </Button>
+              </Box>
             </Box>
           </Box>
         </Box>

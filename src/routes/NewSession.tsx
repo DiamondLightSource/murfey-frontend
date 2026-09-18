@@ -314,122 +314,125 @@ const NewSession = () => {
             Choose from a currently active visit or manually input one
           </Heading>
         </Box>
-        {/* Page contents */}
-        <Box
-          overflow="auto"
-          p={8}
-          flex="1"
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="start"
-          gap={8}
-        >
-          {/* Setup steps progress indicator */}
-          <Box w="80%" minW="600px">
-            <SetupStepper activeStepIndex={0} />
-          </Box>
-          {/* Table showing current visit information */}
-          <Box w="80%" minW="600px">
-            <Table
-              data={formattedVisits}
-              headers={[
-                { key: 'name', label: 'Name' },
-                { key: 'startFormatted', label: 'Start Time' },
-                { key: 'endFormatted', label: 'End Time' },
-                { key: 'proposal_title', label: 'Description' },
-              ]}
-              label={'visitData'}
-              onClick={selectVisit}
-            />
-          </Box>
-          {/* Visit name and transfer end time information */}
+        {/* Overflow container for page contents */}
+        <Box overflow="auto" minW={0} flex="1">
+          {/* Page contents */}
           <Box
-            minW="400px"
-            maxW="600px"
+            w="100%"
+            minW="1000px"
+            p={8}
             display="flex"
             flexDirection="column"
             alignItems="center"
-            justifyContent="center"
-            gap={4}
+            justifyContent="start"
+            gap={8}
           >
-            {/* Visit name input */}
-            <Input
-              placeholder="Visit name"
-              value={visitName}
-              onChange={handleVisitNameInput}
-            />
-            {/* Visit description input */}
-            <Input
-              placeholder="Session description (optional)"
-              value={sessionDescription}
-              onChange={handleSessionDescriptionInput}
-            />
-            {/* Transfer end time indicator */}
-            <Card
-              w="100%"
-              p={4}
-              cursor="default"
-              _hover={{
-                cursor: 'default',
-                borderColor: 'murfey.400',
-              }}
+            {/* Setup steps progress indicator */}
+            <Box w="80%" minW="960px">
+              <SetupStepper activeStepIndex={0} />
+            </Box>
+            {/* Table showing current visit information */}
+            <Box w="80%">
+              <Table
+                data={formattedVisits}
+                headers={[
+                  { key: 'name', label: 'Name' },
+                  { key: 'startFormatted', label: 'Start Time' },
+                  { key: 'endFormatted', label: 'End Time' },
+                  { key: 'proposal_title', label: 'Description' },
+                ]}
+                label={'visitData'}
+                onClick={selectVisit}
+              />
+            </Box>
+            {/* Visit name and transfer end time information */}
+            <Box
+              minW="400px"
+              maxW="600px"
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+              gap={4}
             >
-              <Box
+              {/* Visit name input */}
+              <Input
+                placeholder="Visit name"
+                value={visitName}
+                onChange={handleVisitNameInput}
+              />
+              {/* Visit description input */}
+              <Input
+                placeholder="Session description (optional)"
+                value={sessionDescription}
+                onChange={handleSessionDescriptionInput}
+              />
+              {/* Transfer end time indicator */}
+              <Card
                 w="100%"
-                display="flex"
-                flexDirection="column"
-                alignItems="start"
-                gap={4}
+                p={4}
+                cursor="default"
+                _hover={{
+                  cursor: 'default',
+                  borderColor: 'murfey.400',
+                }}
               >
-                <Text>Transfers will stop after:</Text>
                 <Box
                   w="100%"
-                  pl={4}
                   display="flex"
-                  flexDirection="row"
-                  alignItems="center"
-                  justifyContent="space-between"
+                  flexDirection="column"
+                  alignItems="start"
+                  gap={4}
                 >
+                  <Text>Transfers will stop after:</Text>
+                  <Box
+                    w="100%"
+                    pl={4}
+                    display="flex"
+                    flexDirection="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
+                    <Text>
+                      {endTime
+                        ? new Intl.DateTimeFormat('en-GB', {
+                            timeZone: 'Europe/London',
+                            weekday: 'short',
+                            year: 'numeric',
+                            month: 'short',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            timeZoneName: 'short',
+                            hour12: false,
+                          }).format(endTime)
+                        : 'NOT SET'}
+                    </Text>
+                    <Tooltip label="Set end time for data transfer">
+                      <IconButton
+                        aria-label="calendar-for-end-time"
+                        icon={<FaCalendar />}
+                        onClick={() => onOpenCalendar()}
+                      />
+                    </Tooltip>
+                  </Box>
                   <Text>
-                    {endTime
-                      ? new Intl.DateTimeFormat('en-GB', {
-                          timeZone: 'Europe/London',
-                          weekday: 'short',
-                          year: 'numeric',
-                          month: 'short',
-                          day: '2-digit',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          second: '2-digit',
-                          timeZoneName: 'short',
-                          hour12: false,
-                        }).format(endTime)
-                      : 'NOT SET'}
+                    (To receive alerts, a transfer end time needs to be set)
                   </Text>
-                  <Tooltip label="Set end time for data transfer">
-                    <IconButton
-                      aria-label="calendar-for-end-time"
-                      icon={<FaCalendar />}
-                      onClick={() => onOpenCalendar()}
-                    />
-                  </Tooltip>
                 </Box>
-                <Text>
-                  (To receive alerts, a transfer end time needs to be set)
-                </Text>
-              </Box>
-            </Card>
+              </Card>
+            </Box>
+            <Button
+              variant="default"
+              isDisabled={visitName === '' || createSessionDisabled}
+              onClick={() => {
+                handleCreateSession(instrumentName)
+              }}
+            >
+              Create session for visit {visitName}
+            </Button>
           </Box>
-          <Button
-            variant="default"
-            isDisabled={visitName === '' || createSessionDisabled}
-            onClick={() => {
-              handleCreateSession(instrumentName)
-            }}
-          >
-            Create session for visit {visitName}
-          </Button>
         </Box>
       </Box>
     </div>

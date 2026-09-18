@@ -1,4 +1,4 @@
-import { Box, Heading, VStack } from '@chakra-ui/react'
+import { Box, Heading, Button } from '@chakra-ui/react'
 import { Table } from '@diamondlightsource/ui-components'
 import { useNavigate, useLoaderData, useParams } from 'react-router-dom'
 import { components } from 'schema/main'
@@ -23,46 +23,70 @@ const DataCollectionGroups = () => {
 
   return (
     <div className="rootContainer">
-      <Box w="100%" bg="murfey.50">
-        <Box w="100%" overflow="hidden">
-          <VStack className="homeRoot">
-            <VStack
-              bg="murfey.700"
-              justifyContent="start"
-              alignItems="start"
-              display="flex"
-              w="100%"
-              px="10vw"
-              py="1vh"
-            >
-              <Heading size="xl" color="murfey.50">
-                Data Collection Groups
-              </Heading>
-            </VStack>
-          </VStack>
-        </Box>
+      {/* Parent container for page contents */}
+      <Box
+        className="homeRoot"
+        overflow="auto"
+        display="flex"
+        flexDirection="column"
+        flex="1"
+      >
+        {/* Page title bar */}
         <Box
-          mt="1em"
-          px="10vw"
+          bg="murfey.700"
           w="100%"
-          justifyContent={'center'}
-          alignItems={'center'}
+          px={{
+            base: 8,
+            md: 16,
+          }}
+          py={4}
+          display="flex"
+          flexDirection="column"
+          alignItems="start"
+          justifyContent="start"
+          gap={2}
         >
-          {dataCollectionGroups ? (
-            <Table
-              width="80%"
-              data={Object.values(dataCollectionGroups)}
-              headers={[
-                { key: 'tag', label: 'Tag' },
-                { key: 'id', label: 'ID' },
-                { key: 'atlas', label: 'Atlas' },
-              ]}
-              label={'dataCollectionGroupsData'}
-              onClick={SelectDataCollectionGroup}
-            />
-          ) : (
-            <></>
-          )}
+          <Heading size="xl" color="murfey.50">
+            Data Collection Groups
+          </Heading>
+        </Box>
+        {/* Overflow container for page contents */}
+        <Box overflow="auto" minW={0} flex="1">
+          {/* Page contents */}
+          <Box
+            w="100%"
+            minW="1000px"
+            p={8}
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="start"
+            gap={8}
+          >
+            {/* Table showing data collection groups */}
+            {dataCollectionGroups ? (
+              <Box w="80%" minW="800px">
+                <Table
+                  data={Object.values(dataCollectionGroups)}
+                  headers={[
+                    { key: 'tag', label: 'Tag' },
+                    { key: 'id', label: 'ID' },
+                    { key: 'atlas', label: 'Atlas' },
+                  ]}
+                  label={'dataCollectionGroupsData'}
+                  onClick={SelectDataCollectionGroup}
+                />
+              </Box>
+            ) : (
+              <></>
+            )}
+            <Button
+              variant="default"
+              onClick={() => navigate(`../sessions/${sessid}`)}
+            >
+              Back to Session
+            </Button>
+          </Box>
         </Box>
       </Box>
     </div>

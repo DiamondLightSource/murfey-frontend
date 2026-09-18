@@ -185,61 +185,64 @@ export const GainRefTransfer = () => {
             Upload Gain Reference File
           </Heading>
         </Box>
-        {/* Page contents */}
-        <Box
-          overflow="auto"
-          p={8}
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="start"
-          flex="1"
-          gap={8}
-        >
-          {/* Setup steps progress indicator */}
-          {searchParams.get('setup') ? (
-            <Box w="80%" minW="600px">
-              <SetupStepper activeStepIndex={1} />
-            </Box>
-          ) : null}
-          {/* Input for the tag to append to the transferred gain reference */}
-          <Box minW="400px" maxW="600px">
-            <Tooltip label="Tag appended to gain reference name">
-              <Input
-                placeholder={tag}
-                onChange={(e) => setTag(e.target.value)}
-              />
-            </Tooltip>
-          </Box>
-          {/* Checkbox to indicate if image is from a Falcon camera */}
-          <Checkbox
-            isChecked={falcon}
-            onChange={(e) => setFalcon(e.target.checked)}
-          >
-            Falcon
-          </Checkbox>
+        {/* Overflow container for page contents */}
+        <Box overflow="auto" minW={0} flex="1">
+          {/* Page contents */}
           <Box
-            w="80%"
-            minW="600px"
+            w="100%"
+            minW="1000px"
+            p={8}
             display="flex"
             flexDirection="column"
             alignItems="center"
-            justifyContent="center"
+            justifyContent="start"
+            gap={8}
           >
-            <Table
-              data={possibleGainRefsFormatted}
-              headers={[
-                { key: 'name', label: 'File Name' },
-                { key: 'timestampFormatted', label: 'Timestamp' },
-                { key: 'size', label: 'Size [MB]' },
-                { key: 'full_path', label: 'Full Path' },
-              ]}
-              label={'gainRefData'}
-              onClick={handleSelectGainRef}
-            />
-            <Button variant="ghost" onClick={handleNextSetupPage}>
-              Skip gain reference
-            </Button>
+            {/* Setup steps progress indicator */}
+            {searchParams.get('setup') ? (
+              <Box w="80%" minW="960px">
+                <SetupStepper activeStepIndex={1} />
+              </Box>
+            ) : null}
+            {/* Input for the tag to append to the transferred gain reference */}
+            <Box minW="400px" maxW="600px">
+              <Tooltip label="Tag appended to gain reference name">
+                <Input
+                  placeholder={tag}
+                  onChange={(e) => setTag(e.target.value)}
+                />
+              </Tooltip>
+            </Box>
+            {/* Checkbox to indicate if image is from a Falcon camera */}
+            <Checkbox
+              isChecked={falcon}
+              onChange={(e) => setFalcon(e.target.checked)}
+            >
+              Falcon
+            </Checkbox>
+            <Box
+              w="80%"
+              minW="800px"
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Table
+                data={possibleGainRefsFormatted}
+                headers={[
+                  { key: 'name', label: 'File Name' },
+                  { key: 'timestampFormatted', label: 'Timestamp' },
+                  { key: 'size', label: 'Size [MB]' },
+                  { key: 'full_path', label: 'Full Path' },
+                ]}
+                label={'gainRefData'}
+                onClick={handleSelectGainRef}
+              />
+              <Button variant="ghost" onClick={handleNextSetupPage}>
+                Skip gain reference
+              </Button>
+            </Box>
           </Box>
         </Box>
       </Box>

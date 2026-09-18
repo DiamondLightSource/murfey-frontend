@@ -122,56 +122,59 @@ const MultigridSetup = () => {
             Select Data Directory
           </Heading>
         </Box>
-        {/* Page contents */}
-        <Box
-          overflow="auto"
-          p={8}
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="start"
-          flex="1"
-          gap={8}
-        >
-          {/* Setup steps progress indicator */}
-          <Box w="80%" minW="600px">
-            <SetupStepper activeStepIndex={activeStep} />
-          </Box>
-          {/* Drop-down menu for data directories */}
+        {/* Overflow container for page contents */}
+        <Box overflow="auto" minW={0} flex="1">
+          {/* Page contents */}
           <Box
             w="100%"
+            minW="1000px"
+            p={8}
             display="flex"
             flexDirection="column"
             alignItems="center"
-            justifyContent="center"
+            justifyContent="start"
+            gap={8}
           >
-            {machineConfig && machineConfig.data_directories.length > 0 ? (
-              machineConfig.data_directories.map((value) => {
-                return (
-                  <Box
-                    minW="600px"
-                    maxW="800px"
-                    display="flex"
-                    flexDirection="row"
-                    alignItems="center"
-                    justifyContent="center"
-                    gap={4}
-                  >
-                    <Select onChange={handleDirectorySelection}>
-                      <option value={value}>{value}</option>
-                    </Select>
-                    <IconButton
-                      aria-label="select"
-                      icon={<ArrowForwardIcon />}
-                      isDisabled={buttonDisabled}
-                      onClick={handleConfirmSelection}
-                    />
-                  </Box>
-                )
-              })
-            ) : (
-              <Heading size="xl">No Data Directories Found</Heading>
-            )}
+            {/* Setup steps progress indicator */}
+            <Box w="80%" minW="960px">
+              <SetupStepper activeStepIndex={activeStep} />
+            </Box>
+            {/* Drop-down menu for data directories */}
+            <Box
+              w="100%"
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+            >
+              {machineConfig && machineConfig.data_directories.length > 0 ? (
+                machineConfig.data_directories.map((value) => {
+                  return (
+                    <Box
+                      minW="600px"
+                      maxW="800px"
+                      display="flex"
+                      flexDirection="row"
+                      alignItems="center"
+                      justifyContent="center"
+                      gap={4}
+                    >
+                      <Select onChange={handleDirectorySelection}>
+                        <option value={value}>{value}</option>
+                      </Select>
+                      <IconButton
+                        aria-label="select"
+                        icon={<ArrowForwardIcon />}
+                        isDisabled={buttonDisabled}
+                        onClick={handleConfirmSelection}
+                      />
+                    </Box>
+                  )
+                })
+              ) : (
+                <Heading size="xl">No Data Directories Found</Heading>
+              )}
+            </Box>
           </Box>
         </Box>
       </Box>

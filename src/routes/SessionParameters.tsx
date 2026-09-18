@@ -172,42 +172,46 @@ export const SessionParameters = () => {
             Extra Parameters
           </Button>
         </Box>
-        {/* Page contents */}
-        <Box
-          overflow="auto"
-          p={8}
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="start"
-          flex="1"
-          gap={8}
-        >
-          {/* Table showing processing parameters */}
+        {/* Overflow container for page contents */}
+        <Box overflow="auto" minW={0} flex="1">
+          {/* Page contents */}
           <Box
-            w="80%"
-            minW="600px"
+            w="100%"
+            minW="1000px"
+            p={8}
             display="flex"
             flexDirection="column"
-            alignItems="start"
+            alignItems="center"
             justifyContent="start"
-            gap={4}
+            gap={8}
           >
-            <Table
-              data={table.processingRows}
-              headers={[
-                { key: 'parameterName', label: 'Parameter' },
-                { key: 'parameterValue', label: 'Value' },
-              ]}
-              label={'sessionParameterData'}
-              onClick={editParameterDialogue}
-            />
-            <Button
-              variant="default"
-              onClick={() => navigate(`../sessions/${sessid}`)}
+            {/* Table showing processing parameters */}
+            <Box
+              overflow="auto"
+              w="80%"
+              minW="800px"
+              display="flex"
+              flexDirection="column"
+              alignItems="start"
+              justifyContent="start"
+              gap={4}
             >
-              Back to Session
-            </Button>
+              <Table
+                data={table.processingRows}
+                headers={[
+                  { key: 'parameterName', label: 'Parameter' },
+                  { key: 'parameterValue', label: 'Value' },
+                ]}
+                label={'sessionParameterData'}
+                onClick={editParameterDialogue}
+              />
+              <Button
+                variant="default"
+                onClick={() => navigate(`../sessions/${sessid}`)}
+              >
+                Back to Session
+              </Button>
+            </Box>
           </Box>
         </Box>
       </Box>
