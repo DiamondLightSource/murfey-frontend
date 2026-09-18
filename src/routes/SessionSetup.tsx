@@ -1,13 +1,4 @@
-import {
-  Button,
-  Box,
-  RadioGroup,
-  Radio,
-  Stack,
-  Link,
-  VStack,
-  Heading,
-} from '@chakra-ui/react'
+import { Button, Box, RadioGroup, Radio, Heading } from '@chakra-ui/react'
 import { getForm } from 'components/forms'
 import { SetupStepper } from 'components/setupStepper'
 import { startMultigridWatcher } from 'loaders/multigridSetup'
@@ -15,7 +6,7 @@ import { getProcessingParameterData } from 'loaders/processingParameters'
 import { updateSession } from 'loaders/sessionClients'
 import { registerProcessingParameters } from 'loaders/sessionSetup'
 import React from 'react'
-import { Link as LinkRouter, useParams, useLoaderData } from 'react-router-dom'
+import { useNavigate, useParams, useLoaderData } from 'react-router-dom'
 import { components } from 'schema/main'
 
 type SessionClients = components['schemas']['SessionClients']
@@ -28,6 +19,8 @@ export const SessionSetup = () => {
   const [procParams, setProcParams] = React.useState()
   const { sessid } = useParams()
   const [paramsSet, setParamsSet] = React.useState(false)
+
+  const navigate = useNavigate()
 
   const handleSelection = (formData: any) => {
     if (typeof sessid !== 'undefined') {
@@ -61,101 +54,120 @@ export const SessionSetup = () => {
     : 3
   return (
     <div className="rootContainer">
-      <Box w="100%" bg="murfey.50">
-        <Box w="100%" overflow="hidden">
-          <VStack className="homeRoot">
-            <VStack
-              bg="murfey.700"
-              justifyContent="start"
-              alignItems="start"
-              display="flex"
-              w="100%"
-              px="10vw"
-              py="1vh"
-            >
-              <Heading size="xl" color="murfey.50">
-                Processing parameters
-              </Heading>
-            </VStack>
-          </VStack>
+      {/* Parent container for page contents */}
+      <Box
+        className="homeRoot"
+        overflow="auto"
+        display="flex"
+        flexDirection="column"
+        flex="1"
+        bg="murfey.50"
+      >
+        {/* Page title bar */}
+        <Box
+          bg="murfey.700"
+          w="100%"
+          px={{
+            base: 8,
+            md: 16,
+          }}
+          py={4}
+          display="flex"
+          flexDirection="column"
+          alignItems="start"
+          justifyContent="start"
+          gap={2}
+        >
+          <Heading size="xl" color="murfey.50">
+            Set Processing Parameters
+          </Heading>
         </Box>
-        <Stack>
+        {/* Overflow container for page contents */}
+        <Box overflow="auto" minW={0} flex="1">
+          {/* Page contents */}
           <Box
-            mt="1em"
-            px="10vw"
             w="100%"
-            justifyContent={'center'}
-            alignItems={'center'}
+            minW="1000px"
+            p={8}
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="start"
+            gap={8}
           >
-            <SetupStepper activeStepIndex={activeStep} />
-          </Box>
-          <Box
-            mt="1em"
-            px="10vw"
-            w="100%"
-            justifyContent={'left'}
-            alignItems={'center'}
-            display={'flex'}
-          >
-            <RadioGroup
-              onChange={setExpType}
-              value={expType}
-              colorScheme="murfey"
-              isDisabled={activeStep !== 3 ? true : false}
+            {/* Setup steps progress indicator */}
+            <Box w="80%" minW="960px">
+              <SetupStepper activeStepIndex={3} />
+            </Box>
+            {/* Parameters forms */}
+            <Box
+              w="80%"
+              minW="600px"
+              display="flex"
+              flexDirection="column"
+              alignItems="start"
+              justifyContent="start"
+              gap={4}
             >
-              <Stack>
-                <Radio value="spa">SPA</Radio>
-                <Radio value="tomography">Tomography</Radio>
-              </Stack>
-            </RadioGroup>
+              {/* Toggle between SPA and tomography parameters */}
+              <RadioGroup
+                onChange={setExpType}
+                value={expType}
+                colorScheme="murfey"
+                isDisabled={activeStep !== 3 ? true : false}
+              >
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                  alignItems="start"
+                  justifyContent="start"
+                  gap={2}
+                >
+                  <Radio value="spa">SPA</Radio>
+                  <Radio value="tomography">Tomography</Radio>
+                </Box>
+              </RadioGroup>
+              {/* Selected processing parameters form */}
+              <Box
+                p={4}
+                borderWidth="1px"
+                borderRadius="lg"
+                borderColor={'murfey.400'}
+                display={'flex'}
+                justifyContent={'start'}
+                alignItems={'start'}
+              >
+                {sessid ? getForm(expType, handleSelection) : <></>}
+              </Box>
+              {/* Bottom row of buttons */}
+              <Box
+                display={'flex'}
+                flexDirection="row"
+                alignItems={'left'}
+                justifyContent={'left'}
+                gap={4}
+              >
+                <Button
+                  variant="default"
+                  isDisabled={!paramsSet}
+                  onClick={() => navigate(`../sessions/${sessid}`)}
+                >
+                  Go to Session
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    handleSkip().then(() => {
+                      navigate(`../sessions/${sessid}`)
+                    })
+                  }}
+                >
+                  Disable Processing
+                </Button>
+              </Box>
+            </Box>
           </Box>
-          <Box
-            mt="1em"
-            ml="10vw"
-            w="80%"
-            borderWidth="1px"
-            borderRadius="lg"
-            overflow="hidden"
-            padding="10px"
-            justifyContent={'left'}
-            alignItems={'left'}
-            display={'flex'}
-            borderColor={'murfey.400'}
-          >
-            {sessid ? getForm(expType, handleSelection) : <></>}
-          </Box>
-          <Box
-            mt="1em"
-            px="10vw"
-            w="100%"
-            justifyContent={'left'}
-            alignItems={'left'}
-            display={'flex'}
-          >
-            <Link
-              w={{ base: '100%', md: '19.6%' }}
-              key={sessid}
-              _hover={{ textDecor: 'none' }}
-              as={LinkRouter}
-              to={`../sessions/${sessid}`}
-            >
-              <Button variant="default" isDisabled={!paramsSet}>
-                Next
-              </Button>
-            </Link>
-            <Link
-              w={{ base: '100%', md: '19.6%' }}
-              key={sessid}
-              _hover={{ textDecor: 'none' }}
-              as={LinkRouter}
-              to={`../sessions/${sessid}`}
-            >
-              <Button variant="ghost" onClick={handleSkip}>
-                Disable Processing
-              </Button>
-            </Link>
-          </Box>
-        </Stack>
+        </Box>
       </Box>
     </div>
   )
