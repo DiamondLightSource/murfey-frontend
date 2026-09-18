@@ -170,7 +170,7 @@ export const OTFFileTransfer = () => {
             {/* Setup steps progress indicator  */}
             {searchParams.get('setup') ? (
               <Box w="80%" minW="960px">
-                <SetupStepper activeStepIndex={1} />
+                <SetupStepper activeStepIndex={2} />
               </Box>
             ) : null}
             {/* Table showing OTF directory information */}

@@ -97,7 +97,7 @@ export const SessionSetup = () => {
           >
             {/* Setup steps progress indicator */}
             <Box w="80%" minW="960px">
-              <SetupStepper activeStepIndex={1} />
+              <SetupStepper activeStepIndex={3} />
             </Box>
             {/* Parameters forms */}
             <Box

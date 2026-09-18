@@ -31,7 +31,6 @@ const MultigridSetup = () => {
     if (!!!sessid) return
     getSessionData(sessid).then((sess) => setSession(sess.session))
   }, [sessid])
-  const activeStep = session != null ? (session.started ? 3 : 2) : 2
 
   // Set the React states using machine config and session information
   useEffect(() => {
@@ -137,7 +136,7 @@ const MultigridSetup = () => {
           >
             {/* Setup steps progress indicator */}
             <Box w="80%" minW="960px">
-              <SetupStepper activeStepIndex={activeStep} />
+              <SetupStepper activeStepIndex={1} />
             </Box>
             {/* Drop-down menu for data directories */}
             <Box

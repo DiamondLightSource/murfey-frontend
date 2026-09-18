@@ -201,7 +201,7 @@ export const GainRefTransfer = () => {
             {/* Setup steps progress indicator */}
             {searchParams.get('setup') ? (
               <Box w="80%" minW="960px">
-                <SetupStepper activeStepIndex={1} />
+                <SetupStepper activeStepIndex={2} />
               </Box>
             ) : null}
             {/* Input for the tag to append to the transferred gain reference */}
