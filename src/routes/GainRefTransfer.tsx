@@ -227,6 +227,7 @@ export const GainRefTransfer = () => {
               flexDirection="column"
               alignItems="center"
               justifyContent="center"
+              gap={4}
             >
               <Table
                 data={possibleGainRefsFormatted}
