@@ -99,7 +99,7 @@ export const SessionSetup = () => {
           </Box>
           {/* Parameters forms */}
           <Box
-            w="60%"
+            w="80%"
             minW="600px"
             display="flex"
             flexDirection="column"
