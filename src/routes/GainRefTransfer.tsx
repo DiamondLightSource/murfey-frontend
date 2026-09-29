@@ -2,8 +2,6 @@ import {
   Button,
   Box,
   Heading,
-  HStack,
-  VStack,
   Input,
   Checkbox,
   Modal,
@@ -14,6 +12,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react'
 import { Table } from '@diamondlightsource/ui-components'
+import { keyframes } from '@emotion/react'
 import { SetupStepper } from 'components/setupStepper'
 import { getMachineConfigData } from 'loaders/machineConfig'
 import {
@@ -28,7 +27,6 @@ import {
   useParams,
   useSearchParams,
 } from 'react-router-dom'
-import { CircleLoader } from 'react-spinners'
 import { components } from 'schema/main'
 import { convertUTCToUKNaive, formatUTCISOToUKLocal } from 'utils/generic'
 
@@ -52,6 +50,12 @@ export const GainRefTransfer = () => {
   const [tag, setTag] = React.useState('')
   const [falcon, setFalcon] = React.useState(false)
   const [falconPreset, setFalconPreset] = React.useState(false)
+
+  // Set up animation for the loading icon
+  const bounce = keyframes`
+    0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+    40% { transform: scale(1); opacity: 1; }
+  `
 
   const handleNextSetupPage = () => {
     !!setup
@@ -106,69 +110,126 @@ export const GainRefTransfer = () => {
 
   return (
     <div className="rootContainer">
-      <Box w="100%" bg="murfey.50">
-        <Box w="100%" overflow="hidden">
-          <VStack className="homeRoot">
-            <VStack
-              bg="murfey.700"
-              justifyContent="start"
-              alignItems="start"
-              display="flex"
-              w="100%"
-              px="10vw"
-              py="1vh"
-            >
-              <Heading size="xl" color="murfey.50">
-                Upload Gain Reference File
-              </Heading>
-            </VStack>
-          </VStack>
-        </Box>
-        <Modal isOpen={processing} onClose={() => void 0}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Processing gain reference</ModalHeader>
-            <ModalBody>
-              <CircleLoader />
-            </ModalBody>
-          </ModalContent>
-        </Modal>
+      {/* Pop-up to show that gain reference is being processed */}
+      <Modal isOpen={processing} onClose={() => void 0}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Processing gain reference...</ModalHeader>
+          <ModalBody
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            p="2vw"
+          >
+            {/* Show three pulsing dots */}
+            <Box display="flex" gap={1}>
+              <Box
+                w={2}
+                h={2}
+                bg="black"
+                borderRadius="full"
+                sx={{
+                  animation: `${bounce} 1s infinite ease-in-out`,
+                  animationDelay: '0.1s',
+                }}
+              />
+              <Box
+                w={2}
+                h={2}
+                bg="black"
+                borderRadius="full"
+                sx={{
+                  animation: `${bounce} 1s infinite ease-in-out`,
+                  animationDelay: '0.2s',
+                }}
+              />
+              <Box
+                w={2}
+                h={2}
+                bg="black"
+                borderRadius="full"
+                sx={{
+                  animation: `${bounce} 1s infinite ease-in-out`,
+                  animationDelay: '0.3s',
+                }}
+              />
+            </Box>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      {/* Parent container for page contents */}
+      <Box
+        className="homeRoot"
+        overflow="auto"
+        display="flex"
+        flexDirection="column"
+        flex="1"
+        bg="murfey.50"
+      >
+        {/* Page title bar */}
         <Box
-          mt="1em"
-          px="10vw"
+          bg="murfey.700"
           w="100%"
-          justifyContent={'center'}
-          alignItems={'center'}
+          px={{
+            base: 8,
+            md: 16,
+          }}
+          py={4}
+          display="flex"
+          flexDirection="column"
+          alignItems="start"
+          justifyContent="start"
+          gap={2}
         >
-          {searchParams.get('setup') ? (
-            <SetupStepper activeStepIndex={1} />
-          ) : null}
+          <Heading size="xl" color="murfey.50">
+            Upload Gain Reference File
+          </Heading>
         </Box>
-        <Box
-          mt="1em"
-          w="100%"
-          justifyContent={'center'}
-          alignItems={'center'}
-          display={'flex'}
-        >
-          <HStack>
-            <VStack>
+        {/* Overflow container for page contents */}
+        <Box overflow="auto" minW={0} flex="1">
+          {/* Page contents */}
+          <Box
+            w="100%"
+            minW="1000px"
+            p={8}
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="start"
+            gap={8}
+          >
+            {/* Setup steps progress indicator */}
+            {searchParams.get('setup') ? (
+              <Box w="80%" minW="960px">
+                <SetupStepper activeStepIndex={2} />
+              </Box>
+            ) : null}
+            {/* Input for the tag to append to the transferred gain reference */}
+            <Box minW="400px" maxW="600px">
               <Tooltip label="Tag appended to gain reference name">
                 <Input
                   placeholder={tag}
-                  w="50%"
-                  display={'flex'}
                   onChange={(e) => setTag(e.target.value)}
                 />
               </Tooltip>
-              <Checkbox
-                isChecked={falcon}
-                onChange={(e) => setFalcon(e.target.checked)}
-              >
-                Falcon
-              </Checkbox>
+            </Box>
+            {/* Checkbox to indicate if image is from a Falcon camera */}
+            <Checkbox
+              isChecked={falcon}
+              onChange={(e) => setFalcon(e.target.checked)}
+            >
+              Falcon
+            </Checkbox>
+            <Box
+              w="80%"
+              minW="800px"
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+              gap={4}
+            >
               <Table
-                width="80%"
                 data={possibleGainRefsFormatted}
                 headers={[
                   { key: 'name', label: 'File Name' },
@@ -182,8 +243,8 @@ export const GainRefTransfer = () => {
               <Button variant="ghost" onClick={handleNextSetupPage}>
                 Skip gain reference
               </Button>
-            </VStack>
-          </HStack>
+            </Box>
+          </Box>
         </Box>
       </Box>
     </div>

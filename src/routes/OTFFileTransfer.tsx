@@ -79,100 +79,114 @@ export const OTFFileTransfer = () => {
 
   return (
     <div className="rootContainer">
-      <Box w="100%" bg="murfey.50">
-        {/* Pop-up for showing loading progress */}
-        <Modal isOpen={processing} onClose={() => void 0}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Transferring OTF files...</ModalHeader>
-            <ModalBody
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              p="2vw"
-            >
-              {/* Show three pulsing dots */}
-              <Box display="flex" gap={1}>
-                <Box
-                  w={2}
-                  h={2}
-                  bg="black"
-                  borderRadius="full"
-                  sx={{
-                    animation: `${bounce} 1s infinite ease-in-out`,
-                    animationDelay: '0.1s',
-                  }}
-                />
-                <Box
-                  w={2}
-                  h={2}
-                  bg="black"
-                  borderRadius="full"
-                  sx={{
-                    animation: `${bounce} 1s infinite ease-in-out`,
-                    animationDelay: '0.2s',
-                  }}
-                />
-                <Box
-                  w={2}
-                  h={2}
-                  bg="black"
-                  borderRadius="full"
-                  sx={{
-                    animation: `${bounce} 1s infinite ease-in-out`,
-                    animationDelay: '0.3s',
-                  }}
-                />
-              </Box>
-            </ModalBody>
-          </ModalContent>
-        </Modal>
-        {/* Title bar */}
+      {/* Pop-up for showing loading progress */}
+      <Modal isOpen={processing} onClose={() => void 0}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Transferring OTF files...</ModalHeader>
+          <ModalBody
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            p="2vw"
+          >
+            {/* Show three pulsing dots */}
+            <Box display="flex" gap={1}>
+              <Box
+                w={2}
+                h={2}
+                bg="black"
+                borderRadius="full"
+                sx={{
+                  animation: `${bounce} 1s infinite ease-in-out`,
+                  animationDelay: '0.1s',
+                }}
+              />
+              <Box
+                w={2}
+                h={2}
+                bg="black"
+                borderRadius="full"
+                sx={{
+                  animation: `${bounce} 1s infinite ease-in-out`,
+                  animationDelay: '0.2s',
+                }}
+              />
+              <Box
+                w={2}
+                h={2}
+                bg="black"
+                borderRadius="full"
+                sx={{
+                  animation: `${bounce} 1s infinite ease-in-out`,
+                  animationDelay: '0.3s',
+                }}
+              />
+            </Box>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      {/* Parent container for page contents */}
+      <Box
+        className="homeRoot"
+        bg="murfey.50"
+        overflow="auto"
+        display="flex"
+        flexDirection="column"
+        flex="1"
+      >
+        {/* Page title bar */}
         <Box
           bg="murfey.700"
+          w="100%"
+          px={{
+            base: 8,
+            md: 16,
+          }}
+          py={4}
           display="flex"
+          flexDirection="column"
           justifyContent="start"
           alignItems="start"
-          w="100%"
-          px="10vw"
-          py="1vh"
-          overflow="hidden"
+          gap={2}
         >
           <Heading size="xl" color="murfey.50">
             Upload OTF Files
           </Heading>
         </Box>
-        {/* Setup steps progress indicator  */}
-        {searchParams.get('setup') ? (
+        {/* Overflow container for page contents */}
+        <Box overflow="auto" minW={0} flex="1">
+          {/* Page contents */}
           <Box
-            justifyContent="center"
-            alignItems="center"
             w="100%"
-            mt="1em"
-            px="10vw"
+            minW="1000px"
+            p={8}
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="start"
+            gap={8}
           >
-            <SetupStepper activeStepIndex={1} />
+            {/* Setup steps progress indicator  */}
+            {searchParams.get('setup') ? (
+              <Box w="80%" minW="960px">
+                <SetupStepper activeStepIndex={2} />
+              </Box>
+            ) : null}
+            {/* Table showing OTF directory information */}
+            <Box w="80%" minW="800px">
+              <Table
+                data={possibleOTFDirsFormatted}
+                headers={[
+                  { key: 'name', label: 'Folder Name' },
+                  { key: 'timestampFormatted', label: 'Timestamp' },
+                  { key: 'full_path', label: 'Full Path' },
+                ]}
+                label={'otfDirData'}
+                onClick={handleSelectOTFDir}
+              />
+            </Box>
           </Box>
-        ) : null}
-        {/* Table showing OTF directory information */}
-        <Box
-          w="100%"
-          mt="1em"
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Table
-            width="80%"
-            data={possibleOTFDirsFormatted}
-            headers={[
-              { key: 'name', label: 'Folder Name' },
-              { key: 'timestampFormatted', label: 'Timestamp' },
-              { key: 'full_path', label: 'Full Path' },
-            ]}
-            label={'otfDirData'}
-            onClick={handleSelectOTFDir}
-          />
         </Box>
       </Box>
     </div>
