@@ -114,7 +114,8 @@ const NewSession = () => {
   const startMurfeySession = async (iName: string) => {
     const sessid = await createSession(
       visitName,
-      sessionDescription === '' ? visitName : sessionDescription,
+      // sessionDescription === '' ? visitName : sessionDescription,  // Unsafe URL path construction; will fix
+      visitName, // Pass visit name in both fields for now
       iName,
       endTime
     )
