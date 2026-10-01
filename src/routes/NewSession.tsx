@@ -101,7 +101,6 @@ const NewSession = () => {
 
   const selectVisit = (data: Record<string, any>, index: number) => {
     setVisitName(data.name)
-    setSessionDescription(data.proposal_title)
     // Add an hour to the listed end time
     const endTime = new Date(new Date(data.end).getTime() + 3600 * 1000 * 2)
     setEndTime(endTime)
@@ -114,8 +113,7 @@ const NewSession = () => {
   const startMurfeySession = async (iName: string) => {
     const sessid = await createSession(
       visitName,
-      // sessionDescription === '' ? visitName : sessionDescription,  // Unsafe URL path construction; will fix
-      visitName, // Pass visit name in both fields for now
+      sessionDescription === '' ? visitName : sessionDescription,
       iName,
       endTime
     )
