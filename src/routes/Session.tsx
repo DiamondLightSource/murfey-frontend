@@ -212,31 +212,36 @@ export const Session = () => {
         navigate(`/new_session/setup/${sessid}`)
         return
       }
-      // Check if this instrument has a reference file directory configured
-      if (needsGainReference && !!!session.current_gain_ref) {
-        // Redirect to the appropriate page based on workflow name
-        if (workflowName === 'tem') {
-          navigate(
-            `/sessions/${sessid}/gain_ref_transfer?sessid=${sessid}&setup=true`
-          )
-          return
-        } else if (workflowName === 'sim') {
+      // cryo-SIM logic stream
+      if (workflowName === 'sim') {
+        if (needsGainReference && !!!session.current_gain_ref) {
           navigate(
             `/sessions/${sessid}/otf_transfer?sessid=${sessid}&setup=true`
           )
           return
         }
       }
-      // Check if this instrument requires processing parameters configured
-      if (needsProcessingParams) {
-        // Check if processing parameters have been provided
-        getSessionProcessingParameterData(sessid).then((params) => {
-          if (params === null && session.process) {
-            // Redirect to the processing parameters page
-            navigate(`/new_session/parameters/${sessid}`)
-            return
-          }
-        })
+      // TEM logic stream
+      if (workflowName === 'tem') {
+        // Check if this instrument requires processing parameters configured
+        if (needsProcessingParams) {
+          // Check if processing parameters have been provided
+          getSessionProcessingParameterData(sessid).then((params) => {
+            if (params === null && session.process) {
+              if (needsGainReference && !!!session.current_gain_ref) {
+                // Redirect to gain reference if none is associated with the session
+                navigate(
+                  `/sessions/${sessid}/gain_ref_transfer?sessid=${sessid}&setup=true`
+                )
+                return
+              } else {
+                // Redirect to the processing parameters page
+                navigate(`/new_session/parameters/${sessid}`)
+                return
+              }
+            }
+          })
+        }
       }
     }
     runRedirectChecks() // Call the async function inside the useEffect()

@@ -104,7 +104,7 @@ export const formatUTCISOToUKLocal = (utcIsoString: string) => {
 
 type MachineConfig = components['schemas']['MachineConfig']
 export const checkForProcessingParameters = (config: MachineConfig) => {
-  const softwareNeedingParameters = ['epu', 'tomo', 'smartem']
+  const softwareNeedingParameters = ['epu', 'tomo', 'serialem']
   return !!softwareNeedingParameters.some((software) =>
     config.acquisition_software?.includes(software)
   )
