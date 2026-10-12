@@ -99,7 +99,7 @@ export const SessionRow = ({
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>
-              Confirm removing session {session.name} from list
+              Confirm removing session '{session.visit}' from list
             </ModalHeader>
             <ModalCloseButton />
             <ModalBody>
@@ -130,7 +130,7 @@ export const SessionRow = ({
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>
-              Confirm removing files for session {session.name}
+              Confirm removing files for session '{session.visit}'
             </ModalHeader>
             <ModalCloseButton />
             <ModalBody>

@@ -55,8 +55,12 @@ export const createSession = async (
     ? convertUTCToUKNaive(sessionEndTime.toISOString())
     : null
   const response = await client.post(
-    `session_info/instruments/${instrumentName}/visits/${visit}/sessions/${sessionName}`,
-    { end_time: ukEndTime }
+    `session_info/instruments/${instrumentName}/sessions/new`,
+    {
+      visit: visit,
+      name: sessionName,
+      end_time: ukEndTime,
+    }
   )
   if (response.status !== 200) return null
   return response.data
