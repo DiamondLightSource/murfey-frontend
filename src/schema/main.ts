@@ -1899,6 +1899,11 @@ export interface components {
        * @default null
        */
       visit_end_time: string | null
+      /**
+       * Last Active
+       * @default null
+       */
+      last_active: string | null
     }
     /** SessionClients */
     SessionClients: {
