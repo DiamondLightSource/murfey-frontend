@@ -45,6 +45,15 @@ export const getSessionData = async (sessid: string = '0') => {
   return response.data
 }
 
+export const getSessionPreprocessedMovies = async (sessid: number) => {
+  const response = await client.get(
+    `session_info/sessions/${sessid}/movies/preprocessed`
+  )
+
+  if (response.status !== 200) return null
+  return response.data // Dictionary containing the keys "complete" and "incomplete"
+}
+
 export const createSession = async (
   visit: string,
   sessionName: string,
