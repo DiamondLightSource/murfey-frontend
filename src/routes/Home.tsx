@@ -145,12 +145,30 @@ export const Home = () => {
 
     setStaleRunningSessions(
       sessionsData.filter((session) => {
+        // Don't mark as stale if:
+        // - Visit end time is not set
+        // - Session is disconnected
         if (!session.visit_end_time) return false
         if (!sessionStatuses[session.id]?.isActive) return false
-        const sessionEndTimeUTC = new Date(
-          convertUKNaiveToUTC(session.visit_end_time)
-        )
-        return sessionEndTimeUTC < currentTimestamp
+
+        // If 'last active' is populated, use the latest time as the end time
+        const latestEndTime = (() => {
+          const visitEndTime = new Date(
+            convertUKNaiveToUTC(session.visit_end_time)
+          )
+          if (!!session.last_active) {
+            // Load the last active time
+            const lastActive = new Date(
+              new Date(convertUKNaiveToUTC(session.last_active)).getTime() +
+                60 * 60 * 1000 // Include 1 hour offset from registered time
+            )
+            return visitEndTime.getDate() > lastActive.getDate()
+              ? visitEndTime
+              : lastActive
+          }
+          return visitEndTime
+        })()
+        return latestEndTime < currentTimestamp
       })
     )
   }, [sessionsData, sessionStatuses])
