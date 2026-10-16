@@ -19,8 +19,8 @@ import {
   Tooltip,
   VStack,
 } from '@chakra-ui/react'
-import { keyframes } from '@emotion/react'
 import { useQuery } from '@tanstack/react-query'
+import { PulsingDots } from 'components/animations/PulsingDots'
 import { InstrumentCard } from 'components/instrumentCard'
 import { RsyncCard } from 'components/rsyncCard'
 import { UpstreamVisitsCard } from 'components/upstreamVisitsCard'
@@ -166,12 +166,6 @@ export const Session = () => {
     onOpen: onOpenCalendar,
     onClose: onCloseCalendar,
   } = useDisclosure()
-
-  // Set up animation for the loading icon
-  const bounce = keyframes`
-    0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
-    40% { transform: scale(1); opacity: 1; }
-  `
 
   // ----------------------------------------------------------------------------------
   // Functions
@@ -420,39 +414,8 @@ export const Session = () => {
               justifyContent="center"
               p="2vw"
             >
-              {/* Show three pulsing dots */}
-              <Box display="flex" gap={1}>
-                <Box
-                  w={2}
-                  h={2}
-                  bg="black"
-                  borderRadius="full"
-                  sx={{
-                    animation: `${bounce} 1s infinite ease-in-out`,
-                    animationDelay: '0.1s',
-                  }}
-                />
-                <Box
-                  w={2}
-                  h={2}
-                  bg="black"
-                  borderRadius="full"
-                  sx={{
-                    animation: `${bounce} 1s infinite ease-in-out`,
-                    animationDelay: '0.2s',
-                  }}
-                />
-                <Box
-                  w={2}
-                  h={2}
-                  bg="black"
-                  borderRadius="full"
-                  sx={{
-                    animation: `${bounce} 1s infinite ease-in-out`,
-                    animationDelay: '0.3s',
-                  }}
-                />
-              </Box>
+              {/* Show loading animation */}
+              <PulsingDots dotSize={2} />
             </ModalBody>
           ) : (
             <ModalBody>
