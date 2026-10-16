@@ -15,11 +15,11 @@ import {
   ModalHeader,
   ModalFooter,
   ModalBody,
-  ModalCloseButton,
   Select,
   Tooltip,
   VStack,
 } from '@chakra-ui/react'
+import { keyframes } from '@emotion/react'
 import { useQuery } from '@tanstack/react-query'
 import { InstrumentCard } from 'components/instrumentCard'
 import { RsyncCard } from 'components/rsyncCard'
@@ -33,7 +33,11 @@ import {
 } from 'loaders/multigridSetup'
 import { getSessionProcessingParameterData } from 'loaders/processingParameters'
 import { getRsyncerData, pauseRsyncer, finaliseSession } from 'loaders/rsyncers'
-import { updateVisitEndTime, getSessionData } from 'loaders/sessionClients'
+import {
+  updateVisitEndTime,
+  getSessionData,
+  getSessionPreprocessedMovies,
+} from 'loaders/sessionClients'
 import { checkMultigridControllerStatus } from 'loaders/sessionSetup'
 import React, { useEffect, useCallback } from 'react'
 import { GiMagicBroom } from 'react-icons/gi'
@@ -74,6 +78,10 @@ export const Session = () => {
   // Session information
   const [session, setSession] = React.useState<SessionSchema>()
   const [sessionActive, setSessionActive] = React.useState(false)
+  const [movieInfo, setMovieInfo] = React.useState<Record<
+    string,
+    number
+  > | null>(null)
 
   // File transfer source information
   const [selectedDirectory, setSelectedDirectory] = React.useState('')
@@ -158,6 +166,12 @@ export const Session = () => {
     onOpen: onOpenCalendar,
     onClose: onCloseCalendar,
   } = useDisclosure()
+
+  // Set up animation for the loading icon
+  const bounce = keyframes`
+    0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+    40% { transform: scale(1); opacity: 1; }
+  `
 
   // ----------------------------------------------------------------------------------
   // Functions
@@ -265,6 +279,16 @@ export const Session = () => {
   useEffect(() => {
     loadSession()
   }, [sessid, loadSession])
+
+  // Check for unprocessed movies before opening the visit complete pop-up
+  useEffect(() => {
+    isOpenVisitComplete
+      ? // Load movie information for the session
+        getSessionPreprocessedMovies(parseInt(sessid)).then((data) => {
+          setMovieInfo(data)
+        })
+      : setMovieInfo(null) // Reset stored state
+  }, [sessid, isOpenVisitComplete])
 
   // Other Rsync-related functions
   const finaliseAll = async () => {
@@ -383,20 +407,89 @@ export const Session = () => {
   return (
     <div className="rootContainer">
       {/* Logic for pop-up components */}
+      {/* Pop-up session cleanup */}
       <Modal isOpen={isOpenVisitComplete} onClose={onCloseVisitComplete}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Confirm Visit Completion</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            Are you sure you want to remove all data associated with this visit?
-          </ModalBody>
-
+          {movieInfo === null ? (
+            // Loading animation while checking for unprocessed data
+            <ModalBody
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              p="2vw"
+            >
+              {/* Show three pulsing dots */}
+              <Box display="flex" gap={1}>
+                <Box
+                  w={2}
+                  h={2}
+                  bg="black"
+                  borderRadius="full"
+                  sx={{
+                    animation: `${bounce} 1s infinite ease-in-out`,
+                    animationDelay: '0.1s',
+                  }}
+                />
+                <Box
+                  w={2}
+                  h={2}
+                  bg="black"
+                  borderRadius="full"
+                  sx={{
+                    animation: `${bounce} 1s infinite ease-in-out`,
+                    animationDelay: '0.2s',
+                  }}
+                />
+                <Box
+                  w={2}
+                  h={2}
+                  bg="black"
+                  borderRadius="full"
+                  sx={{
+                    animation: `${bounce} 1s infinite ease-in-out`,
+                    animationDelay: '0.3s',
+                  }}
+                />
+              </Box>
+            </ModalBody>
+          ) : (
+            <ModalBody>
+              {
+                // Additional text if there are incomplete movies for this session
+                movieInfo.incomplete > 0 ? (
+                  <>
+                    <p>WARNING:</p>
+                    <p>
+                      {movieInfo.incomplete} out of{' '}
+                      {movieInfo.complete + movieInfo.incomplete} movies have
+                      not been processed
+                    </p>
+                    <br></br>
+                  </>
+                ) : (
+                  <></>
+                )
+              }
+              Are you sure you want to remove all data associated with this
+              visit?
+            </ModalBody>
+          )}
           <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onCloseVisitComplete}>
+            <Button
+              variant="ghost"
+              mr={3}
+              isDisabled={movieInfo === null}
+              onClick={onCloseVisitComplete}
+            >
               Close
             </Button>
-            <Button variant="default" onClick={() => finaliseAll()}>
+            <Button
+              variant="default"
+              isDisabled={movieInfo === null}
+              onClick={finaliseAll}
+            >
               Confirm
             </Button>
           </ModalFooter>
@@ -406,7 +499,6 @@ export const Session = () => {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Restart Transfers</ModalHeader>
-          <ModalCloseButton />
           <ModalBody>
             <FormControl display="flex" alignItems="center">
               <VStack>
@@ -445,7 +537,6 @@ export const Session = () => {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Select data transfer end time</ModalHeader>
-          <ModalCloseButton />
           <ModalBody>
             <input
               aria-label="Date and time"
@@ -542,7 +633,7 @@ export const Session = () => {
               <Button
                 key="visit_complete"
                 variant="onBlue"
-                onClick={() => onOpenVisitComplete()}
+                onClick={onOpenVisitComplete}
               >
                 {displayButtonText && 'Visit Complete'}
                 <Icon

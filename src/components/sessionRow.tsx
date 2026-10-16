@@ -10,7 +10,6 @@ import {
   ModalHeader,
   ModalFooter,
   ModalBody,
-  ModalCloseButton,
   Text,
   Tooltip,
   useDisclosure,
@@ -18,8 +17,11 @@ import {
 import { keyframes } from '@emotion/react'
 import { useQueryClient } from '@tanstack/react-query'
 import { finaliseSession } from 'loaders/rsyncers'
-import { deleteSessionData } from 'loaders/sessionClients'
-import React from 'react'
+import {
+  deleteSessionData,
+  getSessionPreprocessedMovies,
+} from 'loaders/sessionClients'
+import React, { useEffect } from 'react'
 import { GiMagicBroom } from 'react-icons/gi'
 import { MdDelete } from 'react-icons/md'
 import { MdSync, MdSyncProblem } from 'react-icons/md'
@@ -49,6 +51,10 @@ export const SessionRow = ({
   // Set up React states
   const isLoading = isActive === undefined && isFinalising === undefined
   const [sessionFinalising, setSessionFinalising] = React.useState(isFinalising)
+  const [movieInfo, setMovieInfo] = React.useState<Record<
+    string,
+    number
+  > | null>(null)
 
   // Set up utility hooks
   const {
@@ -69,6 +75,15 @@ export const SessionRow = ({
     }
     console.log(`Session ${sessid} marked for cleanup`)
   }
+
+  // Check for unprocessed movies before opening the visit complete pop-up
+  useEffect(() => {
+    isOpenCleanup
+      ? getSessionPreprocessedMovies(session.id).then((data) => {
+          setMovieInfo(data)
+        })
+      : setMovieInfo(null) // Reset stored state
+  }, [session, isOpenCleanup])
 
   // Set up animations for the sync icon
   const bounce = keyframes`
@@ -99,9 +114,8 @@ export const SessionRow = ({
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>
-              Confirm removing session '{session.visit}' from list
+              Remove session '{session.visit}' from list
             </ModalHeader>
-            <ModalCloseButton />
             <ModalBody>
               Are you sure you want to continue? This action is not reversible
             </ModalBody>
@@ -126,22 +140,88 @@ export const SessionRow = ({
             </ModalFooter>
           </ModalContent>
         </Modal>
+        {/* Pop-up for session cleanup */}
         <Modal isOpen={isOpenCleanup} onClose={onCloseCleanup}>
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>
-              Confirm removing files for session '{session.visit}'
+              Remove session '{session.visit}' and associated files
             </ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              Are you sure you want to continue? This action is not reversible
-            </ModalBody>
+            {movieInfo === null ? (
+              // Loading animation while checking for unprocessed data
+              <ModalBody
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                p="2vw"
+              >
+                {/* Show three pulsing dots */}
+                <Box display="flex" gap={1}>
+                  <Box
+                    w={2}
+                    h={2}
+                    bg="black"
+                    borderRadius="full"
+                    sx={{
+                      animation: `${bounce} 1s infinite ease-in-out`,
+                      animationDelay: '0.1s',
+                    }}
+                  />
+                  <Box
+                    w={2}
+                    h={2}
+                    bg="black"
+                    borderRadius="full"
+                    sx={{
+                      animation: `${bounce} 1s infinite ease-in-out`,
+                      animationDelay: '0.2s',
+                    }}
+                  />
+                  <Box
+                    w={2}
+                    h={2}
+                    bg="black"
+                    borderRadius="full"
+                    sx={{
+                      animation: `${bounce} 1s infinite ease-in-out`,
+                      animationDelay: '0.3s',
+                    }}
+                  />
+                </Box>
+              </ModalBody>
+            ) : (
+              <ModalBody>
+                {
+                  // Additional text if there are incomplete movies for this session
+                  movieInfo.incomplete > 0 ? (
+                    <>
+                      <p>WARNING:</p>
+                      <p>
+                        {movieInfo.incomplete} out of{' '}
+                        {movieInfo.complete + movieInfo.incomplete} movies have
+                        not been processed
+                      </p>
+                      <br></br>
+                    </>
+                  ) : (
+                    <></>
+                  )
+                }
+                Are you sure you want to continue? This action is not reversible
+              </ModalBody>
+            )}
             <ModalFooter>
-              <Button variant="ghost" mr={3} onClick={onCloseCleanup}>
+              <Button
+                variant="ghost"
+                mr={3}
+                isDisabled={movieInfo === null}
+                onClick={onCloseCleanup}
+              >
                 Close
               </Button>
               <Button
                 variant="default"
+                isDisabled={movieInfo === null}
                 onClick={() => {
                   cleanupSession(session.id).then(() => {
                     // Refetch session information after requesting cleanup
