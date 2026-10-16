@@ -28,6 +28,8 @@ import { MdSync, MdSyncProblem } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 import { components } from 'schema/main'
 
+import { PulsingDots } from './animations/PulsingDots'
+
 type Session = components['schemas']['Session']
 type SessionRowProps = {
   session: Session
@@ -86,10 +88,6 @@ export const SessionRow = ({
   }, [session, isOpenCleanup])
 
   // Set up animations for the sync icon
-  const bounce = keyframes`
-    0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
-    40% { transform: scale(1); opacity: 1; }
-  `
   const spin = keyframes`
     from { transform: translate(-50%, -50%) rotate(360deg); }
     to { transform: translate(-50%, -50%) rotate(0deg); }
@@ -155,39 +153,8 @@ export const SessionRow = ({
                 justifyContent="center"
                 p="2vw"
               >
-                {/* Show three pulsing dots */}
-                <Box display="flex" gap={1}>
-                  <Box
-                    w={2}
-                    h={2}
-                    bg="black"
-                    borderRadius="full"
-                    sx={{
-                      animation: `${bounce} 1s infinite ease-in-out`,
-                      animationDelay: '0.1s',
-                    }}
-                  />
-                  <Box
-                    w={2}
-                    h={2}
-                    bg="black"
-                    borderRadius="full"
-                    sx={{
-                      animation: `${bounce} 1s infinite ease-in-out`,
-                      animationDelay: '0.2s',
-                    }}
-                  />
-                  <Box
-                    w={2}
-                    h={2}
-                    bg="black"
-                    borderRadius="full"
-                    sx={{
-                      animation: `${bounce} 1s infinite ease-in-out`,
-                      animationDelay: '0.3s',
-                    }}
-                  />
-                </Box>
+                {/* Show loading animation */}
+                <PulsingDots dotSize={2} />
               </ModalBody>
             ) : (
               <ModalBody>
@@ -275,39 +242,8 @@ export const SessionRow = ({
                 justifyContent="center"
               >
                 {isLoading ? (
-                  // Show three pulsing dots
-                  <Box display="flex" gap={1}>
-                    <Box
-                      w={1}
-                      h={1}
-                      bg="black"
-                      borderRadius="full"
-                      sx={{
-                        animation: `${bounce} 1s infinite ease-in-out`,
-                        animationDelay: '0.1s',
-                      }}
-                    />
-                    <Box
-                      w={1}
-                      h={1}
-                      bg="black"
-                      borderRadius="full"
-                      sx={{
-                        animation: `${bounce} 1s infinite ease-in-out`,
-                        animationDelay: '0.2s',
-                      }}
-                    />
-                    <Box
-                      w={1}
-                      h={1}
-                      bg="black"
-                      borderRadius="full"
-                      sx={{
-                        animation: `${bounce} 1s infinite ease-in-out`,
-                        animationDelay: '0.3s',
-                      }}
-                    />
-                  </Box>
+                  // Show loading animation
+                  <PulsingDots dotSize={1} />
                 ) : isActive ? (
                   // Show a pulsing spinning sync icon when running
                   <Icon

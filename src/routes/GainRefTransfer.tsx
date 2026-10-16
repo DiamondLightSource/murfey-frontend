@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react'
 import { Table } from '@diamondlightsource/ui-components'
-import { keyframes } from '@emotion/react'
+import { PulsingDots } from 'components/animations/PulsingDots'
 import { SetupStepper } from 'components/setupStepper'
 import { getMachineConfigData } from 'loaders/machineConfig'
 import {
@@ -50,12 +50,6 @@ export const GainRefTransfer = () => {
   const [tag, setTag] = React.useState('')
   const [falcon, setFalcon] = React.useState(false)
   const [falconPreset, setFalconPreset] = React.useState(false)
-
-  // Set up animation for the loading icon
-  const bounce = keyframes`
-    0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
-    40% { transform: scale(1); opacity: 1; }
-  `
 
   const handleNextSetupPage = () => {
     !!setup
@@ -121,39 +115,8 @@ export const GainRefTransfer = () => {
             justifyContent="center"
             p="2vw"
           >
-            {/* Show three pulsing dots */}
-            <Box display="flex" gap={1}>
-              <Box
-                w={2}
-                h={2}
-                bg="black"
-                borderRadius="full"
-                sx={{
-                  animation: `${bounce} 1s infinite ease-in-out`,
-                  animationDelay: '0.1s',
-                }}
-              />
-              <Box
-                w={2}
-                h={2}
-                bg="black"
-                borderRadius="full"
-                sx={{
-                  animation: `${bounce} 1s infinite ease-in-out`,
-                  animationDelay: '0.2s',
-                }}
-              />
-              <Box
-                w={2}
-                h={2}
-                bg="black"
-                borderRadius="full"
-                sx={{
-                  animation: `${bounce} 1s infinite ease-in-out`,
-                  animationDelay: '0.3s',
-                }}
-              />
-            </Box>
+            {/* Show loading animation */}
+            <PulsingDots dotSize={2} />
           </ModalBody>
         </ModalContent>
       </Modal>
