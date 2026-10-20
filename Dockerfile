@@ -43,10 +43,3 @@ COPY --from=build --chown=nginx /usr/src/app/build /usr/share/nginx/html
 COPY --chown=nginx nginx/conf.d /etc/nginx/nginx.conf
 
 EXPOSE 8080
-CMD [ \
-    "nginx", \
-        "-c", \
-        "/tmp/nginx/nginx.conf", \
-        "-g", \
-        "daemon off;" \
-]
