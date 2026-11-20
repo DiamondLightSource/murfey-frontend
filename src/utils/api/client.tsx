@@ -69,7 +69,9 @@ export const client = async (
 
   try {
     const token = sessionStorage.getItem('token')
-    config.headers = { ...config.headers, Authorization: `Bearer ${token}` }
+    if (!!token) {
+      config.headers = { ...config.headers, Authorization: `Bearer ${token}` }
+    }
     const response = await fetch(prefix + endpoint, config)
     const isJson = response.headers.get('content-type') === 'application/json'
 
